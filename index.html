@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Simpli-framework by simpliwp</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Simpli-framework</h1>
+        <h2>A simple WordPress plugin framework to quickly and easily create WordPress plugins using an object oriented architecture.</h2>
+        <a href="https://github.com/simpliwp/simpli-framework" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="simpli-framework" class="anchor" href="#simpli-framework"><span class="octicon octicon-link"></span></a>simpli-framework</h1>
+
+<h2>
+<a name="synopsis" class="anchor" href="#synopsis"><span class="octicon octicon-link"></span></a>Synopsis</h2>
+
+<p>A simple WordPress plugin framework to quickly and easily create WordPress plugins using an object oriented architecture.</p>
+
+<h2>
+<a name="motivation" class="anchor" href="#motivation"><span class="octicon octicon-link"></span></a>Motivation</h2>
+
+<p>This framework is based on the work of Mike Ems  (email : <a href="mailto:mike@mvied.com">mike@mvied.com</a>). After downloading his <a href="http://wordpress.org/plugins/wordpress-https/">WordPress HTTPS</a> plugin,
+I read through his code and thought it well orgamized and that it might make a great foundation for the plugins I was developing. </p>
+
+<h2>
+<a name="differences-from-mikes-original-code" class="anchor" href="#differences-from-mikes-original-code"><span class="octicon octicon-link"></span></a>Differences from Mike's original code</h2>
+
+<p>Besides stripping out the application specific code, I rebuilt the  save/reset/setting handling so all settings are now stored in
+one database record in wp_options. I also added a Shortcodes module and added some housekeeping features to the modules.</p>
+
+<p>One major addition is the use of the Simpli Framework Base class library. This library is the formerly named 'Mvied' classes. Because WordPress
+does not have a clean way of sharing libraries across pluguins ( excluding namespace management only available in PHP 5.3) , 
+I leveraged the WordPress 'must use' diectory to centrally locate the shared library and built a registration mechanism through which
+installed plugins can negotiate which version of framework they use.</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>The framework installs as the 'Simpli Hello' WordPress Plugin, which is a demonstration WordPress plugin that you 
+can then modify and build off to create your plugin.</p>
+
+<p>Therefore, install it as you would any other WordPress plugin.</p>
+
+<p>Using the built-in plugin installer:</p>
+
+<pre><code>1. Go to Plugins &gt; Add New.
+</code></pre>
+
+<ol>
+<li> Under Search, type in the name of the WordPress Plugin or descriptive keyword, author, or tag in the search form or click a tag link below the search form.
+
+<ol>
+<li>Find the WordPress Plugin you wish to install.
+1.Click Details for more information about the Plugin and instructions you may wish to print or save to help setup the Plugin.
+
+<ol>
+<li>Click Install Now to install the WordPress Plugin. </li>
+</ol>
+</li>
+<li>A popup window will ask you to confirm your wish to install the Plugin.</li>
+<li>If this is the first time you've installed a WordPress Plugin, you may need to enter the FTP login credential information. If you've installed a Plugin before, it will still have the login information. This information is available through your web server host.</li>
+<li>Click Proceed to continue with the installation. The resulting installation screen will list the installation as successful or note any problems during the install.</li>
+<li>If successful, click Activate Plugin to activate it, or Return to Plugin Installer for further actions. </li>
+</ol>
+</li>
+</ol><h2>
+<a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h2>
+
+<p>Andrew Druffner <a href="https://github.com/simpliwp" class="user-mention">@simpliwp</a></p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/simpliwp/simpli-framework/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/simpliwp/simpli-framework/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/simpliwp/simpli-framework"></a> is maintained by <a href="https://github.com/simpliwp">simpliwp</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>

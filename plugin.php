@@ -71,7 +71,8 @@ load_plugin_textdomain(SIMPLI_HELLO_TEXTDOMAIN, false, dirname(plugin_basename(_
 //todo: can we add this elsewhere so we dont contaminate the global namespace?
 function simpli_hello_autoloader($class) {
     $namespaces = array(
-        SIMPLI_HELLO_SHORTNAME
+        'Simpli'
+        ,SIMPLI_HELLO_SHORTNAME
     );
     if (preg_match('/([A-Za-z]+)_?/', $class, $match) && in_array($match[1], $namespaces)) {
         $filename = str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php';
@@ -86,7 +87,7 @@ spl_autoload_register(SIMPLI_HELLO_SLUG . '_autoloader');
 
 /*
  * todo: What is this ? get rid of or find alternate.
- * 
+ *
  */
 if (defined('WP_UNINSTALL_PLUGIN')) {
     return;

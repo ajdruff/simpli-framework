@@ -1,6 +1,6 @@
 <?php
 /**
- * Logger Class for the SimplePI Example Plugin Hello World.
+ * Logger Class
  *
  * @author Andrew Druffner
  * @package Hello

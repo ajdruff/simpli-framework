@@ -12,7 +12,7 @@
   Domain Path:   /languages/
  */
 /*
-  Copyright 2013  Andrew Druffner  (email :andrew@nomstock.com)
+  Simpli Framework Copyright 2013  Andrew Druffner  (email :andrew@nomstock.com)
  * The Simpli framwork was substantially based on the WordPress plugin wordpress-https developed by Mike Ems Copyright 2012  Mike Ems  (email : mike@mvied.com)
 
   This program is free software: you can redistribute it and/or modify

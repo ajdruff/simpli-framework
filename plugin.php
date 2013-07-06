@@ -41,85 +41,177 @@
  */
 
 
-define ('SIMPLI_HELLO_NAME','Simpli Hello'); //dev_note: Value should match value of 'Plugin Name' in the comments at the top of this file.
+define('SIMPLI_HELLO_NAME', 'Simpli Hello'); //dev_note: Value should match value of 'Plugin Name' in the comments at the top of this file.
 define('SIMPLI_HELLO_VERSION', '1.0.0'); //dev_note: Value should match value of 'Version' in the comments at the top of this file.
-define ('SIMPLI_HELLO_SHORTNAME','Hello'); //dev_note: Value must match the name of file lib/Hello/Hello.php
-define ('SIMPLI_HELLO_TEXTDOMAIN','simpli-hello'); //dev_note: Value must include no underscores
-define ('SIMPLI_HELLO_SLUG','simpli_hello'); //dev_note: Replace the value with a short underscore delimited name of your plugin
+define('SIMPLI_HELLO_SHORTNAME', 'Hello'); //dev_note: Value must match the name of file lib/Hello/Hello.php
+define('SIMPLI_HELLO_TEXTDOMAIN', 'simpli-hello'); //dev_note: Value must include no underscores
+define('SIMPLI_HELLO_SLUG', 'simpli_hello'); //dev_note: Replace the value with a short underscore delimited name of your plugin
 define('SIMPLI_HELLO_DEBUG', false); //dev_note:true or false to turn on logging to error log and browser javascript console.
 define('SIMPLI_HELLO_MENU_POSITION', 89.8); //dev_note: Menu Position . See as reference. Must be universally unique or menu wont load if conflicts with another plugin's position.  Ref: http://codex.wordpress.org/Function_Reference/add_menu_page#Parameters
 
 
 
 
-//exit if wordpress isn't properly installed
-if (!defined('ABSPATH'))
-    exit;
 
+/*
+ * Declare global variable for the plugin object
+ *
+ */
+$simpli_hello;
 
-
-
-// load required wordpress classes that might not be loaded by the default installation
-if (!class_exists('WP_Http'))
-    include_once( ABSPATH . WPINC . '/class-http.php' );
-
-
-//add our text domain
-load_plugin_textdomain(SIMPLI_HELLO_TEXTDOMAIN, false, dirname(plugin_basename(__FILE__)) . '/languages/');
 
 //add the names of your classes to the namespaces array so the class file is included
 //todo: can we add this elsewhere so we dont contaminate the global namespace?
 function simpli_hello_autoloader($class) {
-    $namespaces = array(
+
+        $namespaces = array(
         SIMPLI_HELLO_SHORTNAME
     );
+echo '<br>within the autoloader function';
+
+//echo '<br>within the autoloader function';
+//     if (!class_exists('Simpli_Plugin')) {
+//         echo '<br>class does not exist so defining namespaces to include Simpli';
+//    $namespaces = array(
+//        'Simpli',
+//        SIMPLI_HELLO_SHORTNAME
+//    );
+//     }
+//     else
+//         { echo '<br>class does  exist so defining namespaces to exclude Simpli';
+//             $namespaces = array(
+//        SIMPLI_HELLO_SHORTNAME
+//    );
+//
+//         }
+
     if (preg_match('/([A-Za-z]+)_?/', $class, $match) && in_array($match[1], $namespaces)) {
         $filename = str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php';
         require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . $filename;
     }
 }
 
-spl_autoload_register(SIMPLI_HELLO_SLUG . '_autoloader');
+if (!function_exists('simpli_framework_base_autoloader')) {
 
 
+//add the names of your classes to the namespaces array so the class file is included
+//todo: can we add this elsewhere so we dont contaminate the global namespace?
+function simpli_framework_base_autoloader($class) {
 
+    $namespaces = array(
 
-/*
- * todo: What is this ? get rid of or find alternate.
- * 
- */
-if (defined('WP_UNINSTALL_PLUGIN')) {
-    return;
+        'Simpli'
+    );
+
+    if (preg_match('/([A-Za-z]+)_?/', $class, $match) && in_array($match[1], $namespaces)) {
+        $filename = str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php';
+        require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . $filename;
+    }
 }
 
-$classname=SIMPLI_HELLO_SHORTNAME; //needed so we can instantiate the object using a variable classname. using a constant as classname wont work.
-$simpli_hello = new $classname();
-$simpli_hello->setSlug(SIMPLI_HELLO_SLUG);
-$simpli_hello->setVersion(SIMPLI_HELLO_VERSION);
-$simpli_hello->setName(SIMPLI_HELLO_NAME);
-$simpli_hello->setLogger(Hello_Logger::getInstance());
-$simpli_hello->getLogger()->log(' Starting ' . $simpli_hello->getName() . ' Debug Log');
+}
 
-$simpli_hello->setDirectory(dirname(__FILE__));
-$simpli_hello->setModuleDirectory(dirname(__FILE__) . '/lib/'.SIMPLI_HELLO_SHORTNAME.'/Module/');
+if (!class_exists('Simpli_Plugin')) {
 
 
-$simpli_hello->getLogger()->log('Version: ' . $simpli_hello->getVersion());
+    $plugin_version_highest = true;
+    if (!$plugin_version_highest) {
+        add_action('simpli_framework_loaded', SIMPLI_HELLO_SLUG . '_load_plugin');
+        return;
+    } else {
 
-
-/**
- * Load Settings
+spl_autoload_register('simpli_framework_base_autoloader');
+ spl_autoload_register(SIMPLI_HELLO_SLUG . '_autoloader');
+        simpli_hello_load_plugin();
+       do_action('simpli_framework_loaded');
+    }
+}else{
+/*
+ *
+ *
+ * If Simpli base classes are already installed, load the plugin
  */
-$simpli_hello->loadSettings();
+    spl_autoload_register('simpli_framework_base' . '_autoloader');
+    simpli_hello_load_plugin();
+}
 
-/**
- * Load Modules
- */
-$simpli_hello->loadModules();
+function simpli_hello_load_plugin() {
+
+    global $simpli_hello;
+
+
+    /*
+     *
+     * Check if base classes are loaded
+     *
+     */
+    if (!class_exists('Simpli_Plugin')) {
+        return;
+    }
+
+
+
+    //exit if wordpress isn't properly installed
+    if (!defined('ABSPATH'))
+        exit;
+
+
+
+
+// load required wordpress classes that might not be loaded by the default installation
+    if (!class_exists('WP_Http'))
+        include_once( ABSPATH . WPINC . '/class-http.php' );
+
+
+//add our text domain
+    load_plugin_textdomain(SIMPLI_HELLO_TEXTDOMAIN, false, dirname(plugin_basename(__FILE__)) . '/languages/');
+
+
+
+ spl_autoload_register(SIMPLI_HELLO_SLUG . '_autoloader');
+
+    $classname = SIMPLI_HELLO_SHORTNAME; //needed so we can instantiate the object using a variable classname. using a constant as classname wont work.
+    $simpli_hello = new $classname();
+    $simpli_hello->setSlug(SIMPLI_HELLO_SLUG);
+    $simpli_hello->setVersion(SIMPLI_HELLO_VERSION);
+    $simpli_hello->setName(SIMPLI_HELLO_NAME);
+    $simpli_hello->setLogger(Hello_Logger::getInstance());//todo: this isnt caught in search/replace. can we make this a calculated string?
+    $simpli_hello->getLogger()->log(' Starting ' . $simpli_hello->getName() . ' Debug Log');
+
+    $simpli_hello->setDirectory(dirname(__FILE__));
+    $simpli_hello->setModuleDirectory(dirname(__FILE__) . '/lib/' . SIMPLI_HELLO_SHORTNAME . '/Module/');
+
+
+    $simpli_hello->getLogger()->log('Version: ' . $simpli_hello->getVersion());
+
+
+
+
+
+
+    /**
+     * Load Settings
+     */
+    $simpli_hello->loadSettings();
+
+    /**
+     * Load Modules
+     */
+    $simpli_hello->loadModules();
 
 // Initialize Plugin
-$simpli_hello->init();
-$simpli_hello->setPluginUrl(plugins_url('', __FILE__));
+    $simpli_hello->init();
+    $simpli_hello->setPluginUrl(plugins_url('', __FILE__));
+
+
+        /**
+     *
+     *  Register activation hook. Must be called outside of a class.
+     *
+     *
+     */
+    register_activation_hook(__FILE__, array($simpli_hello, 'install'));
+
 
 
 /**
@@ -141,14 +233,13 @@ if (SIMPLI_HELLO_DEBUG) {
 //todo: push this elsewhere outside the global namespace?
 function simpli_hello_print_log() {
     global $simpli_hello;
-    //echo $simpli_hello->getLogger()->consoleLog();
-  //  $simpli_hello->getLogger()->fileLog($simpli_hello->getDirectory() . '/error.log.txt');
+    echo $simpli_hello->getLogger()->consoleLog();
+    $simpli_hello->getLogger()->fileLog($simpli_hello->getDirectory() . '/error.log.txt');
 }
 
-/**
- *
- *  Register activation hook. Must be called outside of a class.
- *
- *
- */
-register_activation_hook(__FILE__, array($simpli_hello, 'install'));
+}
+
+
+
+
+

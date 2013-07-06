@@ -9,7 +9,7 @@
  *
  */
 
-class Hello_Module_Admin extends Simpli_Plugin_Module {
+class Hello_Module_Admin extends Simpliv1c0_Plugin_Module {
 
 	/**
 	 * Initialize Module

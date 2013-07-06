@@ -9,6 +9,38 @@ echo >&2 "$@"
 exit 1
 }
 
+
+#set the path of this script http://stackoverflow.com/a/76257
+SELF_PATH=$(readlink /proc/$$/fd/255)
+
+
+#full path to the parent directory of this script
+SELF_PARENT_DIR_PATH=$(dirname "${SELF_PATH}")
+
+#set the parent directory of this script")
+SELF_PARENT_DIR_NAME=$(basename "$(echo $(dirname "${SELF_PATH}"))")
+
+
+
+
+
+
+
+#################
+# Configure Script
+################
+
+# add the extensions of any files you dont want included in search and replace
+# binary files such as images should be included here to avoid corruption
+excluded_files=".*\.\(zip\|png\|jpg\|gif\)"
+
+#the slug of the framework demonstration plugin that will act as the template
+old_slug='simpli_hello';
+
+default_target_dir=$(dirname "${SELF_PARENT_DIR_PATH}")
+
+
+
 #############
 #validate arguments
 #############
@@ -52,17 +84,25 @@ if [[ "$#" = 0 ]]
 then
 read -e -p "Enter the plugin slug in the form 'company_shortname': " -i "" input_slug
 
-read -e -p "Enter the path to the target directory: [../] "  input_dir
+read -e -p "Enter the path to the target directory: [""${default_target_dir}""] "  input_dir
 
 fi
 
 # if the directory is empty, set it to default
 if [[ "${input_dir}" = "" ]]
 then
-input_dir="../"
+input_dir="${default_target_dir}"
 fi
 
 
+# validate that the slug meets the format requirements (single words separated by an underscore)
+slug_regex="[^_]*_[^_]"
+if [[ ! "${input_slug}" =~ $slug_regex ]]
+then
+die "
+Try again, slug must be two single words separated by an underscore. No special characters.
+"
+fi
 
 
 # if the slug is empty, exit
@@ -86,8 +126,10 @@ fi
 #define variables
 #############
 
-old_slug='simpli_hello';
-dir_name='simpli-framework';
+
+#the parent directory of this script
+dir_name="${SELF_PARENT_DIR_NAME}";
+
 
 #make the input_slug lower case and rename it
 new_slug=$(echo ${input_slug} | awk '{print tolower($0)}')  # company_shortname
@@ -165,7 +207,7 @@ new_class_filename=${new_suffix_cap} # Shortname
 
 
 #module names
-old_module_name=${old_prefix^}_Module # Simpli_Module
+old_module_name=${old_prefix^}_Module # Simpliv1c0_Module
 new_module_name=${new_prefix^}_Module # Company_Module
 
 #logger
@@ -183,16 +225,17 @@ old_plugin_name="${old_prefix^} ${old_suffix_cap}" # Simpli Hello
 new_plugin_name="${new_prefix^} ${new_suffix_cap}" # Company Shortname
 
 #WordPress Plugin Info Header
-#must escape forward slashes with triple slashes
+#must escape forward slashes with triple slashes . In HEREDOC, must also continue to the next line by adding a backslash
+new_line="\\\\n"
 read -d '' new_wp_plugin_header <<EOF
-Plugin Name:   ${new_plugin_name}
-Plugin URI:    http:\\\/\\\/example.com
-Description:   The ${new_plugin_name} plugin does some amazing stuff and was built upon the Simpli framework, a WordPress Plugin development framework that makes building WordPress plugins just a bit easier.
-Author:        <AUTHOR_NAME>
-Version:       1.0.0
-Author URI:    http:\\\/\\\/example.com
-Text Domain:   ${new_slug}
-Domain Path:   \\\/languages\\\/
+Plugin Name:   ${new_plugin_name} ${new_line} \
+Plugin URI:    http:\\\/\\\/example.com ${new_line} \
+Description:   The ${new_plugin_name} plugin does some amazing stuff and was built upon the Simpli framework, a WordPress Plugin development framework that makes building WordPress plugins just a bit easier. ${new_line} \
+Author:        <AUTHOR_NAME> ${new_line} \
+Version:       1.0.0 ${new_line} \
+Author URI:    http:\\\/\\\/example.com ${new_line} \
+Text Domain:   ${new_slug} ${new_line} \
+Domain Path:   \\\/languages\\\/ ${new_line}
 EOF
 
 
@@ -252,11 +295,16 @@ rm  "${target_dir}"/*.html
 
 #replace WordPress Header
 echo 'converting WordPress Plugin Information Header...'
-perl -0777 -i -e "s/${wp_plugin_header_pattern}/${new_wp_plugin_header}/sg" "${target_dir}/plugin.php"
+
+#use a sed multiline substituion by using /c ref:http://www.linuxtopia.org/online_books/linux_tool_guides/the_sed_faq/sedfaq4_013.html
+find "${target_dir}"/plugin.php -type f | xargs -n 1 sed -i -e "/Plugin\s*Name:/, /languages/c$new_wp_plugin_header"
 
 
-#need to exclude binary files or you will corrupt them when searching and replacing
-excluded_files=".*\.\(zip\|png\|jpg\|gif\)"
+#alternative multiline substitution using perl but requires the p flag on windows which makes a .bak file
+#perl -0777 -i -e -p "s/${wp_plugin_header_pattern}/${new_wp_plugin_header}/sg" "${target_dir}""/plugin.php"
+
+
+#echo 'stopping' ; exit 1 ;
 #replace slugs
 echo 'converting slugs...'
 find "${target_dir}/" -not -regex "${excluded_files}" -type f |  xargs -n 1 sed -i -e "s|${old_slug}|${new_slug}|g"

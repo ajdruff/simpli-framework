@@ -9,7 +9,7 @@
  * @package Hello
  *
  */
-class Hello_Module_Core extends Simpli_Plugin_Module {
+class Hello_Module_Core extends Simpliv1c0_Plugin_Module {
 
     private $moduleName;
     private $moduleSlug;

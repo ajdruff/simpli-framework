@@ -150,11 +150,11 @@ find "${lib_dir}"/"${new_directory_name}" -type f | xargs -n 1 sed -i -e "s#[iI]
 
 
 #change all the class declarations that implement the changed interfaces
-find "${plugin_dir}"/ -type f | xargs -n 1 sed -i -e "s#[iI]mplements\s*Simpli[0-9_]*#implements Simpli_1_17_1_${new_version_with_underscores}_#g"
+find "${plugin_dir}"/ -type f | xargs -n 1 sed -i -e "s#[iI]mplements\s*Simpli[0-9_]*#implements Simpliv1c0_1_17_1_${new_version_with_underscores}_#g"
 
 
 #change all the class declarations that extend the base classes
-find "${plugin_dir}"/ -type f | xargs -n 1 sed -i -e "s#[eE]xtends\s*Simpli[0-9_]*#extends Simpli_1_17_1_${new_version_with_underscores}_#g"
+find "${plugin_dir}"/ -type f | xargs -n 1 sed -i -e "s#[eE]xtends\s*Simpli[0-9_]*#extends Simpliv1c0_1_17_1_${new_version_with_underscores}_#g"
 
 exit 1;
 #rename all the descendant classes
@@ -226,7 +226,7 @@ new_class_filename=${new_suffix_cap} # Shortname
 
 
 #module names
-old_module_name=${old_prefix^}_Module # Simpli_Module
+old_module_name=${old_prefix^}_Module # Simpliv1c0_Module
 new_module_name=${new_prefix^}_Module # Company_Module
 
 #logger

@@ -7,7 +7,7 @@
  *
  */
 
-class Hello_Logger implements Simpli_Logger_Interface {
+class Hello_Logger implements Simpliv1c0_Logger_Interface {
 
 	/**
 	 * Instance

@@ -9,7 +9,7 @@
  * @package Hello
  *
  */
-class Hello_Module_Post extends Simpli_Plugin_Module {
+class Hello_Module_Post extends Simpliv1c0_Plugin_Module {
 
     /**
      * Post Option Defaults

@@ -11,7 +11,7 @@
  */
 
 
-class Hello_Module_ModuleTemplate extends Simpli_Plugin_Module {
+class Hello_Module_ModuleTemplate extends Simpliv1c0_Plugin_Module {
 
 
     private $_moduleName;

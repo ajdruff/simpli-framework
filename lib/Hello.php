@@ -7,7 +7,7 @@
  * @package Hello
  *
  */
-class Hello extends Simpli_Plugin {
+class Hello extends Simpliv1c0_Plugin {
 
     public $_setting_defaults = array();
 

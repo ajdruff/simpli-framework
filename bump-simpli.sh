@@ -1,27 +1,36 @@
 #!/usr/bin/bash
 
 
-#cd /cygdrive/c/wamp/www/wpdev.com/public_html/wp-content/plugins
-#./simpli_amazing/bump.sh ./simpli_amazing bug
-
-
-
-# works but math doesnt except with perl
-#find "/cygdrive/c/wamp/www/wpdev.com/public_html/wp-content/plugins/simpli_amazing/lib/Simpli/Plugin.php" -type f | xargs sed -i -e 's/[Cc]lass\([0-9]\)/class\1+1/g'
-#http://stackoverflow.com/questions/10781498/sed-regex-with-variables-to-replace-numbers-in-a-file
-
-
-
-#find "/cygdrive/c/wamp/www/wpdev.com/public_html/wp-content/plugins/simpli_amazing/lib/Simpli/Plugin.php" -type f | xargs -n 1 | perl -pe 's/[cC]lass/Class2/ge'
-
-#exit 1;
-#add some stdout and help instructions
-#create php form script
-
+## define die function
 die () {
 echo >&2 "$@"
 exit 1
 }
+
+
+
+#set the path of this script http://stackoverflow.com/a/76257
+SELF_PATH=$(readlink /proc/$$/fd/255)
+
+#full path to the parent directory of this script
+SELF_PARENT_DIR_PATH=$(dirname "${SELF_PATH}")
+
+#set the parent directory of this script")
+SELF_PARENT_DIR_NAME=$(basename "$(echo $(dirname "${SELF_PATH}"))")
+
+
+
+
+
+#################
+# Configure Script
+################
+
+# add the extensions of any files you dont want included in search and replace
+# binary files such as images should be included here to avoid corruption
+excluded_files=".*\.\(zip\|png\|jpg\|gif\)"
+
+
 
 #############
 #validate arguments
@@ -148,7 +157,7 @@ Unable to bump version. Permission denied on directory "${lib_dir}"/"${old_direc
 fi
 
 #change any references to patterns like 'Simpliv1c1_' in the Simpli class library and change them to new version Simpliv1c2_
-find "${lib_dir}"/"${new_directory_name}" -type f | xargs -n 1 sed -i -e "s#Simpli[vc0-9]*\(_[^\s]*\)#Simpli${new_version}\1#g"
+find "${lib_dir}"/"${new_directory_name}"  -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#Simpli[vc0-9]*\(_[^\s]*\)#Simpli${new_version}\1#g"
 
 
 #not used, but this is a more selective pattern for Class declarations
@@ -168,29 +177,29 @@ find "${lib_dir}"/"${new_directory_name}" -type f | xargs -n 1 sed -i -e "s#Simp
 ######################
 
 #change all the class declarations that implement the changed interfaces
-find "${plugin_dir}"/ -type f | xargs -n 1 sed -i -e "s#[iI]mplements\s*Simpli[vc0-9]*_#implements Simpli${new_version}_#g"
+find "${plugin_dir}"/  -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#[iI]mplements\s*Simpli[vc0-9]*_#implements Simpli${new_version}_#g"
 
 
-#change all the references to a Simpli interface  # e.g. Simpliv1c1_Logger_Interface
+#change all the references to a Simpli interface  # e.g. Simpliv1c0_Logger_Interface
 #groups the suffix
 #uses backslash to escape the group
 #\1 is the capture group
-find "${plugin_dir}"/ -type f | xargs -n 1 sed -i -e "s#Simpli[vc0-9]*\(_[^z]*[Ii]nterface\)#Simpli${new_version}\1#g"
+find "${plugin_dir}"/  -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#Simpli[vc0-9]*\(_[^z]*[Ii]nterface\)#Simpli${new_version}\1#g"
 
-#change all the references to a Simpli Module e.g. Simpliv1c1_Plugin_Module
+#change all the references to a Simpli Module e.g. Simpliv1c0_Plugin_Module
 #groups the suffix
 #uses backslash to escape the group
 #\1 is the capture group
-find "${plugin_dir}"/ -type f | xargs -n 1 sed -i -e "s#Simpli[vc0-9]*\(_[^\s]*[Mm]odule\)#Simpli${new_version}\1#g"
+find "${plugin_dir}"/  -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#Simpli[vc0-9]*\(_[^\s]*[Mm]odule\)#Simpli${new_version}\1#g"
 
 
 
 
 #change all the class declarations that extend the base classes
-find "${plugin_dir}"/ -type f | xargs -n 1 sed -i -e "s#[eE]xtends\s*Simpli[vc0-9]*_#extends Simpli${new_version}_#g"
+find "${plugin_dir}"/  -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#[eE]xtends\s*Simpli[vc0-9]*_#extends Simpli${new_version}_#g"
 
 #change the autoload class in plugin.php
-find "${plugin_dir}"/plugin.php -type f | xargs -n 1 sed -i -e "s#base_class_version='[vc0-9]*'#base_class_version='${new_version}'#g"
+find "${plugin_dir}"/plugin.php  -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#base_class_version='[vc0-9]*'#base_class_version='${new_version}'#g"
 
 
 

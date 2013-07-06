@@ -6,7 +6,7 @@
  * @author Mike Ems
  * @package Simpli
  */
-class Simpli_Plugin {
+class Simpliv1c0_Plugin {
 
     /**
      * Base directory
@@ -32,7 +32,7 @@ class Simpli_Plugin {
     /**
      * Logger
      *
-     * @var Simpli_Logger_Interface
+     * @var Simpliv1c0_Logger_Interface
      */
     protected $_logger;
 
@@ -204,7 +204,7 @@ class Simpli_Plugin {
      * @param object $logger
      * @return object $this
      */
-    public function setLogger(Simpli_Logger_Interface $logger) {
+    public function setLogger(Simpliv1c0_Logger_Interface $logger) {
         $this->_logger = $logger;
         return $this;
     }

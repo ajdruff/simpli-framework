@@ -93,13 +93,6 @@ class Hello extends Simpli_Plugin {
                 }
             }
         }
-
-
-
-
-
-
-
     }
 
     /**

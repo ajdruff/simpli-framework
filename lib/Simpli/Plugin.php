@@ -440,7 +440,7 @@ class Simpli_Plugin {
      * @return $this
      */
     public function init() {
-echo '<br> Loading Simpli class from ' . __FILE__;
+
         $modules = $this->getModules();
 
         foreach ($modules as $module) {

@@ -46,7 +46,7 @@ define('SIMPLI_HELLO_VERSION', '1.0.0'); //dev_note: Value should match value of
 define('SIMPLI_HELLO_SHORTNAME', 'Hello'); //dev_note: Value must match the name of file lib/Hello/Hello.php
 define('SIMPLI_HELLO_TEXTDOMAIN', 'simpli-hello'); //dev_note: Value must include no underscores
 define('SIMPLI_HELLO_SLUG', 'simpli_hello'); //dev_note: Replace the value with a short underscore delimited name of your plugin
-define('SIMPLI_HELLO_DEBUG', false); //dev_note:true or false to turn on logging to error log and browser javascript console.
+define('SIMPLI_HELLO_DEBUG', true); //dev_note:true or false to turn on logging to error log and browser javascript console.
 define('SIMPLI_HELLO_MENU_POSITION', '67.141592653597777777' . SIMPLI_HELLO_SLUG); //dev_note: Menu Position . The default provided here will nearly always work and not conflict with another plugin as long as your slug is unique. You can make it anything you want though and it must be universally unique or menu wont load if conflicts with another plugin's position.  Ref: http://codex.wordpress.org/Function_Reference/add_menu_page#Parameters
 //exit if wordpress isn't properly installed
 if (!defined('ABSPATH'))
@@ -66,7 +66,7 @@ load_plugin_textdomain(SIMPLI_HELLO_TEXTDOMAIN, false, dirname(plugin_basename(_
 //add the names of your classes to the namespaces array so the class file is included
 //todo: can we add this elsewhere so we dont contaminate the global namespace?
 function simpli_hello_autoloader($class) {
-    $base_class_version = ''; //dont change name or update this manually - controlled by the bump script.
+    $base_class_version='v1c0'; //dont change name or update this manually - controlled by the bump script. must match the vXcX part of the SimplvXcX directory
     $namespaces = array(
         'Simpli' . $base_class_version
         , SIMPLI_HELLO_SHORTNAME

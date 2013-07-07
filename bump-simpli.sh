@@ -27,8 +27,17 @@ SELF_PARENT_DIR_NAME=$(basename "$(echo $(dirname "${SELF_PATH}"))")
 ################
 
 # add the extensions of any files you dont want included in search and replace
-# binary files such as images should be included here to avoid corruption
-excluded_files=".*\.\(zip\|png\|jpg\|gif\)"
+# binary files such as images should be excluded to avoid corruption
+# git should be excluded since we are doing the bump from within the working directory
+# sh scripts should be excluded so as not to corrupt this script
+excluded_files=".*\.\(zip\|png\|jpg\|gif\|git\|gitignore\|gitattributes\|sh\)"
+
+
+
+# set override_version = 1, and then set major and minor to the versions that you want if you want a specific version (good for reversing a bump)
+override_version=0; # default=0
+override_major=1;
+override_minor=0;
 
 
 
@@ -107,6 +116,9 @@ old_version=$(ls "${lib_dir}" | grep Simpli | sed -e 's/Simpli\([vc0-9]*\)/\1/g'
 major=$(echo "${old_version}" | sed -e 's/v\([0-9]*\)c[0-9]*/\1/g')  # returns 2 from v2c1
 minor=$(echo "${old_version}" | sed -e 's/v[0-9]*c\([0-9]*\)/\1/g')  # returns 1 from v2c1
 
+
+
+
 #echo 'major='"${major}"
 #echo 'minor='"${minor}"
 
@@ -127,8 +139,14 @@ let minor="${minor}"+1
 fi
 
 
-#echo 'new major='"${major}"
-#echo 'new minor='"${minor}"
+
+## ignore the input if the override is set to true
+if [[ "${override_version}" = 1 ]]
+then
+major="${override_major}"
+minor="${override_minor}"
+fi
+#echo 'new major='"${major}" ; echo 'new minor='"${minor}" ; exit 1;
 
 
 new_version_with_decimals="${major}"."${minor}"
@@ -157,17 +175,17 @@ Unable to bump version. Permission denied on directory "${lib_dir}"/"${old_direc
 fi
 
 #change any references to patterns like 'Simpliv1c1_' in the Simpli class library and change them to new version Simpliv1c2_
-find "${lib_dir}"/"${new_directory_name}"  -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#Simpli[vc0-9]*\(_[^\s]*\)#Simpli${new_version}\1#g"
+find "${lib_dir}"/"${new_directory_name}"  -not -regex "${excluded_files}" -type f | grep -v '.git' | xargs -n 1 sed -i -e "s#Simpli[vc0-9]*\(_[^\s]*\)#Simpli${new_version}\1#g"
 
 
 #not used, but this is a more selective pattern for Class declarations
 #rename all the base classes that use Simpli in their declaration
 #echo "find "${lib_dir}"/"${old_directory_name}" -type f | xargs -n 1 sed -i -e "s#$[cC]lass\\s*Simpli_\(_0-9\)*_#${new_class_prefix}#g""
-#find "${lib_dir}"/"${new_directory_name}" -type f | xargs -n 1 sed -i -e "s#[cC]lass\s*Simpli[vc0-9]*_#Class Simpli${new_version}_#g"
+#find "${lib_dir}"/"${new_directory_name}" -type f | grep -v '.git' | xargs -n 1 sed -i -e "s#[cC]lass\s*Simpli[vc0-9]*_#Class Simpli${new_version}_#g"
 
 #not used, but this is a more selective pattern for Interface declarations
 #change all the interfaces that use Simpli in their declarations
-#find "${lib_dir}"/"${new_directory_name}" -type f | xargs -n 1 sed -i -e "s#[iI]nterface\s*Simpli[vc0-9]*_#interface Simpli${new_version}_#g"
+#find "${lib_dir}"/"${new_directory_name}" -type f | grep -v '.git' | xargs -n 1 sed -i -e "s#[iI]nterface\s*Simpli[vc0-9]*_#interface Simpli${new_version}_#g"
 
 
 
@@ -176,32 +194,35 @@ find "${lib_dir}"/"${new_directory_name}"  -not -regex "${excluded_files}" -type
 #now do a wider search in the full plugin directory to catch references to modules and interfaces
 ######################
 
-#change all the class declarations that implement the changed interfaces
-find "${plugin_dir}"/  -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#[iI]mplements\s*Simpli[vc0-9]*_#implements Simpli${new_version}_#g"
+#change all the class declarations that implement the changed interfaces  e.g.: Implements Simpliv1c0_
+find "${plugin_dir}"/  -not -regex "${excluded_files}" -type f | grep -v '.git' | xargs -n 1 sed -i -e "s#[iI]mplements\s*Simpli[vc0-9]*_#implements Simpli${new_version}_#g"
 
 
 #change all the references to a Simpli interface  # e.g. Simpliv1c0_Logger_Interface
 #groups the suffix
 #uses backslash to escape the group
 #\1 is the capture group
-find "${plugin_dir}"/  -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#Simpli[vc0-9]*\(_[^z]*[Ii]nterface\)#Simpli${new_version}\1#g"
+find "${plugin_dir}"/  -not -regex "${excluded_files}" -type f | grep -v '.git' | xargs -n 1 sed -i -e "s#Simpli[vc0-9]*\(_[^\s]*[Ii]nterface\)#Simpli${new_version}\1#g"
 
 #change all the references to a Simpli Module e.g. Simpliv1c0_Plugin_Module
 #groups the suffix
 #uses backslash to escape the group
 #\1 is the capture group
-find "${plugin_dir}"/  -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#Simpli[vc0-9]*\(_[^\s]*[Mm]odule\)#Simpli${new_version}\1#g"
+find "${plugin_dir}"/  -not -regex "${excluded_files}" -type f | grep -v '.git' | xargs -n 1 sed -i -e "s#Simpli[vc0-9]*\(_[^\s]*[Mm]odule\)#Simpli${new_version}\1#g"
 
 
 
 
 #change all the class declarations that extend the base classes
-find "${plugin_dir}"/  -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#[eE]xtends\s*Simpli[vc0-9]*_#extends Simpli${new_version}_#g"
+find "${plugin_dir}"/  -not -regex "${excluded_files}" -type f | grep -v '.git' | xargs -n 1 sed -i -e "s#[eE]xtends\s*Simpli[vc0-9]*_#extends Simpli${new_version}_#g"
 
 #change the autoload class in plugin.php
-find "${plugin_dir}"/plugin.php  -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#base_class_version='[vc0-9]*'#base_class_version='${new_version}'#g"
+find "${plugin_dir}"/plugin.php  | grep -v '.git' | xargs -n 1 sed -i -e "s#base_class_version\s*=\s*'[vc0-9]*'#base_class_version='${new_version}'#g"
 
 
 
 #completed
 echo "Successfully bumped the Simpli base class library to" "${new_version_with_decimals}"
+
+
+###notes on

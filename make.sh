@@ -138,45 +138,6 @@ new_slug=$(echo ${input_slug} | awk '{print tolower($0)}')  # company_shortname
 
 
 
-target_dir_parent=$(realpath "${input_dir}")
-
-
-
-
-
-# if the destination directory is invalid, exit
-if [[ ! -d "${target_dir_parent}" && ! -L "${target_dir_parent}" ]]
-then
-die "
-Target directory ${target_dir_parent} does not exist, exiting.
-"
-fi
-
-
-
-target_dir=$(realpath "$target_dir_parent")"/${new_slug}"
-######################################################
-#debug
-#echo 'new slug'=$new_slug
-#echo 'input_dir'=$input_dir
-
-
-#echo 'target_dir='$target_dir
-#echo 'target_dir_parent='$target_dir_parent
-#echo 'exiting';exit 1;
-###########################################
-
-
-if [[ "${target_dir}" == *"${dir_name}"* ]]
-then
-die "
-Target Directory must be outside of the simpli_framework directory
-Try 'make --help'
-"
-fi
-
-
-
 old_constant=$(echo $old_slug | awk '{print toupper($0)}') # SIMPLI_HELLO
 new_constant=$(echo $new_slug | awk '{print toupper($0)}') # COMPANY_SHORTNAME
 
@@ -242,6 +203,51 @@ EOF
 wp_plugin_header_pattern="Plugin(.+?)languages\/"
 
 
+
+###  Target Directory
+
+
+
+target_dir_parent=$(realpath "${input_dir}")
+
+
+
+
+
+# if the destination directory is invalid, exit
+if [[ ! -d "${target_dir_parent}" && ! -L "${target_dir_parent}" ]]
+then
+die "
+Target directory ${target_dir_parent} does not exist, exiting.
+"
+fi
+
+
+
+target_dir=$(realpath "$target_dir_parent")"/${new_slug_dashes}"
+######################################################
+#debug
+#echo 'new slug'=$new_slug
+#echo 'input_dir'=$input_dir
+
+
+#echo 'target_dir='$target_dir
+#echo 'target_dir_parent='$target_dir_parent
+#echo 'exiting';exit 1;
+###########################################
+
+
+if [[ "${target_dir}" == *"${dir_name}"* ]]
+then
+die "
+Target Directory must be outside of the simpli_framework directory
+Try 'make --help'
+"
+fi
+
+
+
+
 #############
 #Execute
 #############
@@ -253,19 +259,7 @@ wp_plugin_header_pattern="Plugin(.+?)languages\/"
 #testing
 #############
 
-#cp -r ./* "${target_dir}" 2>/dev/null
 
-
-#remove framework documentation
-#rm  "${target_dir}"/*.html
-
-
-#echo 'testing'
-
-#replace any remaining references of 'Hello' in plugin.php
-#find "${target_dir}/test.php" -type f | xargs -n 1 sed -i -e "s#${old_suffix_cap}#${new_suffix_cap}#g"
-
-#exit 1;
 #############
 #End Testing
 #############
@@ -290,6 +284,9 @@ rm -rf  "${target_dir}"/.git
 #remove framework documentation
 rm  "${target_dir}"/*.html
 
+
+#remove scripts since scripts should only be included in the framework
+rm  "${target_dir}"/*.sh
 
 
 

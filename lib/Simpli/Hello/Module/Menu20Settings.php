@@ -6,10 +6,11 @@
  * Adds the SettingsExample page.
  *
  * @author Andrew Druffner
- * @package Hello
+ * @package SimpliFramework
+ * @subpackage SimpliHello
  *
  */
-class Hello_Module_Menu10Settings extends Simpliv1c0_Plugin_Module {
+class Simpli_Hello_Module_Menu20Settings extends Simpli_Basev1c0_Plugin_Module {
 
     private $moduleName;
     private $moduleSlug;
@@ -21,7 +22,7 @@ class Hello_Module_Menu10Settings extends Simpliv1c0_Plugin_Module {
      * @return void
      */
     public function init() {
-        if (!is_admin()) {return;}
+       if (!is_admin()) {return;}
 
             /*
              *
@@ -42,6 +43,14 @@ class Hello_Module_Menu10Settings extends Simpliv1c0_Plugin_Module {
             $this->moduleSlug = strtolower(preg_replace($regex, '_$1', $this->moduleName));
 
 
+            /*
+             * Add filter to toggle the listing for the 'must use' plugins
+             *
+             */
+ add_filter( 'show_advanced_plugins', array(&$this,'toggle_mu_plugins_listing') , 10, 2 );
+//http://stackoverflow.com/questions/3707134/easiest-way-to-hide-some-wordpress-plugins-from-users
+
+
 
             /*
              *  add custom ajax handlers
@@ -50,21 +59,34 @@ class Hello_Module_Menu10Settings extends Simpliv1c0_Plugin_Module {
               // see http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
              *
              */
-            //this is where you map any form actions with the php function that handles the ajax request
-
             /* save without reloading the page */
             add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array(&$this, 'save'));
 
             /* save with reloading the page */
             add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save_with_reload', array(&$this, 'save_with_reload'));
 
-
-
+/*
+ * Reset a specific metabox's settings to default
+ *
+ */
 
             add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_reset', array(&$this, 'reset'));
 
+/*
+ * Reset all settings to defaults
+ *
+ */
+            add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_reset_all', array(&$this, 'reset_all'));
+  /*
+ * Manuall Update settings so as to add any newly added settings due to a developer update
+ *
+ */
+            add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_update_all', array(&$this, 'update_all'));
+
 // add ajax action
             add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_ajax_metabox', array(&$this, 'ajax_metabox'));
+
+
 
 
             /*
@@ -79,15 +101,8 @@ class Hello_Module_Menu10Settings extends Simpliv1c0_Plugin_Module {
                 // Add meta boxes
                 add_action('admin_init', array(&$this, 'add_meta_boxes'));
 
-
-
-
-
-
-
                 // Add scripts
-               add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
-               add_action('admin_notices', array(&$this, 'showDisabledMessage'));
+           //     add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
             }
 
             // Add admin menus
@@ -104,44 +119,15 @@ class Hello_Module_Menu10Settings extends Simpliv1c0_Plugin_Module {
      */
     public function admin_menu() {
 
-/*
- *
- * Add the main menu
- *
- */
-
-        add_menu_page(
-                SIMPLI_HELLO_NAME . ' - General Settings' // page title
-                , SIMPLI_HELLO_NAME // menu title
-                , 'manage_options'  // capability
-                , $this->getPlugin()->getSlug() . '_' . $this->moduleSlug  // menu slug
-                // , array($this->getPlugin()->getModule($this->moduleName), 'dispatch') //function
-                , array($this->getPlugin()->getModule('Menu10Settings'), 'dispatch') //function to display the html
-                , $this->getPlugin()->getPluginUrl() . '/admin/images/menu.png' // icon url
-                , SIMPLI_HELLO_MENU_POSITION //position in the menu
-        );
-
-
-
-
-
-
-
-/*
- *
- * Add a submenu that points to the same page as the main menu
- * This allows us to create a menu title that is different than the main heading
- *
- */
-
-             add_submenu_page(
+        add_submenu_page(
                 $this->getPlugin()->getSlug() .'_menu10_settings' // parent slug
-                , SIMPLI_HELLO_NAME . ' - General Settings' // page title
-                , 'General Settings' // menu title
+                , $this->getPlugin()->getName() . ' - Settings Submenu' // page title
+                , 'Advanced' // menu title
                 , 'manage_options'  // capability
-                , $this->getPlugin()->getSlug() .'_menu10_settings'  // make sure this is the same slug as the main menu so it overwrites the main menus submenu title
-                , array($this->getPlugin()->getModule('Menu10Settings'), 'dispatch') //function to display the html
+                , $this->getPlugin()->getSlug() . '_' .$this->moduleSlug  // menu slug
+                , array($this->getPlugin()->getModule('Menu20Settings'), 'dispatch') //function that provides the html. You will receive a 'Module not found' error if the name doesnt match any class names in the Module directory
         );
+
 
 
     }
@@ -155,67 +141,23 @@ class Hello_Module_Menu10Settings extends Simpliv1c0_Plugin_Module {
     public function add_meta_boxes() {
 
 
-
-
-
-        add_meta_box(
-                $this->getPlugin()->getSlug() . '_general'  //HTML id attribute of metabox
-                , __('Basic Setup', $this->getPlugin()->getSlug()) //title of the metabox.
+                add_meta_box(
+                $this->getPlugin()->getSlug() . '_maintain'  //HTML id attribute of metabox
+                , __('Maintenance', $this->getPlugin()->getSlug()) //title of the metabox.
                 , array($this->getPlugin()->getModule('Admin'), 'meta_box_render') //function that prints the html
                 , 'toplevel_page_' . $this->getPlugin()->getSlug() . '_' . $this->moduleSlug . '_group1' //the post type to show the metabox
                 , 'main' //normal advanced or side The part of the page where the metabox should show
                 , 'high' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , array('metabox' => $this->moduleSlug . '_metabox_general') //callback arguments.  'metabox' is the folder,  'settings_sub_menu_example_metabox1' is the template file
+                , array('metabox' => $this->moduleSlug . '_metabox_maintain') //callback arguments.  'metabox' is the folder,  'settings_sub_menu_example_metabox1' is the template file
         );
 
 
-        add_meta_box(
-                $this->getPlugin()->getSlug() . '_updates' //HTML id attribute of metabox
-                , __('Plugin Updates', $this->getPlugin()->getSlug()) //title of the metabox
-                , array($this->getPlugin()->getModule('Admin'), 'meta_box_render') //function that prints the html
-                , 'toplevel_page_' . $this->getPlugin()->getSlug() . '_' . $this->moduleSlug . '_group2' //the post type to show the metabox
-                , 'side'//normal advanced or side The part of the page where the metabox should show
-                , 'low' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , array('metabox' => 'ajax', 'url' => 'http://www.simpliwp.com/simpli-framework/metabox-updates-example/') //callback arguments. file that contains the html for the metabox. metabox is the folder, 'settings-example' is the file in the folder
-        );
 
-        add_meta_box(
-                $this->getPlugin()->getSlug() . '_support' //HTML id attribute of metabox
-                , __('Support', $this->getPlugin()->getSlug()) //title of the metabox
-                , array($this->getPlugin()->getModule('Admin'), 'meta_box_render') //function that prints the html
-                , 'toplevel_page_' . $this->getPlugin()->getSlug() . '_' . $this->moduleSlug . '_group2' //the post type to show the metabox
-                , 'side'//normal advanced or side The part of the page where the metabox should show
-                , 'low' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , array('metabox' => 'ajax', 'url' => 'http://www.simpliwp.com/simpli-framework/metabox-support-example/') //callback arguments. file that contains the html for the metabox. metabox is the folder, 'settings-example' is the file in the folder
-        );
-
-        add_meta_box(
-                $this->getPlugin()->getSlug() . '_feedback' //HTML id attribute of metabox
-                , __('Feedback', $this->getPlugin()->getSlug()) //title of the metabox
-                , array($this->getPlugin()->getModule('Admin'), 'meta_box_render') //function that prints the html
-                , 'toplevel_page_' . $this->getPlugin()->getSlug() . '_' . $this->moduleSlug . '_group2' //the post type to show the metabox
-                , 'side'//normal advanced or side The part of the page where the metabox should show
-                , 'low' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , array('metabox' => 'ajax', 'url' => 'http://www.simpliwp.com/simpli-framework/metabox-feedback-example/') //callback arguments. file that contains the html for the metabox. metabox is the folder, 'settings-example' is the file in the folder
-        );
-
-        add_meta_box(
-                $this->getPlugin()->getSlug() . '_donate' //HTML id attribute of metabox
-                , __('Donate', $this->getPlugin()->getSlug()) //title of the metabox
-                , array($this->getPlugin()->getModule('Admin'), 'meta_box_render') //function that prints the html
-                , 'toplevel_page_' . $this->getPlugin()->getSlug() . '_' . $this->moduleSlug . '_group2' //the post type to show the metabox
-                , 'side'//normal advanced or side The part of the page where the metabox should show
-                , 'low' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , array('metabox' => 'ajax', 'url' => 'http://www.simpliwp.com/simpli-framework/metabox-donate-example/') //callback arguments. file that contains the html for the metabox. metabox is the folder, 'settings-example' is the file in the folder
-        );
 
 
     }
 
-    public function metaboxEcho($module, $metabox = array()) {
 
-        echo $metabox['args']['text'];
-    }
 
     /**
      * Dispatch request for settings page
@@ -274,7 +216,6 @@ class Hello_Module_Menu10Settings extends Simpliv1c0_Plugin_Module {
      */
     public function admin_enqueue_scripts() {
         wp_enqueue_style($this->getPlugin()->getSlug() . '-admin-page', $this->getPlugin()->getPluginUrl() . '/admin/css/settings.css', array(), $this->getPlugin()->getVersion());
-          wp_enqueue_script('jquery');
         wp_enqueue_script('jquery-form');
         wp_enqueue_script('post');
 
@@ -328,7 +269,6 @@ class Hello_Module_Menu10Settings extends Simpliv1c0_Plugin_Module {
         }
         require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
     }
-
 
         /**
      * Save Wrapper - No Page Reload
@@ -436,31 +376,116 @@ class Hello_Module_Menu10Settings extends Simpliv1c0_Plugin_Module {
 
     }
 
-    /**
-     * Shows a disabled message if the plugin is disabled via the settings
-     * This will only appear when first switching to the general settings page. Its assumed that the settings that trigger
-     * it are set on a different (advanced) menu page.
+/**
+     * Reset All Settings
      *
+     * @param none
+     * @return void
      */
-    public  function showDisabledMessage(){
+    public function reset_all() {
+        if (!wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug())) {
+                return false;
+        }
 
+        $message = "All Settings Have been reset to initial defaults.";
+        $errors = array();
+        $reload = true;
+        $logout = false; //whether you want to logout after settings are saved
 
-        //dont show if you are not on the main menu ( general settings )
-if (isset($_GET['page']) && $_GET['page']!='simpli-hello_menu10_settings') {return;}
+        global $wpdb;
+        $query='delete from wp_options where option_name = \'' . SIMPLI_HELLO_SLUG . '_options\'';
+	$dbresult=$wpdb->query($query);
 
-//dont show if the plugin is enabled
-if (($this->getPlugin()->getSetting('plugin_enabled')=='enabled') ) {return;}
+       /* if no rows affected, that means the defaults havent been changed yet and stored in the database*/
+        if ($dbresult===0) {
+            $message='Settings are already at defaults!';
+        }elseif($dbresult===false){//returns false on error
 
-        ?>
+            $message='Setting reset failed due to database error.';
+        }
 
+        $this->getPlugin()->saveSettings();
 
-
-    <div class="error">
-        <p><strong>You have disabled <?php echo SIMPLI_HELLO_NAME ?> functionality.</strong> To re-enable <?php echo SIMPLI_HELLO_NAME ?> , set  'Maintenance -> Enable Plugin' to 'Yes'.</p>
-    </div>
-
-            <?php
-
+        if ($logout) {
+            wp_logout();
+        }
+        require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
     }
 
+    /**
+     * Update All Settings
+     *
+     * add the update_all method to the Simpli Plugin.php class and make this method a wrapper that calls it
+     * Takes the default array for settings and merges it with existing settings. This results in the database being updated with any new
+     * settings added by development changes while retainining the existing setting values.
+     * @param none
+     * @return void
+     */
+    public function update_all() {
+        if (!wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug())) {
+                return false;
+        }
+
+        $message = "Settings have been updated";
+        $errors = array();
+        $reload = true;
+        $logout = false; //whether you want to logout after settings are saved
+
+
+        /*
+         * Merge existing options with the defaults
+         * Will not delete old settings, but will add new ones.
+         *
+         */
+
+
+        $wp_option_name = $this->getPlugin()->getSlug() . '_options';
+        $existing_options = $this->getPlugin()->getSettings();
+        $option_defaults= $this->getPlugin()->getSettingDefaults();
+        $options=array_merge($option_defaults,$existing_options);
+
+
+                /*
+         * Save back to the database ( do not use the $this->getPlugin()->saveSettings() method since that
+                 * will only use existing settings)
+         *
+         */
+
+        if ($blog_id > 0) {
+            update_blog_option($blog_id, $wp_option_name, $options);
+        } else {
+            update_option($wp_option_name, $options);
+        }
+
+
+
+        if ($logout) {
+            wp_logout();
+        }
+        require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
+    }
+
+      /**
+     * Controls hiding or unhiding of mu-plugin listing
+       * If listing is disabled, will show only if there are other must use plugins.
+     * WordPress Hook - enqueue_scripts
+     *
+     * @param none
+     * @return void
+     */
+
+         function toggle_mu_plugins_listing($show, $type)
+    {
+
+             if ($this->getPlugin()->getSetting('must_use_plugins_listing')==='enabled') {
+                 return true;
+             }
+             elseif(count(get_mu_plugins())===1){
+                 return false;
+             }
+             else
+             {
+           return true;
+             }
+    }
 }

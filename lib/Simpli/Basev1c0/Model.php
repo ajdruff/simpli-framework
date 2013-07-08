@@ -3,9 +3,10 @@
  * Model class for a WordPress theme or plugin.
  *
  * @author Mike Ems
- * @package Simpli
+ * @package SimpliFramework
+ * @subpackage SimpliBase
  */
-class Simpliv1c0_Model {
+class Simpli_Basev1c0_Model {
 
 	protected $_post;
 

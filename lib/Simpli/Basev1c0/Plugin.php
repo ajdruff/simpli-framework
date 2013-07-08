@@ -4,9 +4,11 @@
  * Base class for a WordPress plugin.
  *
  * @author Mike Ems
- * @package Simpli
+ * @author Andrew Druffner (Significantly re-wrote loadModule following code refactoring,loadSettings and saveSettings)
+ * @package SimpliFramework
+ * @subpackage SimpliBase
  */
-class Simpliv1c0_Plugin {
+class Simpli_Basev1c0_Plugin {
 
     /**
      * Base directory
@@ -32,7 +34,7 @@ class Simpliv1c0_Plugin {
     /**
      * Logger
      *
-     * @var Simpliv1c0_Logger_Interface
+     * @var Simpli_Basev1c0_Logger_Interface
      */
     protected $_logger;
 
@@ -82,6 +84,38 @@ class Simpliv1c0_Plugin {
      */
     protected $_version;
 
+
+    /**
+     * Framwork Version
+     *
+     * @var string
+     */
+    protected $_framework_version;
+
+
+    /**
+     * Text Domain
+     *
+     * @var string
+     */
+    protected $_text_domain;
+
+
+
+    /**
+     * Constructor
+     *
+     * @param void
+     * @return object $this
+     */
+    public function __construct() {
+
+
+        $this->setLogger(Simpli_Basev1c0_Logger::getInstance());
+
+        return $this;
+    }
+
     /**
      * Set Directory
      *
@@ -110,6 +144,7 @@ class Simpliv1c0_Plugin {
      * @return object $this
      */
     public function setModuleDirectory($module_directory) {
+        $this->getLogger()->log('setting module directory to ' . $module_directory);
         $this->_module_directory = $module_directory;
         return $this;
     }
@@ -132,6 +167,9 @@ class Simpliv1c0_Plugin {
      */
     public function getAvailableModules() {
         $modules = array();
+
+        $this->getLogger()->log('module directory = ' . $this->getModuleDirectory());
+
         if (is_dir($this->getModuleDirectory()) && $module_directory = opendir($this->getModuleDirectory())) {
             while (false !== ($entry = readdir($module_directory))) {
                 if (strpos($entry, '.') !== 0 && strpos($entry, '.php') !== false) {
@@ -167,7 +205,7 @@ class Simpliv1c0_Plugin {
             }
         }
 
-        die('LINE ' . __LINE__ . ' ' .__METHOD__ . ' Module not found: \'' . $module . '\'.');
+        die('LINE ' . __LINE__ . ' ' . __METHOD__ . ' Module not found: \'' . $module . '\'.');
     }
 
     /**
@@ -204,8 +242,10 @@ class Simpliv1c0_Plugin {
      * @param object $logger
      * @return object $this
      */
-    public function setLogger(Simpliv1c0_Logger_Interface $logger) {
+    public function setLogger(Simpli_Basev1c0_Logger_Interface $logger) {
         $this->_logger = $logger;
+        $this->_logger->setPlugin($this); //pass a reference of the plugin to the logger
+
         return $this;
     }
 
@@ -431,6 +471,29 @@ class Simpliv1c0_Plugin {
         return $this->_version;
     }
 
+
+      /**
+     * Set Simpli Base Class Version
+     *
+     * @param string $version
+     * @return object $this
+     */
+    public function setFrameworkVersion($version) {
+        $this->_framework_version = $version;
+        return $this;
+    }
+
+    /**
+     * Get Simpli Base Class Version
+     *
+     * @param none
+     * @return string
+     */
+    public function getFrameworkVersion() {
+        return $this->_framework_version;
+    }
+
+
     /**
      * Init
      *
@@ -441,13 +504,17 @@ class Simpliv1c0_Plugin {
      */
     public function init() {
 
+
+
+
+
         /*
          *
          * Tell debugger plugin and class library loaded
          *
          */
-       $this->getLogger()->log('Initialized Plugin '. $this->getName());
-        $this->getLogger()->log('Loaded Base Class Library for plugin '. $this->getName() .' from ' . dirname(__FILE__));
+        $this->getLogger()->log('Initialized Plugin ' . $this->getName());
+        $this->getLogger()->log('Loaded Base Class Library for plugin ' . $this->getName() . ' from ' . dirname(__FILE__));
 
         $modules = $this->getModules();
 
@@ -483,23 +550,35 @@ class Simpliv1c0_Plugin {
     /**
      * Load Module
      *
+     * Takes the module name  and loads the associated file.
+     * e.g.: 'Admin' loads from '/simpli/hello/Module/Admin.php'
+     *
+     * @author Andrew Druffner <andrew@nomstock.com>
      * @param string $module
      * @return $this
      */
     public function loadModule($module) {
-        if (strpos(get_class($this), '_') !== false) {
-            $base_class = substr(get_class($this), 0, strpos(get_class($this), '_'));
-        } else {
-            $base_class = get_class($this);
-        }
-        $module_full = 'Module\\' . $module;
+
+        $module_full = 'Module\\' . $module;  # Admin
         $filename = str_replace('\\', '/', $module);
-        $filename = $filename . '.php';
+        $filename = $filename . '.php'; # Admin.php
 
 
-        require_once($this->getModuleDirectory() . $filename);
+        /*
+         *
+         * Derive the namespace ('Simpli_Hello') from the class name
+         *
+         */
+        $array_class_name = explode('_', get_class($this));  # Changes class Simpli_Hello_Plugin to [0]='Simpli' [1]='Hello'  [2]='Plugin'
+        array_pop($array_class_name);  # $array_class_name =  [0]='Simpli' [1]='Hello'
+        $namespace = implode('_', $array_class_name);  # $namespace =  Simpli_Hello
 
-        $class = $base_class . '_' . str_replace('\\', '_', $module_full);
+
+
+        require_once($this->getModuleDirectory() . $filename); # simpli-framework/lib/simpli/hello/Module/Admin.php
+
+
+        $class = $namespace . '_Module_' . $module;
         if (!isset($this->_modules[$class]) || !is_object($this->_modules[$class]) || get_class($this->_modules[$class]) != $class) {
             try {
                 $object = new $class;

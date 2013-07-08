@@ -28,7 +28,7 @@ To add a metabox, you must add the do_metaboxes line as in the examples below, a
 
 <div class="wrap" id="simpli-main">
 	<div id="icon-options-https" class="icon32"><br /></div>
-	<h2><?php _e(SIMPLI_HELLO_NAME,'simpli-hello'); ?></h2>
+	<h2><?php _e($this->getPlugin()->getName(),'simpli-hello'); ?></h2>
 
 <?php
 	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false );

@@ -4,10 +4,11 @@
  * Simpli Hello World
  *
  * @author Andrew Druffner
- * @package Hello
+ * @package SimpliFramework
+ * @subpackage SimpliHello
  *
  */
-class Hello extends Simpliv1c0_Plugin {
+class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
 
     public $_setting_defaults = array();
 
@@ -24,32 +25,33 @@ class Hello extends Simpliv1c0_Plugin {
 
 
         $this->_setting_defaults = array(
-
             /*
              *
              * General Settings
              *
              */
             'first_name' => 'Default First Name'       //
-        , 'last_name' => 'Last Name'  //
-        , 'option_checkbox' => array('table'=>'no','chair'=>'yes') //
-        , 'option_radio' => 'maybe'
-        , 'admin_menu_side' => 'side'
-        , 'option_select' => 'blue'
-
-           ,'test_array'=>array('first'=>'first_element','second'=>'second_element')
-                        /*
+            , 'last_name' => 'Last Name'  //
+            , 'option_checkbox' => array('table' => 'no', 'chair' => 'yes') //
+            , 'option_radio' => 'maybe'
+            , 'admin_menu_side' => 'side'
+            , 'option_select' => 'blue'
+            , 'test_array' => array('first' => 'first_element', 'second' => 'second_element')
+            /*
              *
              * Advanced Settings
              *
              */
-        , 'plugin_enabled' => 'enabled'    //'enabled' or 'disabled' Controls whether the plugins modules are loaded. Disabled still loads the admin pages
-        , 'must_use_plugins_listing'=>'disabled' //or 'disabled' Controls whether the user can see a listing of must use plugins in admin
+            , 'plugin_enabled' => 'enabled'    //'enabled' or 'disabled' Controls whether the plugins modules are loaded. Disabled still loads the admin pages
+            , 'must_use_plugins_listing' => 'disabled' //or 'disabled' Controls whether the user can see a listing of must use plugins in admin
+        );
 
 
 
 
-    );
+
+
+        parent::__construct(); //call the base constructor which adds logging capability.
     }
 
     /**
@@ -60,9 +62,48 @@ class Hello extends Simpliv1c0_Plugin {
      */
     public function init() {
 
+        $this->getLogger()->setLoggingOn(false); //turn this on to dump all the log() messages to firebug's console and to the log file.
+        $this->getLogger()->log(' Starting ' . $this->getName() . ' Debug Log');
+
+        $this->getLogger()->log('Version: ' . $this->getVersion());
+
+        /*
+         * set the directory of the Plugin          *
+         */
+
+
+
+        $this->setDirectory(dirname(dirname(dirname(dirname(__FILE__))))); //e.g.: /home/username/public_html/wp-content/plugins/simpli-framework
+
+        /*
+         * set the Module Directory
+         *
+         */
+        $this->setModuleDirectory($this->getDirectory() . '/lib/Simpli/Hello/Module/'); //e.g. /home/username/public_html/wp-content/plugins/simpli-framework/lib/simpli/hello/Module/
+
+
+
+$this->setPluginUrl(plugins_url('', $this->getDirectory() .  '/plugin.php'));
+
+
+
+        /**
+         * Load Settings
+         */
+        $this->loadSettings();
+
+        /**
+         * Load Modules
+         */
+        $this->loadModules();
+
 
 
         parent::init();
+
+
+
+
     }
 
     /**

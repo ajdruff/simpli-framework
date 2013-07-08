@@ -5,11 +5,12 @@
  * This module creates the admin panel
  *
  * @author Mike Ems
- * @package Hello
+ * @package SimpliFramework 
+ * @subpackage SimpliHello
  *
  */
 
-class Hello_Module_Admin extends Simpliv1c0_Plugin_Module {
+class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
 
 	/**
 	 * Initialize Module
@@ -19,6 +20,7 @@ class Hello_Module_Admin extends Simpliv1c0_Plugin_Module {
 	 */
 	public function init() {
 		// Load on plugins page
+            $this->getPlugin()->getLogger()->log('Loaded ' . __CLASS__);
 		if ( isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] == 'plugins.php' ) {
 			add_filter( 'plugin_row_meta', array(&$this, 'plugin_links'), 10, 2);
 		}

@@ -6,12 +6,13 @@
  * Use this class as a base template for a new module
  *
  * @author Andrew Druffner
- * @package XXXX
+ * @package SimpliFramework
+ * @subpackage SimpliHello
  *
  */
 
 
-class Hello_Module_ModuleTemplate extends Simpliv1c0_Plugin_Module {
+class Simpli_Hello_Module_ModuleTemplate extends Simpli_Basev1c0_Plugin_Module {
 
 
     private $_moduleName;

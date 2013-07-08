@@ -1,13 +1,13 @@
-<?php 
+<?php
 /**
  * Logger Interface
  *
  * @author Mike Ems
- * @package Simpli
- *
+ * @package SimpliFramework
+ * @subpackage SimpliBase
  */
 
-interface Simpliv1c0_Logger_Interface {
+interface Simpli_Basev1c0_Logger_Interface {
 
 	/**
 	 * Get singleton instance
@@ -24,7 +24,7 @@ interface Simpliv1c0_Logger_Interface {
 	 * @return array
 	 */
 	public function getLog();
-	
+
 	/**
 	 * Adds a string to an array of log entries
 	 *
@@ -32,5 +32,5 @@ interface Simpliv1c0_Logger_Interface {
 	 * @return $this
 	 */
 	public function log( $string );
-	
+
 }

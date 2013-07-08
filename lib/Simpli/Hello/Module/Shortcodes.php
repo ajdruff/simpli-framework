@@ -6,10 +6,11 @@
  * Adds Shortcodes
  *
  * @author Andrew Druffner
- * @package XXXX
+ * @package SimpliFramework
+ * @subpackage SimpliHello
  *
  */
-class Hello_Module_Shortcodes extends Simpliv1c0_Plugin_Module {
+class Simpli_Hello_Module_Shortcodes extends Simpli_Basev1c0_Plugin_Module {
 
     private $_moduleName;
     private $_moduleSlug;

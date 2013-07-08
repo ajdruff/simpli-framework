@@ -5,7 +5,7 @@
   Plugin URI:    http://simpliwp/simpli-framework
   Description:   The Simpli Hello plugin is a demonstration plugin to be used as a template for WordPress plugin developers. The Simpli framework is a WordPress Plugin Framework to help developers build WordPress plugins.
   Author:        Andrew Druffner
-  Version:       1.0.0
+  Version:       1.0.1
   Author URI:    http://simpliwp/about
 
   Text Domain:   simpli-hello
@@ -41,17 +41,27 @@
  */
 
 
-define('SIMPLI_HELLO_NAME', 'Simpli Hello'); //dev_note: Value should match value of 'Plugin Name' in the comments at the top of this file.
-define('SIMPLI_HELLO_VERSION', '1.0.0'); //dev_note: Value should match value of 'Version' in the comments at the top of this file.
-define('SIMPLI_HELLO_SHORTNAME', 'Hello'); //dev_note: Value must match the name of file lib/Hello/Hello.php
-define('SIMPLI_HELLO_TEXTDOMAIN', 'simpli-hello'); //dev_note: Value must include no underscores
+
+
+
+
+
+
+
 define('SIMPLI_HELLO_SLUG', 'simpli_hello'); //dev_note: Replace the value with a short underscore delimited name of your plugin
-define('SIMPLI_HELLO_DEBUG', true); //dev_note:true or false to turn on logging to error log and browser javascript console.
+
+
+define('SIMPLI_HELLO_SLUG_PREFIX', substr(SIMPLI_HELLO_SLUG,0,stripos ( SIMPLI_HELLO_SLUG , '_' ))); //dev_note: Value must match the name of file lib/Hello/Hello.php
+define('SIMPLI_HELLO_SLUG_SUFFIX',substr(SIMPLI_HELLO_SLUG,stripos ( SIMPLI_HELLO_SLUG , '_' )+1,strlen(SIMPLI_HELLO_SLUG)-1) ); //dev_note: Value must match the name of file lib/Hello/Hello.php
+define('SIMPLI_HELLO_TEXTDOMAIN', 'simpli-hello'); //dev_note: Value must include no underscores
+
+
+
+
 define('SIMPLI_HELLO_MENU_POSITION', '67.141592653597777777' . SIMPLI_HELLO_SLUG); //dev_note: Menu Position . The default provided here will nearly always work and not conflict with another plugin as long as your slug is unique. You can make it anything you want though and it must be universally unique or menu wont load if conflicts with another plugin's position.  Ref: http://codex.wordpress.org/Function_Reference/add_menu_page#Parameters
 //exit if wordpress isn't properly installed
 if (!defined('ABSPATH'))
-    exit;
-
+    die('Cannot Load Plugin - WordPress installation not found');
 
 
 
@@ -65,17 +75,40 @@ load_plugin_textdomain(SIMPLI_HELLO_TEXTDOMAIN, false, dirname(plugin_basename(_
 
 //add the names of your classes to the namespaces array so the class file is included
 //todo: can we add this elsewhere so we dont contaminate the global namespace?
-function simpli_hello_autoloader($class) {
-    $base_class_version='v1c0'; //dont change name or update this manually - controlled by the bump script. must match the vXcX part of the SimplvXcX directory
+function simpli_hello_autoloader($class) { //e.g. class= 'Simpli_Hello_Plugin'
+    $base_class_version='v1c0'; //dont change name or update this manually - controlled by the bump script. must match the vXcX part of the Simpli/BasevXcX directory
     $namespaces = array(
-        'Simpli' . $base_class_version
-        , SIMPLI_HELLO_SHORTNAME
+        'Simpli_Base' . $base_class_version
+        , 'Simpli_Hello'
     );
-    if (preg_match('/([A-Za-z0-9]+)_?/', $class, $match) && in_array($match[1], $namespaces)) {
-        $filename = str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php';
-        require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . $filename;
+
+
+
+
+
+//    $pattern='/[A-Za-z0-9]+/';
+
+//    echo '<br> class = ' .$class;
+#preg_match_all($pattern, $class, $match);
+$matches=explode('_',$class); // alternative :  $pattern='/[A-Za-z0-9]+/';preg_match_all($pattern, $class, $matches);
+//echo '<pre>';
+//print_r($matches);
+//echo '</pre>';
+
+    if (in_array($matches[0]. '_' .$matches[1], $namespaces)) {  // match[0]='Simpli' match[1]='Hello' match[2]='Plugin'
+        $filename=array_pop($matches).'.php'; // get the last part of $class and use it as the name of the file
+        $subdirectory_path=implode(DIRECTORY_SEPARATOR,$matches); // each part of the remaining string is the name of a subdirectory
+       # $filename =  $match[3] . '.php'; // e.g. : Plugin.php
+        #$subdirectory_path= $match[1] . DIRECTORY_SEPARATOR . $match[2] ; // e.g.: /Simpli/Hello
+       # $filename = str_replace('_', DIRECTORY_SEPARATOR, $match[0]) . '.php';
+
+        require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib'  .DIRECTORY_SEPARATOR .  $subdirectory_path .DIRECTORY_SEPARATOR .  $filename;
     }
+
+
+
 }
+
 
 spl_autoload_register(SIMPLI_HELLO_SLUG . '_autoloader');
 
@@ -83,65 +116,26 @@ spl_autoload_register(SIMPLI_HELLO_SLUG . '_autoloader');
 
 
 /*
- * todo: What is this ? get rid of or find alternate.
+ *
+ * Create a global Plugin object with a unique name equal
+ * to your plugin's slug. This helps to prevent conflict with other plugins.
  *
  */
-if (defined('WP_UNINSTALL_PLUGIN')) {
-    return;
-}
-
-$classname = SIMPLI_HELLO_SHORTNAME; //needed so we can instantiate the object using a variable classname. using a constant as classname wont work.
-$simpli_hello = new $classname();
-$simpli_hello->setSlug(SIMPLI_HELLO_SLUG);
-$simpli_hello->setVersion(SIMPLI_HELLO_VERSION);
-$simpli_hello->setName(SIMPLI_HELLO_NAME);
-$simpli_hello->setLogger(Hello_Logger::getInstance());
-$simpli_hello->getLogger()->log(' Starting ' . $simpli_hello->getName() . ' Debug Log');
-
-$simpli_hello->setDirectory(dirname(__FILE__));
-$simpli_hello->setModuleDirectory(dirname(__FILE__) . '/lib/' . SIMPLI_HELLO_SHORTNAME . '/Module/');
 
 
-$simpli_hello->getLogger()->log('Version: ' . $simpli_hello->getVersion());
-
-
-/**
- * Load Settings
- */
-$simpli_hello->loadSettings();
-
-/**
- * Load Modules
- */
-$simpli_hello->loadModules();
+$simpli_hello = new Simpli_Hello_Plugin();
+$simpli_hello->setSlug('simpli_hello');
+$simpli_hello->setVersion('1.0.0'); //Value should match value of 'Version' in the comments at the top of this file.
+$simpli_hello->setName('Simpli Hello'); // Value should match value of 'Plugin Name' in the comments at the top of this file);
 
 // Initialize Plugin
 $simpli_hello->init();
-$simpli_hello->setPluginUrl(plugins_url('', __FILE__));
 
 
-/**
- *
- * Show debug info
- *
- */
-if (SIMPLI_HELLO_DEBUG) {
 
 
-    add_action('shutdown', 'simpli_hello_print_log');
-}
 
-/**
- *
- * Dumps all Logger entries to the browser's javascript console and to a log file
- *
- */
-//todo: push this elsewhere outside the global namespace?
-function simpli_hello_print_log() {
-    global $simpli_hello;
-    echo $simpli_hello->getLogger()->consoleLog();
-    $simpli_hello->getLogger()->fileLog($simpli_hello->getDirectory() . '/error.log.txt');
-}
+
 
 /**
  *

@@ -6,14 +6,15 @@
  * Modules can be treated as independent plugins. Think of them as sub-plugins.
  *
  * @author Mike Ems
- * @package Simpli
+ * @package SimpliFramework
+ * @subpackage SimpliBase
  */
-class Simpliv1c0_Plugin_Module implements Simpliv1c0_Plugin_Module_Interface {
+class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Interface {
 
 	/**
 	 * Plugin object that this module extends
 	 *
-	 * @var Simpliv1c0_Plugin
+	 * @var Simpli_Basev1c0_Plugin
 	 */
 	protected $_plugin;
 
@@ -30,11 +31,11 @@ class Simpliv1c0_Plugin_Module implements Simpliv1c0_Plugin_Module_Interface {
 	/**
 	 * Set Plugin
 	 *
-	 * @param Simpliv1c0_Plugin $plugin
+	 * @param Simpli_Basev1c0_Plugin $plugin
 	 * @return object $this
-	 * @uses Simpliv1c0_Plugin
+	 * @uses Simpli_Basev1c0_Plugin
 	 */
-	public function setPlugin( Simpliv1c0_Plugin $plugin ) {
+	public function setPlugin( Simpli_Basev1c0_Plugin $plugin ) {
 		$this->_plugin = $plugin;
 		return $this;
 	}
@@ -43,7 +44,7 @@ class Simpliv1c0_Plugin_Module implements Simpliv1c0_Plugin_Module_Interface {
 	 * Get Plugin
 	 *
 	 * @param none
-	 * @return Simpliv1c0_Plugin
+	 * @return Simpli_Basev1c0_Plugin
 	 */
 	public function getPlugin() {
 		if ( ! isset($this->_plugin) ) {

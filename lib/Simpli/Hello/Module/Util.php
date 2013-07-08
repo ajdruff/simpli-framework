@@ -1,15 +1,16 @@
 <?php
 
 /**
- * Core Module
+ * Utility Module
  *
- * Plugin's core functionality
+ * General Utility Functions
  *
  * @author Andrew Druffner
- * @package Hello
+ * @package SimpliFramework
+ * @subpackage SimpliHello
  *
  */
-class Hello_Module_Util extends Simpliv1c0_Plugin_Module {
+class Simpli_Hello_Module_Util extends Simpli_Basev1c0_Plugin_Module {
 
     private $moduleName;
     private $moduleSlug;
@@ -68,7 +69,7 @@ class Hello_Module_Util extends Simpliv1c0_Plugin_Module {
         //split url into component parts
         $url_parts = parse_url($url);
 
-// if there is no query paramater, return the url as it is since its assumed that we dont need one and it will just cause an error below 
+// if there is no query paramater, return the url as it is since its assumed that we dont need one and it will just cause an error below
         if (!isset($url_parts['query'])) {
              return ($url);
         }

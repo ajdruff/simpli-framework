@@ -6,10 +6,11 @@
  * Plugin's core functionality
  *
  * @author Andrew Druffner
- * @package Hello
+ * @package SimpliFramework 
+ * @subpackage SimpliHello
  *
  */
-class Hello_Module_Core extends Simpliv1c0_Plugin_Module {
+class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 
     private $moduleName;
     private $moduleSlug;
@@ -22,7 +23,7 @@ class Hello_Module_Core extends Simpliv1c0_Plugin_Module {
      */
     public function init() {
 
-
+ $this->getPlugin()->getLogger()->log('Loaded ' . __CLASS__);
         /*
          *
          * Set the Module Name based on the name of this file

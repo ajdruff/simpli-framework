@@ -6,10 +6,11 @@
  * Adds settings to the edit post screen.
  *
  * @author Mike Ems
- * @package Hello
+ * @package SimpliFramework 
+ * @subpackage SimpliHello
  *
  */
-class Hello_Module_Post extends Simpliv1c0_Plugin_Module {
+class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 
     /**
      * Post Option Defaults

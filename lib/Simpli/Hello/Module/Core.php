@@ -6,7 +6,7 @@
  * Plugin's core functionality
  *
  * @author Andrew Druffner
- * @package SimpliFramework 
+ * @package SimpliFramework
  * @subpackage SimpliHello
  *
  */
@@ -23,7 +23,7 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
      */
     public function init() {
 
- $this->getPlugin()->getLogger()->log('Loaded ' . __CLASS__);
+
         /*
          *
          * Set the Module Name based on the name of this file
@@ -89,8 +89,8 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 //        if (function_exists('add_thickbox')) {
 //            add_thickbox();
 //        }
-        $handle = SIMPLI_HELLO_SLUG . '_core.js';
-        $src = $this->getPlugin()->getPluginUrl() . '/lib/'.SIMPLI_HELLO_SHORTNAME.'/js/' . SIMPLI_HELLO_SLUG . '_core.js';
+        $handle = $this->getPlugin()->getSlug() . '_core.js';
+        $src = $this->getPlugin()->getPluginUrl() . '/lib/'.SIMPLI_HELLO_SHORTNAME.'/js/' . $this->getPlugin()->getSlug() . '_core.js';
         $deps = 'jquery';
         $ver = '1.0';
         $in_footer = false;

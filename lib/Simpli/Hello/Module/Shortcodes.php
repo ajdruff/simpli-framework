@@ -46,7 +46,7 @@ class Simpli_Hello_Module_Shortcodes extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        add_shortcode(SIMPLI_HELLO_SLUG, array(&$this, 'sayHello'), 10);
+        add_shortcode($this->getPlugin()->getSlug(), array(&$this, 'sayHello'), 10);
 
         /**
          *
@@ -118,7 +118,7 @@ class Simpli_Hello_Module_Shortcodes extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        $result='<div>Hello World! , says the ' . SIMPLI_HELLO_NAME . ' plugin</div>';
+        $result='<div>Hello World! , says the ' . $this->getPlugin()->getName() . ' plugin</div>';
 
         return $result;
     }

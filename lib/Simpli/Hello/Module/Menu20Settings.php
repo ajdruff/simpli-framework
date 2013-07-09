@@ -393,7 +393,7 @@ class Simpli_Hello_Module_Menu20Settings extends Simpli_Basev1c0_Plugin_Module {
         $logout = false; //whether you want to logout after settings are saved
 
         global $wpdb;
-        $query='delete from wp_options where option_name = \'' . SIMPLI_HELLO_SLUG . '_options\'';
+        $query='delete from wp_options where option_name = \'' . $this->getPlugin()->getSlug() . '_options\'';
 	$dbresult=$wpdb->query($query);
 
        /* if no rows affected, that means the defaults havent been changed yet and stored in the database*/

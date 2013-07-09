@@ -5,12 +5,53 @@
  * This module creates the admin panel
  *
  * @author Mike Ems
- * @package SimpliFramework 
+ * @package SimpliFramework
  * @subpackage SimpliHello
  *
  */
 
 class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
+
+
+
+    private $_menu_position='';
+
+    /**
+     * Get Menu Position
+     *
+     * @param none
+     * @return string
+     */
+    public function getMenuPosition() {
+
+        /*
+         * Provide a default menu position
+         * This will virtually guarantee uniqueness as long as the slug is unique
+         * Default will also automatically sort in alphabetic position in relation
+         * to other Simpli Framework plugins
+         */
+
+if ($this->_menu_position===''){
+
+  $this->_menu_position='67.141592653597777777' . $this->getPlugin()->getSlug();
+
+}
+
+
+        return $this->_menu_position;
+    }
+
+    /**
+     * Set Menu Position
+     *
+     * @param string $menu_position
+     * @return object $this
+     */
+    public function setMenuPosition($menu_position) {
+        $this->_menu_position = $menu_position;
+        return $this;
+    }
+
 
 	/**
 	 * Initialize Module
@@ -20,7 +61,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
 	 */
 	public function init() {
 		// Load on plugins page
-            $this->getPlugin()->getLogger()->log('Loaded ' . __CLASS__);
+
 		if ( isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] == 'plugins.php' ) {
 			add_filter( 'plugin_row_meta', array(&$this, 'plugin_links'), 10, 2);
 		}
@@ -76,7 +117,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
 			return $links;
 		}
 
-		$links[] = '<a href="' . site_url() . '/wp-admin/admin.php?page='.$this->getPlugin()->getSlug().'" title=SIMPLI_HELLO_NAME . " Settings">Settings</a>';
+		$links[] = '<a href="' . site_url() . '/wp-admin/admin.php?page='.$this->getPlugin()->getSlug().'" title=$this->getPlugin()->getName() . " Settings">Settings</a>';
 		$links[] = '<a href="http://wordpress.org/extend/plugins/'.$this->getPlugin()->getSlug().'/faq/" title="Frequently Asked Questions">FAQ</a>';
 		$links[] = '<a href="http://wordpress.org/tags/'.$this->getPlugin()->getSlug().'#postform" title="Support">Support</a>';
 		$links[] = '<a href="your paypal url here" title="Support this plugin\'s development with a donation!">Donate</a>';

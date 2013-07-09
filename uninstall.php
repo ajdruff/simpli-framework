@@ -26,4 +26,4 @@ foreach ( $blogs as $blog_id ) {
 }
 
 // Delete plugin's custom_field from posts and pages
-delete_metadata('post', null, SIMPLI_HELLO_SLUG, null, true);
+delete_metadata('post', null, $simpli_hello->getSlug(), null, true);

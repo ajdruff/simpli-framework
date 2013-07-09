@@ -12,19 +12,21 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
 
     public $_setting_defaults = array();
 
-    public function __construct() {
 
+    /**
+     * Set Default Settings
+     *
+     * Add the settings and their defaults here. The plugin will use the
+     * default values when first activating the plugin and when using the reset
+     * buttons.
+     *  
+     * @param void
+     * @return string The parsed output of the form body tag
+ */
+   private function setDefaultSettings()
+    {
 
-
-        /*
-         *
-         * Set Setting defaults
-         *
-         */
-
-
-
-        $this->_setting_defaults = array(
+       $default_settings= array(
             /*
              *
              * General Settings
@@ -43,8 +45,29 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
              *
              */
             , 'plugin_enabled' => 'enabled'    //'enabled' or 'disabled' Controls whether the plugins modules are loaded. Disabled still loads the admin pages
-            , 'must_use_plugins_listing' => 'disabled' //or 'disabled' Controls whether the user can see a listing of must use plugins in admin
         );
+
+
+
+
+        $this->_setting_defaults=$default_settings;
+        return $this->_setting_defaults;
+
+}
+
+    public function __construct() {
+
+
+
+        /*
+         *
+         * Set Default Settings
+         *
+         */
+
+
+$this->setDefaultSettings();
+
 
 
 
@@ -62,7 +85,34 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
      */
     public function init() {
 
-        $this->getLogger()->setLoggingOn(false); //turn this on to dump all the log() messages to firebug's console and to the log file.
+        /*
+         * make sure wordpress is installed properly
+         */
+        if (!defined('ABSPATH'))
+            die('Cannot Load Plugin - WordPress installation not found');
+
+        /*
+         *  Load any libraries you need that may not be included with the default wordpress installation
+         */
+
+        if (!class_exists('WP_Http'))
+            include_once( ABSPATH . WPINC . '/class-http.php' );
+
+
+
+
+        /*
+         * Load the text domain
+         */
+        load_plugin_textdomain($this->getTextDomain(), false, dirname(plugin_basename(__FILE__)) . '/languages/');
+
+
+
+        /*
+         * Add some log messages
+         *
+         */
+
         $this->getLogger()->log(' Starting ' . $this->getName() . ' Debug Log');
 
         $this->getLogger()->log('Version: ' . $this->getVersion());
@@ -77,13 +127,14 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
 
         /*
          * set the Module Directory
-         *
-         */
+         *         */
         $this->setModuleDirectory($this->getDirectory() . '/lib/Simpli/Hello/Module/'); //e.g. /home/username/public_html/wp-content/plugins/simpli-framework/lib/simpli/hello/Module/
 
+        /*
+         * Set the Plugin Url
+         */
 
-
-$this->setPluginUrl(plugins_url('', $this->getDirectory() .  '/plugin.php'));
+        $this->setPluginUrl(plugins_url('', $this->getDirectory() . '/plugin.php'));
 
 
 
@@ -97,13 +148,11 @@ $this->setPluginUrl(plugins_url('', $this->getDirectory() .  '/plugin.php'));
          */
         $this->loadModules();
 
-
+        /*
+         * Finally, call the base class initialization routines
+         */
 
         parent::init();
-
-
-
-
     }
 
     /**

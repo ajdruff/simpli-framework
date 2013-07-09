@@ -17,7 +17,7 @@ $option_checkboxes=$this->getPlugin()->getSetting('option_checkbox');
 
     <table class="form-table">
         <tr valign="top" id="first_name_row">
-            <th scope="row"><?php _e('First Name:', $this->getPlugin()->getSlug()); ?></th>
+            <th scope="row"><?php _e('First Name:',$this->getPlugin()->getTextDomain()); ?></th>
             <td>
 
                 <!-- First and second Options -->
@@ -25,7 +25,7 @@ $option_checkboxes=$this->getPlugin()->getSetting('option_checkbox');
                     <label for="first_name" id="first_name_label">
                         <input name="first_name" type="text" id="first_name" class="regular-text code" value="<?php echo $this->getPlugin()->getSetting('first_name'); ?>" />
                     </label>
-                    <label for="last_name" id="last_name_label"><?php _e('Last Name:', $this->getPlugin()->getSlug()); ?>
+                    <label for="last_name" id="last_name_label"><?php _e('Last Name:',$this->getPlugin()->getTextDomain()); ?>
                         <input name="last_name" type="text" id="last_name" class="regular-text" value="<?php echo $this->getPlugin()->getSetting('last_name'); ?>" />
                     </label>
                 </fieldset>
@@ -34,7 +34,7 @@ $option_checkboxes=$this->getPlugin()->getSetting('option_checkbox');
 
         <!-- Options Checkbox Example  -->
         <tr valign="top" id="option_checkbox_row">
-            <th scope="row"><?php _e('Do you want this option?', $this->getPlugin()->getSlug()); ?></th>
+            <th scope="row"><?php _e('Do you want this option?',$this->getPlugin()->getTextDomain()); ?></th>
             <td>
                 <fieldset>
                     <label for="option_checkbox">
@@ -79,20 +79,20 @@ $option_checkboxes=$this->getPlugin()->getSetting('option_checkbox');
 
 
         <tr valign="top" id="option_radio_row">
-            <th scope="row"><?php _e('Which option would you like to select?', $this->getPlugin()->getSlug()); ?></th>
+            <th scope="row"><?php _e('Which option would you like to select?',$this->getPlugin()->getTextDomain()); ?></th>
             <td>
                 <fieldset>
                     <label for="option_radio" class="label-radio">
                         <label class="label-radio">
-                        <input type="radio" name="option_radio" value="yes"  <?php echo (($this->getPlugin()->getSetting('option_radio') == 'yes') ?  ' checked="checked"' : ''); ?> /> <span><?php _e('Yes', $this->getPlugin()->getSlug()); ?></span></label>
+                        <input type="radio" name="option_radio" value="yes"  <?php echo (($this->getPlugin()->getSetting('option_radio') == 'yes') ?  ' checked="checked"' : ''); ?> /> <span><?php _e('Yes',$this->getPlugin()->getTextDomain()); ?></span></label>
 
                          <label class="label-radio">
-                        <input type="radio" name="option_radio" value="no" <?php echo (($this->getPlugin()->getSetting('option_radio') == 'no') ?  ' checked="checked"' : ''); ?> /> <span><?php _e('No', $this->getPlugin()->getSlug()); ?></span>
+                        <input type="radio" name="option_radio" value="no" <?php echo (($this->getPlugin()->getSetting('option_radio') == 'no') ?  ' checked="checked"' : ''); ?> /> <span><?php _e('No',$this->getPlugin()->getTextDomain()); ?></span>
                          </label>
 
 
                          <label class="label-radio">
-                        <input type="radio" name="option_radio" value="maybe" <?php echo (($this->getPlugin()->getSetting('option_radio') == 'maybe') ?  ' checked="checked"' : ''); ?> /> <span><?php _e('Maybe', $this->getPlugin()->getSlug()); ?></span>
+                        <input type="radio" name="option_radio" value="maybe" <?php echo (($this->getPlugin()->getSetting('option_radio') == 'maybe') ?  ' checked="checked"' : ''); ?> /> <span><?php _e('Maybe',$this->getPlugin()->getTextDomain()); ?></span>
                     </label>
 
                     <p class="description">
@@ -113,21 +113,21 @@ $option_checkboxes=$this->getPlugin()->getSetting('option_checkbox');
 
 
         <tr valign="top" id="admin_menu_row">
-            <th scope="row"><?php _e('Admin Menu Location', $this->getPlugin()->getSlug()); ?></th>
+            <th scope="row"><?php _e('Admin Menu Location',$this->getPlugin()->getTextDomain()); ?></th>
             <td>
                 <fieldset>
                     <label for="admin_menu_side" class="label-radio">
-                        <input type="radio" name="admin_menu_side" id="admin_menu_side" value="side"<?php echo (($this->getPlugin()->getSetting('admin_menu_side') == 'side') ? ' checked="checked"' : ''); ?>/> <span><?php _e('Sidebar', $this->getPlugin()->getSlug()); ?></span>
+                        <input type="radio" name="admin_menu_side" id="admin_menu_side" value="side"<?php echo (($this->getPlugin()->getSetting('admin_menu_side') == 'side') ? ' checked="checked"' : ''); ?>/> <span><?php _e('Sidebar',$this->getPlugin()->getTextDomain()); ?></span>
                     </label>
                     <label for="admin_menu_settings" class="label-radio">
-                        <input type="radio" name="admin_menu_side" id="admin_menu_settings" value="settings"<?php echo (($this->getPlugin()->getSetting('admin_menu_side') == 'settings') ? ' checked="checked"' : ''); ?>/> <span><?php _e('Settings', $this->getPlugin()->getSlug()); ?></span>
+                        <input type="radio" name="admin_menu_side" id="admin_menu_settings" value="settings"<?php echo (($this->getPlugin()->getSetting('admin_menu_side') == 'settings') ? ' checked="checked"' : ''); ?>/> <span><?php _e('Settings',$this->getPlugin()->getTextDomain()); ?></span>
                     </label>
                 </fieldset>
             </td>
         </tr>
          <!-- Option Select Menu  -->
                 <tr valign="top" id="option_radio_row">
-            <th scope="row"><?php _e('Which option would you like to select?', $this->getPlugin()->getSlug()); ?></th>
+            <th scope="row"><?php _e('Which option would you like to select?',$this->getPlugin()->getTextDomain()); ?></th>
             <td>
                 <fieldset>
                     <label for="option_select" class="label-radio">
@@ -179,7 +179,7 @@ $option_checkboxes=$this->getPlugin()->getSetting('option_checkbox');
     <p class="button-controls">
         <input type="submit" id="<?php echo $form_name; ?>_settings-reset" class="button-secondary" value="Reset" name="<?php echo $form_name; ?>_settings-reset">
         <input type="submit" id="<?php echo $form_name; ?>_settings-save" class="button-primary" value="Save Changes" name="<?php echo $form_name; ?>_settings-save">
-        <img alt="<?php _e('Waiting...', $this->getPlugin()->getSlug()); ?>" src="<?php echo admin_url('/images/wpspin_light.gif'); ?>" class="waiting submit-waiting" />
+        <img alt="<?php _e('Waiting...',$this->getPlugin()->getTextDomain()); ?>" src="<?php echo admin_url('/images/wpspin_light.gif'); ?>" class="waiting submit-waiting" />
     </p>
 </form>
 <script type="text/javascript">
@@ -211,7 +211,7 @@ $option_checkboxes=$this->getPlugin()->getSetting('option_checkbox');
 
 
         $('#<?php echo $form_name; ?>_settings-reset').click(function(e, el) {
-            if (!confirm('<?php _e('Are you sure you want to reset this form?', $this->getPlugin()->getSlug()); ?>')) {
+            if (!confirm('<?php _e('Are you sure you want to reset this form?',$this->getPlugin()->getTextDomain()); ?>')) {
                 e.preventDefault();
                 return false;
             }

@@ -119,8 +119,9 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Module {
                 // , array($this->getPlugin()->getModule($this->moduleName), 'dispatch') //function
                 , array($this->getPlugin()->getModule('Menu10Settings'), 'dispatch') //function to display the html
                 , $this->getPlugin()->getPluginUrl() . '/admin/images/menu.png' // icon url
-                , SIMPLI_HELLO_MENU_POSITION //position in the menu
-        );
+                , $this->getPlugin()->getModule('Admin')->getMenuPosition() //position in the menu
+
+                      );
 
 
 

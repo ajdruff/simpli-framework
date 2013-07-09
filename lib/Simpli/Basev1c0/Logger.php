@@ -4,15 +4,12 @@
  * Logger Class
  *
  * @author Mike Ems
+ * @author Andrew Druffner
  * @package SimpliFramework
  * @subpackage SimpliBase
  *
  */
 class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
-
-
-
-
 
     /**
      * Instance
@@ -29,77 +26,69 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
     protected $_log = array();
 
     public function __construct() {
-        add_action('shutdown', array(&$this, 'print_log'));
+
     }
-
-
 
     /**
      * Enabled
      *
      * @var Enabled
      */
-    private $_enabled;
+    private $_enabled = false;
 
-
-     /**
+    /**
      * Turn Logging On or Off
      *
      * @param boolean $enabled
      * @return array
      */
-    public function setLoggingOn($enabled=true) {
+    public function setLoggingOn($enabled = true) {
+        if ($enabled === true) {
 
-     $this->_enabled=($enabled===true) ? true : false;
-     return  $this->_enabled;
+            add_action('shutdown', array(&$this, 'print_log'));
+        }
+
+        $this->_enabled = ($enabled === true) ? true : false;
+        return $this->_enabled;
     }
 
-     /**
+    /**
      * Check if Debug is Enabled
      *
      * @param none
      * @return array
      */
     public function getLoggingState() {
-     return $this->_enabled;
+        return $this->_enabled;
     }
 
-
-       /**
+    /**
      * Plugin
      *
      * @var Plugin
      */
-
     private $_plugin;
 
-       /**
+    /**
      * Get Plugin Reference
      *
      * @param none
      * @return object plugin
      */
     public function getPlugin() {
-     return $this->_plugin;
+        return $this->_plugin;
     }
 
-
-         /**
+    /**
      * Set Plugin
      *
      * @param none
      * @return object
      */
     public function setPlugin($plugin) {
-     $this->_plugin=$plugin;
-     return $this->_plugin;
+        $this->_plugin = $plugin;
+        return $this->_plugin;
     }
-
-
-
-
-
-
 
     /**
      * Get singleton instance
@@ -131,41 +120,48 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
      * @return $this
      */
     public function log($string) {
+//        echo '<br>' . $this->getPlugin()->getSlug() . ':  logging enabled = ';
+//        echo ($this->getLoggingState() === true) ? "true" : "false";
+        /*
+         * if logging isnt turned on, dont log it.
+         */
+        if (!$this->getLoggingState()) {
+            return;
+        }
+
         $time_now = date("Y-m-d H:i:s");
         $this->_log[] = $time_now . ' ' . $string;
         return $this;
     }
 
-	/**
-	 * Console Log
-	 *
-	 * Output contents of the log to the browser's console.
-	 *
-	 * @param none
-	 * @return string $code
-	 */
-	public function consoleLog() {
+    /**
+     * Console Log
+     *
+     * Output contents of the log to the browser's console.
+     *
+     * @param none
+     * @return string $code
+     */
+    public function consoleLog() {
 
-           // echo '<br>adding logs within consolelog';
+        // echo '<br>adding logs within consolelog';
 
 
-		$code = "<script id=\"my_log\" type=\"text/javascript\">\n\tif ( typeof console === 'object' ) {\n";
-		$log = $this->getLog();
+        $code = "<script id=\"my_log\" type=\"text/javascript\">\n\tif ( typeof console === 'object' ) {\n";
+        $log = $this->getLog();
 
-             //   print_r($log);
-//		array_unshift($log, '[BEGIN Simpli Debug Log]');
-//		array_push($log, '[END Simpli Debug Log]');
-		foreach( $log as $log_entry ) {
-			if ( is_array($log_entry) ) {
-				$log_entry = json_encode($log_entry);
-			} else {
-				$log_entry = "'" . addslashes($log_entry) . "'";
-			}
-			$code .= "\t\tconsole.log(" . $log_entry . ");\n";
-		}
-		$code .= "\t}\n</script>\n";
-		return $code;
-	}
+
+        foreach ($log as $log_entry) {
+            if (is_array($log_entry)) {
+                $log_entry = json_encode($log_entry);
+            } else {
+                $log_entry = "'" . addslashes($log_entry) . "'";
+            }
+            $code .= "\t\tconsole.log(" . $log_entry . ");\n";
+        }
+        $code .= "\t}\n</script>\n";
+        return $code;
+    }
 
     /**
      * File Log
@@ -181,7 +177,7 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
         if ($filename == '') {
             $filename = 'error.log.txt';
         }
-       return file_put_contents($filename, implode("\r\n", $this->getLog())); //, FILE_APPEND);
+        return file_put_contents($filename, implode("\r\n", $this->getLog())); //, FILE_APPEND);
     }
 
     /**
@@ -191,15 +187,6 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
      *
      */
     public function print_log() {
-
-/*
- *
- * Only proceed if logging is turned on
- *
- */
-        if (!$this->getLoggingState()) {
-            return;
-        }
 
 
         /*
@@ -211,16 +198,15 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
             return;
         }
 
-/*
- *
- * Echo the output of the consoleLog() script which creates the javascript that
- * includes the console.log calls for each of the log statements
- *
- */
+        /*
+         *
+         * Echo the output of the consoleLog() script which creates the javascript that
+         * includes the console.log calls for each of the log statements
+         *
+         */
         echo $this->consoleLog();
 
-       $this->fileLog($this->getPlugin()->getDirectory() . '/error.log.txt');
-
+        $this->fileLog($this->getPlugin()->getDirectory() . '/error.log.txt');
     }
 
 }

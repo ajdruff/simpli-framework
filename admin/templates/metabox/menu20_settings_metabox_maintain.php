@@ -20,17 +20,18 @@ $form_name="settings_enabled";
 
 
         <tr valign="top" id="plugin_enabled_row">
-            <th scope="row"><?php _e('Enable Plugin', $this->getPlugin()->getSlug()); ?></th>
+            <th scope="row"><?php _e('Enable Plugin',$this->getPlugin()->getTextDomain()); ?></th>
+             <th scope="row"><?php _e('Enable Plugin',$this->getPlugin()->getTextDomain()); ?></th>
             <td>
                 <fieldset>
                     <label for="plugin_enabled" class="label-radio">
 
                          <label class="label-radio">
-                        <input type="radio" name="plugin_enabled" value="enabled" <?php echo (($this->getPlugin()->getSetting('plugin_enabled') == 'enabled') ?  ' checked="checked"' : ''); ?> /> <span><?php _e('Yes', $this->getPlugin()->getSlug()); ?></span>
+                        <input type="radio" name="plugin_enabled" value="enabled" <?php echo (($this->getPlugin()->getSetting('plugin_enabled') == 'enabled') ?  ' checked="checked"' : ''); ?> /> <span><?php _e('Yes',$this->getPlugin()->getTextDomain()); ?></span>
                          </label>
 
                         <label class="label-radio">
-                        <input type="radio" name="plugin_enabled" value="disabled"  <?php echo (($this->getPlugin()->getSetting('plugin_enabled') == 'disabled') ?  ' checked="checked"' : ''); ?> /> <span><?php _e('No', $this->getPlugin()->getSlug()); ?></span></label>
+                        <input type="radio" name="plugin_enabled" value="disabled"  <?php echo (($this->getPlugin()->getSetting('plugin_enabled') == 'disabled') ?  ' checked="checked"' : ''); ?> /> <span><?php _e('No',$this->getPlugin()->getTextDomain()); ?></span></label>
 
 
 
@@ -40,7 +41,7 @@ $form_name="settings_enabled";
  <?php
                             printf(
                                     __(
-                                            'Use this setting to temporarily disable ' . SIMPLI_HELLO_NAME .' for troubleshooting or maintenance. \'No\' will disable all plugin functionality except for this Administrative area, allowing you continued access to these settings. To completely remove' . SIMPLI_HELLO_NAME .', de-activate it from the plugins menu.', $this->getPlugin()->getSlug()
+                                            'Use this setting to temporarily disable ' . $this->getPlugin()->getName() .' for troubleshooting or maintenance. \'No\' will disable all plugin functionality except for this Administrative area, allowing you continued access to these settings. To completely remove ' . $this->getPlugin()->getName() .', de-activate it from the plugins menu.', $this->getPlugin()->getSlug()
                                     ), '<a href="#" target="_blank">', '</a>'
                             );
                             ?></p>
@@ -48,35 +49,7 @@ $form_name="settings_enabled";
                 </fieldset>
             </td>
         </tr>
- <tr valign="top" id="plugin_enabled_row">
-            <th scope="row"><?php _e('Must Use Plugin Listing', $this->getPlugin()->getSlug()); ?></th>
-            <td>
-                <fieldset>
-                    <label for="must_use_plugins_listing" class="label-radio">
-
-                         <label class="label-radio">
-                        <input type="radio" name="must_use_plugins_listing" value="enabled" <?php echo (($this->getPlugin()->getSetting('must_use_plugins_listing') == 'enabled') ?  ' checked="checked"' : ''); ?> /> <span><?php _e('Yes', $this->getPlugin()->getSlug()); ?></span>
-                         </label>
-
-                        <label class="label-radio">
-                        <input type="radio" name="must_use_plugins_listing" value="disabled"  <?php echo (($this->getPlugin()->getSetting('must_use_plugins_listing') == 'disabled') ?  ' checked="checked"' : ''); ?> /> <span><?php _e('No', $this->getPlugin()->getSlug()); ?></span></label>
-
-
-
-
-
-                    <p class="description">
- <?php
-                            printf(
-                                    __(
-                                            'Toggle whether the Must Use Plugins (contained in the wp-content/mu-plugins directory) are listed under \'Must Use\' when listing plugins. This allows you to verify that the Simpli Base Class Library loaded correctly.', $this->getPlugin()->getSlug()
-                                    ), '<a href="#" target="_blank">', '</a>'
-                            );
-                            ?></p>
-                              </label>
-                </fieldset>
-            </td>
-        </tr>
+ 
 
     </table>
 
@@ -105,7 +78,7 @@ $form_name="settings_enabled";
 
 
     <input type="submit" id="<?php echo $form_name; ?>_settings-save" class="button-primary" value="Save Changes" name="<?php echo $form_name; ?>_settings-save">
-        <img alt="<?php _e('Waiting...', $this->getPlugin()->getSlug()); ?>" src="<?php echo admin_url('/images/wpspin_light.gif'); ?>" class="waiting submit-waiting" />
+        <img alt="<?php _e('Waiting...',$this->getPlugin()->getTextDomain()); ?>" src="<?php echo admin_url('/images/wpspin_light.gif'); ?>" class="waiting submit-waiting" />
 
 
     </p>
@@ -137,14 +110,14 @@ $form_name="settings_enabled";
 
 
        $('#<?php echo $form_name; ?>_settings-reset').click(function(e, el) {
-            if ( ! confirm('<?php _e('Are you sure you want to reset this form?', $this->getPlugin()->getSlug()); ?>') ) {
+            if ( ! confirm('<?php _e('Are you sure you want to reset this form?',$this->getPlugin()->getTextDomain()); ?>') ) {
                 e.preventDefault();
                 return false;
             }
         });
 
        $('#<?php echo $form_name; ?>_settings-reset-all').click(function(e, el) {
-            if ( ! confirm('<?php _e('Are you sure you want to reset all the settings for this plugin to installed defaults?', $this->getPlugin()->getSlug()); ?>') ) {
+            if ( ! confirm('<?php _e('Are you sure you want to reset all the settings for this plugin to installed defaults?',$this->getPlugin()->getTextDomain()); ?>') ) {
                 e.preventDefault();
                 return false;
             }

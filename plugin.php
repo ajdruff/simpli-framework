@@ -30,110 +30,71 @@
  */
 
 /*
- * dev_note: Please see framework-getting-started.html for information on how to Get Started
+ * Get Started with the Plugin Framework
+ * Please see framework-getting-started.html for information on how to Get Started
  *
  */
-
-/*
- *
- * Configure
- *
- */
-
-
-
-
-
-
-
-
-
-define('SIMPLI_HELLO_SLUG', 'simpli_hello'); //dev_note: Replace the value with a short underscore delimited name of your plugin
-
-
-define('SIMPLI_HELLO_SLUG_PREFIX', substr(SIMPLI_HELLO_SLUG,0,stripos ( SIMPLI_HELLO_SLUG , '_' ))); //dev_note: Value must match the name of file lib/Hello/Hello.php
-define('SIMPLI_HELLO_SLUG_SUFFIX',substr(SIMPLI_HELLO_SLUG,stripos ( SIMPLI_HELLO_SLUG , '_' )+1,strlen(SIMPLI_HELLO_SLUG)-1) ); //dev_note: Value must match the name of file lib/Hello/Hello.php
-define('SIMPLI_HELLO_TEXTDOMAIN', 'simpli-hello'); //dev_note: Value must include no underscores
-
-
-
-
-define('SIMPLI_HELLO_MENU_POSITION', '67.141592653597777777' . SIMPLI_HELLO_SLUG); //dev_note: Menu Position . The default provided here will nearly always work and not conflict with another plugin as long as your slug is unique. You can make it anything you want though and it must be universally unique or menu wont load if conflicts with another plugin's position.  Ref: http://codex.wordpress.org/Function_Reference/add_menu_page#Parameters
-//exit if wordpress isn't properly installed
-if (!defined('ABSPATH'))
-    die('Cannot Load Plugin - WordPress installation not found');
-
-
-
-// load required wordpress classes that might not be loaded by the default installation
-if (!class_exists('WP_Http'))
-    include_once( ABSPATH . WPINC . '/class-http.php' );
-
-
-//add our text domain
-load_plugin_textdomain(SIMPLI_HELLO_TEXTDOMAIN, false, dirname(plugin_basename(__FILE__)) . '/languages/');
-
-//add the names of your classes to the namespaces array so the class file is included
-//todo: can we add this elsewhere so we dont contaminate the global namespace?
-function simpli_hello_autoloader($class) { //e.g. class= 'Simpli_Hello_Plugin'
-    $base_class_version='v1c0'; //dont change name or update this manually - controlled by the bump script. must match the vXcX part of the Simpli/BasevXcX directory
-    $namespaces = array(
-        'Simpli_Base' . $base_class_version
-        , 'Simpli_Hello'
-    );
-
-
-
-
-
-//    $pattern='/[A-Za-z0-9]+/';
-
-//    echo '<br> class = ' .$class;
-#preg_match_all($pattern, $class, $match);
-$matches=explode('_',$class); // alternative :  $pattern='/[A-Za-z0-9]+/';preg_match_all($pattern, $class, $matches);
-//echo '<pre>';
-//print_r($matches);
-//echo '</pre>';
-
-    if (in_array($matches[0]. '_' .$matches[1], $namespaces)) {  // match[0]='Simpli' match[1]='Hello' match[2]='Plugin'
-        $filename=array_pop($matches).'.php'; // get the last part of $class and use it as the name of the file
-        $subdirectory_path=implode(DIRECTORY_SEPARATOR,$matches); // each part of the remaining string is the name of a subdirectory
-       # $filename =  $match[3] . '.php'; // e.g. : Plugin.php
-        #$subdirectory_path= $match[1] . DIRECTORY_SEPARATOR . $match[2] ; // e.g.: /Simpli/Hello
-       # $filename = str_replace('_', DIRECTORY_SEPARATOR, $match[0]) . '.php';
-
-        require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib'  .DIRECTORY_SEPARATOR .  $subdirectory_path .DIRECTORY_SEPARATOR .  $filename;
-    }
-
-
-
-}
-
-
-spl_autoload_register(SIMPLI_HELLO_SLUG . '_autoloader');
-
 
 
 
 /*
+ * Add framework bootstrapping code
+ */
+
+require(dirname(__FILE__) . '/lib/Simpli/Framework/Framework.php');
+
+/*
+ * Create the Plugin Object
  *
- * Create a global Plugin object with a unique name equal
- * to your plugin's slug. This helps to prevent conflict with other plugins.
+ * Usage: Simpli_Framework::load($plugin_slug, $plugin_file_path, $base_class_version)
+ *
+ * must only be called from within this file
+ * $plugin_slug must be universally unique, and consist of 2 lowercase words separated by an underscore
+ * $plugin_file_path should always be __FILE__
+ * $base_class_version must match the name of the 'vXcY' part of the Simpli/BasevXcY directory name and generally should remain unchanged
+ */
+
+$simpli_hello = Simpli_Framework::load('simpli_hello', __FILE__,'v1c0');
+
+
+
+/*
+ * Configure Plugin
  *
  */
 
 
-$simpli_hello = new Simpli_Hello_Plugin();
-$simpli_hello->setSlug('simpli_hello');
-$simpli_hello->setVersion('1.0.0'); //Value should match value of 'Version' in the comments at the top of this file.
-$simpli_hello->setName('Simpli Hello'); // Value should match value of 'Plugin Name' in the comments at the top of this file);
+$simpli_hello->setVersion('1.0.0'); // Version is the version of your plugin and should match value of 'Version' in the comments at the top of this file.
+$simpli_hello->setName('Simpli Hello'); // Name should match the value of 'Plugin Name' in the comments at the top of this file);
+$simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include underscores and uniquely identifies
 
-// Initialize Plugin
+
+
+//(optional)
+$simpli_hello->getLogger()->setLoggingOn(false); //Set to true to dump debugging logs to javascript console and to the error log.
+
+
+
+/*
+ * Initialize Plugin
+ * (Loads modules and settings)
+ */
 $simpli_hello->init();
 
 
 
+/*
+ * Configure Modules - Must Occur After Plugin Initialization
+ */
 
+//(optional) $simpli_hello->getModule('Admin')->setMenuPosition ('67.141592653597777777');
+
+
+
+
+//echo '<pre>';
+//print_r($simpli_hello);
+//echo '</pre>';
 
 
 

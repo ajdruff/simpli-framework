@@ -102,6 +102,7 @@ class Simpli_Basev1c0_Plugin {
 
 
 
+
     /**
      * Constructor
      *
@@ -144,7 +145,7 @@ class Simpli_Basev1c0_Plugin {
      * @return object $this
      */
     public function setModuleDirectory($module_directory) {
-        $this->getLogger()->log('setting module directory to ' . $module_directory);
+        $this->getLogger()->log($this->getSlug() . ': Setting module directory to ' . $module_directory);
         $this->_module_directory = $module_directory;
         return $this;
     }
@@ -168,7 +169,9 @@ class Simpli_Basev1c0_Plugin {
     public function getAvailableModules() {
         $modules = array();
 
-        $this->getLogger()->log('module directory = ' . $this->getModuleDirectory());
+
+
+        $this->getLogger()->log($this->getSlug() . ': Module directory = ' . $this->getModuleDirectory());
 
         if (is_dir($this->getModuleDirectory()) && $module_directory = opendir($this->getModuleDirectory())) {
             while (false !== ($entry = readdir($module_directory))) {
@@ -256,6 +259,7 @@ class Simpli_Basev1c0_Plugin {
      * @return object
      */
     public function getLogger() {
+        
         if (!isset($this->_logger)) {
             die(__CLASS__ . ' missing Logger dependency.');
         }
@@ -493,6 +497,66 @@ class Simpli_Basev1c0_Plugin {
         return $this->_framework_version;
     }
 
+    /**
+     * Get Class Namespace
+     *
+     * @param none
+     * @return string
+     */
+    public function getClassNamespace() {
+
+        /*
+         * derive namespace from slug
+         * just Title Case each word
+         */
+
+        $array_class=explode('_',$this->getSlug());
+        $namespace=ucwords($array_class[0]) .'_' .ucwords($array_class[1]);
+        return $namespace;
+    }
+
+
+     /**
+     * Get Class Namespace Parts (Read Only)
+     *
+     * Returns and array of the class namespace parts
+      *
+     * @param none
+     * @return string
+     */
+    public function getClassNamespaceParts() {
+
+
+        return explode('_', $this->getClassNamespace());
+    }
+
+
+
+    /**
+     * Get Text Domain
+     *
+     * @param none
+     * @return string
+     */
+    public function getTextDomain() {
+        return $this->_text_domain;
+    }
+
+    /**
+     * Set Text Domain
+     *
+     * @param string $text_domain
+     * @return object $this
+     */
+    public function setTextDomain($text_domain) {
+        $this->_text_domain = $text_domain;
+        return $this;
+    }
+
+
+
+
+
 
     /**
      * Init
@@ -502,6 +566,11 @@ class Simpli_Basev1c0_Plugin {
      * @param none
      * @return $this
      */
+
+
+
+
+
     public function init() {
 
 
@@ -513,8 +582,8 @@ class Simpli_Basev1c0_Plugin {
          * Tell debugger plugin and class library loaded
          *
          */
-        $this->getLogger()->log('Initialized Plugin ' . $this->getName());
-        $this->getLogger()->log('Loaded Base Class Library for plugin ' . $this->getName() . ' from ' . dirname(__FILE__));
+        $this->getLogger()->log($this->getSlug() . ': Initialized Plugin ');
+        $this->getLogger()->log($this->getSlug() . ': Loaded Base Class Library '  . ' from ' . dirname(__FILE__));
 
         $modules = $this->getModules();
 
@@ -558,6 +627,9 @@ class Simpli_Basev1c0_Plugin {
      * @return $this
      */
     public function loadModule($module) {
+
+
+        $this->getLogger()->log($this->getSlug() . ': Loading Module ' . $module );
 
         $module_full = 'Module\\' . $module;  # Admin
         $filename = str_replace('\\', '/', $module);

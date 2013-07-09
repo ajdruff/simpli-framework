@@ -35,14 +35,14 @@ SELF_PARENT_DIR_NAME=$(basename "$(echo $(dirname "${SELF_PATH}"))")
 excluded_files=".*\.\(zip\|png\|jpg\|gif\)"
 
 #the slug of the framework demonstration plugin that will act as the template
-old_slug='simpli_hello';
+simpli_hello='simpli_hello';
 
 default_target_dir=$(dirname "${SELF_PARENT_DIR_PATH}")
 
 
 
 #############
-#validate arguments
+# Validate Script Arguments
 #############
 
 if [[ "$1" = --help ]]
@@ -57,9 +57,9 @@ Creates a new plugin project with unique identifier SLUG and places
 it in the DEST directory.
 
 
-SLUG should be in the form company_shortname where
-'company' is a single-word identifier for the
-plugin company or author and 'shortname' is a single word identifier
+SLUG should be in the form mycompany_myplugin where
+'mycompany' is a single-word identifier for the
+plugin company or author and 'myplugin' is a single word identifier
 for the plugin. No spaces or special characters
 (except a single underscore) are permitted.
 
@@ -82,7 +82,7 @@ input_dir="$2" #second argument
 #if there were no arguments, prompt the user for them
 if [[ "$#" = 0 ]]
 then
-read -e -p "Enter the plugin slug in the form 'company_shortname': " -i "" input_slug
+read -e -p "Enter the plugin slug in the form 'mycompany_myplugin': " -i "" input_slug
 
 read -e -p "Enter the path to the target directory: [""${default_target_dir}""] "  input_dir
 
@@ -123,67 +123,57 @@ fi
 
 
 #############
-#define variables
+# Variables
 #############
-
+# Note : variable names are intentionally of mixed format and mimic the expected format of its value
+# this makes it a bit easier to spot errors in search and replace logic
+# Read this script as if we were making a plugin called 'Mycompany_Myplugin'
 
 #the parent directory of this script
 dir_name="${SELF_PARENT_DIR_NAME}";
 
 
 #make the input_slug lower case and rename it
-new_slug=$(echo ${input_slug} | awk '{print tolower($0)}')  # company_shortname
+mycompany_myplugin=$(echo ${input_slug} | awk '{print tolower($0)}')  # mycompany_myplugin
 
 
 
 
-
-old_constant=$(echo $old_slug | awk '{print toupper($0)}') # SIMPLI_HELLO
-new_constant=$(echo $new_slug | awk '{print toupper($0)}') # COMPANY_SHORTNAME
-
-
+#use for constant replacements
+SIMPLI_HELLO=$(echo $simpli_hello | awk '{print toupper($0)}') # SIMPLI_HELLO
+MYCOMPANY_MYPLUGIN=$(echo $mycompany_myplugin | awk '{print toupper($0)}') # COMPANY_SHORTNAME
 
 
 
-old_slug_dashes=$(echo $old_slug | tr '_' '-') # simpli-hello
-new_slug_dashes=$(echo $new_slug | tr '_' '-') # company-shortname
 
-old_prefix=$(echo ${old_slug} | cut -d _ -f 1) # simpli
-new_prefix=$(echo ${new_slug} | cut -d _ -f 1) # hello
+#text domains
+simpliDASHhello=$(echo $simpli_hello | tr '_' '-') # simpli-hello
+mycompanyDASHmyplugin=$(echo $mycompany_myplugin | tr '_' '-') # mycompany-myplugin
 
-old_prefix_cap=${old_prefix^} # Simpli
-new_prefix_cap=${new_prefix^} # Company
-
-
-old_suffix=$(echo ${old_slug} | cut -d _ -f 2) # company
-new_suffix=$(echo ${new_slug} | cut -d _ -f 2) # shortname
+#prefixes
+simpli=$(echo ${simpli_hello} | cut -d _ -f 1) # simpli
+mycompany=$(echo ${mycompany_myplugin} | cut -d _ -f 1) # mycompany
 
 
-old_suffix_cap=${old_suffix^} # Hello
-new_suffix_cap=${new_suffix^} # Shortname
+#prefixes - title case
+Simpli=${simpli^} # Simpli
+Mycompany=${mycompany^} # Mycompany
 
+#suffixes
+hello=$(echo ${simpli_hello} | cut -d _ -f 2) # hello
+myplugin=$(echo ${mycompany_myplugin} | cut -d _ -f 2) # myplugin
 
-old_class_filename=${old_suffix_cap} # Hello
-new_class_filename=${new_suffix_cap} # Shortname
+#suffixes - Title Case
+Hello=${hello^} # Hello
+Myplugin=${myplugin^} # Myplugin
 
+Simpli_Hello="${Simpli}""_""${Hello}"
+Mycompany_Myplugin="${Mycompany}""_""${Myplugin}"
 
-#module names
-old_module_name=${old_prefix^}_Module # Simpliv1c0_Module
-new_module_name=${new_prefix^}_Module # Company_Module
-
-#logger
-old_logger_name=${old_prefix^}_Logger # Simpli_Logger
-new_logger_name=${new_prefix^}_Logger # Company_Logger
-
-#class
-old_class='class '${old_suffix_cap} # class Hello
-new_class='class '${new_suffix_cap} # class Shortname
-old_class_cap=${old_class^} # Class Hello
-new_class_cap=${new_class^} # Class Shortname
 
 #Plugin Name
-old_plugin_name="${old_prefix^} ${old_suffix_cap}" # Simpli Hello
-new_plugin_name="${new_prefix^} ${new_suffix_cap}" # Company Shortname
+old_plugin_name="${simpli^} ${Hello}" # Simpli Hello
+new_plugin_name="${mycompany^} ${Myplugin}" # Mycompany Myplugin
 
 #WordPress Plugin Info Header
 #must escape forward slashes with triple slashes . In HEREDOC, must also continue to the next line by adding a backslash
@@ -195,7 +185,7 @@ Description:   The ${new_plugin_name} plugin does some amazing stuff and was bui
 Author:        <AUTHOR_NAME> ${new_line} \
 Version:       1.0.0 ${new_line} \
 Author URI:    http:\\\/\\\/example.com ${new_line} \
-Text Domain:   ${new_slug} ${new_line} \
+Text Domain:   ${mycompany_myplugin} ${new_line} \
 Domain Path:   \\\/languages\\\/ ${new_line}
 EOF
 
@@ -204,10 +194,12 @@ wp_plugin_header_pattern="Plugin(.+?)languages\/"
 
 
 
-###  Target Directory
+#############
+# Target Directory - Define and Validate
+#############
 
 
-
+#resolve input directory to real path so we can validate it
 target_dir_parent=$(realpath "${input_dir}")
 
 
@@ -224,17 +216,8 @@ fi
 
 
 
-target_dir=$(realpath "$target_dir_parent")"/${new_slug_dashes}"
-######################################################
-#debug
-#echo 'new slug'=$new_slug
-#echo 'input_dir'=$input_dir
+target_dir=$(realpath "$target_dir_parent")"/${mycompanyDASHmyplugin}"
 
-
-#echo 'target_dir='$target_dir
-#echo 'target_dir_parent='$target_dir_parent
-#echo 'exiting';exit 1;
-###########################################
 
 
 if [[ "${target_dir}" == *"${dir_name}"* ]]
@@ -247,25 +230,16 @@ fi
 
 
 
-
 #############
-#Execute
-#############
-
-
-
-
-#############
-#testing
+# Main
 #############
 
 
-#############
-#End Testing
-#############
+
+
 echo "Creating your new plugin ,  '${new_plugin_name}' , using the Simpli Framework..."
 
-#create a subdirectory the same name as the new_slug
+#create a subdirectory the same name as the mycompany_myplugin
 mkdir -p "${target_dir}";
 
 if [[ ! (-d "${target_dir}" && ! -L "${target_dir}") ]] ; then
@@ -273,8 +247,17 @@ die "Target Directory is invalid, exiting..."
 fi
 
 
+#########################
+# Copy Template to New Directory
+#########################
+
+#copy the simpli framework folder to the new plugin directory
 cp -r ./* "${target_dir}" 2>/dev/null
 
+#########################
+# Remove unnecessary files
+#########################
+# remove unneccessary files before replacements start
 
 #remove git directory or it will take forever to complete
 rm -rf  "${target_dir}"/.git
@@ -290,7 +273,17 @@ rm  "${target_dir}"/*.sh
 
 
 
+#########################
+# Directory Structure
+#########################
+#rename files
+#rename Simpli/Hello to Mycompany/Myplugin
+mkdir -p "${target_dir}""/lib/""${Mycompany}"; # make the new directories first
+mv "${target_dir}"/lib/"${Simpli}"/"${Hello}" "${target_dir}"/lib/"${Mycompany}"/
+mv "${target_dir}"/lib/"${Mycompany}"/"${Hello}" "${target_dir}"/lib/"${Mycompany}"/"${Myplugin}"
+#########################
 #replace WordPress Header
+#########################
 echo 'converting WordPress Plugin Information Header...'
 
 #use a sed multiline substituion by using /c ref:http://www.linuxtopia.org/online_books/linux_tool_guides/the_sed_faq/sedfaq4_013.html
@@ -301,56 +294,73 @@ find "${target_dir}"/plugin.php -type f | xargs -n 1 sed -i -e "/Plugin\s*Name:/
 #perl -0777 -i -e -p "s/${wp_plugin_header_pattern}/${new_wp_plugin_header}/sg" "${target_dir}""/plugin.php"
 
 
-#echo 'stopping' ; exit 1 ;
-#replace slugs
+
+
+
+#########################
+# Slugs
+#########################
+#replace simpli_hello with mycompany_myplugin
 echo 'converting slugs...'
-find "${target_dir}/" -not -regex "${excluded_files}" -type f |  xargs -n 1 sed -i -e "s|${old_slug}|${new_slug}|g"
-
-#replace slug_dashes
-find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${old_slug_dashes}|${new_slug_dashes}|g"
+find "${target_dir}/" -not -regex "${excluded_files}" -type f |  xargs -n 1 sed -i -e "s|${simpli_hello}|${mycompany_myplugin}|g"
 
 
-#replace constants
+
+
+#########################
+# Text Domain Style
+#########################
+#replace simpli-hello with mycompany-myplugin
+find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${simpliDASHhello}|${mycompanyDASHmyplugin}|g"
+
+
+#########################
+# Constants
+#########################
+#replace SIMPLI_HELLO with MYCOMPANY_MYPLUGIN
 echo 'converting constants...'
-find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${old_constant}|${new_constant}|g"
-
-
-#replace module names
-echo 'converting modules...'
-find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${old_module_name}|${new_module_name}|g"
-
-
-#replace class names
-#change class names
-echo 'converting classes...'
-find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${old_class}|${new_class}|g"
-find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${old_class_cap}|${new_class_cap}|g"
+find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${SIMPLI_HELLO}|${MYCOMPANY_MYPLUGIN}|g"
 
 
 
+#########################
+# Class Namespaces
+#########################
+# replace Simpli_Hello_ with Mycompany_Myplugin
+echo 'converting class namespaces'
+find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${Simpli_Hello}_|${Mycompany_Myplugin}_|g"
 
-#rename files
-mv "${target_dir}"/lib/"${old_class_filename}" "${target_dir}""/lib/${new_class_filename}"
-mv "${target_dir}"/lib/"${old_class_filename}.php" "${target_dir}""/lib/${new_class_filename}.php"
-
-#update any remaining classes or namespaces that match the old suffix
-find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#${old_suffix_cap}_\(.*\)#${new_suffix_cap}_\1#"
 
 
-#replace plugin names
+#########################
+# Cleanup
+#########################
+#replace any remaining references of 'Hello' in plugin.php
+find "${target_dir}/plugin.php" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#${Hello}#${Myplugin}#g"
+
+#########################
+# Doc Block Tokens
+#########################
+#replace documentation tokens in phpdoc blocks
+#todo: limit this only to the non-framework directories
+echo 'converting documentation tokens...' #deletes subpackage references and renames package
+find "${target_dir}""/lib/""${Mycompany}"/"${Myplugin}""/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#@subpackage\\s*${Simpli}${Hello}##"
+find "${target_dir}""/lib/""${Mycompany}"/"${Myplugin}""/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#@package\\s*'SimpliFramework#@package ${Mycompany}${Myplugin}#"
+
+
+
+#########################
+# Plugin Name
+#########################
+#replace 'Simpli Hello' with 'Mycompany Myplugin'
 echo 'converting plugin names...'
 find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${old_plugin_name}|${new_plugin_name}|g"
 
-#replace any remaining references of 'Hello' in plugin.php
-find "${target_dir}/plugin.php" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#${old_suffix_cap}#${new_suffix_cap}#g"
 
-
-#replace javadoc tokens
-echo 'converting javadoc tokens...'
-find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#@package\\s*${old_suffix_cap}#@package ${new_prefix_cap}${new_suffix_cap}#"
-
-
-
-
+#########################
+# Done !
+#########################
 #completed
-echo "Completed! - Your new plugin ${new_plugin_name} is in sub-directory ${target_dir}"
+echo "Completed! - Your new plugin ${new_plugin_name} is in sub-directory ${target_dir}" ;
+
+exit 1 ;

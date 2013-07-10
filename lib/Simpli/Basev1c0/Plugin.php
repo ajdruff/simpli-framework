@@ -101,6 +101,13 @@ class Simpli_Basev1c0_Plugin {
     protected $_text_domain;
 
 
+    /**
+     * Plugin File Path
+     *
+     * @var string
+     */
+    protected $_plugin_file_path;
+
 
 
     /**
@@ -259,7 +266,7 @@ class Simpli_Basev1c0_Plugin {
      * @return object
      */
     public function getLogger() {
-        
+
         if (!isset($this->_logger)) {
             die(__CLASS__ . ' missing Logger dependency.');
         }
@@ -554,7 +561,26 @@ class Simpli_Basev1c0_Plugin {
     }
 
 
+    /**
+     * Get Plugin File Path
+     *
+     * @param none
+     * @return string
+     */
+    public function getFilePath() {
+        return $this->_plugin_file_path;
+    }
 
+    /**
+     * Set Plugin File Path
+     *
+     * @param string $something
+     * @return object $this
+     */
+    public function setFilePath($plugin_file_path) {
+        $this->_plugin_file_path = $plugin_file_path;
+        return $this;
+    }
 
 
 
@@ -582,13 +608,12 @@ class Simpli_Basev1c0_Plugin {
          * Tell debugger plugin and class library loaded
          *
          */
-        $this->getLogger()->log($this->getSlug() . ': Initialized Plugin ');
+        $this->getLogger()->log($this->getSlug() . ': Initializing Plugin ');
         $this->getLogger()->log($this->getSlug() . ': Loaded Base Class Library '  . ' from ' . dirname(__FILE__));
 
         $modules = $this->getModules();
 
         foreach ($modules as $module) {
-
 
             $module->init();
         }
@@ -629,7 +654,7 @@ class Simpli_Basev1c0_Plugin {
     public function loadModule($module) {
 
 
-        $this->getLogger()->log($this->getSlug() . ': Loading Module ' . $module );
+        $this->getLogger()->log($this->getSlug() . ': Loading Module ' . $module . ' from ' . __FILE__ );
 
         $module_full = 'Module\\' . $module;  # Admin
         $filename = str_replace('\\', '/', $module);

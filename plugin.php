@@ -6,6 +6,7 @@
   Description:   The Simpli Hello plugin is a demonstration plugin to be used as a template for WordPress plugin developers. The Simpli framework is a WordPress Plugin Framework to help developers build WordPress plugins.
   Author:        Andrew Druffner
   Version:       1.0.1
+  Framework Version: Simpli Framework v1c1
   Author URI:    http://simpliwp/about
 
   Text Domain:   simpli-hello
@@ -71,7 +72,7 @@ $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include u
 
 
 //(optional)
-$simpli_hello->getLogger()->setLoggingOn(false); //Set to true to dump debugging logs to javascript console and to the error log.
+$simpli_hello->getLogger()->setLoggingOn(true); //Set to true to dump debugging logs to javascript console and to the error log.
 
 
 
@@ -105,3 +106,12 @@ $simpli_hello->init();
  *
  */
 register_activation_hook(__FILE__, array($simpli_hello, 'install'));
+
+
+     function simpli_hello_plugin_action_links($links) {
+        echo 'firing action links';
+        //$links[] = 'Framework Version:' . $this->getPlugin()->getFrameworkVersion();
+        $links['Wow'] = '<a href="#">This is a link</a>';
+        return $links;
+    }
+

@@ -56,12 +56,18 @@ class Simpli_Framework {
         spl_autoload_register('self::autoloader');
 
         /*
-         * derive namesspace from the plugin slug and use it to instantiate the plugin
+         * derive namespace from the plugin slug and use it to instantiate the plugin
          */
         $plugin_class = self::getClassNamespace() . '_Plugin';
         $plugin = new $plugin_class();
 
         $plugin->setSlug(self::getPluginSlug());
+        $plugin->setFrameworkVersion($base_class_version);
+        $plugin->setFilePath($plugin_file_path);
+
+
+
+
 
         return ($plugin);
     }
@@ -125,6 +131,7 @@ class Simpli_Framework {
      */
     public function setPluginFilePath($plugin_file_path) {
         self::$_plugin_file_path = $plugin_file_path;
+
     }
 
     /**

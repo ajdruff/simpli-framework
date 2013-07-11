@@ -172,8 +172,12 @@ Mycompany_Myplugin="${Mycompany}""_""${Myplugin}"
 
 
 #Plugin Name
-old_plugin_name="${simpli^} ${Hello}" # Simpli Hello
-new_plugin_name="${mycompany^} ${Myplugin}" # Mycompany Myplugin
+old_plugin_name="${Simpli}"" ""${Hello}" # Simpli Hello
+new_plugin_name="${Mycompany}"" ""${Myplugin}" # Mycompany Myplugin
+
+
+#echo "new_plugin_name=""${new_plugin_name}";exit 1;
+
 
 #WordPress Plugin Info Header
 #must escape forward slashes with triple slashes . In HEREDOC, must also continue to the next line by adding a backslash
@@ -230,10 +234,10 @@ fi
 
 
 
+
 #############
 # Main
 #############
-
 
 
 
@@ -270,6 +274,31 @@ rm  "${target_dir}"/*.html
 
 #remove scripts since scripts should only be included in the framework
 rm  "${target_dir}"/*.sh
+
+#############
+# start testing
+#############
+ #returns the plugins version number
+#framework_version=$( sed -n -e 's/Version:\([.0-9]*\)/\1/p' "${target_dir}/plugin.php")
+#framework_version=`echo $framework_version` #trims result of any whitespaces
+
+#echo "framework version = |""${framework_version}"
+
+#exit 1;
+
+#############
+# end testing
+#############
+
+
+#################
+#
+# Framework Version
+#
+#################
+#returns the plugins version number
+framework_version=$( sed -n -e 's/Version:\([.0-9]*\)/\1/p' "${target_dir}/plugin.php")
+framework_version=`echo $framework_version` #trims result of any whitespaces
 
 
 
@@ -332,18 +361,13 @@ find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -
 
 
 
-#########################
-# Cleanup
-#########################
-#replace any remaining references of 'Hello' in plugin.php
-find "${target_dir}/plugin.php" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#${Hello}#${Myplugin}#g"
 
 #########################
 # Doc Block Tokens
 #########################
 #replace documentation tokens in phpdoc blocks
 #todo: limit this only to the non-framework directories
-echo 'converting documentation tokens...' #deletes subpackage references and renames package
+echo 'converting doc block tokens ...' #deletes subpackage references and renames package
 find "${target_dir}""/lib/""${Mycompany}"/"${Myplugin}""/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#@subpackage\\s*${Simpli}${Hello}##"
 find "${target_dir}""/lib/""${Mycompany}"/"${Myplugin}""/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#@package\\s*'SimpliFramework#@package ${Mycompany}${Myplugin}#"
 
@@ -352,9 +376,27 @@ find "${target_dir}""/lib/""${Mycompany}"/"${Myplugin}""/" -not -regex "${exclud
 #########################
 # Plugin Name
 #########################
+
+#echo 'stopping before plugin replacements so you can look at it' ; exit 1;
 #replace 'Simpli Hello' with 'Mycompany Myplugin'
 echo 'converting plugin names...'
 find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${old_plugin_name}|${new_plugin_name}|g"
+
+
+
+#########################
+# Framework Version
+#########################
+
+
+
+
+#replace Framework Version placeholder with version number
+echo "Adding Framework Version Number"
+find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|__SIMPLI_FRAMEWORK_VERSION__|${framework_version}|g"
+
+
+
 
 
 #########################

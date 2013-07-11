@@ -26,7 +26,7 @@ To add a metabox, you must add the do_metaboxes line as in the examples below, a
 ?>
 	<div id="poststuff" class="columns metabox-holder">
 		<div class="postbox-container column-primary">
-<?php do_meta_boxes('toplevel_page_' . $this->getPlugin()->getSlug(). '_' .  $this->moduleSlug .'_group1', 'main', $this); ?>
+<?php do_meta_boxes('toplevel_page_' . $this->getPlugin()->getSlug(). '_' .  $this->getSlug() .'_group1', 'main', $this); ?>
 		</div>
 
 

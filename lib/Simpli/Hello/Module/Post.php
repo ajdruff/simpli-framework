@@ -6,7 +6,7 @@
  * Adds settings to the edit post screen.
  *
  * @author Mike Ems
- * @package SimpliFramework 
+ * @package SimpliFramework
  * @subpackage SimpliHello
  *
  */
@@ -39,7 +39,12 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function init() {
-
+        /*
+         * Module base class requires
+         * setting Name first, then slug
+         */
+        $this->setName();
+        $this->setSlug();
 
         // Save custom post data
         add_action('save_post', array(&$this, 'post_save'));
@@ -51,7 +56,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
             add_action('admin_init', array(&$this, 'loadPostOptions')); //wp hook is not reliable on edit post page.
         }
 
-
+          $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName());
         // global $post;
     }
 

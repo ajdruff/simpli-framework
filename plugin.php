@@ -3,10 +3,9 @@
 /**
   Plugin Name:   Simpli Hello
   Plugin URI:    http://simpliwp/simpli-framework
-  Description:   The Simpli Hello plugin is a demonstration plugin to be used as a template for WordPress plugin developers. The Simpli framework is a WordPress Plugin Framework to help developers build WordPress plugins.
+  Description:   The Simpli Hello plugin is a template for WordPress plugin developers to create WordPress plugins using the Simpli Framework. The Simpli framework is a WordPress Plugin Framework that makes building object oriented WordPress plugins just a bit easier.
   Author:        Andrew Druffner
-  Version:       1.0.1
-  Framework Version: Simpli Framework v1c1
+  Version:       1.0.2
   Author URI:    http://simpliwp/about
 
   Text Domain:   simpli-hello
@@ -108,10 +107,4 @@ $simpli_hello->init();
 register_activation_hook(__FILE__, array($simpli_hello, 'install'));
 
 
-     function simpli_hello_plugin_action_links($links) {
-        echo 'firing action links';
-        //$links[] = 'Framework Version:' . $this->getPlugin()->getFrameworkVersion();
-        $links['Wow'] = '<a href="#">This is a link</a>';
-        return $links;
-    }
 

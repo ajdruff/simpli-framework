@@ -62,7 +62,7 @@ class Simpli_Framework {
         $plugin = new $plugin_class();
 
         $plugin->setSlug(self::getPluginSlug());
-        $plugin->setFrameworkVersion($base_class_version);
+        $plugin->setBaseClassVersion($base_class_version);
         $plugin->setFilePath($plugin_file_path);
 
 

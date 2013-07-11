@@ -12,8 +12,6 @@
  */
 class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 
-    private $moduleName;
-    private $moduleSlug;
 
     /**
      * Initialize Module
@@ -22,29 +20,12 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function init() {
-
-
         /*
-         *
-         * Set the Module Name based on the name of this file
-         * for MyModule.php , moduleName=MyModule
-         *
+         * Module base class requires
+         * setting Name first, then slug
          */
-
-
-        $this->moduleName = basename(__FILE__, ".php");
-
-        /*
-         * Create an equivilent 'module slug' that is the module name but lower cased and separated by underscores
-         * for for MyModule.php , moduleName=MyModule , moduleSlug='my_module'
-         * http://stackoverflow.com/q/8611617
-         */
-        $regex = '/(?<!^)((?<![[:upper:]])[[:upper:]]|[[:upper:]](?![[:upper:]]))/';
-        $this->moduleSlug = strtolower(preg_replace($regex, '_$1', $this->moduleName));
-
-
-
-
+        $this->setName();
+        $this->setSlug();
 
 
 
@@ -68,7 +49,7 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-
+ $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName());
 
 
     }

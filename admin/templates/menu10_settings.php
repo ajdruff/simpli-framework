@@ -36,10 +36,10 @@ To add a metabox, you must add the do_metaboxes line as in the examples below, a
 ?>
 	<div id="poststuff" class="columns metabox-holder">
 		<div class="postbox-container column-primary">
-<?php do_meta_boxes('toplevel_page_' . $this->getPlugin()->getSlug(). '_' . $this->moduleSlug . '_group1', 'main', $this); ?>
+<?php do_meta_boxes('toplevel_page_' . $this->getPlugin()->getSlug(). '_' . $this->getSlug() . '_group1', 'main', $this); ?>
 		</div>
 		<div class="postbox-container column-secondary">
-<?php do_meta_boxes('toplevel_page_' . $this->getPlugin()->getSlug(). '_' . $this->moduleSlug . '_group1', 'side', $this); ?>
+<?php do_meta_boxes('toplevel_page_' . $this->getPlugin()->getSlug(). '_' . $this->getSlug() . '_group1', 'side', $this); ?>
 		</div>
 
             </div>
@@ -52,7 +52,7 @@ To add a metabox, you must add the do_metaboxes line as in the examples below, a
 
 		<div class="postbox-container column-secondary">
                     <?php // these are all the boxes on the right side  ?>
-<?php do_meta_boxes('toplevel_page_' . $this->getPlugin()->getSlug(). '_' . $this->moduleSlug . '_group2', 'side', $this); ?>
+<?php do_meta_boxes('toplevel_page_' . $this->getPlugin()->getSlug(). '_' . $this->getSlug() . '_group2', 'side', $this); ?>
 		</div>
 	</div>
 

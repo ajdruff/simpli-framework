@@ -62,7 +62,7 @@ class Simpli_Basev1c0_Plugin {
     /**
      * Plugin Slug
      *
-     * Used as a unqiue identifier for the plugin.
+     * Used as a unique identifier for the plugin.
      *
      * @var string
      */
@@ -84,7 +84,6 @@ class Simpli_Basev1c0_Plugin {
      */
     protected $_version;
 
-
     /**
      * Framwork Version
      *
@@ -92,6 +91,12 @@ class Simpli_Basev1c0_Plugin {
      */
     protected $_framework_version;
 
+    /**
+     * Base Class Version
+     *
+     * @var string
+     */
+    protected $_base_class_version;
 
     /**
      * Text Domain
@@ -100,15 +105,12 @@ class Simpli_Basev1c0_Plugin {
      */
     protected $_text_domain;
 
-
     /**
      * Plugin File Path
      *
      * @var string
      */
     protected $_plugin_file_path;
-
-
 
     /**
      * Constructor
@@ -118,8 +120,14 @@ class Simpli_Basev1c0_Plugin {
      */
     public function __construct() {
 
+        /*
+         *
+         * Set Logger dependency
+         *
+         */
 
-        $this->setLogger(Simpli_Basev1c0_Logger::getInstance());
+     $this->setLogger(Simpli_Basev1c0_Logger::getInstance());
+
 
         return $this;
     }
@@ -482,26 +490,76 @@ class Simpli_Basev1c0_Plugin {
         return $this->_version;
     }
 
-
-      /**
+    /**
      * Set Simpli Base Class Version
      *
      * @param string $version
      * @return object $this
      */
-    public function setFrameworkVersion($version) {
-        $this->_framework_version = $version;
+    public function setBaseClassVersion($version) {
+        $this->_base_class_version = $version;
+
         return $this;
     }
 
     /**
      * Get Simpli Base Class Version
      *
+     * Set by the Simpli_Framework load method when loading the plugin
+     * @param none
+     * @return string
+     */
+    public function getBaseClassVersion($flags = null) {
+
+        $version = $this->_base_class_version;
+
+
+
+        if (is_null($flags)) {
+
+            $version = str_replace('v', '', $version);
+            $version = str_replace('c', '.', $version);
+        }
+
+        return $version;
+    }
+
+    /**
+     * Get Framework Version
+     *
      * @param none
      * @return string
      */
     public function getFrameworkVersion() {
-        return $this->_framework_version;
+
+        $version = null;
+
+        /*
+         * Since the framework is distributed as a plugin,
+         * the framework's version *is* the version of the Simpli Framework plugin.
+         * So check if the plugin *is* the framework. if it is, just
+         * use the version of the plugin as the framework version
+         */
+        $plugin_file = plugin_basename($this->getFilePath());
+        //   echo '<br> $plugin_file =  ' . $plugin_file;
+        //   echo '<br> FilePath = ' .$this->getFilePath();
+        if (strpos($plugin_file, 'simpli-framework') !== false) { //if the plugin is teh framework...
+            //   echo 'this is the simpli framework plugin';
+            $plugin_data = get_plugin_data($this->getFilePath());
+            $version = $plugin_data['Version'];
+        } else {
+            /*
+             * If viewing this function's source in a plugin that was created by the
+             * Framework's make script, you will see a version number below which was put there by the framework's make script.
+             * The make script replaced a placeholder
+             * with the version number of the Framework that the script used to build the plugin.
+             * If viewing the source from within the Simpli Framework  plugin, you'll see
+             * the SIMPLI_FRAMEWORK_VERSION  placeholder instead.
+             */
+            $version = "__SIMPLI_FRAMEWORK_VERSION__";
+        }
+
+        return $version;
     }
 
     /**
@@ -517,17 +575,16 @@ class Simpli_Basev1c0_Plugin {
          * just Title Case each word
          */
 
-        $array_class=explode('_',$this->getSlug());
-        $namespace=ucwords($array_class[0]) .'_' .ucwords($array_class[1]);
+        $array_class = explode('_', $this->getSlug());
+        $namespace = ucwords($array_class[0]) . '_' . ucwords($array_class[1]);
         return $namespace;
     }
 
-
-     /**
+    /**
      * Get Class Namespace Parts (Read Only)
      *
      * Returns and array of the class namespace parts
-      *
+     *
      * @param none
      * @return string
      */
@@ -536,8 +593,6 @@ class Simpli_Basev1c0_Plugin {
 
         return explode('_', $this->getClassNamespace());
     }
-
-
 
     /**
      * Get Text Domain
@@ -560,7 +615,6 @@ class Simpli_Basev1c0_Plugin {
         return $this;
     }
 
-
     /**
      * Get Plugin File Path
      *
@@ -582,25 +636,65 @@ class Simpli_Basev1c0_Plugin {
         return $this;
     }
 
-
-
     /**
      * Init
      *
-     * Initializes all of the modules.
+     * Performs basic housekeeping tasks and initializes all modules
      *
      * @param none
      * @return $this
      */
-
-
-
-
-
     public function init() {
 
 
 
+
+        /*
+         * Load the text domain
+         * ref: http://codex.wordpress.org/Function_Reference/load_plugin_textdomain
+         */
+        load_plugin_textdomain($this->getTextDomain(), false, dirname(plugin_basename($this->getFilePath())) . '/languages/');
+
+
+
+        /*
+         * set the directory of the Plugin          *
+         */
+
+
+
+        $this->setDirectory(dirname($this->getFilePath())); //e.g.: /home/username/public_html/wp-content/plugins/simpli-framework
+
+        /*
+         * set the Module Directory
+         *         */
+
+        $class_namespace_parts = $this->getClassNamespaceParts();
+
+
+
+        $this->setModuleDirectory($this->getDirectory() . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . $class_namespace_parts[0] . DIRECTORY_SEPARATOR . $class_namespace_parts[1] . DIRECTORY_SEPARATOR . 'Module' . DIRECTORY_SEPARATOR); //e.g. /home/username/public_html/wp-content/plugins/simpli-framework/lib/simpli/hello/Module/
+
+        $this->getLogger()->log($this->getSlug() . ': Plugin Directory: ' . $this->getDirectory());
+        $this->getLogger()->log($this->getSlug() . ': Module Directory: ' . $this->getModuleDirectory());
+        /*
+         * Set the Plugin Url
+         */
+
+        $this->setPluginUrl(plugins_url('', $this->getDirectory() . '/plugin.php'));
+
+        $this->getLogger()->log($this->getSlug() . ': Plugin URL: ' . $this->getPluginUrl());
+
+        /**
+         * Load Settings
+         */
+        $this->loadSettings();
+        $this->getLogger()->log($this->getSlug() . ': Loading Settings ');
+
+        /**
+         * Load Modules
+         */
+        $this->loadModules(array(),'/menu|admin/s');
 
 
         /*
@@ -609,7 +703,7 @@ class Simpli_Basev1c0_Plugin {
          *
          */
         $this->getLogger()->log($this->getSlug() . ': Initializing Plugin ');
-        $this->getLogger()->log($this->getSlug() . ': Loaded Base Class Library '  . ' from ' . dirname(__FILE__));
+        $this->getLogger()->log($this->getSlug() . ': Loaded Base Class Library ' . ' from ' . dirname(__FILE__));
 
         $modules = $this->getModules();
 
@@ -654,7 +748,7 @@ class Simpli_Basev1c0_Plugin {
     public function loadModule($module) {
 
 
-        $this->getLogger()->log($this->getSlug() . ': Loading Module ' . $module . ' from ' . __FILE__ );
+        $this->getLogger()->log($this->getSlug() . ': Loading Module ' . $module . ' from ' . __FILE__);
 
         $module_full = 'Module\\' . $module;  # Admin
         $filename = str_replace('\\', '/', $module);
@@ -689,15 +783,18 @@ class Simpli_Basev1c0_Plugin {
         return $this;
     }
 
-    /**
+
+       /**
      * Load Modules
      *
      * Load specified modules. If no modules are specified, all modules are loaded.
-     *
+     * @author Andrew Druffner
      * @param array $modules
+     * @param string $exclusion_regex Regex pattern in the form '/menu|admin/s' to exclude modules from loading
      * @return $this
      */
-    public function loadModules($modules = array()) {
+
+       public function loadModules($modules = array(),$exclusion_regex='') {
 
 
 
@@ -707,15 +804,25 @@ class Simpli_Basev1c0_Plugin {
 
         foreach ($modules as $module) {
 
-//            //if disable is true, and its not a menu, skip loading the module
-//            if (true) {
-//                if (str_pos(strtolower($module), 'menu') === false) {
-//                    continue;
-//                }
-//            }
+            //if plugin was disabled in settings, load only those modules
+            //with menu or admin in their name. that way we can still
+            // configure the plugin but the rest of the plugins functionality
+            // is disabled.
+            if ($this->getSetting('plugin_enabled') == 'disabled') {
+                $haystack = strtolower($module);
+
+                if (preg_match_all($exclusion_regex, $haystack, $matches) < 1) {
+
+                    // Skip Module
+                    continue;
+                }
+            }
 
             $this->loadModule($module);
         }
+
+//        echo 'plugin_enabled setting = ' ;
+//print_r($this->getSettings());
         return $this;
     }
 

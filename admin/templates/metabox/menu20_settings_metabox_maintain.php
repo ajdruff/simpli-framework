@@ -20,7 +20,6 @@ $form_name="settings_enabled";
 
 
         <tr valign="top" id="plugin_enabled_row">
-            <th scope="row"><?php _e('Enable Plugin',$this->getPlugin()->getTextDomain()); ?></th>
              <th scope="row"><?php _e('Enable Plugin',$this->getPlugin()->getTextDomain()); ?></th>
             <td>
                 <fieldset>
@@ -49,7 +48,7 @@ $form_name="settings_enabled";
                 </fieldset>
             </td>
         </tr>
- 
+
 
     </table>
 
@@ -82,6 +81,10 @@ $form_name="settings_enabled";
 
 
     </p>
+
+    <p><strong>Reset</strong> will reset the settings in this metabox to their defaults.</p>
+<p><strong>Reset All </strong> will reset <em>all settings</em> for the plugin to their defaults when first installed.</p>
+<p><strong>Update All Settings </strong> will retain any existing setting values, but will add any new settings and their defaults that may have been manually added by editing the plugins source code in the Plugin class. </p>
 </form>
 <script type="text/javascript">
     jQuery(document).ready(function($) {

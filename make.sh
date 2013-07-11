@@ -306,10 +306,18 @@ framework_version=`echo $framework_version` #trims result of any whitespaces
 # Directory Structure
 #########################
 #rename files
+
 #rename Simpli/Hello to Mycompany/Myplugin
-mkdir -p "${target_dir}""/lib/""${Mycompany}"; # make the new directories first
-mv "${target_dir}"/lib/"${Simpli}"/"${Hello}" "${target_dir}"/lib/"${Mycompany}"/
-mv "${target_dir}"/lib/"${Mycompany}"/"${Hello}" "${target_dir}"/lib/"${Mycompany}"/"${Myplugin}"
+
+# make the new directories first
+mkdir -p "${target_dir}""/lib/""${Mycompany}";
+#move the company directory
+mv "${target_dir}""/lib/""${Simpli}""/""${Hello}" "${target_dir}""/lib/""${Mycompany}"
+wait
+#now rename the hello directory
+mv "${target_dir}""/lib/""${Mycompany}""/""${Hello}" "${target_dir}""/lib/""${Mycompany}""/""${Myplugin}"
+
+
 #########################
 #replace WordPress Header
 #########################
@@ -393,7 +401,7 @@ find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -
 
 #replace Framework Version placeholder with version number
 echo "Adding Framework Version Number"
-find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|__SIMPLI_FRAMEWORK_VERSION__|${framework_version}|g"
+find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|\"__SIMPLI_FRAMEWORK_VERSION__\"|\"${framework_version}\"|g"
 
 
 

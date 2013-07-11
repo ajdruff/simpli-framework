@@ -65,7 +65,7 @@ add_submenu_page(
                 , 'Advanced' // menu title
                 , 'manage_options'  // capability
                 , $this->getPlugin()->getSlug() . '_' .$this->getSlug()  // menu slug
-                , array($this->getPlugin()->getModule('Menu20Settings'), 'dispatch') //function that provides the html. You will receive a 'Module not found' error if the name doesnt match any class names in the Module directory
+                , array($this, 'dispatch') //function that provides the html. You will receive a 'Module not found' error if the name doesnt match any class names in the Module directory
         );
 
 

@@ -69,9 +69,9 @@ parent::init();
                 $this->getPlugin()->getName() . ' - General Settings' // page title
                 , $this->getPlugin()->getName() // menu title
                 , 'manage_options'  // capability
-                , $this->getPlugin()->getSlug() . '_' . $this->getSlug()  //
+                , $this->getPlugin()->getSlug() . '_' . $this->getSlug()  // menu slug
                 // , array($this->getPlugin()->getModule($this->getName()), 'dispatch') //function
-                , array($this->getPlugin()->getModule('Menu10Settings'), 'dispatch') //function to display the html
+                , array($this, 'dispatch') //function to display the html
                 , $this->getPlugin()->getPluginUrl() . '/admin/images/menu.png' // icon url
                 , $this->getPlugin()->getModule('Admin')->getMenuPosition() //position in the menu
         );
@@ -91,7 +91,7 @@ parent::init();
                 , 'General Settings' // menu title
                 , 'manage_options'  // capability
                 , $this->getPlugin()->getSlug() . '_menu10_settings'  // make sure this is the same slug as the main menu so it overwrites the main menus submenu title
-                , array($this->getPlugin()->getModule('Menu10Settings'), 'dispatch') //function to display the html
+                , array($this, 'dispatch') //function to display the html
         );
     }
 
@@ -108,13 +108,17 @@ parent::init();
 
         add_meta_box(
                 $this->getPlugin()->getSlug() . '_general'  //HTML id attribute of metabox
-                , __('Basic Setup', $this->getPlugin()->getSlug()) //title of the metabox.
+                , __('Example Settings Metabox', $this->getPlugin()->getSlug()) //title of the metabox.
                 , array($this->getPlugin()->getModule('Admin'), 'meta_box_render') //function that prints the html
                 , 'toplevel_page_' . $this->getPlugin()->getSlug() . '_' . $this->getSlug() . '_group1' //the post type to show the metabox
                 , 'main' //normal advanced or side The part of the page where the metabox should show
                 , 'high' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                 , array('metabox' => $this->getSlug() . '_metabox_general') //callback arguments.  'metabox' is the folder,  'settings_sub_menu_example_metabox1' is the template file
         );
+
+
+
+
 
 
         add_meta_box(
@@ -189,7 +193,7 @@ parent::init();
 
 
         //dont show if you are not on the main menu ( general settings )
-        if (isset($_GET['page']) && $_GET['page'] != 'simpli-hello_menu10_settings') {
+        if (isset($_GET['page']) && $_GET['page'] !== $this->getPlugin()->getSlug() . '_' . $this->getSlug()) {
             return;
         }
 

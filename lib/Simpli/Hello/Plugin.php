@@ -28,18 +28,27 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
     {
 
        $default_settings= array(
-            /*
-             *
-             * General Settings
-             *
-             */
-            'first_name' => 'Default First Name'       //
-            , 'last_name' => 'Last Name'  //
-            , 'option_checkbox' => array('table' => 'no', 'chair' => 'yes') //
-            , 'option_radio' => 'no'
-            , 'admin_menu_side' => 'side'
-            , 'option_select' => 'blue'
-            , 'test_array' => array('first' => 'first_element', 'second' => 'second_element')
+
+           /*
+            *
+            * Defaults for Example Settings in 'Example Settings Metabox'
+            *
+            */
+
+           'checkbox_setting' =>
+           array(
+               'yellow' => 'no'
+               ,'red' => 'yes'
+                ,'orange' => 'yes'
+                ,'blue' => 'yes'
+               )
+
+           ,'dropdown_setting' => 'orange'
+
+           ,'text_setting'=>'Joe Smith'
+
+           ,'radio_setting'=>'yes'
+
             /*
              *
              * Advanced Settings

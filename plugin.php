@@ -44,24 +44,21 @@
  * Add framework bootstrapping code
  */
 
-require(dirname(__FILE__) . '/lib/Simpli/Base/Framework.php');
+require(dirname(__FILE__) . '/lib/Simpli/Framework.php');
 
 /*
  * Create the Plugin Object
  *
- * Usage: Simpli_Framework::load($plugin_slug, $plugin_file_path, $base_class_version)
+ * Usage: Simpli_Framework::load($plugin_slug, $plugin_file_path)
  *
  * must only be called from within this file
  * $plugin_slug must be universally unique, and consist of 2 lowercase words separated by an underscore
  * $plugin_file_path should always be __FILE__
- * $base_class_version must match the name of the 'vXcY' part of the Simpli/BasevXcY directory name and generally should remain unchanged
  */
 
 
 $simpli_hello = Simpli_Framework::load('simpli_hello', __FILE__);
 
-
-$simpli_hello = Simpli_Framework::load('simpli_hello', __FILE__);
 
 
 /*

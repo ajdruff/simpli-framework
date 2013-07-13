@@ -23,7 +23,7 @@ class Simpli_Basev1c0_Loader {
      *
      * @var string
      */
-    private static $_base_class_version;
+    private  $_base_class_version;
 
     /**
      * Plugin Name
@@ -32,7 +32,7 @@ class Simpli_Basev1c0_Loader {
      *
      * @var string
      */
-    private static $_plugin_slug;
+    private  $_plugin_slug;
 
     /**
      * Plugin File Path
@@ -41,13 +41,13 @@ class Simpli_Basev1c0_Loader {
      *
      * @var string
      */
-    private static $_plugin_file_path;
+    private  $_plugin_file_path;
 
-    public static function load($plugin_slug, $plugin_file_path,$version) {
+    public  function load($plugin_slug, $plugin_file_path,$base_class_version) {
 
 
 
-        self::setBaseClassVersion( $version);
+        $this->setBaseClassVersion( $base_class_version);
 
 
 
@@ -55,22 +55,21 @@ class Simpli_Basev1c0_Loader {
          * Set the plugin slug and file path properties
          */
 
-        self::setPluginSlug($plugin_slug);
-        self::setPluginFilePath($plugin_file_path);
+        $this->setPluginSlug($plugin_slug);
+        $this->setPluginFilePath($plugin_file_path);
 
 
         /*
          * Register the class autoloader to point to this class's autoloader method
          */
 
-        spl_autoload_register(array(__CLASS__, 'autoloader')); /* cant use self here since it will fail for some reason if you have different versions later */
-
+        spl_autoload_register(array($this, 'autoloader'));
 
         /*
          * Create the Plugin object
          * getClassNamespace() simply derives the namespace from the plugin slug that was passed to this method
          */
-        $plugin_class = self::getClassNamespace() . '_Plugin';
+        $plugin_class = $this->getClassNamespace() . '_Plugin';
         $plugin = new $plugin_class();
 
 
@@ -78,8 +77,8 @@ class Simpli_Basev1c0_Loader {
          * Set the properties of the new plugin object
          */
 
-        $plugin->setSlug(self::getPluginSlug());
-        $plugin->setBaseClassVersion(self::getBaseClassVersion());
+        $plugin->setSlug($this->getPluginSlug());
+        $plugin->setBaseClassVersion($this->getBaseClassVersion());
         $plugin->setFilePath($plugin_file_path);
 
 
@@ -95,8 +94,8 @@ class Simpli_Basev1c0_Loader {
      * @param string $base_class_version
      * @return void;
      */
-    private static function setBaseClassVersion($base_class_version) {
-        self::$_base_class_version = $base_class_version;
+    private  function setBaseClassVersion($base_class_version) {
+        $this->_base_class_version = $base_class_version;
     }
 
     /**
@@ -105,12 +104,12 @@ class Simpli_Basev1c0_Loader {
      * @param none
      * @return string
      */
-    private static function getBaseClassVersion($template=null) {
-        //return self::$_base_class_version;
+    private  function getBaseClassVersion($template=null) {
+        //return $this->_base_class_version;
 
 
 
-                $version = self::$_base_class_version;
+                $version = $this->_base_class_version;
 
 
 
@@ -135,9 +134,9 @@ class Simpli_Basev1c0_Loader {
      * @param string $plugin_slug
      * @return void;
      */
-    private static function setPluginSlug($plugin_slug) {
+    private  function setPluginSlug($plugin_slug) {
 
-        self::$_plugin_slug = strtolower($plugin_slug);
+        $this->_plugin_slug = strtolower($plugin_slug);
     }
 
     /**
@@ -146,8 +145,8 @@ class Simpli_Basev1c0_Loader {
      * @param none
      * @return string
      */
-    private static function getPluginSlug() {
-        return self::$_plugin_slug;
+    private  function getPluginSlug() {
+        return $this->_plugin_slug;
     }
 
     /**
@@ -157,7 +156,7 @@ class Simpli_Basev1c0_Loader {
      * @return string
      */
     public function getPluginFilePath() {
-        return self::$_plugin_file_path;
+        return $this->_plugin_file_path;
     }
 
     /**
@@ -167,7 +166,7 @@ class Simpli_Basev1c0_Loader {
      * @return void
      */
     public function setPluginFilePath($plugin_file_path) {
-        self::$_plugin_file_path = $plugin_file_path;
+        $this->_plugin_file_path = $plugin_file_path;
     }
 
     /**
@@ -184,7 +183,7 @@ class Simpli_Basev1c0_Loader {
          *
          */
 
-        $namespace = self::getPluginSlug();
+        $namespace = $this->getPluginSlug();
 
         /*
          * Convert to Title Case 'Simpli_Hello'
@@ -202,12 +201,12 @@ class Simpli_Basev1c0_Loader {
      * @param string $class
      * @return void;
      */
-    public static function autoloader($class) { //e.g. class= 'Simpli_Hello_Plugin'
+    public  function autoloader($class) { //e.g. class= 'Simpli_Hello_Plugin'
 
 
         $namespaces = array(
-            'Simpli_Base' . self::getBaseClassVersion('v{major}c{minor}')
-            , self::getClassNamespace()
+            'Simpli_Base' . $this->getBaseClassVersion('v{major}c{minor}')
+            , $this->getClassNamespace()
         );
 
 //    echo '<pre>';
@@ -223,7 +222,7 @@ class Simpli_Basev1c0_Loader {
             $filename = array_pop($matches) . '.php'; // get the last part of $class and use it as the name of the file
             $subdirectory_path = implode(DIRECTORY_SEPARATOR, $matches); // each part of the remaining string is the name of a subdirectory
 // do not use the slower 'require_once' since autoload tracks loading. no use of DIRECTORY_SEPARATOR since require will translate
-            require dirname(self::getPluginFilePath()) . '/lib/' . $subdirectory_path . '/' . $filename;
+            require dirname($this->getPluginFilePath()) . '/lib/' . $subdirectory_path . '/' . $filename;
         }
     }
 

@@ -29,7 +29,6 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-
         /*
          * add scripts
          *  */
@@ -71,7 +70,7 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 //            add_thickbox();
 //        }
         $handle = $this->getPlugin()->getSlug() . '_core.js';
-        $src = $this->getPlugin()->getPluginUrl() . '/lib/'.SIMPLI_HELLO_SHORTNAME.'/js/' . $this->getPlugin()->getSlug() . '_core.js';
+        $src = $this->getPlugin()->getPluginUrl() . '/js/' . $this->getPlugin()->getSlug() . '_core.js';
         $deps = 'jquery';
         $ver = '1.0';
         $in_footer = false;

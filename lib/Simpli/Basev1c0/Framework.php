@@ -5,11 +5,10 @@
  *
  * This class is a simple wrapper around the versioned base loader. So as
  * to keep the api as simple as possible, any complexity should be pushed
- * to the base loader, to preven the need to version this class.
+ * to the base loader, to prevent the need to version this class.
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * @subpackage SimpliBase
  */
 // Check that the class exists before trying to use it
 if (class_exists('Simpli_Framework')) {
@@ -20,13 +19,6 @@ class Simpli_Framework {
 
     public static function load($plugin_slug, $plugin_file_path) {
 
-        /*
-         * require the base loader so we can use it to bootstrap the base classes
-         */
-
-        $base_loader_class_path = dirname(__FILE__) . '/Loader.php';
-
-        require($base_loader_class_path);
 
 
         /*
@@ -37,10 +29,10 @@ class Simpli_Framework {
 
         $simpli_data = get_file_data($plugin_file_path, array(), 'simpli');
 
-        $base_class_version = $simpli_data['Simpli Base Class Version'];
+        $base_class_version = $simpli_data['Simpli Base Class Version']; // X.Y
 
         /*
-         * build the base class versioned namespace
+         * build the base class versioned namespace vXcY
          * by adding v and c so we have vXcY
          * for version X.Y
          *
@@ -53,16 +45,29 @@ class Simpli_Framework {
         $template = 'v{major}c{minor}'; //
 
         $template = str_replace('{major}', $major, $template); // vX.Y
-        $base_class_version_namespace = str_replace('{minor}', $minor, $template); // vXcY
+        $vxcy = str_replace('{minor}', $minor, $template); // vXcY
+
+        /*
+         * require the base loader so we can use it to bootstrap the base classes
+         */
+
+        $base_loader_class_path = dirname($plugin_file_path) . '/lib/Simpli/Base' . $vxcy . '/Loader.php';
+
+        require($base_loader_class_path);
 
 
 
 
-        $loader_class = 'Simpli_Base' . $base_class_version_namespace.'_Loader';
-        $loader_class='Simpli_Basev1c0_Loader';
-      //  $plugin = call_user_func(array($loader_class, 'load', $plugin_slug, $plugin_file_path,$base_class_version));
 
-$plugin = Simpli_Basev1c0_loader::load($plugin_slug, $plugin_file_path,$base_class_version);
+
+
+
+        $loader_class = 'Simpli_Base' . $vxcy . '_Loader';
+
+
+        $loader = new $loader_class();
+        $plugin = $loader->load($plugin_slug, $plugin_file_path, $base_class_version);
+
 
 
 

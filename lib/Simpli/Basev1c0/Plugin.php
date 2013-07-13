@@ -1,3 +1,4 @@
+
 <?php
 
 /**
@@ -537,34 +538,13 @@ class Simpli_Basev1c0_Plugin {
      */
     public function getFrameworkVersion() {
 
-        $version = null;
 
-        /*
-         * Since the framework is distributed as a plugin,
-         * the framework's version *is* the version of the Simpli Framework plugin.
-         * So check if the plugin *is* the framework. if it is, just
-         * use the version of the plugin as the framework version
-         */
-        $plugin_file = plugin_basename($this->getFilePath());
-        //   echo '<br> $plugin_file =  ' . $plugin_file;
-        //   echo '<br> FilePath = ' .$this->getFilePath();
-        if (strpos($plugin_file, 'simpli-framework') !== false) { //if the plugin is teh framework...
-            //   echo 'this is the simpli framework plugin';
-            $plugin_data = get_plugin_data($this->getFilePath());
-            $version = $plugin_data['Version'];
-        } else {
-            /*
-             * If viewing this function's source in a plugin that was created by the
-             * Framework's make script, you will see a version number below which was put there by the framework's make script.
-             * The make script replaced a placeholder
-             * with the version number of the Framework that the script used to build the plugin.
-             * If viewing the source from within the Simpli Framework  plugin, you'll see
-             * the SIMPLI_FRAMEWORK_VERSION  placeholder instead.
-             */
-            $version = "__SIMPLI_FRAMEWORK_VERSION__";
-        }
 
-        return $version;
+        $simpli_data = get_file_data($this->getFilePath(), array(), 'simpli');
+
+        $framework_version = $simpli_data['Simpli Framework Version'];
+
+        return $framework_version;
     }
 
     /**

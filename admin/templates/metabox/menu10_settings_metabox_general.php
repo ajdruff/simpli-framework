@@ -1,163 +1,195 @@
 <?php
 #todo: add class functions to handle select,radio, and checkbox markup. use the nstock.common.php code
-
 //must give the form a unique name since there will be multiple forms on the page.
-$form_name="general_settings";
+$form_name = "general_settings";
 
-$option_checkboxes=$this->getPlugin()->getSetting('option_checkbox');
-//print_r($option_checkboxes);
-//echo $option_checkboxes['\'table\''];
-//die();
-#todo: add class functions to handle select,radio, and checkbox markup. use the nstock.common.php code
+
+$checkbox_settings=$this->getPlugin()->getSetting('checkbox_setting');
 
 ?>
-<form name="<?php echo $this->getPlugin()->getSlug(); ?><?php echo '_' . $form_name ; ?>" id="<?php echo $this->getPlugin()->getSlug() . "_$form_name"; ?>" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
-    <?php wp_nonce_field($this->getPlugin()->getSlug()); ?>
+<form name="<?php echo $this->getPlugin()->getSlug(); ?><?php echo '_' . $form_name; ?>" id="<?php echo $this->getPlugin()->getSlug() . "_$form_name"; ?>" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+<?php wp_nonce_field($this->getPlugin()->getSlug()); ?>
     <input type="hidden" name="action" id="action" value="" />
 
+
+
+    <h4 class="title"><?php _e('Radio Button Setting Example', $this->getPlugin()->getSlug()); ?></h4>
+
     <table class="form-table">
-        <tr valign="top" id="first_name_row">
-            <th scope="row"><?php _e('First Name:', $this->getPlugin()->getSlug()); ?></th>
-            <td>
+        <tbody>
 
-                <!-- First and second Options -->
-                <fieldset>
-                    <label for="first_name" id="first_name_label">
-                        <input name="first_name" type="text" id="first_name" class="regular-text code" value="<?php echo $this->getPlugin()->getSetting('first_name'); ?>" />
-                    </label>
-                    <label for="last_name" id="last_name_label"><?php _e('Last Name:', $this->getPlugin()->getSlug()); ?>
-                        <input name="last_name" type="text" id="last_name" class="regular-text" value="<?php echo $this->getPlugin()->getSetting('last_name'); ?>" />
-                    </label>
-                </fieldset>
-            </td>
-        </tr>
+            <tr>
+                <th>
+<?php _e('Do you want this option?', $this->getPlugin()->getSlug()); ?>
 
-        <!-- Options Checkbox Example  -->
-        <tr valign="top" id="option_checkbox_row">
-            <th scope="row"><?php _e('Do you want this option?', $this->getPlugin()->getSlug()); ?></th>
-            <td>
-                <fieldset>
-                    <label for="option_checkbox">
+                </th>
+                <td>
+                    <fieldset>
+                        <label>
+                            <label>
+                                <input type="radio" name="radio_setting" value="yes"  <?php echo (($this->getPlugin()->getSetting('radio_setting') == 'yes') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Yes', $this->getPlugin()->getSlug()); ?></span></label>
 
-                        <input type="checkbox" name="option_checkbox[table]"  id="option_checkbox" value="<?php echo 'yes'; ?>"<?php echo (($option_checkboxes['table'] == 'yes') ?  ' checked="checked"' : ''); ?> >
-
-
-
-
-                        <p class="description">
-                            <?php
-                            printf(
-                                    __(
-                                            'Provide helpful hints on how to complete this option here. You can provide a link  %s here %s if you want', $this->getPlugin()->getSlug()
-                                    ), '<a href="#" target="_blank">', '</a>'
-                            );
-                            ?>
-
-                        </p>
+                            <label>
+                                <input type="radio" name="radio_setting" value="no" <?php echo (($this->getPlugin()->getSetting('radio_setting') == 'no') ? ' checked="checked"' : ''); ?> /> <span><?php _e('No', $this->getPlugin()->getSlug()); ?></span>
                             </label>
-   <label for="option_checkbox[chair]">
-                                                 <p><input type="checkbox" name="option_checkbox[chair]"  id="option_checkbox" value="<?php echo 'yes'; ?>"<?php echo (($option_checkboxes['chair'] == 'yes') ?  ' checked="checked"' : ''); ?> > </p>
-
-                                         <p class="description">
-                            <?php
-                            printf(
-                                    __(
-                                            'Provide helpful hints on how to complete this option here. You can provide a link  %s here %s if you want', $this->getPlugin()->getSlug()
-                                    ), '<a href="#" target="_blank">', '</a>'
-                            );
-                            ?>
-
-                        </p>
-
-                    </label>
-                </fieldset>
-            </td>
-        </tr>
-
-          <!-- Options Radio Buttons  -->
 
 
 
-        <tr valign="top" id="option_radio_row">
-            <th scope="row"><?php _e('Which option would you like to select?', $this->getPlugin()->getSlug()); ?></th>
-            <td>
-                <fieldset>
-                    <label for="option_radio" class="label-radio">
-                        <label class="label-radio">
-                        <input type="radio" name="option_radio" value="yes"  <?php echo (($this->getPlugin()->getSetting('option_radio') == 'yes') ?  ' checked="checked"' : ''); ?> /> <span><?php _e('Yes', $this->getPlugin()->getSlug()); ?></span></label>
-
-                         <label class="label-radio">
-                        <input type="radio" name="option_radio" value="no" <?php echo (($this->getPlugin()->getSetting('option_radio') == 'no') ?  ' checked="checked"' : ''); ?> /> <span><?php _e('No', $this->getPlugin()->getSlug()); ?></span>
-                         </label>
-
-
-                         <label class="label-radio">
-                        <input type="radio" name="option_radio" value="maybe" <?php echo (($this->getPlugin()->getSetting('option_radio') == 'maybe') ?  ' checked="checked"' : ''); ?> /> <span><?php _e('Maybe', $this->getPlugin()->getSlug()); ?></span>
-                    </label>
-
-                    <p class="description">
- <?php
-                            printf(
-                                    __(
-                                            'Provide helpful hints on how to complete this option here. You can provide a link  %s here %s if you want', $this->getPlugin()->getSlug()
-                                    ), '<a href="#" target="_blank">', '</a>'
-                            );
-                            ?></p>
-                              </label>
-                </fieldset>
-            </td>
-        </tr>
-
-            <!-- Option Admin Menu  -->
-
-
-
-        <tr valign="top" id="admin_menu_row">
-            <th scope="row"><?php _e('Admin Menu Location', $this->getPlugin()->getSlug()); ?></th>
-            <td>
-                <fieldset>
-                    <label for="admin_menu_side" class="label-radio">
-                        <input type="radio" name="admin_menu_side" id="admin_menu_side" value="side"<?php echo (($this->getPlugin()->getSetting('admin_menu_side') == 'side') ? ' checked="checked"' : ''); ?>/> <span><?php _e('Sidebar', $this->getPlugin()->getSlug()); ?></span>
-                    </label>
-                    <label for="admin_menu_settings" class="label-radio">
-                        <input type="radio" name="admin_menu_side" id="admin_menu_settings" value="settings"<?php echo (($this->getPlugin()->getSetting('admin_menu_side') == 'settings') ? ' checked="checked"' : ''); ?>/> <span><?php _e('Settings', $this->getPlugin()->getSlug()); ?></span>
-                    </label>
-                </fieldset>
-            </td>
-        </tr>
-         <!-- Option Select Menu  -->
-                <tr valign="top" id="option_radio_row">
-            <th scope="row"><?php _e('Which option would you like to select?', $this->getPlugin()->getSlug()); ?></th>
-            <td>
-                <fieldset>
-                    <label for="option_select" class="label-radio">
-
-                        <select name="option_select" id="option_select">
-
-                            <option value="blue" <?php echo (($this->getPlugin()->getSetting('option_select') == 'blue') ? ' selected="selected"' : ''); ?>>Blue</option>
-                             <option value="orange" <?php echo (($this->getPlugin()->getSetting('option_select') == 'orange') ? ' selected="selected"' : ''); ?>>Orange</option>
-                              <option value="red" <?php echo (($this->getPlugin()->getSetting('option_select') == 'red') ? ' selected="selected"' : ''); ?>>Red</option>
-                               <option value="yellow" <?php echo (($this->getPlugin()->getSetting('option_select') == 'yellow') ? ' selected="selected"' : ''); ?>>Yellow</option>
-                        </select>
+                            <span class="description" style="padding-left:10px;">
+<?php
+printf(
+        __('Provide helpful text here describing this setting or provide a help %s link %s.  ' , $this->getPlugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
+);
+?></span>
                         </label>
-                    <label for="option_select_description" class="label-radio">
-                    <p id="option_select_description" class="description">
- <?php
-                            printf(
-                                    __(
-                                            'Provide helpful hints on how to complete this option here. You can provide a link  %s here %s if you want', $this->getPlugin()->getSlug()
-                                    ), '<a href="#" target="_blank">', '</a>'
-                            );
-                            ?></p>
-                              </label>
-                </fieldset>
-            </td>
-        </tr>
+                    </fieldset>
+                </td>
+            </tr>
 
 
+
+        </tbody>
     </table>
 
+ <h4 class="title"><?php _e('Text Setting Example', $this->getPlugin()->getSlug()); ?></h4>
 
+    <table class="form-table">
+        <tbody>
+
+            <tr>
+                <th>
+<?php _e('Your Name: ', $this->getPlugin()->getSlug()); ?>
+
+                </th>
+                <td>
+                    <fieldset>
+                        <label>
+                            <label>
+
+                                                        <input name="text_setting" type="text" id="first_name" class="regular-text code" value="<?php echo $this->getPlugin()->getSetting('text_setting'); ?>" />
+
+                            </label>
+
+
+
+                            <span class="description" style="padding-left:10px;">
+<?php
+printf(
+        __('Provide helpful text here describing this setting or provide a help %s link %s.  ' , $this->getPlugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
+);
+?></span>
+                        </label>
+                    </fieldset>
+                </td>
+            </tr>
+
+
+
+        </tbody>
+    </table>
+
+ <h4 class="title"><?php _e('Dropdown Setting Example', $this->getPlugin()->getSlug()); ?></h4>
+
+
+ <table class="form-table">
+        <tbody>
+
+            <tr>
+                <th>
+<?php _e('Color: ', $this->getPlugin()->getSlug()); ?>
+
+                </th>
+                <td>
+<fieldset>
+                    <label>
+  <label>
+                        <select name="dropdown_setting" id="dropdown_setting">
+
+                            <option value="blue" <?php echo (($this->getPlugin()->getSetting('dropdown_setting') == 'blue') ? ' selected="selected"' : ''); ?>>Blue</option>
+                             <option value="orange" <?php echo (($this->getPlugin()->getSetting('dropdown_setting') == 'orange') ? ' selected="selected"' : ''); ?>>Orange</option>
+                              <option value="red" <?php echo (($this->getPlugin()->getSetting('dropdown_setting') == 'red') ? ' selected="selected"' : ''); ?>>Red</option>
+                               <option value="yellow" <?php echo (($this->getPlugin()->getSetting('dropdown_setting') == 'yellow') ? ' selected="selected"' : ''); ?>>Yellow</option>
+                        </select>
+
+                            </label>
+
+
+
+                            <span class="description" style="padding-left:10px;">
+<?php
+printf(
+        __('Provide helpful text here describing this setting or provide a help %s link %s.  ' , $this->getPlugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
+);
+?></span>
+                        </label>
+                </fieldset>
+                </td>
+            </tr>
+
+
+
+        </tbody>
+    </table>
+
+<h4 class="title"><?php _e('Checkbox Setting Example', $this->getPlugin()->getSlug()); ?></h4>
+
+    <table class="form-table">
+        <tbody>
+
+            <tr>
+                <th>
+<?php _e('Place a check mark next to each color you like', $this->getPlugin()->getSlug()); ?>
+
+                </th>
+                <td>
+                      <fieldset>
+
+
+<?php
+
+
+//echo '<pre>';
+//print_r($posttypes_enabled);
+//echo '</pre>';
+?>
+
+
+                        <?php
+
+                        foreach ($checkbox_settings as $color=>$checkbox_setting_value) {
+
+
+                        ?>
+
+                        <p>
+                         <label style="padding: 18px 2px 5px;" for="checkbox_settings_<?php echo $color ?>"><span style="padding-left:5px" ><?php echo $color ?></span>
+                        <input type="checkbox" name="checkbox_settings[<?php  echo $color ?>]"  id="checkbox_settings_<?php echo $color ?>"  value="<?php echo 'yes'; ?>"<?php echo (($checkbox_setting_value === 'yes') ? ' checked="checked"' : ''); ?> >
+
+
+</label>
+                        </p>
+
+
+
+<?php
+} // end
+?>
+
+                        <p class="description"><?php
+printf(
+        __('Provide helpful text here describing this setting or provide a help %s link %s.  ' , $this->getPlugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
+);
+                        ?>
+
+                        </p>
+                    </fieldset>
+                </td>
+            </tr>
+
+
+
+        </tbody>
+    </table>
 
 
 

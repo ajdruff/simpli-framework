@@ -20,3 +20,9 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+
+bump-simpli.sh export-ignore
+error.log.txt export-ignore
+make_zip.sh export-ignore
+/*.html export-ignore

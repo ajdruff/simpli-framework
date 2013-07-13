@@ -1,18 +1,20 @@
 <?php
 
 /**
- * Simpli Framework Class
+ * Simpli Framework Loader Class
+ *
+ * Loads the base classes
  *
  * @author Andrew Druffner
  * @package SimpliFramework
  * @subpackage SimpliBase
  */
 // Check that the class exists before trying to use it
-if (class_exists('Simpli_Framework')) {
+if (class_exists('Simpli_Basev1c0_Loader')) {
     return;
 }
 
-class Simpli_Framework {
+class Simpli_Basev1c0_Loader {
 
     /**
      * Plugin Name
@@ -41,19 +43,11 @@ class Simpli_Framework {
      */
     private static $_plugin_file_path;
 
-    public static function load($plugin_slug, $plugin_file_path) {
+    public static function load($plugin_slug, $plugin_file_path,$version) {
 
 
-        /*
-         * Read WordPress Header to get the name of the base class version
-         * Do not use'self here'
-         */
-        add_filter('extra_simpli_headers', __CLASS__ . '::add_extra_wp_headers');
 
-       // $simpli_data = get_file_data($plugin_file_path, array(), 'simpli');
-$simpli_data =get_file_data($plugin_file_path, array(), 'simpli');
-
-        self::setBaseClassVersion( $simpli_data['Simpli Base Class Version']);
+        self::setBaseClassVersion( $version);
 
 
 
@@ -201,20 +195,6 @@ $simpli_data =get_file_data($plugin_file_path, array(), 'simpli');
         return ($namespace);
     }
 
-    /**
-     * Add Simpli Framework Headers
-     * WordPress Hook extra_{$context}_headers
-     * @param string $extra headers
-     * @return void;
-     */
-    public static function add_extra_wp_headers($extra_headers) {
-
-        $extra_headers[] = 'Simpli Framework Version';
-        $extra_headers[] = 'Simpli Base Class Version';
-
-
-        return ($extra_headers);
-    }
 
     /**
      * Class Autoloader
@@ -224,7 +204,7 @@ $simpli_data =get_file_data($plugin_file_path, array(), 'simpli');
      */
     public static function autoloader($class) { //e.g. class= 'Simpli_Hello_Plugin'
 
-      
+
         $namespaces = array(
             'Simpli_Base' . self::getBaseClassVersion('v{major}c{minor}')
             , self::getClassNamespace()

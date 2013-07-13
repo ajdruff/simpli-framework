@@ -44,7 +44,7 @@
  * Add framework bootstrapping code
  */
 
-require(dirname(__FILE__) . '/lib/Simpli/Framework/Framework.php');
+require(dirname(__FILE__) . '/lib/Simpli/Base/Framework.php');
 
 /*
  * Create the Plugin Object
@@ -60,6 +60,8 @@ require(dirname(__FILE__) . '/lib/Simpli/Framework/Framework.php');
 
 $simpli_hello = Simpli_Framework::load('simpli_hello', __FILE__);
 
+
+$simpli_hello = Simpli_Framework::load('simpli_hello', __FILE__);
 
 
 /*

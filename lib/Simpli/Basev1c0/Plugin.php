@@ -126,7 +126,7 @@ class Simpli_Basev1c0_Plugin {
          *
          */
 
-     $this->setLogger(Simpli_Basev1c0_Logger::getInstance());
+        $this->setLogger(Simpli_Basev1c0_Logger::getInstance());
 
 
         return $this;
@@ -506,19 +506,24 @@ class Simpli_Basev1c0_Plugin {
      * Get Simpli Base Class Version
      *
      * Set by the Simpli_Framework load method when loading the plugin
-     * @param none
+     * @format string $template e.g.: 'v{major}.c{minor}' a string template where {major} and {minor} tags will be replaced with the major and minor version numbers.
      * @return string
      */
-    public function getBaseClassVersion($flags = null) {
+    public function getBaseClassVersion($template = null) {
+
+
 
         $version = $this->_base_class_version;
 
 
 
-        if (is_null($flags)) {
+        if (!is_null($template)) {
+            $parts = explode('.', $version);
+            $major = $parts[0];
+            $minor = $parts[1];
 
-            $version = str_replace('v', '', $version);
-            $version = str_replace('c', '.', $version);
+            $template = str_replace('{major}', $major, $template);
+            $version = str_replace('{minor}', $minor, $template);
         }
 
         return $version;
@@ -694,7 +699,7 @@ class Simpli_Basev1c0_Plugin {
         /**
          * Load Modules
          */
-        $this->loadModules(array(),'/menu|admin/s');
+        $this->loadModules(array(), '/menu|admin/s');
 
 
         /*
@@ -748,7 +753,7 @@ class Simpli_Basev1c0_Plugin {
     public function loadModule($module) {
 
 
-        $this->getLogger()->log($this->getSlug() . ': Loading Module ' . $module . ' from ' . __FILE__);
+        $this->getLogger()->log($this->getSlug() . ': Loading Module ' . $module);
 
         $module_full = 'Module\\' . $module;  # Admin
         $filename = str_replace('\\', '/', $module);
@@ -783,8 +788,7 @@ class Simpli_Basev1c0_Plugin {
         return $this;
     }
 
-
-       /**
+    /**
      * Load Modules
      *
      * Load specified modules. If no modules are specified, all modules are loaded.
@@ -793,8 +797,7 @@ class Simpli_Basev1c0_Plugin {
      * @param string $exclusion_regex Regex pattern in the form '/menu|admin/s' to exclude modules from loading
      * @return $this
      */
-
-       public function loadModules($modules = array(),$exclusion_regex='') {
+    public function loadModules($modules = array(), $exclusion_regex = '') {
 
 
 

@@ -179,6 +179,7 @@ new_plugin_name="${Mycompany}"" ""${Myplugin}" # Mycompany Myplugin
 #echo "new_plugin_name=""${new_plugin_name}";exit 1;
 
 
+
 #WordPress Plugin Info Header
 #must escape forward slashes with triple slashes . In HEREDOC, must also continue to the next line by adding a backslash
 new_line="\\\\n"
@@ -186,7 +187,7 @@ read -d '' new_wp_plugin_header <<EOF
 Plugin Name:   ${new_plugin_name} ${new_line} \
 Plugin URI:    http:\\\/\\\/example.com ${new_line} \
 Description:   The ${new_plugin_name} plugin does some amazing stuff and was built upon the Simpli framework, a WordPress Plugin development framework that makes building WordPress plugins just a bit easier. ${new_line} \
-Author:        <AUTHOR_NAME> ${new_line} \
+Author:        Author ${new_line} \
 Version:       1.0.0 ${new_line} \
 Author URI:    http:\\\/\\\/example.com ${new_line} \
 Text Domain:   ${mycompany_myplugin} ${new_line} \

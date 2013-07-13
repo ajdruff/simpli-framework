@@ -41,28 +41,51 @@ class Simpli_Framework {
      */
     private static $_plugin_file_path;
 
-    public static function load($plugin_slug, $plugin_file_path, $base_class_version) {
+    public static function load($plugin_slug, $plugin_file_path) {
 
 
+        /*
+         * Read WordPress Header to get the name of the base class version
+         * Do not use'self here'
+         */
+        add_filter('extra_simpli_headers', __CLASS__ . '::add_extra_wp_headers');
+
+       // $simpli_data = get_file_data($plugin_file_path, array(), 'simpli');
+$simpli_data =get_file_data($plugin_file_path, array(), 'simpli');
+
+        self::setBaseClassVersion( $simpli_data['Simpli Base Class Version']);
+
+
+
+        /*
+         * Set the plugin slug and file path properties
+         */
 
         self::setPluginSlug($plugin_slug);
         self::setPluginFilePath($plugin_file_path);
-        self::setBaseClassVersion($base_class_version);
 
-
-
-
-
-        spl_autoload_register('self::autoloader');
 
         /*
-         * derive namespace from the plugin slug and use it to instantiate the plugin
+         * Register the class autoloader to point to this class's autoloader method
+         */
+
+        spl_autoload_register(array(__CLASS__, 'autoloader')); /* cant use self here since it will fail for some reason if you have different versions later */
+
+
+        /*
+         * Create the Plugin object
+         * getClassNamespace() simply derives the namespace from the plugin slug that was passed to this method
          */
         $plugin_class = self::getClassNamespace() . '_Plugin';
         $plugin = new $plugin_class();
 
+
+        /*
+         * Set the properties of the new plugin object
+         */
+
         $plugin->setSlug(self::getPluginSlug());
-        $plugin->setBaseClassVersion($base_class_version);
+        $plugin->setBaseClassVersion(self::getBaseClassVersion());
         $plugin->setFilePath($plugin_file_path);
 
 
@@ -88,8 +111,28 @@ class Simpli_Framework {
      * @param none
      * @return string
      */
-    private static function getBaseClassVersion() {
-        return self::$_base_class_version;
+    private static function getBaseClassVersion($template=null) {
+        //return self::$_base_class_version;
+
+
+
+                $version = self::$_base_class_version;
+
+
+
+        if (!is_null($template)) {
+            $parts = explode('.', $version);
+            $major = $parts[0];
+            $minor = $parts[1];
+
+            $template = str_replace('{major}', $major, $template);
+            $version = str_replace('{minor}', $minor, $template);
+        }
+
+        return $version;
+
+
+
     }
 
     /**
@@ -131,7 +174,6 @@ class Simpli_Framework {
      */
     public function setPluginFilePath($plugin_file_path) {
         self::$_plugin_file_path = $plugin_file_path;
-
     }
 
     /**
@@ -159,12 +201,38 @@ class Simpli_Framework {
         return ($namespace);
     }
 
+    /**
+     * Add Simpli Framework Headers
+     * WordPress Hook extra_{$context}_headers
+     * @param string $extra headers
+     * @return void;
+     */
+    public static function add_extra_wp_headers($extra_headers) {
 
+        $extra_headers[] = 'Simpli Framework Version';
+        $extra_headers[] = 'Simpli Base Class Version';
+
+
+        return ($extra_headers);
+    }
+
+    /**
+     * Class Autoloader
+     *
+     * @param string $class
+     * @return void;
+     */
     public static function autoloader($class) { //e.g. class= 'Simpli_Hello_Plugin'
+
+      
         $namespaces = array(
-            'Simpli_Base' . self::getBaseClassVersion()
+            'Simpli_Base' . self::getBaseClassVersion('v{major}c{minor}')
             , self::getClassNamespace()
         );
+
+//    echo '<pre>';
+//print_r($namespaces);
+//echo '</pre>';
 
         $matches = explode('_', $class); // alternative :  $pattern='/[A-Za-z0-9]+/';preg_match_all($pattern, $class, $matches);
 //echo '<pre>';

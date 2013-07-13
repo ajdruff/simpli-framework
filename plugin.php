@@ -10,6 +10,9 @@
 
   Text Domain:   simpli-hello
   Domain Path:   /languages/
+  Simpli Framework Version: 1.0.2
+  Simpli Base Class Version:   1.0
+ *
  */
 /*
   Simpli Framework Copyright 2013  Andrew Druffner  (email :andrew@nomstock.com)
@@ -54,7 +57,8 @@ require(dirname(__FILE__) . '/lib/Simpli/Framework/Framework.php');
  * $base_class_version must match the name of the 'vXcY' part of the Simpli/BasevXcY directory name and generally should remain unchanged
  */
 
-$simpli_hello = Simpli_Framework::load('simpli_hello', __FILE__,'v1c0');
+
+$simpli_hello = Simpli_Framework::load('simpli_hello', __FILE__);
 
 
 
@@ -66,12 +70,12 @@ $simpli_hello = Simpli_Framework::load('simpli_hello', __FILE__,'v1c0');
 
 $simpli_hello->setVersion('1.0.0'); // Version is the version of your plugin and should match value of 'Version' in the comments at the top of this file.
 $simpli_hello->setName('Simpli Hello'); // Name should match the value of 'Plugin Name' in the comments at the top of this file);
-$simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include underscores and uniquely identifies
+$simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include underscores and uniquely identifies the language domain for your plugin
 
 
 
 //(optional)
-$simpli_hello->getLogger()->setLoggingOn(true); //Set to true to dump debugging logs to javascript console and to the error log.
+$simpli_hello->getLogger()->setLoggingOn(true); //Set to true to dump debugging logs to javascript console and to the error log.default is false
 
 
 
@@ -106,5 +110,63 @@ $simpli_hello->init();
  */
 register_activation_hook(__FILE__, array($simpli_hello, 'install'));
 
+//
+//add_filter('extra_simpli_headers','simpli_add_extra_headers');
+//add_filter('extra_plugin_headers','simpli_add_extra_headers');
+//
+//
+//function simpli_add_extra_headers($extra_headers){
+//        	$extra_headers = array(
+//            'Simpli Framework Version',
+//            'Simpli Base Class Version'
+//
+//	);
+//    return ($extra_headers);
+//}
+//
+//
+//if (is_admin()){
+//
+//
+//
+//
+//    	$default_headers = array(
+//		'Name' => 'Plugin Name',
+//		'PluginURI' => 'Plugin URI',
+//		'Version' => 'Version',
+//		'Description' => 'Description',
+//		'Author' => 'Author',
+//		'AuthorURI' => 'Author URI',
+//		'TextDomain' => 'Text Domain',
+//		'DomainPath' => 'Domain Path',
+//		'Network' => 'Network',
+//		// Site Wide Only is deprecated in favor of Network.
+//		'_sitewide' => 'Site Wide Only',
+//               'SimpliFrameworkVersion'=>'Simpli Framework Version',
+//           'SimpliBaseClassVersion'=>'Simpli Base Class Version'
+//
+//	);
+//
+////            	$default_headers = array(
+////
+////
+////            'SimpliFrameworkVersion'=>'Simpli Framework Version',
+////            'SimpliBaseClassVersion'=>'Simpli Base Class Version'
+////
+////	);
+//
+//
+//        $plugin_file=__FILE__;
+//        //$plugin_file=dirname(__FILE__) . '/lib/Simpli/Framework/plugin-data.php';
+// $plugin_data = get_file_data( $plugin_file, $default_headers ,'plugin' );
+//
+// $simpli_data=get_simpli_data(__FILE__);
+//echo '<pre>';
+//print_r($plugin_data);
+//echo '<pre>';
+//echo '<pre>';
+//print_r($simpli_data);
+//echo '<pre>';
 
+//}
 

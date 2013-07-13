@@ -35,7 +35,7 @@ excluded_files=".*\.\(zip\|png\|jpg\|gif\|git\|gitignore\|gitattributes\|sh\)"
 
 
 # set override_version = 1, and then set major and minor to the versions that you want if you want a specific version (good for reversing a bump)
-override_version=1; # default=0
+override_version=0; # default=0
 override_major=1;
 override_minor=0;
 
@@ -112,7 +112,11 @@ fi
 #######
 
 # list the lib directory and look for a directory name that starts with Simpli
-old_version=$(ls "${lib_dir}""/Simpli/" | grep Basev | sed -e 's/Base\([vc0-9]*\)/\1/g')  #returns the full version number 1-0-0
+old_version=$(ls "${lib_dir}""/Simpli/" | grep "Basev" | sed -e 's/Base\([vc0-9]*\)/\1/g')  #returns the full version number 1-0-0
+
+
+
+
 #break the result into its component parts
 major=$(echo "${old_version}" | sed -e 's/v\([0-9]*\)c[0-9]*/\1/g')  # returns 2 from v2c1
 minor=$(echo "${old_version}" | sed -e 's/v[0-9]*c\([0-9]*\)/\1/g')  # returns 1 from v2c1
@@ -120,8 +124,6 @@ minor=$(echo "${old_version}" | sed -e 's/v[0-9]*c\([0-9]*\)/\1/g')  # returns 1
 
 
 
-echo 'major='"${major}"
-echo 'minor='"${minor}"
 
 
 
@@ -149,7 +151,8 @@ then
 major="${override_major}"
 minor="${override_minor}"
 fi
-#echo 'new major='"${major}" ; echo 'new minor='"${minor}" ; exit 1;
+
+
 
 
 new_version_with_decimals="${major}"."${minor}"
@@ -157,10 +160,53 @@ new_version_with_decimals="${major}"."${minor}"
 new_version=v"${major}"c"${minor}"
 new_directory_name=Base"${new_version}"
 
-#echo 'old version = '"${old_version}"
-#echo 'new version = '"${new_version}"
 
 
+###########
+# begin debug
+###########
+debug=0
+if [[ "${debug}" = 1 ]]
+then
+
+echo '$old_version='$old_version
+
+echo 'major='"${major}"
+echo 'minor='"${minor}"
+
+echo 'new major='"${major}" ; echo 'new minor='"${minor}"
+
+echo 'old version = '"${old_version}"
+echo 'new version = '"${new_version}"
+
+# old form:
+#find "${plugin_dir}"/plugin.php  | grep -v '.git' | xargs -n 1 sed -i -e "s#\(Simpli_Framework[a-zA-Z0-9]*::.*(.*__FILE__.*\)'[vc0-9]*'#\1'${new_version}'#g"
+#new form:
+#find "${plugin_dir}"/plugin.php  | grep -v '.git' | xargs -n 1 sed -i -e "s#\(Simpli Base Class Version*\)'#\1${new_version}#g"
+#framework_version=$( sed -n -e '/Version:\s*/p' "${target_dir}/plugin.php")
+#new_version=$( echo "${new_version}" |  sed  "s#v\([0-9]*\)c\([0-9]*\).*#\1.\2#g")
+#match=$( sed -n -e '/Simpli\s*Base\s*Class\s*Version:\s*[.0-9]*.*$/p' "${plugin_dir}/plugin.php")
+#match=$( echo "${match}" |  sed  "s#\(Simpli Base Class Version:\).*#\1 ${new_version_with_decimals}#g")
+
+#replace 'Simpli Base Class Version: x.y' with 'Simpli Base Class Version: X.Y' where X.Y is new version
+sed_expression='s#\(Simpli\s*Base\s*Class\s*Version:\)\s*[.0-9]*.*$#\1 '"${new_version_with_decimals}"'#g'
+#find "${plugin_dir}"/plugin.php  | grep -v '.git' | xargs -n 1 sed -i -e  "${sed_expression}"
+
+#test the match
+match=$( echo "Simpli Base Class Version: 1.0" |  sed  "${sed_expression}" )
+
+echo 'match = ' $match
+#echo 'finished debug output' ;
+
+
+
+echo ' exiting ' ; exit 1;
+echo 'continuing ....'
+
+fi
+###########
+# end testing
+###########
 
 echo 'bumping to new version ' "${new_version_with_decimals}"
 echo 'please wait ...'
@@ -185,15 +231,26 @@ fi
 
 find "${plugin_dir}"  -not -regex "${excluded_files}" -type f | grep -v '.git' | xargs -n 1 sed -i -e "s#Base[vc0-9]*\(_[^\s]*\)#Base${new_version}\1#g"
 
+#################
+# Update  'Simpli Base Class Version: x.y'  in the WordPress Header in plugin.php
+###############
+#replace 'Simpli Base Class Version: x.y' with 'Simpli Base Class Version: X.Y' where X.Y is new version
+sed_expression='s#\(Simpli\s*Base\s*Class\s*Version:\)\s*[.0-9]*.*$#\1 '"${new_version_with_decimals}"'#g'
+find "${plugin_dir}"/plugin.php  | grep -v '.git' | xargs -n 1 sed -i -e  "${sed_expression}"
 
-#change the autoload class in plugin.php
-find "${plugin_dir}"/plugin.php  | grep -v '.git' | xargs -n 1 sed -i -e "s#\(Simpli_Framework[a-zA-Z0-9]*::.*(.*__FILE__.*\)'[vc0-9]*'#\1'${new_version}'#g"
 
 
-echo 'stopping - check that simpli framework version was updated' ; exit 1;
+################################################################
 
 # the rest of this seems nonsense  although more selective
 
+
+
+exit 1;
+
+
+
+#################
 
 #not used, but this is a more selective pattern for Class declarations
 #rename all the base classes that use Simpli in their declaration

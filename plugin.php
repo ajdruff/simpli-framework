@@ -11,7 +11,7 @@
   Text Domain:   simpli-hello
   Domain Path:   /languages/
   Simpli Framework Version: 1.0.2
-  Simpli Base Class Version:   1.0
+  Simpli Base Class Version: 1.0
  *
  */
 /*

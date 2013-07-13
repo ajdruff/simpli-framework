@@ -108,7 +108,7 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
 
         $this->getLogger()->log(' Starting ' . $this->getName() . ' Debug Log');
 
-        $this->getLogger()->log('Version: ' . $this->getVersion());
+        $this->getLogger()->log('Plugin Version: ' . $this->getVersion() . ' Framework Version: ' . $this->getFrameworkVersion() . ' Base Class Version: ' . $this->getBaseClassVersion());
 
 
 

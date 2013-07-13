@@ -297,7 +297,7 @@ rm  "${target_dir}"/*.sh
 # Framework Version
 #
 #################
-#returns the plugins version number
+#returns the plugins version number taken from the WordPress Header and uses that as the Framework Version
 framework_version=$( sed -n -e 's/Version:\([.0-9]*\)/\1/p' "${target_dir}/plugin.php")
 framework_version=`echo $framework_version` #trims result of any whitespaces
 

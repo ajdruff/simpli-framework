@@ -23,6 +23,8 @@
 
 
 bump-simpli.sh export-ignore
+.gitignore export-ignore
+.gitattributes export-ignore
 error.log.txt export-ignore
 make_zip.sh export-ignore
 /*.html export-ignore

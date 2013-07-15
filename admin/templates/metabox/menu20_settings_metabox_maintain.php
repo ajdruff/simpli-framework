@@ -7,7 +7,7 @@ $form_name="settings_enabled";
 
 ?>
 <form name="<?php echo $this->getPlugin()->getSlug(); ?><?php echo '_' . $form_name ; ?>" id="<?php echo $this->getPlugin()->getSlug() . "_$form_name"; ?>" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
-    <?php wp_nonce_field($this->getPlugin()->getSlug()); ?>
+<?php wp_nonce_field($this->getPlugin()->getSlug()); ?>
     <input type="hidden" name="action" id="action" value="" />
 
     <table class="form-table">

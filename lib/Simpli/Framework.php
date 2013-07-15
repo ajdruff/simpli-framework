@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Simpli Framework Class
  *

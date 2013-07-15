@@ -1,11 +1,10 @@
 <?php
-
 /**
   Plugin Name:   Simpli Hello
   Plugin URI:    http://simpliwp/simpli-framework
   Description:   The Simpli Hello plugin is a template for WordPress plugin developers to create WordPress plugins using the Simpli Framework. The Simpli framework is a WordPress Plugin Framework that makes building object oriented WordPress plugins just a bit easier.
   Author:        Andrew Druffner
-  Version:       1.2.0
+  Version:       1.2.1
   Author URI:    http://simpliwp/about
 
   Text Domain:   simpli-hello
@@ -67,14 +66,13 @@ $simpli_hello = Simpli_Framework::load('simpli_hello', __FILE__);
  */
 
 
-$simpli_hello->setVersion('1.0.0'); // Version is the version of your plugin and should match value of 'Version' in the comments at the top of this file.
 $simpli_hello->setName('Simpli Hello'); // Name should match the value of 'Plugin Name' in the comments at the top of this file);
 $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include underscores and uniquely identifies the language domain for your plugin
 
 
 
 //(optional)
-$simpli_hello->getLogger()->setLoggingOn(true); //Set to true to dump debugging logs to javascript console and to the error log.default is false
+$simpli_hello->getLogger()->setLoggingOn(false); //Set to true to dump debugging logs to javascript console and to the error log.default is false
 
 
 
@@ -107,7 +105,15 @@ $simpli_hello->init();
  *
  *
  */
+//register_activation_hook(__FILE__, array($simpli_hello, 'install'));
+        /**
+ *
+ *  Register activation hook. Must be called outside of a class.
+ *
+ *
+ */
 register_activation_hook(__FILE__, array($simpli_hello, 'install'));
+
 
 //
 //add_filter('extra_simpli_headers','simpli_add_extra_headers');
@@ -168,4 +174,3 @@ register_activation_hook(__FILE__, array($simpli_hello, 'install'));
 //echo '<pre>';
 
 //}
-

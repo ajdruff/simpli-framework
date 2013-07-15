@@ -131,6 +131,11 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
 
         $time_now = date("Y-m-d H:i:s");
         $this->_log[] = $time_now . ' ' . $string;
+
+
+
+
+
         return $this;
     }
 

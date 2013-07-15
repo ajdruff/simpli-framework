@@ -1,4 +1,3 @@
-
 <?php
 
 /**
@@ -78,26 +77,8 @@ class Simpli_Basev1c0_Plugin {
      */
     protected $_plugin_name;
 
-    /**
-     * Plugin Version
-     *
-     * @var string
-     */
-    protected $_version;
 
-    /**
-     * Framwork Version
-     *
-     * @var string
-     */
-    protected $_framework_version;
 
-    /**
-     * Base Class Version
-     *
-     * @var string
-     */
-    protected $_base_class_version;
 
     /**
      * Text Domain
@@ -112,6 +93,26 @@ class Simpli_Basev1c0_Plugin {
      * @var string
      */
     protected $_plugin_file_path;
+
+
+
+        /**
+     * Activate Actions
+     *
+     * @var string
+     */
+    protected $_activate_actions=array();
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Constructor
@@ -470,38 +471,28 @@ class Simpli_Basev1c0_Plugin {
         return $this->_slug;
     }
 
-    /**
-     * Set Version
-     *
-     * @param string $version
-     * @return object $this
-     */
-    public function setVersion($version) {
-        $this->_version = $version;
-        return $this;
-    }
+
 
     /**
      * Get Version
+     *
      *
      * @param none
      * @return string
      */
     public function getVersion() {
-        return $this->_version;
+
+
+                    $headers=array('Version'=>'Version');
+
+        $plugin_file_data=get_file_data( $this->getFilePath(),$headers,'plugin' );
+
+
+
+        return $plugin_file_data['Version'];
     }
 
-    /**
-     * Set Simpli Base Class Version
-     *
-     * @param string $version
-     * @return object $this
-     */
-    public function setBaseClassVersion($version) {
-        $this->_base_class_version = $version;
 
-        return $this;
-    }
 
     /**
      * Get Simpli Base Class Version
@@ -512,9 +503,15 @@ class Simpli_Basev1c0_Plugin {
      */
     public function getBaseClassVersion($template = null) {
 
+                    $headers=array('SimpliBaseClassVersion'=>'Simpli Base Class Version');
+
+        $plugin_file_data=get_file_data( $this->getFilePath(),$headers,'simpli' );
 
 
-        $version = $this->_base_class_version;
+
+      $version = $plugin_file_data['Simpli Base Class Version'];
+
+      //  $version = $this->_base_class_version;
 
 
 
@@ -829,6 +826,36 @@ class Simpli_Basev1c0_Plugin {
 
         $this->_modules = $modules;
 
+        return $this;
+    }
+
+
+    /**
+     * Get Activate Actions
+     *
+     * @param none
+     * @return string
+     */
+    public function getActivateActions() {
+        return $this->_activate_actions;
+    }
+
+    /**
+     * Add Activate Action
+     *
+     * Because of the way that activation works, its not possible to trigger activation actions normally through the do_action function.
+     * In this way , we are able to cycle through the actions
+     * Usage:
+     * To add an action
+     *  $this->getPlugin()->addActivateAction(array(&$this, 'flush_rewrite_rules'));
+     * see the Plugin::install method for an example of how to cycle through all the activate actions.
+     *
+     *
+     * @param string $something
+     * @return object $this
+     */
+    public function addActivateAction($action) {
+        array_push($this->_activate_actions, $action);
         return $this;
     }
 

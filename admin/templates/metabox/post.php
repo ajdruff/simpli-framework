@@ -31,7 +31,7 @@ wp_nonce_field($this->getPlugin()->getSlug(), $this->getPlugin()->getSlug());
                     </label>
 
                     <p class="description">
- <?php
+<?php
                             printf(
                                     __(
                                             '', $this->getPlugin()->getSlug()

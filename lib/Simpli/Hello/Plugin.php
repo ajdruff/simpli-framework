@@ -12,7 +12,6 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
 
     public $_setting_defaults = array();
 
-
     /**
      * Set Default Settings
      *
@@ -23,31 +22,26 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
      * @author Andrew Druffner
      * @param void
      * @return string The parsed output of the form body tag
- */
-   private function setDefaultSettings()
-    {
+     */
+    private function setDefaultSettings() {
 
-       $default_settings= array(
+        $default_settings = array(
+            /*
+             *
+             * Defaults for Example Settings in 'Example Settings Metabox'
+             *
+             */
 
-           /*
-            *
-            * Defaults for Example Settings in 'Example Settings Metabox'
-            *
-            */
-
-           'checkbox_setting' =>
-           array(
-               'yellow' => 'no'
-               ,'red' => 'yes'
-                ,'orange' => 'yes'
-                ,'blue' => 'yes'
-               )
-
-           ,'dropdown_setting' => 'orange'
-
-           ,'text_setting'=>'Joe Smith'
-
-           ,'radio_setting'=>'yes'
+            'checkbox_setting' =>
+            array(
+                'yellow' => 'no'
+                , 'red' => 'yes'
+                , 'orange' => 'yes'
+                , 'blue' => 'yes'
+            )
+            , 'dropdown_setting' => 'orange'
+            , 'text_setting' => 'Joe Smith'
+            , 'radio_setting' => 'yes'
 
             /*
              *
@@ -60,12 +54,9 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
 
 
 
-        $this->_setting_defaults=$default_settings;
+        $this->_setting_defaults = $default_settings;
         return $this->_setting_defaults;
-
-}
-
-
+    }
 
     /**
      * Initialize
@@ -110,6 +101,17 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
 
         $this->getLogger()->log('Plugin Version: ' . $this->getVersion() . ' Framework Version: ' . $this->getFrameworkVersion() . ' Base Class Version: ' . $this->getBaseClassVersion());
 
+        /*
+         * Save Activation Errors for later display
+         */
+        add_action('activated_plugin', array($this, 'save_activation_error'));
+
+        /*
+         * Show Activation Error
+         *
+         */
+
+        add_action('admin_notices', array($this, 'show_activation_extra_characters'));
 
 
         /*
@@ -135,18 +137,72 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
         }
 
         /*
+         * Execute all the Activate Actions
+         * Due to the way that WordPress handles the activation events,its not possible to add a custom hook and use the add_action function
+         * in the normal way to enable modules to hook into this event.
+         * Instead, we implement the actions a different way, through the Plugin class's AddActivateAction method.
+         * So now, we just need to cycle through the actions, calling each method as they are provided. Note its not possible at this time to
+         * include arguments.
+         */
+
+
+        $activate_actions = $this->getActivateActions();
+        foreach ($activate_actions as $action) {
+
+            $object = $action[0];
+            $method = $action[1];
+            // this is equivilent to $object->method();
+            call_user_func(array($object, $method));
+        }
+
+
+
+
+        /*
          *
          * Add any installation routines that you need
          * Modify as necessary if single or multi-site
          *
          */
-
     }
 
+    /* Save Activation Error
+     *
+     * @param none
+     * @return void
+     */
+
+    public function save_activation_error() {
+        set_transient($this->getSlug() . '_activation_error', ob_get_contents(), 5);
+    }
+
+    /* Show Activation Extra Characters
+     *
+     * Shows any output that occurred during activation
+     * Note: Logs do not work in activation - use echo instead to troubleshoot.
+     * @param none
+     * @return void
+     */
+
+    public function show_activation_extra_characters() {
 
 
+        $activation_error=get_transient($this->getSlug() . '_activation_error');
+
+        if ( $activation_error != '' ) {
+            ?>
 
 
-
+            <div class="updated">
+                <p><strong>Unexpected Output generated during activation:</strong></p>
+                <p style="border:gray solid 1px"><?php echo $activation_error; ?></p>
+            </div>
+            <?php
+        }
+    }
 
 }
+
+//todo: make sense of the above
+//todo: add similar deactivation routines
+//todo: add logging for deactivation if possible. use transients. consider dumping log to transient, and then accessing transient after activation.

@@ -51,7 +51,7 @@ To add a metabox, you must add the do_metaboxes line as in the examples below, a
 
 
 		<div class="postbox-container column-secondary">
-                    <?php // these are all the boxes on the right side  ?>
+<?php // these are all the boxes on the right side  ?>
 <?php do_meta_boxes('toplevel_page_' . $this->getPlugin()->getSlug(). '_' . $this->getSlug() . '_group2', 'side', $this); ?>
 		</div>
 	</div>

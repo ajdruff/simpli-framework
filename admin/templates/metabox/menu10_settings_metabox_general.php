@@ -143,18 +143,7 @@ printf(
                 </th>
                 <td>
                       <fieldset>
-
-
 <?php
-
-
-//echo '<pre>';
-//print_r($posttypes_enabled);
-//echo '</pre>';
-?>
-
-
-                        <?php
 
                         foreach ($checkbox_settings as $color=>$checkbox_setting_value) {
 

@@ -65,6 +65,16 @@ class Simpli_Basev1c0_Loader {
 
         spl_autoload_register(array($this, 'autoloader'));
 
+
+        /*
+         * Get the plugin data from the WordPress information header
+         */
+
+     //   $headers=array('Version'=>'Version');
+
+     //   $plugin_file_data=get_file_data( $plugin_file_path,$headers,'plugin' );
+
+
         /*
          * Create the Plugin object
          * getClassNamespace() simply derives the namespace from the plugin slug that was passed to this method
@@ -78,7 +88,12 @@ class Simpli_Basev1c0_Loader {
          */
 
         $plugin->setSlug($this->getPluginSlug());
-        $plugin->setBaseClassVersion($this->getBaseClassVersion());
+
+
+
+ //  $plugin->setVersion($plugin_file_data['Version']);  // Version is the version of your plugin and should match value of 'Version' in WordPress Information header
+
+    //    $plugin->setBaseClassVersion($this->getBaseClassVersion());
         $plugin->setFilePath($plugin_file_path);
 
 

@@ -55,10 +55,20 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
     /**
      * Check if Debug is Enabled
      *
+     * Will return value of $_debug['consolelog'] if loggingEnabled wasnt turned on explicitly
      * @param none
      * @return array
      */
     public function getLoggingState() {
+
+        if (is_null($this->_enabled)){
+
+            $debug=$this->getPlugin()->getDebug();
+
+            $this->_enabled = ($debug['consolelog'] ||$debug['filelog']) ;
+
+        }
+
         return $this->_enabled;
     }
 
@@ -178,7 +188,23 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
      */
     public function fileLog($filename = '') {
 
+        /*
+         * dont log to file if debug options turned it off
+         */
+        $debug=$this->getPlugin()->getDebug();
+        if (!$debug['filelog']){return;}
 
+
+
+
+        /*
+         * Do not write to file if ajax request
+         * AJAX check
+         */
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+            /* special ajax here */
+            return;
+        }
         if ($filename == '') {
             $filename = 'error.log.txt';
         }
@@ -192,6 +218,13 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
      *
      */
     public function print_log() {
+
+        /*
+         * if logging isnt turned on, exit function.
+         */
+        if (!$this->getLoggingState()) {
+            return;
+        }
 
 
         /*
@@ -209,9 +242,13 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
          * includes the console.log calls for each of the log statements
          *
          */
-        echo $this->consoleLog();
 
-        $this->fileLog($this->getPlugin()->getDirectory() . '/error.log.txt');
+
+        $debug=$this->getPlugin()->getDebug();
+
+        if ($debug['consolelog']) {echo $this->consoleLog();}
+
+         if ($debug['filelog']) {$this->fileLog($this->getPlugin()->getDirectory() . '/error.log.txt');}
     }
 
 }

@@ -37,6 +37,20 @@
  *
  */
 
+//add_action('init',array(&$this, 'closeMetaboxes'));
+//add_filter('get_user_option_closedpostboxes_toplevel_page_simpli_hello_menu10_settings', array(&$this, 'closeMetaboxes'));
+
+//add_filter('get_user_option_closedpostboxes_toplevel_page_simpli_hello_menu10_settings', 'closeMetaboxes');
+    function closeMetaboxes($result) {
+//die('closed metaboxes');
+
+
+     $closedMetaboxes = array('simpli_hello_about2');
+     if ( !is_array($result) )
+         return $closedMetaboxes;
+     else
+         return array_merge($result, $closedMetaboxes);
+}
 
 
 /*
@@ -72,8 +86,14 @@ $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include u
 
 
 //(optional)
-$simpli_hello->getLogger()->setLoggingOn(false); //Set to true to dump debugging logs to javascript console and to the error log.default is false
-
+$simpli_hello->setDebug(
+        array(
+            'consolelog'=>false  // true/false Turn on Logging to Javascript console for php logs
+            ,'js'=>true // true/false Turn on Logging to Javascript console for javascript logs
+            ,'src'=>false  // true/false Whether to use the full source for javascript or just the minimized versions
+            ,'filelog'=>false // true/false Turn on Logging to File for php logs
+            )
+        );
 
 
 /*
@@ -174,3 +194,8 @@ register_activation_hook(__FILE__, array($simpli_hello, 'install'));
 //echo '<pre>';
 
 //}
+
+
+
+
+

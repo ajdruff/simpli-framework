@@ -17,13 +17,12 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      *
      * @var array
      */
-
-            public $_post_option_defaults=array(
-        'simpli-hello-posttext'=>'Hello World! This is my post'
-        ,'simpli-hello-postenabled'=>'true'
-                ,'simpli_placement'=>'after'
+    public $_post_option_defaults = array(
+        'text' => 'Hello World!' // any text
+        ,'use_global_text'=>'true' // true/false
+        , 'enabled' => 'true' // true/false
+        , 'placement' => 'default'  // before,after,default
     );
-
 
     /**
      * Post Options
@@ -56,7 +55,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
             add_action('admin_init', array(&$this, 'loadPostOptions')); //wp hook is not reliable on edit post page.
         }
 
-          $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName());
+        $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName());
         // global $post;
     }
 

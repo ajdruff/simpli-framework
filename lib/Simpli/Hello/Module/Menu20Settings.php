@@ -104,7 +104,7 @@ add_submenu_page(
      * @return void
      */
     public function admin_enqueue_scripts() {
-        wp_enqueue_style($this->getPlugin()->getSlug() . '-admin-page', $this->getPlugin()->getPluginUrl() . '/admin/css/settings.css', array(), $this->getPlugin()->getVersion());
+        wp_enqueue_style($this->getPlugin()->getSlug() . '-admin-page', $this->getPlugin()->getUrl() . '/admin/css/settings.css', array(), $this->getPlugin()->getVersion());
         wp_enqueue_script('jquery-form');
         wp_enqueue_script('post');
 

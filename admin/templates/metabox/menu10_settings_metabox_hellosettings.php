@@ -1,7 +1,7 @@
 <?php
 #todo: add class functions to handle select,radio, and checkbox markup. use the nstock.common.php code
 //must give the form a unique name since there will be multiple forms on the page.
-$form_name = "general_settings";
+$form_name = "hello_settings";
 
 
 $checkbox_settings=$this->getPlugin()->getSetting('checkbox_setting');
@@ -9,28 +9,28 @@ $checkbox_settings=$this->getPlugin()->getSetting('checkbox_setting');
 ?>
 <form name="<?php echo $this->getPlugin()->getSlug(); ?><?php echo '_' . $form_name; ?>" id="<?php echo $this->getPlugin()->getSlug() . "_$form_name"; ?>" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
 <?php wp_nonce_field($this->getPlugin()->getSlug()); ?>
-    <input type="hidden" name="action" value="" />
+    <input type="hidden" name="action"  value="" />
 
 
 
-    <h4 class="title"><?php _e('Radio Button Setting Example', $this->getPlugin()->getSlug()); ?></h4>
+    <h4 class="title"><?php _e('Text Placement', $this->getPlugin()->getSlug()); ?></h4>
 
     <table class="form-table">
         <tbody>
 
             <tr>
                 <th>
-<?php _e('Do you want this option?', $this->getPlugin()->getSlug()); ?>
+<?php _e('Where do you want to place the text?', $this->getPlugin()->getSlug()); ?>
 
                 </th>
                 <td>
                     <fieldset>
                         <label>
                             <label>
-                                <input type="radio" name="radio_setting" value="yes"  <?php echo (($this->getPlugin()->getSetting('radio_setting') == 'yes') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Yes', $this->getPlugin()->getSlug()); ?></span></label>
+                                <input type="radio" name="hello_global_default_placement" value="before"  <?php echo (($this->getPlugin()->getSetting('hello_global_default_placement') == 'before') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Before the content', $this->getPlugin()->getSlug()); ?></span></label>
 
                             <label>
-                                <input type="radio" name="radio_setting" value="no" <?php echo (($this->getPlugin()->getSetting('radio_setting') == 'no') ? ' checked="checked"' : ''); ?> /> <span><?php _e('No', $this->getPlugin()->getSlug()); ?></span>
+                                <input type="radio" name="hello_global_default_placement" value="after" <?php echo (($this->getPlugin()->getSetting('hello_global_default_placement') == 'after') ? ' checked="checked"' : ''); ?> /> <span><?php _e('After the content', $this->getPlugin()->getSlug()); ?></span>
                             </label>
 
 
@@ -38,7 +38,7 @@ $checkbox_settings=$this->getPlugin()->getSetting('checkbox_setting');
                             <span class="description" style="padding-left:10px;">
 <?php
 printf(
-        __('Provide helpful text here describing this setting or provide a help %s link %s.  ' , $this->getPlugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
+        __('Selecting \'Before\' will add your text<em> before</em> the content in the post. Selecting \'After\' will add your text <em>after</em> the content in the post.  ' , $this->getPlugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
 );
 ?></span>
                         </label>
@@ -51,14 +51,54 @@ printf(
         </tbody>
     </table>
 
- <h4 class="title"><?php _e('Text Setting Example', $this->getPlugin()->getSlug()); ?></h4>
+<h4 class="title"><?php _e('Global Enable', $this->getPlugin()->getSlug()); ?></h4>
 
     <table class="form-table">
         <tbody>
 
             <tr>
                 <th>
-<?php _e('Your Name: ', $this->getPlugin()->getSlug()); ?>
+<?php _e('Enable or Disable Text Insertion for All Posts', $this->getPlugin()->getSlug()); ?>
+
+                </th>
+                <td>
+                    <fieldset>
+                        <label>
+                            <label>
+                                <input type="radio" name="hello_global_default_enabled" value="enabled"  <?php echo (($this->getPlugin()->getSetting('hello_global_default_enabled') == 'enabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Enabled', $this->getPlugin()->getSlug()); ?></span></label>
+
+                            <label>
+                                <input type="radio" name="hello_global_default_enabled" value="disabled" <?php echo (($this->getPlugin()->getSetting('hello_global_default_enabled') == 'disabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Disabled', $this->getPlugin()->getSlug()); ?></span>
+                            </label>
+
+
+
+                            <span class="description" style="padding-left:10px;">
+<?php
+printf(
+        __('Selecting \'Enabled\' will turn on text insertion for all posts that have it enabled. Selecting \'Disabled\' will prevent any text from being inserted even if your post settings allow it.  ' , $this->getPlugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
+);
+?></span>
+                        </label>
+                    </fieldset>
+                </td>
+            </tr>
+
+
+
+        </tbody>
+    </table>
+
+
+
+ <h4 class="title"><?php _e('Hello World Text', $this->getPlugin()->getSlug()); ?></h4>
+
+    <table class="form-table">
+        <tbody>
+
+            <tr>
+                <th>
+<?php _e('Text to Insert into Post Content:', $this->getPlugin()->getSlug()); ?>
 
                 </th>
                 <td>
@@ -66,7 +106,7 @@ printf(
                         <label>
                             <label>
 
-                                                        <input name="text_setting" type="text" id="first_name" class="regular-text code" value="<?php echo $this->getPlugin()->getSetting('text_setting'); ?>" />
+                                                        <input name="hello_global_default_text" type="text" id="hello_global_default_text" class="regular-text code" value="<?php echo $this->getPlugin()->getSetting('hello_global_default_text'); ?>" />
 
                             </label>
 
@@ -75,7 +115,7 @@ printf(
                             <span class="description" style="padding-left:10px;">
 <?php
 printf(
-        __('Provide helpful text here describing this setting or provide a help %s link %s.  ' , $this->getPlugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
+        __('Add the text that you want to insert into your post content. ' , $this->getPlugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
 );
 ?></span>
                         </label>
@@ -88,97 +128,6 @@ printf(
         </tbody>
     </table>
 
- <h4 class="title"><?php _e('Dropdown Setting Example', $this->getPlugin()->getSlug()); ?></h4>
-
-
- <table class="form-table">
-        <tbody>
-
-            <tr>
-                <th>
-<?php _e('Color: ', $this->getPlugin()->getSlug()); ?>
-
-                </th>
-                <td>
-<fieldset>
-                    <label>
-  <label>
-                        <select name="dropdown_setting" id="dropdown_setting">
-
-                            <option value="blue" <?php echo (($this->getPlugin()->getSetting('dropdown_setting') == 'blue') ? ' selected="selected"' : ''); ?>>Blue</option>
-                             <option value="orange" <?php echo (($this->getPlugin()->getSetting('dropdown_setting') == 'orange') ? ' selected="selected"' : ''); ?>>Orange</option>
-                              <option value="red" <?php echo (($this->getPlugin()->getSetting('dropdown_setting') == 'red') ? ' selected="selected"' : ''); ?>>Red</option>
-                               <option value="yellow" <?php echo (($this->getPlugin()->getSetting('dropdown_setting') == 'yellow') ? ' selected="selected"' : ''); ?>>Yellow</option>
-                        </select>
-
-                            </label>
-
-
-
-                            <span class="description" style="padding-left:10px;">
-<?php
-printf(
-        __('Provide helpful text here describing this setting or provide a help %s link %s.  ' , $this->getPlugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
-);
-?></span>
-                        </label>
-                </fieldset>
-                </td>
-            </tr>
-
-
-
-        </tbody>
-    </table>
-
-<h4 class="title"><?php _e('Checkbox Setting Example', $this->getPlugin()->getSlug()); ?></h4>
-
-    <table class="form-table">
-        <tbody>
-
-            <tr>
-                <th>
-<?php _e('Place a check mark next to each color you like', $this->getPlugin()->getSlug()); ?>
-
-                </th>
-                <td>
-                      <fieldset>
-<?php
-
-                        foreach ($checkbox_settings as $color=>$checkbox_setting_value) {
-
-
-                        ?>
-
-                        <p>
-                         <label style="padding: 18px 2px 5px;" for="checkbox_settings_<?php echo $color ?>"><span style="padding-left:5px" ><?php echo $color ?></span>
-                        <input type="checkbox" name="checkbox_settings[<?php  echo $color ?>]"  id="checkbox_settings_<?php echo $color ?>"  value="<?php echo 'yes'; ?>"<?php echo (($checkbox_setting_value === 'yes') ? ' checked="checked"' : ''); ?> >
-
-
-</label>
-                        </p>
-
-
-
-<?php
-} // end
-?>
-
-                        <p class="description"><?php
-printf(
-        __('Provide helpful text here describing this setting or provide a help %s link %s.  ' , $this->getPlugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
-);
-                        ?>
-
-                        </p>
-                    </fieldset>
-                </td>
-            </tr>
-
-
-
-        </tbody>
-    </table>
 
 
 
@@ -202,6 +151,8 @@ printf(
         <input type="submit" id="<?php echo $form_name; ?>_settings-save" class="button-primary" value="Save Changes" name="<?php echo $form_name; ?>_settings-save">
         <img alt="<?php _e('Waiting...', $this->getPlugin()->getSlug()); ?>" src="<?php echo admin_url('/images/wpspin_light.gif'); ?>" class="waiting submit-waiting" />
     </p>
+
+
 
 
 </form>

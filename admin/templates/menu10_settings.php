@@ -27,35 +27,41 @@ To add a metabox, you must add the do_metaboxes line as in the examples below, a
 </div>
 
 <div class="wrap" id="simpli-main">
-	<div id="icon-options-https" class="icon32"><br /></div>
+	<div class="icon32"><br /></div>
 	<h2><?php _e($this->getPlugin()->getName(),$this->getPlugin()->getTextDomain()); ?></h2>
 
-<?php
-	wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false );
-	wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false );
-?>
+
+
+
 	<div id="poststuff" class="columns metabox-holder">
+
+            <form action="" method="">
+
+    <?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); ?>
+    <?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false ); ?>
+
+
+
 		<div class="postbox-container column-primary">
-<?php do_meta_boxes('toplevel_page_' . $this->getPlugin()->getSlug(). '_' . $this->getSlug() . '_group1', 'main', $this); ?>
-		</div>
-		<div class="postbox-container column-secondary">
-<?php do_meta_boxes('toplevel_page_' . $this->getPlugin()->getSlug(). '_' . $this->getSlug() . '_group1', 'side', $this); ?>
+<?php do_meta_boxes('toplevel_page_' . $this->getPlugin()->getSlug(). '_' . $this->getSlug(), 'normal', $this); ?>
 		</div>
 
-            </div>
 
 
-	<div id="poststuff" class="columns metabox-holder">
 
 
 
 
 		<div class="postbox-container column-secondary">
 <?php // these are all the boxes on the right side  ?>
-<?php do_meta_boxes('toplevel_page_' . $this->getPlugin()->getSlug(). '_' . $this->getSlug() . '_group2', 'side', $this); ?>
+<?php
+ do_meta_boxes('toplevel_page_' . $this->getPlugin()->getSlug(). '_' . $this->getSlug() , 'side', $this);
+?>
 		</div>
-	</div>
 
+
+                </form>
+	</div>
 
 
 
@@ -65,4 +71,5 @@ To add a metabox, you must add the do_metaboxes line as in the examples below, a
 
 </div>
 
-</simpli-hello>
+</div>
+

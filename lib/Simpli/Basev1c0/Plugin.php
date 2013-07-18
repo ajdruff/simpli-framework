@@ -77,9 +77,6 @@ class Simpli_Basev1c0_Plugin {
      */
     protected $_plugin_name;
 
-
-
-
     /**
      * Text Domain
      *
@@ -94,25 +91,26 @@ class Simpli_Basev1c0_Plugin {
      */
     protected $_plugin_file_path;
 
-
-
-        /**
+    /**
      * Activate Actions
      *
      * @var string
      */
-    protected $_activate_actions=array();
+    protected $_activate_actions = array();
 
+    /**
+     * Debug Options
+     *
+     * @var string
+     */
+    protected $_debug = array();
 
-
-
-
-
-
-
-
-
-
+    /**
+     * Utility Object
+     *
+     * @var string
+     */
+    protected $_tools;
 
     /**
      * Constructor
@@ -133,6 +131,15 @@ class Simpli_Basev1c0_Plugin {
 
         return $this;
     }
+
+    /**
+     * Localize Variables
+     *
+     * holds variables to be added to javascript in format required by wp_localize
+     *
+     * @var array
+     */
+    protected $_local_vars = array();
 
     /**
      * Set Directory
@@ -301,7 +308,7 @@ class Simpli_Basev1c0_Plugin {
      * @param none
      * @return string
      */
-    public function getPluginUrl() {
+    public function getUrl() {
         return $this->_plugin_url;
     }
 
@@ -471,8 +478,6 @@ class Simpli_Basev1c0_Plugin {
         return $this->_slug;
     }
 
-
-
     /**
      * Get Version
      *
@@ -483,16 +488,14 @@ class Simpli_Basev1c0_Plugin {
     public function getVersion() {
 
 
-                    $headers=array('Version'=>'Version');
+        $headers = array('Version' => 'Version');
 
-        $plugin_file_data=get_file_data( $this->getFilePath(),$headers,'plugin' );
+        $plugin_file_data = get_file_data($this->getFilePath(), $headers, 'plugin');
 
 
 
         return $plugin_file_data['Version'];
     }
-
-
 
     /**
      * Get Simpli Base Class Version
@@ -503,15 +506,15 @@ class Simpli_Basev1c0_Plugin {
      */
     public function getBaseClassVersion($template = null) {
 
-                    $headers=array('SimpliBaseClassVersion'=>'Simpli Base Class Version');
+        $headers = array('SimpliBaseClassVersion' => 'Simpli Base Class Version');
 
-        $plugin_file_data=get_file_data( $this->getFilePath(),$headers,'simpli' );
+        $plugin_file_data = get_file_data($this->getFilePath(), $headers, 'simpli');
 
 
 
-      $version = $plugin_file_data['Simpli Base Class Version'];
+        $version = $plugin_file_data['Simpli Base Class Version'];
 
-      //  $version = $this->_base_class_version;
+        //  $version = $this->_base_class_version;
 
 
 
@@ -542,6 +545,28 @@ class Simpli_Basev1c0_Plugin {
         $framework_version = $simpli_data['Simpli Framework Version'];
 
         return $framework_version;
+    }
+
+    /**
+     * Get Slug Parts
+     *
+     * @param none
+     * @return object
+     */
+    public function getSlugParts() {
+
+        /*
+         * derive namespace from slug
+         * return as object
+         */
+
+        $array_class = explode('_', $this->getSlug());
+
+        $parts = new stdClass;
+        $parts->prefix = $array_class[0];
+        $parts->suffix = $array_class[1];
+
+        return $parts;
     }
 
     /**
@@ -619,6 +644,139 @@ class Simpli_Basev1c0_Plugin {
     }
 
     /**
+     * Get Variables to be wp_localized
+     *
+     * @param none
+     * @return string
+     */
+    public function getLocalVars() {
+        return $this->_local_vars;
+    }
+
+    /**
+     * Set Localize Variables for wp_localize
+     *
+     * Adds variables to the local_vars array so we
+     * can later add them to javascript using wp_localize
+     * @param string $something
+     * @return object $this
+     */
+    public function setLocalVars($local_vars) {
+
+        if (is_array($local_vars)) {
+            $this->_local_vars = array_merge($this->_local_vars, $local_vars);
+        }
+ //wp_localize_script('simpli-framework-namespace.js', $this->getSlug(), $this->_local_vars);
+  //wp_localize_script('save-metabox-state.js', $this->getSlug(), $this->_local_vars);
+  //wp_localize_script($this->getSlug() . '_' . 'localVars', $this->getSlug(), $this->_local_vars );
+
+        return $this;
+    }
+
+
+
+
+    /**
+     * Get Debug
+     *
+     * Returns the debug property array or an element of the debug property array
+     * @param $key (optional) . If provided, returns the element identified by the key instead of the entire array
+     * @return string
+     */
+    public function getDebug($key = null) {
+
+
+        $debug_defaults = array(
+            'js' => false
+            , 'consolelog' => false
+            , 'src' => false
+            , 'filelog' => false
+        );
+
+        $debug = array_merge($debug_defaults, $this->_debug);
+
+        if (!is_null($key)) { //if key provided, return only a single element
+
+
+            $result = $debug[$key];
+        } else {
+            $result = $this->_debug;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Set Debug
+     *
+     * @param array $debug
+     * @return object $this
+     */
+    public function setDebug($debug) {
+
+        $valid_options = array('js', 'consolelog', 'filelog', 'src');
+
+        /* Check for Validtity
+         * Use the validateArrayKeys utility to check that all the keys
+         * passed to setDebug are allowed, as defined by $valid_options.
+         */
+        $validity_check = $this->getTools()->validateArrayKeys($debug, $valid_options);
+
+
+        if ($validity_check !== true) {
+
+            echo ('(<strong>Error/simpli-framework: Bad Debug Options</strong>, only the following options are accepted and they must be set to true or false: \'' . implode('\',\'', $valid_options) . '\')' );
+            return;
+        }
+
+        /*
+         * Merge what was provided with existing, so existing can provide defaults or previously set options
+         */
+        $debug = array_merge($this->getDebug(), $debug);
+
+        if (($debug['consolelog']) || $debug['filelog']) {
+
+            $this->getLogger()->setLoggingOn(true);
+        }
+
+
+//        if (isset($debug['filelog'])) {
+//
+//            $this->getLogger()->setLoggingOn($debug['filelog']);
+//        }
+
+
+
+        if (isset($debug['src'])) {
+
+            if (!defined('SCRIPT_DEBUG')) {
+                define('SCRIPT_DEBUG', $debug['src']);
+            }
+        }
+
+        $this->_debug = $debug;
+        return $this;
+    }
+
+    /**
+     * Tools
+     *
+     * Provides access to the library of methods in the Base Tools class
+     * @param none
+     * @return object Base Tools
+     */
+    public function getTools() {
+
+        if (!isset($this->_tools)) {
+
+            $this->_tools = new Simpli_Basev1c0_Btools();
+        }
+
+
+        return $this->_tools;
+    }
+
+    /**
      * Init
      *
      * Performs basic housekeeping tasks and initializes all modules
@@ -628,9 +786,21 @@ class Simpli_Basev1c0_Plugin {
      */
     public function init() {
 
+        /*
+         * Enqueue the framework's namespace script so we can namespace our javascript
+         * Add our local variables
+         *
+         */
+
+        if (is_admin()) {
+            add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+            add_action('admin_print_footer_scripts', array(&$this, 'printLocalVars'));
+        } else {
+            add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+            add_action('wp_print_footer_scripts', array(&$this, 'printLocalVars'));
 
 
-
+        }
         /*
          * Load the text domain
          * ref: http://codex.wordpress.org/Function_Reference/load_plugin_textdomain
@@ -665,7 +835,7 @@ class Simpli_Basev1c0_Plugin {
 
         $this->setPluginUrl(plugins_url('', $this->getDirectory() . '/plugin.php'));
 
-        $this->getLogger()->log($this->getSlug() . ': Plugin URL: ' . $this->getPluginUrl());
+        $this->getLogger()->log($this->getSlug() . ': Plugin URL: ' . $this->getUrl());
 
         /**
          * Load Settings
@@ -829,7 +999,6 @@ class Simpli_Basev1c0_Plugin {
         return $this;
     }
 
-
     /**
      * Get Activate Actions
      *
@@ -857,6 +1026,71 @@ class Simpli_Basev1c0_Plugin {
     public function addActivateAction($action) {
         array_push($this->_activate_actions, $action);
         return $this;
+    }
+
+    /**
+     * Enqueue Scripts
+     *
+     * Enqueues frameworks scripts
+     * @param string $content The shortcode content
+     * @return string The parsed output of the form body tag
+     */
+    function enqueue_scripts($param) {
+        $handle = 'simpli-framework-namespace.js';
+        $src = $this->getUrl() . '/js/' . 'simpli-framework-namespace.js';
+        $deps = array('jquery');
+        $ver = '1.0.0';
+        $in_footer = true; // must be in footer or it wont retain positions
+        wp_enqueue_script($handle, $src, $deps, $ver, $in_footer);
+
+        /*
+         * Pass to javascript some basic information about our plugin
+         */
+        $vars = array(
+            'plugin' => array(
+                'slugparts' => array(
+                    'prefix' => $this->getSlugParts()->prefix
+                    , 'suffix' => $this->getSlugParts()->suffix
+                )
+                , 'slug' => $this->getSlug()
+                , 'name' => $this->getName()
+                , 'url' => $this->getUrl()
+                , 'version' => $this->getVersion()
+                , 'directory' => $this->getDirectory()
+                , 'debug' => $this->getDebug('js')
+            )
+        );
+
+
+        /*
+         * wp_localize will now create an object within javascript named after the slug for your plugin, with the properties above.
+         * for example,to access the plugins url, do this : alert ( simpli_hello.plugin.url)
+         */
+
+        $this->setLocalVars($vars);
+
+      //  wp_localize_script($handle, $this->getSlug(), $this->getLocalVars());
+    }
+
+
+    /**
+     * Prints Local Vars to Footer of Page
+     *
+     * Long Description
+     * @param string $content The shortcode content
+     * @return string The parsed output of the form body tag
+ */
+    function printLocalVars() {
+
+        $vars=json_encode($this->getLocalVars());
+        ?>
+            <script type='text/javascript'>
+
+            var <?php echo $this->getSlug();?> = <?php echo $vars;?>
+
+            </script>
+
+            <?php
     }
 
 }

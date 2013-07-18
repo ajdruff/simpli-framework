@@ -66,7 +66,7 @@ class Simpli_Hello_Module_Shortcodes extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function enqueue_scripts() {
-//       wp_enqueue_style($this->getPlugin()->getSlug() . '-admin-page', $this->getPlugin()->getPluginUrl() . '/admin/css/settings.css', array(), $this->getPlugin()->getVersion());
+//       wp_enqueue_style($this->getPlugin()->getSlug() . '-admin-page', $this->getPlugin()->getUrl() . '/admin/css/settings.css', array(), $this->getPlugin()->getVersion());
 //        wp_enqueue_script('jquery');
 //        wp_enqueue_script('jquery-form');
 //        wp_enqueue_script('post');

@@ -53,17 +53,17 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
         add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_reset', array(&$this, 'reset'));
 
-/*
- * Reset all settings to defaults
- *
- */
-            add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_reset_all', array(&$this, 'reset_all'));
-  /*
- * Manuall Update settings so as to add any newly added settings due to a developer update
- *
- */
-            add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_update_all', array(&$this, 'update_all'));
-            
+        /*
+         * Reset all settings to defaults
+         *
+         */
+        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_reset_all', array(&$this, 'reset_all'));
+        /*
+         * Manuall Update settings so as to add any newly added settings due to a developer update
+         *
+         */
+        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_update_all', array(&$this, 'update_all'));
+
 
 
 // add ajax action
@@ -75,21 +75,20 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          * Add metaboxes whenever the page matches the plugin's slug
          *
          */
+
         if (isset($_GET['page']) //if 'page' variable is in url
                 && strpos($_GET['page'], $this->getPlugin()->getSlug()) !== false
         ) {
             // Add meta boxes
-            add_action('admin_init', array(&$this, 'add_meta_boxes'));
+            // add_action('admin_init', array(&$this, 'add_meta_boxes'));
+add_action('admin_init', array(&$this, 'add_meta_boxes'));
+        //    add_action('load-toplevel_page_simpli_hello_menu10_settings', array(&$this, 'add_meta_boxes'));
 
-
-
-
-
-
+//    add_action('load-toplevel_page_simpli_hello_menu10_settings', array(&$this, 'add_meta_boxes'));
+//add_action('load-toplevel_page_simpli_hello_menu10_settings_group1', array(&$this, 'add_meta_boxes'));
 
             // Add scripts
             add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
-
         }
 
         // Add admin menus
@@ -110,7 +109,6 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     public function admin_menu() {
 
         throw new Exception('No admin_menu method in  ' . get_class($this));
-
     }
 
     /**
@@ -121,10 +119,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      */
     public function add_meta_boxes() {
 
-
     }
-
-
 
     /**
      * Dispatch request for settings page
@@ -184,8 +179,6 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     public function admin_enqueue_scripts() {
 
         //add any   wp_enqueue_script calls here
-
-
     }
 
     /**
@@ -335,7 +328,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
     }
 
-   /**
+    /**
      * Update All Settings
      *
      * add the update_all method to the Simpli Plugin.php class and make this method a wrapper that calls it
@@ -346,7 +339,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      */
     public function update_all() {
         if (!wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug())) {
-                return false;
+            return false;
         }
 
         $message = "Settings have been updated";
@@ -364,13 +357,13 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
         $wp_option_name = $this->getPlugin()->getSlug() . '_options';
         $existing_options = $this->getPlugin()->getSettings();
-        $option_defaults= $this->getPlugin()->getSettingDefaults();
-        $options=array_merge($option_defaults,$existing_options);
+        $option_defaults = $this->getPlugin()->getSettingDefaults();
+        $options = array_merge($option_defaults, $existing_options);
 
 
-                /*
+        /*
          * Save back to the database ( do not use the $this->getPlugin()->saveSettings() method since that
-                 * will only use existing settings)
+         * will only use existing settings)
          *
          */
 
@@ -388,7 +381,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
     }
 
-/**
+    /**
      * Reset All Settings
      *
      * @param none
@@ -396,7 +389,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      */
     public function reset_all() {
         if (!wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug())) {
-                return false;
+            return false;
         }
 
         $message = "All Settings Have been reset to initial defaults.";
@@ -405,15 +398,14 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         $logout = false; //whether you want to logout after settings are saved
 
         global $wpdb;
-        $query='delete from wp_options where option_name = \'' . $this->getPlugin()->getSlug() . '_options\'';
-	$dbresult=$wpdb->query($query);
+        $query = 'delete from wp_options where option_name = \'' . $this->getPlugin()->getSlug() . '_options\'';
+        $dbresult = $wpdb->query($query);
 
-       /* if no rows affected, that means the defaults havent been changed yet and stored in the database*/
-        if ($dbresult===0) {
-            $message='Settings are already at defaults!';
-        }elseif($dbresult===false){//returns false on error
-
-            $message='Setting reset failed due to database error.';
+        /* if no rows affected, that means the defaults havent been changed yet and stored in the database */
+        if ($dbresult === 0) {
+            $message = 'Settings are already at defaults!';
+        } elseif ($dbresult === false) {//returns false on error
+            $message = 'Setting reset failed due to database error.';
         }
 
         $this->getPlugin()->saveSettings();

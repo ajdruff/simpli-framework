@@ -10,7 +10,7 @@
  * @package SimpliFramework
  * @subpackage SimpliBase
  */
-abstract class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Interface {
+class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Interface {
 
     /**
      * Plugin object that this module extends

@@ -246,15 +246,13 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
         $this->getPlugin()->setLocalVars( $vars );
 
 
-            $handle = 'save-metabox-state.js';
-        $src = $this->getPlugin()->getUrl() . '/admin/js/' . 'save-metabox-state.js';
-        $deps = array('postbox');
-        $ver = '1.0.0';
-        $in_footer = true; // must be in footer or it wont retain positions
-        wp_enqueue_script($handle, $src, $deps, $ver, $in_footer);
 
+        $handle = $this->getSlug() . '_save-metabox-state.js';
+        $path = $this->getPlugin()->getDirectory() . '/js/save-metabox-state.js';
+        $inline_deps = array($this->getPlugin()->getSlug() . '_simpli-framework-namespace.js');
+        $external_deps = array('postbox');
+        $this->getPlugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
 
-          //  wp_localize_script($handle, $this->getPlugin()->getSlug(), $this->getPlugin()->getLocalVars());
 
 
 /*

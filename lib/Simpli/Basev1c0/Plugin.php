@@ -666,15 +666,12 @@ class Simpli_Basev1c0_Plugin {
         if (is_array($local_vars)) {
             $this->_local_vars = array_merge($this->_local_vars, $local_vars);
         }
- //wp_localize_script('simpli-framework-namespace.js', $this->getSlug(), $this->_local_vars);
-  //wp_localize_script('save-metabox-state.js', $this->getSlug(), $this->_local_vars);
-  //wp_localize_script($this->getSlug() . '_' . 'localVars', $this->getSlug(), $this->_local_vars );
+        //wp_localize_script('simpli-framework-namespace.js', $this->getSlug(), $this->_local_vars);
+        //wp_localize_script('save-metabox-state.js', $this->getSlug(), $this->_local_vars);
+        //wp_localize_script($this->getSlug() . '_' . 'localVars', $this->getSlug(), $this->_local_vars );
 
         return $this;
     }
-
-
-
 
     /**
      * Get Debug
@@ -696,8 +693,6 @@ class Simpli_Basev1c0_Plugin {
         $debug = array_merge($debug_defaults, $this->_debug);
 
         if (!is_null($key)) { //if key provided, return only a single element
-
-
             $result = $debug[$key];
         } else {
             $result = $this->_debug;
@@ -795,12 +790,20 @@ class Simpli_Basev1c0_Plugin {
         if (is_admin()) {
             add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
             add_action('admin_print_footer_scripts', array(&$this, 'printLocalVars'));
+            add_action('admin_print_footer_scripts', array(&$this, 'printInlineFooterScripts'));
         } else {
             add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
             add_action('wp_print_footer_scripts', array(&$this, 'printLocalVars'));
-
-
+            add_action('wp_print_footer_scripts', array(&$this, 'printInlineFooterScripts'));
         }
+
+
+
+
+
+
+
+
         /*
          * Load the text domain
          * ref: http://codex.wordpress.org/Function_Reference/load_plugin_textdomain
@@ -837,6 +840,9 @@ class Simpli_Basev1c0_Plugin {
 
         $this->getLogger()->log($this->getSlug() . ': Plugin URL: ' . $this->getUrl());
 
+
+
+
         /**
          * Load Settings
          */
@@ -851,8 +857,7 @@ class Simpli_Basev1c0_Plugin {
 
         /*
          *
-         * Tell debugger plugin and class library loaded
-         *
+         * Tell debugger that the plugin and class library have been loaded
          */
         $this->getLogger()->log($this->getSlug() . ': Initializing Plugin ');
         $this->getLogger()->log($this->getSlug() . ': Loaded Base Class Library ' . ' from ' . dirname(__FILE__));
@@ -1028,6 +1033,122 @@ class Simpli_Basev1c0_Plugin {
         return $this;
     }
 
+    protected $_inline_script_queue = array();
+
+    /**
+     * Enqueue Inline Script
+     *
+     * Adds an inline script to a queue array that is later printed
+     * @param string $handle - The handle of the script
+     * @param string $src - The absolute path to the script
+     * @para array $deps - An array of handles that the script is dependent on
+     * @return array $this->_inline_script_queue The current array of queued scripts
+     */
+    public function enqueueInlineScript($handle, $path, $inline_deps, $external_deps) {
+
+
+        if (is_null($this->_inline_script_queue)) {
+            $this->_inline_script_queue = array('scripts' => array(), 'handles' => array(), 'inline_deps' => array());
+        }
+
+
+//        $handle = 'myscript';
+//        $path = $this->getDirectory() . '/js/myscript.js';
+//        $deps = array('myscript1', 'myscript2');
+
+
+        $inline_script = array(
+            'path' => $path
+            , 'inline_deps' => $inline_deps
+            , 'external_deps' => $external_deps
+        );
+
+
+
+        $queue = $this->_inline_script_queue;
+        $queue['scripts'][$handle] = $inline_script;
+        $queue['handles'][] = $handle;
+        $queue['inline_deps'][$handle] = $inline_deps;
+        //  $this->_inline_script_queue = array_merge($this->_inline_script_queue, array('handles'=>array($handle))); //needed to assist with sorting dependencies
+        //  $this->_inline_script_queue = array_merge($this->_inline_script_queue, array('inline_deps'=>array($handle=>$inline_deps)));//needed to assist with sorting dependencies
+        $this->_inline_script_queue = $queue;
+        return $queue;
+    }
+
+    /**
+     * Print Inline Footer Scripts
+     *
+     * Echos the queued inline scripts to the WordPress footer
+     * @todo Consider adding a 'dependency resolution' option to toggle  dependency sort off for potentially increased performance. If you do this, you'll likely receive more reference errors and need to sequence the loading of script more carefully manually, as well as place code in jquery ready() blocks
+     * @param boolean $dep_resolution  Dependency Resolution - Whether load the scripts in order of dependency which helps to prevent conflicts but may take longer
+     * @return void
+     */
+    function printInlineFooterScripts() {
+
+        $dep_resolution = true;
+        /*
+         * get the script queue
+         */
+        $script_queue = $this->_inline_script_queue;
+
+        /*
+         * dont go any further if there are no scripts to process
+         */
+        if (empty($script_queue)) {
+
+            return;
+        }
+        /*
+         * Now get a sorted list of handles, in order of dependency.
+         */
+        $handle_list = $script_queue['handles'];
+        $deps = $script_queue['inline_deps'];
+
+        if ($dep_resolution) {
+            $handle_list = $this->getTools()->sortDependentList($handle_list, $deps);
+        }
+//        else
+//        {
+//            $handle_list = $unsorted_handles;
+//        }
+
+        /*
+         * Now print out the scripts, in order of their dependencies
+         */
+
+
+        echo '<script  type="text/javascript">';
+
+        foreach ($handle_list as $handle) {
+            $script = $script_queue['scripts'][$handle]; /* get the script queue properties from the script_queue */
+            $ext_dependencies_met = true; /* assume that external dependencies are met,, then toggle it false if found to be untrue */
+            foreach ($script['external_deps'] as $ext_handle) {
+                if (!wp_script_is($ext_handle)) {
+                    $ext_dependencies_met = false;
+                }
+            }
+
+            /*
+             * include the script if external dependencies met
+             * if inline script dependencies are not met, then they wouldn't appear here at all anyway because the sortDependentList removes them
+             */
+            if ($ext_dependencies_met) {
+
+                if (file_exists($script['path'])) { //include the path to the script. if not found, output an error to the javascript console.
+                    include($script['path']);
+                    $this->getLogger()->log('loaded inline script: ' . $handle);
+                } else {
+                    $this->getLogger()->log('couldnt load script: ' . $handle . ' due to missing script file');
+                    echo 'jQuery(document).ready(function() { console.error (\' WordPrsss Plugin ' . $this->getSlug() . ' attempted to enqueue ' . ' Missing Script File ' . str_replace('\\', '\\\\', $script['path']) . '\')});';
+                }
+            } else {
+                $this->getLogger()->log($handle . ' not loaded, missing dependency ' . $ext_handle);
+            }
+        }
+
+        echo '</script>';
+    }
+
     /**
      * Enqueue Scripts
      *
@@ -1035,13 +1156,42 @@ class Simpli_Basev1c0_Plugin {
      * @param string $content The shortcode content
      * @return string The parsed output of the form body tag
      */
-    function enqueue_scripts($param) {
-        $handle = 'simpli-framework-namespace.js';
-        $src = $this->getUrl() . '/js/' . 'simpli-framework-namespace.js';
-        $deps = array('jquery');
-        $ver = '1.0.0';
-        $in_footer = true; // must be in footer or it wont retain positions
-        wp_enqueue_script($handle, $src, $deps, $ver, $in_footer);
+    function enqueue_scripts() {
+
+
+        /*
+         * Load 3rd Party Libraries using wp_enqueue
+         */
+
+        wp_enqueue_script('jquery');
+
+        /*
+         * Load our own 'inline' scripts
+         * We use the framework's enqueueInlineScript method to speed loading and manage dependencies
+         * ( faster loading since there is no roundtrip request.)
+         */
+
+
+
+        $handle = $this->getSlug() . '_simpli-framework-namespace.js';
+        $path = $this->getDirectory() . '/js/simpli-framework-namespace.js';
+        $inline_deps = array();
+        $external_deps = array('jquery');
+        $this->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+
+        $handle = $this->getSlug() . '_test1.js';
+        $path = $this->getDirectory() . '/js/test1.js';
+        $inline_deps = array($this->getSlug() . '_test2.js', $this->getSlug() . '_simpli-framework-namespace.js');
+        $external_deps = array('jquery');
+        $this->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+
+
+
+        /*
+         * Use wp_enqueue for longer local scripts
+         */
+
+
 
         /*
          * Pass to javascript some basic information about our plugin
@@ -1063,15 +1213,15 @@ class Simpli_Basev1c0_Plugin {
 
 
         /*
-         * wp_localize will now create an object within javascript named after the slug for your plugin, with the properties above.
+         * Use the framework setLocalVars to create an object within javascript named after the slug for your plugin, with the properties above.
          * for example,to access the plugins url, do this : alert ( simpli_hello.plugin.url)
+         * Avoid use of wp_localize as it prevents us from adding variables after the enqueue events.
          */
 
         $this->setLocalVars($vars);
 
-      //  wp_localize_script($handle, $this->getSlug(), $this->getLocalVars());
-    }
 
+    }
 
     /**
      * Prints Local Vars to Footer of Page
@@ -1079,18 +1229,18 @@ class Simpli_Basev1c0_Plugin {
      * Long Description
      * @param string $content The shortcode content
      * @return string The parsed output of the form body tag
- */
+     */
     function printLocalVars() {
 
-        $vars=json_encode($this->getLocalVars());
+        $vars = json_encode($this->getLocalVars());
         ?>
-            <script type='text/javascript'>
+        <script type='text/javascript'>
 
-            var <?php echo $this->getSlug();?> = <?php echo $vars;?>
+            var <?php echo $this->getSlug(); ?> = <?php echo $vars; ?>
 
-            </script>
+        </script>
 
-            <?php
+        <?php
     }
 
 }

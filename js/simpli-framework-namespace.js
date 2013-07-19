@@ -42,11 +42,13 @@ simpli.hello.message('hello world!');
 
 simpli.hello.log = function(message)
 {
+    jQuery(document).ready(function() {
       if (simpli_hello.plugin.debug===true){
     //alert(message);
     console.log( message );
 
     }
+    });
 };
 
 simpli.hello.test=function(){

@@ -61,12 +61,11 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
      */
     public function getLoggingState() {
 
-        if (is_null($this->_enabled)){
+        if (is_null($this->_enabled)) {
 
-            $debug=$this->getPlugin()->getDebug();
+            $debug = $this->getPlugin()->getDebug();
 
-            $this->_enabled = ($debug['consolelog'] ||$debug['filelog']) ;
-
+            $this->_enabled = ($debug['consolelog'] || $debug['filelog']);
         }
 
         return $this->_enabled;
@@ -124,12 +123,23 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
     }
 
     /**
-     * Adds a string to an array of log entries
+     * Adds an Error to the Log
+     *
+     * Wrapper to log
+     * @param string $string
+     * @return $this
+     */
+    public function logError($string) {
+        $this->log($string, $type = 'error');
+    }
+
+    /**
+     * Adds an Info entry to the log
      *
      * @param string $string
      * @return $this
      */
-    public function log($string) {
+    public function log($string, $type = 'info') {
 //        echo '<br>' . $this->getPlugin()->getSlug() . ':  logging enabled = ';
 //        echo ($this->getLoggingState() === true) ? "true" : "false";
         /*
@@ -140,7 +150,10 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
         }
 
         $time_now = date("Y-m-d H:i:s");
-        $this->_log[] = $time_now . ' ' . $string;
+        $this->_log[] = array(
+            'text' => $time_now . ' ' . $string
+            , 'type' => $type);
+
 
 
 
@@ -167,12 +180,20 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
 
 
         foreach ($log as $log_entry) {
-            if (is_array($log_entry)) {
-                $log_entry = json_encode($log_entry);
+            $log_text = $log_entry['text'];
+            if (is_array($log_text)) {
+                $log_text = json_encode($log_text);
             } else {
-                $log_entry = "'" . addslashes($log_entry) . "'";
+                $log_text = "'" . addslashes($log_text) . "'";
             }
-            $code .= "\t\tconsole.log(" . $log_entry . ");\n";
+
+            if ($log_entry['type'] === 'info') {
+
+                $code .= "\t\tconsole.log(" . $log_text . ");\n";
+            } elseif ($log_entry['type'] === 'error') {
+
+                $code .= "\t\tconsole.error(" . $log_text . ");\n";
+            }
         }
         $code .= "\t}\n</script>\n";
         return $code;
@@ -191,8 +212,10 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
         /*
          * dont log to file if debug options turned it off
          */
-        $debug=$this->getPlugin()->getDebug();
-        if (!$debug['filelog']){return;}
+        $debug = $this->getPlugin()->getDebug();
+        if (!$debug['filelog']) {
+            return;
+        }
 
 
 
@@ -244,11 +267,15 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
          */
 
 
-        $debug=$this->getPlugin()->getDebug();
+        $debug = $this->getPlugin()->getDebug();
 
-        if ($debug['consolelog']) {echo $this->consoleLog();}
+        if ($debug['consolelog']) {
+            echo $this->consoleLog();
+        }
 
-         if ($debug['filelog']) {$this->fileLog($this->getPlugin()->getDirectory() . '/error.log.txt');}
+        if ($debug['filelog']) {
+            $this->fileLog($this->getPlugin()->getDirectory() . '/error.log.txt');
+        }
     }
 
 }

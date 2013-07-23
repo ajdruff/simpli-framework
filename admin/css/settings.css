@@ -11,7 +11,7 @@
 	margin: 0;
 }
 
-.simpli-hello #simpli-main #icon-options-https {
+.simpli-hello #simpli-main .menu-icon {
 	background: url(images/admin-icon32.png) no-repeat;
 }
 
@@ -87,6 +87,8 @@
 	margin: 5px 5px 0 0;
 	float: left;
 }
+
+/*
 .simpli-hello #simpli-main #settings-reset,
 .simpli-hello #simpli-main #network-settings-reset,
 .simpli-hello #simpli-main #filters-reset,
@@ -94,6 +96,7 @@
 	float: left;
 	margin-right: 10px;
 }
+
 .simpli-hello #simpli-main #ssl_port_label {
 	display: inline-block;
 	padding-top: 10px;
@@ -105,42 +108,6 @@
 	padding-top: 5px;
 }
 
-.simpli-hello #simpli-main #admin_menu_row label {
-	display: inline;
-}
-
-.simpli-hello #simpli-main #secure_filter_row textarea {
-	width: 95%;
-	height: 120px;
-}
-
-.simpli-hello #simpli-main #admin_menu_row fieldset {
-	margin-top: 5px;
-}
-
-.simpli-hello #simpli-main input[type="checkbox"] {
-	float: left;
-}
-.simpli-hello #simpli-main p.description {
-	margin: .5em 0 0 .5em;
-	width: 75%;
-	display: block;
-	float: left;
-	line-height: 1.2em;
-}
-.simpli-hello #simpli-main #secure_filter_row p.description {
-	margin: .5em 10px 0 0;
-	width: auto;
-}
-.simpli-hello #simpli-main #ssl_proxy_row p.description {
-	width: 65%;
-}
-.simpli-hello #simpli-main #domain_mapping td {
-	padding: 10px 0;
-}
-.simpli-hello #simpli-main #domain_mapping td.arrow {
-	padding: 8px 0;
-}
 .simpli-hello #simpli-main #domain_mapping .http_scheme,
 .simpli-hello #simpli-main #domain_mapping .https_scheme {
 	width: 30px;
@@ -203,3 +170,41 @@
 	border: 1px solid #000;
 	border-width: 0 0 1px 1px;
 }
+.simpli-hello #simpli-main #secure_filter_row p.description {
+	margin: .5em 10px 0 0;
+	width: auto;
+}
+.simpli-hello #simpli-main #ssl_proxy_row p.description {
+	width: 65%;
+}
+.simpli-hello #simpli-main #domain_mapping td {
+	padding: 10px 0;
+}
+.simpli-hello #simpli-main #domain_mapping td.arrow {
+	padding: 8px 0;
+}
+*/
+.simpli-hello #simpli-main #admin_menu_row label {
+	display: inline;
+}
+
+.simpli-hello #simpli-main #secure_filter_row textarea {
+	width: 95%;
+	height: 120px;
+}
+
+.simpli-hello #simpli-main #admin_menu_row fieldset {
+	margin-top: 5px;
+}
+
+.simpli-hello #simpli-main input[type="checkbox"] {
+	float: left;
+}
+.simpli-hello #simpli-main p.description {
+	margin: .5em 0 0 .5em;
+	width: 75%;
+	display: block;
+	float: left;
+	line-height: 1.2em;
+}
+

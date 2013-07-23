@@ -201,13 +201,14 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function add_meta_box_post() {
+        
         $args = array(
             'public' => true,
         );
         $post_types = get_post_types($args);
         foreach ($post_types as $post_type) {
             add_meta_box(
-                    $this->getPlugin()->getSlug(), __($this->getPlugin()->getName(), $this->getPlugin()->getSlug()), array($this->getPlugin()->getModule('Admin'), 'meta_box_render'), $post_type, 'side', 'core', array('metabox' => 'post')
+                    $this->getPlugin()->getSlug(), __($this->getPlugin()->getName(),$this->getPlugin()->getTextDomain()), array($this->getPlugin()->getModule('Admin'), 'meta_box_render'), $post_type, 'side', 'core', array('metabox' => 'post')
             );
         };
     }

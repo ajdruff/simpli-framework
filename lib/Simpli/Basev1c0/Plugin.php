@@ -663,9 +663,30 @@ class Simpli_Basev1c0_Plugin {
      */
     public function setLocalVars($local_vars) {
 
-        if (is_array($local_vars)) {
-            $this->_local_vars = array_merge($this->_local_vars, $local_vars);
+;
+/*
+ * need to merge the individual elements since the standard merge isnt recursive,
+ * and the array_merge_recursive chokes on the first merge, as well as not overwriting
+ * some of the deeper elements.
+ */
+
+        foreach ($local_vars as $key=>$value) {
+            if (isset($this->_local_vars[$key]) && is_array($this->_local_vars[$key])) {
+
+                $this->_local_vars[$key]=array_merge($this->_local_vars[$key],$value);
+            }
+           else
+            {
+               $this->_local_vars[$key]=$value;
+            }
         }
+
+
+
+
+//        if (is_array($local_vars)) {
+//            $this->_local_vars = array_merge_recursive_distinct($this->_local_vars, $local_vars);
+//        }
         //wp_localize_script('simpli-framework-namespace.js', $this->getSlug(), $this->_local_vars);
         //wp_localize_script('save-metabox-state.js', $this->getSlug(), $this->_local_vars);
         //wp_localize_script($this->getSlug() . '_' . 'localVars', $this->getSlug(), $this->_local_vars );
@@ -1044,9 +1065,19 @@ class Simpli_Basev1c0_Plugin {
      * @para array $deps - An array of handles that the script is dependent on
      * @return array $this->_inline_script_queue The current array of queued scripts
      */
-    public function enqueueInlineScript($handle, $path, $inline_deps, $external_deps) {
+    public function enqueueInlineScript($handle, $path, $inline_deps=array(), $external_deps=array()) {
 
-
+/*
+ * Its necessary to set defaults for arrays here since doing so in the declaration
+ * for some reason doesnt work and carries a null value through instead, which
+ * will choke foreach statements later.
+ *
+ */
+if (is_null($inline_deps)){$inline_deps=array();}
+if (is_null($external_deps)){$external_deps=array();}
+/*
+ * if queue hasnt been created yet, create it
+ */
         if (is_null($this->_inline_script_queue)) {
             $this->_inline_script_queue = array('scripts' => array(), 'handles' => array(), 'inline_deps' => array());
         }
@@ -1069,6 +1100,7 @@ class Simpli_Basev1c0_Plugin {
         $queue['scripts'][$handle] = $inline_script;
         $queue['handles'][] = $handle;
         $queue['inline_deps'][$handle] = $inline_deps;
+
         //  $this->_inline_script_queue = array_merge($this->_inline_script_queue, array('handles'=>array($handle))); //needed to assist with sorting dependencies
         //  $this->_inline_script_queue = array_merge($this->_inline_script_queue, array('inline_deps'=>array($handle=>$inline_deps)));//needed to assist with sorting dependencies
         $this->_inline_script_queue = $queue;
@@ -1208,6 +1240,8 @@ class Simpli_Basev1c0_Plugin {
                 , 'version' => $this->getVersion()
                 , 'directory' => $this->getDirectory()
                 , 'debug' => $this->getDebug('js')
+                , 'admin_url'=> get_admin_url()
+                , 'nonce'=> wp_create_nonce($this->getSlug())
             )
         );
 

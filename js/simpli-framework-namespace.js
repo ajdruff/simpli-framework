@@ -56,8 +56,8 @@ simpli.hello.test=function(){
 /*
  * tests jquery selectors  - just outputs the title of the page
  */
-simpli.hello.log (jQuery("title").html());
-simpli.hello.log('Plugin Name is ' + simpli_hello.plugin.name);
+simpli.hello.log ('Testing console output. Current Page Title is ' + jQuery("title").html());
+simpli.hello.log('Testing console output. Plugin Name is ' + simpli_hello.plugin.name);
 
 }
 
@@ -65,7 +65,7 @@ jQuery(document).ready(function() {
 
 
 
-    simpli.hello.test();
+   // simpli.hello.test();
 
 
 });

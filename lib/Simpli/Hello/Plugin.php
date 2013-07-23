@@ -46,7 +46,7 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
              *
              */
 
-            ,'checkbox_setting' =>
+            ,'checkbox_settings' =>
             array(
                 'yellow' => 'no'
                 , 'red' => 'yes'

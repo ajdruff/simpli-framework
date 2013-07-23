@@ -30,7 +30,7 @@ class Simpli_Basev1c0_Btools {
      * @param array $list - An associative array containing a complete list of handles to be sorted
      * @param array $dependencies Ann associative array whose keys are a subset of $list, but whose values are an array of handles that it is dependent on.
      */
-    public function sortDependentList($list, $dependencies) {
+    public function sortDependentList($list=array(), $dependencies=array()) {
         /* testing
           $list=array(
           'script1'
@@ -73,6 +73,28 @@ class Simpli_Basev1c0_Btools {
 
          *
          */
+
+        /*
+         * return if either list or dependencies is empty
+         */
+     //   if (!is_array($list) || !is_array ($dependencies)){return (array());}
+
+     //   if (empty($list) || empty ($dependencies)){return (array());}
+//          echo '<br>list is empty? ' . empty($list);
+//          echo '<br>list is  an array ? ' . is_array($list);
+//
+//          echo '<br>list is empty? ' . empty($dependencies);
+//          echo '<br>list is  an array ? ' . is_array($dependencies);
+//
+//          echo '<pre>';
+//
+//          print_r($list);
+//          echo '</pre>';
+//
+//                    echo '<pre>';
+//
+//          print_r($dependencies);
+//          echo '</pre>';
 
 
 

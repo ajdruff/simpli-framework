@@ -5,7 +5,7 @@
  *
  * This module creates the admin panel
  *
- * @author Mike Ems
+ * @author Andrew Druffner
  * @package SimpliFramework
  * @subpackage SimpliHello
  *
@@ -77,9 +77,9 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
         if (isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] == 'plugins.php') {
 
 
-                    $plugin = plugin_basename($this->getPlugin()->getFilePath());
+            $plugin = plugin_basename($this->getPlugin()->getFilePath());
 
-           add_filter('plugin_action_links_' . $plugin, array(&$this, 'plugin_action_links'), 10, 2);
+            add_filter('plugin_action_links_' . $plugin, array(&$this, 'plugin_action_links'), 10, 2);
 
             add_filter('plugin_row_meta', array(&$this, 'plugin_links'), 10, 2);
         }
@@ -87,7 +87,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
         // Add global admin scripts
         add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
 
-         $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName() . ' Slug = ' . $this->getSlug());
+        $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName() . ' Slug = ' . $this->getSlug());
     }
 
     /**
@@ -108,20 +108,11 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @param array $metabox
      * @return void
      */
-    public function meta_box_render($module, $metabox = array()) {
-        // if ($metabox['id']=='simpli-helloworld_example_ajax') {
-//                echo '<pre>';
-//               print_r($metabox);
-//               echo '</pre>';
-        //   die();
-        // }
-//
-//             die('rendering');
-//            print_r($metabox);
-        // print_r($metabox);
-        if (isset($metabox['args']['metabox'])) {
-            include($this->getPlugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['args']['metabox'] . '.php');
-        }
+    public function meta_box_render($module,$metabox) {
+
+
+            include($this->getPlugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php');
+
     }
 
     /**
@@ -142,9 +133,9 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
             return $links;
         }
 
-        $links[1]='Simpli Framework '  . $this->getPlugin()->getFrameworkVersion() . ' / ' . $this->getPlugin()->getBaseClassVersion();
+        $links[1] = 'Simpli Framework ' . $this->getPlugin()->getFrameworkVersion() . ' / ' . $this->getPlugin()->getBaseClassVersion();
 
-$links[] = '<a href="'.get_admin_url() . "admin.php?page=" . $this->getPlugin()->getSlug() . '_' . $this->getPlugin()->getModule('Menu10Settings')->getSlug().'" title="' . $this->getPlugin()->getName() . ' Settings">Settings</a>';
+        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->getPlugin()->getSlug() . '_' . $this->getPlugin()->getModule('Menu10Settings')->getSlug() . '" title="' . $this->getPlugin()->getName() . ' Settings">Settings</a>';
         $links[] = '<a href="http://wordpress.org/extend/plugins/' . $this->getPlugin()->getSlug() . '/faq/" title="Frequently Asked Questions">FAQ</a>';
         $links[] = '<a href="http://wordpress.org/tags/' . $this->getPlugin()->getSlug() . '#postform" title="Support">Support</a>';
         $links[] = '<a href="your paypal url here" title="Support this plugin\'s development with a donation!">Donate</a>';
@@ -162,9 +153,8 @@ $links[] = '<a href="'.get_admin_url() . "admin.php?page=" . $this->getPlugin()-
      * @param array $links
      * @return array $links
      */
-
-     public function plugin_action_links($links) {
-        $links[] = '<a href="'.get_admin_url() . "admin.php?page=" . $this->getPlugin()->getSlug() . '_' . $this->getPlugin()->getModule('Menu10Settings')->getSlug().'">Settings</a>';
+    public function plugin_action_links($links) {
+        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->getPlugin()->getSlug() . '_' . $this->getPlugin()->getModule('Menu10Settings')->getSlug() . '">Settings</a>';
         return $links;
     }
 

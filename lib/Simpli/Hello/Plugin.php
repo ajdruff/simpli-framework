@@ -26,27 +26,22 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
     private function setDefaultSettings() {
 
         $default_settings = array(
-
-
-
-
             /*
              *
              * Defaults for Hello World Default Settings
              *
              */
 
-             'hello_global_default_text' => 'Global Hello World!'
-             , 'hello_global_default_placement' => 'after'
-             , 'hello_global_default_enabled' => 'enabled'
+            'hello_global_default_text' => 'Global Hello World!'
+            , 'hello_global_default_placement' => 'after'
+            , 'hello_global_default_enabled' => 'enabled'
 
             /*
              *
              * Defaults for Example Settings in 'Example Settings Metabox'
              *
              */
-
-            ,'checkbox_settings' =>
+            , 'checkbox_settings' =>
             array(
                 'yellow' => 'no'
                 , 'red' => 'yes'
@@ -201,9 +196,9 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
     public function show_activation_extra_characters() {
 
 
-        $activation_error=get_transient($this->getSlug() . '_activation_error');
+        $activation_error = get_transient($this->getSlug() . '_activation_error');
 
-        if ( $activation_error != '' ) {
+        if ($activation_error != '') {
             ?>
 
 

@@ -17,7 +17,7 @@ class Simpli_Hello_Module_Menu20Settings extends Simpli_Basev1c0_Plugin_Menu {
      * @param none
      * @return void
      */
-    public function init() {
+    public function initMenu() {
 
 
 
@@ -40,13 +40,16 @@ class Simpli_Hello_Module_Menu20Settings extends Simpli_Basev1c0_Plugin_Menu {
          * Add any other hooks you need - see base class for examples
          *
          */
+    }
 
-
-
-
-
-        parent::init();
-
+    /**
+     * Config
+     *
+     * Long Description
+     * @param string $content The shortcode content
+     * @return string The parsed output of the form body tag
+     */
+    public function config() {
         /*
          * Set default metabox states - must place this after parent::init to get access to the module's slug
          */

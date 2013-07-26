@@ -50,24 +50,14 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
-     * Initialize Module
+     * Initialize Module when in Admin environment
      *
      * @param none
-     * @return void
+     * @return object $this
      */
-    public function init() {
-
-        /*
-         * Module base class requires
-         * setting Name first, then slug
-         */
-        $this->setName();
-        $this->setSlug();
+    public function initModuleAdmin() {
 
 
-
-
-        // Load on plugins page
 
         /*
          * Only load the plugin action and row meta actions if you are on the plugins listing page
@@ -88,6 +78,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
         add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
 
         $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName() . ' Slug = ' . $this->getSlug());
+        return $this;
     }
 
     /**
@@ -102,17 +93,36 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
+     * Initialize Module
+     *
+     * @param none
+     * @return object $this
+     */
+    public function initModule() {
+        return $this;
+    }
+
+    /**
+     * Configure Module
+     *
+     * @param none
+     * @return void
+     */
+    public function config() {
+
+    }
+
+    /**
      * Renders a meta box
      *
      * @param string $module
      * @param array $metabox
      * @return void
      */
-    public function meta_box_render($module,$metabox) {
+    public function meta_box_render($module, $metabox) {
 
 
-            include($this->getPlugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php');
-
+        include($this->getPlugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php');
     }
 
     /**

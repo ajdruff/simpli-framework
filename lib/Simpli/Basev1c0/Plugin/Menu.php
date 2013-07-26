@@ -102,20 +102,25 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return void
      */
-    public function init() {
-
-
-        if (!is_admin()) {
-            return;
-        }
-
+    public function initModule() {
 
         /*
-         * Module base class requires
-         * setting Name first, then slug
+         * This is an admin module, so no initialization occurs
          */
-        $this->setName();
-        $this->setSlug();
+        return $this;
+    }
+
+    /**
+     * Initialize Module when in Admin environment
+     *
+     * @param none
+     * @return void
+     */
+    public function initModuleAdmin() {
+
+
+
+
 
         /*
          * Fire all actions that must occur after the menu page has been added
@@ -169,11 +174,14 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         add_action('current_screen', array(&$this, 'hookCurrentScreen'));
 
 
+        $this->initMenu();
 
 
         do_action('init_' . $this->getPlugin()->getSlug() . '_' . $this->getSlug()); // Extend Hook for actions that depend on initialization
 
         $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName());
+
+        return $this;
     }
 
     /**
@@ -632,7 +640,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
             return false;
         }
 
-        $message = __("Settings saved.",$this->getPlugin()->getTextDomain());
+        $message = __("Settings saved.", $this->getPlugin()->getTextDomain());
         $errors = array(); // initialize the error array , add any validation errors when you scrub the form_field values
         // eg: $errors[]="You really screwed up on that one";
         // $reload = false; //whether to reload the page after settings are saved
@@ -717,7 +725,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         }
 
 
-        $message = __("Settings have been updated",$this->getPlugin()->getTextDomain());
+        $message = __("Settings have been updated", $this->getPlugin()->getTextDomain());
         $errors = array();
         $reload = true;
         $logout = false; //whether you want to logout after settings are saved
@@ -771,7 +779,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
             return false;
         }
 
-        $message = __("All Settings Have been reset to initial defaults.",$this->getPlugin()->getTextDomain());
+        $message = __("All Settings Have been reset to initial defaults.", $this->getPlugin()->getTextDomain());
 
         $errors = array();
         $reload = true;

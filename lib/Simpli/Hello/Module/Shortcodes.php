@@ -12,24 +12,26 @@
  */
 class Simpli_Hello_Module_Shortcodes extends Simpli_Basev1c0_Plugin_Module {
 
+    /**
+     * Initialize Module when in Admin environment
+     *
+     * @param none
+     * @return object $this
+     */
+    public function initModuleAdmin() {
 
+    }
 
     /**
      * Initialize Module
      *
      * @param none
-     * @return void
+     * @return object $this
      */
-    public function init() {
+    public function initModule() {
 
 
 
-        /*
-         * Module base class requires
-         * setting Name first, then slug
-         */
-        $this->setName();
-        $this->setSlug();
 
         add_shortcode($this->getPlugin()->getSlug(), array(&$this, 'sayHello'), 10);
 
@@ -54,8 +56,18 @@ class Simpli_Hello_Module_Shortcodes extends Simpli_Basev1c0_Plugin_Module {
          *
          *
          */
+        $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName());
+        return $this;
+    }
 
-                  $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName());
+    /**
+     * Configure Module
+     *
+     * @param none
+     * @return void
+     */
+    public function config() {
+
     }
 
     /**
@@ -77,26 +89,6 @@ class Simpli_Hello_Module_Shortcodes extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
-     * Gets the module name
-     * @return $_moduleName
-     *
-     *      */
-    public function getModuleName() {
-
-        return $this->_moduleName;
-    }
-
-    /**
-     * Gets the module slug
-     * @return $_moduleSlug
-     *
-     *      */
-    public function getModuleSlug() {
-
-        return $this->_moduleSlug;
-    }
-
-    /**
      *  Say Hello
      *
      *
@@ -105,7 +97,7 @@ class Simpli_Hello_Module_Shortcodes extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        $result='<div>Hello World! , says the ' . $this->getPlugin()->getName() . ' plugin</div>';
+        $result = '<div>Hello World! , says the ' . $this->getPlugin()->getName() . ' plugin</div>';
 
         return $result;
     }

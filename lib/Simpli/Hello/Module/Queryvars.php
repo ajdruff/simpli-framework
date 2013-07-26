@@ -43,19 +43,24 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
     private $_rewrite_rules = array();
 
     /**
+     * Initialize Module when in Admin environment
+     *
+     * @param none
+     * @return object $this
+     */
+    public function initModuleAdmin() {
+
+        $this->initModule();
+    }
+
+    /**
      * Initialize Module
      *
      * @param none
-     * @return void
+     * @return object $this
      */
-    public function init() {
+    public function initModule() {
 
-        /*
-         * Module base class requires
-         * setting Name first, then slug
-         */
-        $this->setName();
-        $this->setSlug();
 
 
         /*
@@ -131,6 +136,17 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
          */
 
         $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName() . ' Slug = ' . $this->getSlug());
+        return $this;
+    }
+
+    /**
+     * Configure Module
+     *
+     * @param none
+     * @return void
+     */
+    public function config() {
+
     }
 
     /**
@@ -197,14 +213,10 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
                 'pretty_url_pattern' => 'awesome/?$'
                 , 'ugly_url_pattern' => 'index.php?simpli_hello_page=2'
             )
-     , array(//  http://example.com/phpinfo/
+            , array(//  http://example.com/phpinfo/
                 'pretty_url_pattern' => 'phpinfo/?$'
                 , 'ugly_url_pattern' => 'index.php?simpli_hello_action=phpinfo'
             )
-
-
-
-
         );
     }
 

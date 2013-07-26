@@ -12,12 +12,12 @@
 class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
 
     /**
-     * Initialize Module
+     * Initialize Menu
      *
      * @param none
      * @return void
      */
-    public function init() {
+    public function initMenu() {
 
 
 
@@ -47,9 +47,16 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
          *
          */
         add_action('admin_notices', array(&$this, 'showDisabledMessage'));
+    }
 
-        parent::init();
-
+    /**
+     * Config
+     *
+     * Long Description
+     * @param string $content The shortcode content
+     * @return string The parsed output of the form body tag
+     */
+    public function config() {
         /*
          * Set default metabox states - must place this after parent::init to get access to the module's slug
          */
@@ -79,12 +86,11 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
          */
 
         $page_title = $this->getPlugin()->getName() . ' - General Settings';
-        $menu_title = array('menu'=>$this->getPlugin()->getName(),'sub_menu'=>'General Settings');
+        $menu_title = array('menu' => $this->getPlugin()->getName(), 'sub_menu' => 'General Settings');
         $capability = 'manage_options';
         $icon_url = $this->getPlugin()->getUrl() . '/admin/images/menu.png';
 
         $this->addMenuPage($page_title, $menu_title, $capability, $icon_url, null);
-
     }
 
     /**
@@ -102,13 +108,13 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
 
 
         add_meta_box(
-                 $this->getSlug() .'_' . 'metabox_about'  //Meta Box DOM ID
+                $this->getSlug() . '_' . 'metabox_about'  //Meta Box DOM ID
                 , __('About Simpli Hello and the Simpli Framework', $this->getPlugin()->getTextDomain()) //title of the metabox.
-               , array($this, 'renderMetaBoxTemplate') //function that prints the html
-                ,$screen_id=null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
+                , array($this, 'renderMetaBoxTemplate') //function that prints the html
+                , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                   , null //$metabox['args'] in callback function
+                , null //$metabox['args'] in callback function
         );
 ////
 ////
@@ -125,56 +131,56 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
         );
 
         add_meta_box(
-                 $this->getSlug() .'_' . 'metabox_example'  //Meta Box DOM ID
+                $this->getSlug() . '_' . 'metabox_example'  //Meta Box DOM ID
                 , __('Example Metabox with different input types', $this->getPlugin()->getTextDomain()) //title of the metabox.
-               , array($this, 'renderMetaBoxTemplate') //function that prints the html
-                , $screen_id=null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
+                , array($this, 'renderMetaBoxTemplate') //function that prints the html
+                , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                   , null //$metabox['args'] in callback function
+                , null //$metabox['args'] in callback function
         );
 //
 
 
         add_meta_box(
-                $this->getSlug() .'_' . 'metabox_updates'  //Meta Box DOM ID
-                , __('Plugin Updates',$this->getPlugin()->getTextDomain()) //title of the metabox
+                $this->getSlug() . '_' . 'metabox_updates'  //Meta Box DOM ID
+                , __('Plugin Updates', $this->getPlugin()->getTextDomain()) //title of the metabox
                 , array($this, 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , array('url' =>  'http://www.simpliwp.com/simpli-framework/metabox-updates-example/') //$metabox['args'] in callback function
+                , array('url' => 'http://www.simpliwp.com/simpli-framework/metabox-updates-example/') //$metabox['args'] in callback function
         );
 //
 //
         add_meta_box(
-                $this->getSlug() .'_' . 'metabox_support'  //Meta Box DOM ID
-                , __('Support',$this->getPlugin()->getTextDomain()) //title of the metabox
+                $this->getSlug() . '_' . 'metabox_support'  //Meta Box DOM ID
+                , __('Support', $this->getPlugin()->getTextDomain()) //title of the metabox
                 , array($this, 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , array('url' =>  'http://www.simpliwp.com/simpli-framework/metabox-support-example/') //$metabox['args'] in callback function
+                , array('url' => 'http://www.simpliwp.com/simpli-framework/metabox-support-example/') //$metabox['args'] in callback function
         );
 //
         add_meta_box(
-                $this->getSlug() .'_' . 'metabox_feedback'  //Meta Box DOM ID
-                , __('Feedback',$this->getPlugin()->getTextDomain()) //title of the metabox
+                $this->getSlug() . '_' . 'metabox_feedback'  //Meta Box DOM ID
+                , __('Feedback', $this->getPlugin()->getTextDomain()) //title of the metabox
                 , array($this, 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , array('url' =>  'http://www.simpliwp.com/simpli-framework/metabox-feedback-example/') //$metabox['args'] in callback function
+                , array('url' => 'http://www.simpliwp.com/simpli-framework/metabox-feedback-example/') //$metabox['args'] in callback function
         );
 
         add_meta_box(
-                $this->getSlug() .'_' . 'metabox_donate'  //Meta Box DOM ID
-                , __('Donate',$this->getPlugin()->getTextDomain()) //title of the metabox
+                $this->getSlug() . '_' . 'metabox_donate'  //Meta Box DOM ID
+                , __('Donate', $this->getPlugin()->getTextDomain()) //title of the metabox
                 , array($this, 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , array('url' =>  'http://www.simpliwp.com/simpli-framework/metabox-donate-example/') //$metabox['args'] in callback function
+                , array('url' => 'http://www.simpliwp.com/simpli-framework/metabox-donate-example/') //$metabox['args'] in callback function
         );
     }
 
@@ -207,10 +213,5 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
         <?php
     }
 
-
-
-
 }
-
-
 ?>

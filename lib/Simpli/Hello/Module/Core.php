@@ -13,18 +13,43 @@
 class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 
     /**
+     * Initialize Module when in Admin environment
+     *
+     * @param none
+     * @return object $this
+     */
+    public function initModuleAdmin() {
+
+    }
+
+    /**
+     * Initialize Module
+     *
+     * @param none
+     * @return object $this
+     */
+    public function initModule() {
+        return $this;
+    }
+
+    /**
+     * Configure Module
+     *
+     * @param none
+     * @return void
+     */
+    public function config() {
+
+    }
+
+    /**
      * Initialize Module
      *
      * @param none
      * @return void
      */
     public function init() {
-        /*
-         * Module base class requires
-         * setting Name first, then slug
-         */
-        $this->setName();
-        $this->setSlug();
+
 
 
 
@@ -119,13 +144,17 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
         $enabled = $this->getPlugin()->getModule('Post')->getPostOption('enabled');
         $placement = $this->getPlugin()->getModule('Post')->getPostOption('placement');
         $text = $this->getPlugin()->getModule('Post')->getPostOption('text');
-$use_global_text=$this->getPlugin()->getModule('Post')->getPostOption('use_global_text');
+        $use_global_text = $this->getPlugin()->getModule('Post')->getPostOption('use_global_text');
         /*
          * if the post is configured to use the defaults, then use the defaults from the global settings
          */
 
-        if ($placement=='default'){$placement=$this->getPlugin()->getSetting('hello_global_default_placement');}
-        if ($use_global_text=='true'){$text=$this->getPlugin()->getSetting('hello_global_default_text');}
+        if ($placement == 'default') {
+            $placement = $this->getPlugin()->getSetting('hello_global_default_placement');
+        }
+        if ($use_global_text == 'true') {
+            $text = $this->getPlugin()->getSetting('hello_global_default_text');
+        }
 
 
         if (is_single() && ($enabled == 'true'))

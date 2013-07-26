@@ -23,7 +23,7 @@ class Simpli_Basev1c0_Loader {
      *
      * @var string
      */
-    private  $_base_class_version;
+    private $_base_class_version;
 
     /**
      * Plugin Name
@@ -32,7 +32,7 @@ class Simpli_Basev1c0_Loader {
      *
      * @var string
      */
-    private  $_plugin_slug;
+    private $_plugin_slug;
 
     /**
      * Plugin File Path
@@ -41,13 +41,13 @@ class Simpli_Basev1c0_Loader {
      *
      * @var string
      */
-    private  $_plugin_file_path;
+    private $_plugin_file_path;
 
-    public  function load($plugin_slug, $plugin_file_path,$base_class_version) {
+    public function load($plugin_slug, $plugin_file_path, $base_class_version) {
 
 
 
-        $this->setBaseClassVersion( $base_class_version);
+        $this->setBaseClassVersion($base_class_version);
 
 
 
@@ -70,9 +70,8 @@ class Simpli_Basev1c0_Loader {
          * Get the plugin data from the WordPress information header
          */
 
-     //   $headers=array('Version'=>'Version');
-
-     //   $plugin_file_data=get_file_data( $plugin_file_path,$headers,'plugin' );
+        //   $headers=array('Version'=>'Version');
+        //   $plugin_file_data=get_file_data( $plugin_file_path,$headers,'plugin' );
 
 
         /*
@@ -91,9 +90,8 @@ class Simpli_Basev1c0_Loader {
 
 
 
- //  $plugin->setVersion($plugin_file_data['Version']);  // Version is the version of your plugin and should match value of 'Version' in WordPress Information header
-
-    //    $plugin->setBaseClassVersion($this->getBaseClassVersion());
+        //  $plugin->setVersion($plugin_file_data['Version']);  // Version is the version of your plugin and should match value of 'Version' in WordPress Information header
+        //    $plugin->setBaseClassVersion($this->getBaseClassVersion());
         $plugin->setFilePath($plugin_file_path);
 
 
@@ -109,7 +107,7 @@ class Simpli_Basev1c0_Loader {
      * @param string $base_class_version
      * @return void;
      */
-    private  function setBaseClassVersion($base_class_version) {
+    private function setBaseClassVersion($base_class_version) {
         $this->_base_class_version = $base_class_version;
     }
 
@@ -119,12 +117,12 @@ class Simpli_Basev1c0_Loader {
      * @param none
      * @return string
      */
-    private  function getBaseClassVersion($template=null) {
+    private function getBaseClassVersion($template = null) {
         //return $this->_base_class_version;
 
 
 
-                $version = $this->_base_class_version;
+        $version = $this->_base_class_version;
 
 
 
@@ -138,9 +136,6 @@ class Simpli_Basev1c0_Loader {
         }
 
         return $version;
-
-
-
     }
 
     /**
@@ -149,7 +144,7 @@ class Simpli_Basev1c0_Loader {
      * @param string $plugin_slug
      * @return void;
      */
-    private  function setPluginSlug($plugin_slug) {
+    private function setPluginSlug($plugin_slug) {
 
         $this->_plugin_slug = strtolower($plugin_slug);
     }
@@ -160,7 +155,7 @@ class Simpli_Basev1c0_Loader {
      * @param none
      * @return string
      */
-    private  function getPluginSlug() {
+    private function getPluginSlug() {
         return $this->_plugin_slug;
     }
 
@@ -209,16 +204,13 @@ class Simpli_Basev1c0_Loader {
         return ($namespace);
     }
 
-
     /**
      * Class Autoloader
      *
      * @param string $class
      * @return void;
      */
-    public  function autoloader($class) { //e.g. class= 'Simpli_Hello_Plugin'
-
-
+    public function autoloader($class) { //e.g. class= 'Simpli_Hello_Plugin'
         $namespaces = array(
             'Simpli_Base' . $this->getBaseClassVersion('v{major}c{minor}')
             , $this->getClassNamespace()

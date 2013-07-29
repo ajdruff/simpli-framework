@@ -7,10 +7,10 @@
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * @subpackage SimpliHello
+ * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Hello_Module_FormFiltersSettings extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Addons_Forms_Module_FiltersSettings extends Simpli_Basev1c0_Plugin_Module {
 
     /**
      * Initialize Module when in Admin environment

@@ -7,10 +7,10 @@
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * @subpackage SimpliHello
+ * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Hello_Module_FormFiltersOptions extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Addons_Forms_Module_FiltersOptions extends Simpli_Basev1c0_Plugin_Module {
 
     /**
      * Initialize Module when in Admin environment
@@ -75,16 +75,16 @@ class Simpli_Hello_Module_FormFiltersOptions extends Simpli_Basev1c0_Plugin_Modu
         /*
          * Return error if required arguments are not found
          */
-        if ((!isset($atts['option_name'])) || (is_null($atts['option_name']))) {
+        if ((!isset($atts['name'])) || (is_null($atts['name']))) {
 
-            $atts ['_error'][] = 'Option Name attribute is required';
+            $atts ['_error'][] = 'Name attribute is required';
 
             return ($atts);
         }
 
       //  echo '<pre>', print_r($atts, true), '</pre>';
-        $atts['value'] = $this->getPlugin()->getModule('Post')->getPostOption($atts['option_name']);
-        $atts['name'] = $this->getPlugin()->getSlug() . '_' . $atts['option_name'];
+        $atts['value'] = $this->getPlugin()->getModule('Post')->getPostOption($atts['name']);
+        $atts['name'] = $this->getPlugin()->getSlug() . '_' . $atts['name'];
 
 
 

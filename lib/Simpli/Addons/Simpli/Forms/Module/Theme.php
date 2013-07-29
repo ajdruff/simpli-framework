@@ -1,16 +1,16 @@
 <?php
 
 /**
- * Form Theme 'Seattle' Module
+ * Form Theme Module
  *
  * Provides Form Helper Methods
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * @subpackage SimpliHello
+ * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Hello_Module_FormTheme extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Addons_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Module {
 
     private $_templates = array();
     private $_template;
@@ -130,7 +130,7 @@ class Simpli_Hello_Module_FormTheme extends Simpli_Basev1c0_Plugin_Module {
 
         foreach ($supported_tags as $tag) {
 
-            $template_path = $this->getTemplateDirectory() . '/' . $this->getTheme() . '/' . $tag . '.template.php';
+            $template_path = $this->getTemplateDirectory() . '/' . $this->getThemeName() . '/' . $tag . '.template.php';
             //   echo '<br/>' . __LINE__ . ' ' . __METHOD__ . ' $template_path=' . $template_path;
 
             if (!file_exists($template_path)) {
@@ -189,7 +189,7 @@ $e='simpli_framework_echo';
      * @param none
      * @return string
      */
-    public function getTheme() {
+    public function getThemeName() {
         if (is_null($this->_theme)) {
             $this->setTheme(self::DEFAULT_THEME);
         }
@@ -207,5 +207,39 @@ $e='simpli_framework_echo';
         $this->_theme = $theme;
         return $this;
     }
+
+
+
+    /**
+     * Get Elements Module
+     *
+     * Returns the Elements Module of the Current Theme or FormElementsBasic if it doesnt exist
+     * @param none
+     * @return object Form Elements Module
+     */
+    public function getFormElementsModule() {
+
+        $theme=ucwords($this->getThemeName());
+
+        $module_name='FormElements'. $theme;
+
+        $theme_elements_module_exists=$this->getPlugin()->isModuleLoaded($module_name);
+
+        if ($theme_elements_module_exists)
+        {
+
+            $module_name='FormElements'. $theme;
+
+        }
+        else
+        {
+            $module_name='FormElements'. 'Basic';
+
+        }
+
+
+        return $this->getPlugin()->getModule($module_name);
+    }
+
 
 }

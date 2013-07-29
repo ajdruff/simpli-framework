@@ -1,4 +1,5 @@
 <?php
+
 /**
   Plugin Name:   Simpli Hello
   Plugin URI:    http://simpliwp/simpli-framework
@@ -37,20 +38,6 @@
  *
  */
 
-//add_action('init',array(&$this, 'closeMetaboxes'));
-//add_filter('get_user_option_closedpostboxes_toplevel_page_simpli_hello_menu10_settings', array(&$this, 'closeMetaboxes'));
-
-//add_filter('get_user_option_closedpostboxes_toplevel_page_simpli_hello_menu10_settings', 'closeMetaboxes');
-    function closeMetaboxes($result) {
-//die('closed metaboxes');
-
-
-     $closedMetaboxes = array('simpli_hello_about2');
-     if ( !is_array($result) )
-         return $closedMetaboxes;
-     else
-         return array_merge($result, $closedMetaboxes);
-}
 
 
 
@@ -70,7 +57,6 @@ require(dirname(__FILE__) . '/lib/Simpli/Framework.php');
  * $plugin_file_path should always be __FILE__
  */
 
-
 $simpli_hello = Simpli_Framework::load('simpli_hello', __FILE__);
 
 
@@ -82,18 +68,15 @@ $simpli_hello = Simpli_Framework::load('simpli_hello', __FILE__);
 
 $simpli_hello->setName('Simpli Hello'); // Name should match the value of 'Plugin Name' in the comments at the top of this file);
 $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include underscores and uniquely identifies the language domain for your plugin
-
-
-
 //(optional)
 $simpli_hello->setDebug(
         array(
-            'consolelog'=>false  // true/false Turn on Logging to Javascript console for php logs
-            ,'js'=>false // true/false Turn on Logging to Javascript console for javascript logs
-            ,'src'=>false  // true/false Whether to use the full source for javascript or just the minimized versions
-            ,'filelog'=>false // true/false Turn on Logging to File for php logs
-            )
-        );
+            'consolelog' => true  // true/false Turn on Logging to Javascript console for php logs
+            , 'js' => false // true/false Turn on Logging to Javascript console for javascript logs
+            , 'src' => false  // true/false Whether to use the full source for javascript or just the minimized versions
+            , 'filelog' => false // true/false Turn on Logging to File for php logs
+        )
+);
 
 
 /*
@@ -103,20 +86,17 @@ $simpli_hello->setDebug(
 $simpli_hello->init();
 
 
+//echo '<pre>', print_r($simpli_hello->getAddon('Simpli_Forms'), true), '</pre>';
+////die('inspecting - exit');
 
+$print_this = $simpli_hello->getAddon('Simpli_Forms');
+//echo '<pre>', print_r($print_this, true), '</pre>';
+//echo '<pre>', print_r($simpli_hello->getAvailableModules('always_enabled'), true), '</pre>';
 /*
  * Configure Modules - Must Occur After Plugin Initialization
  */
 
-//(optional) $simpli_hello->getModule('Admin')->setMenuPosition ('67.141592653597777777');
-
-
-
-
-//echo '<pre>';
-//print_r($simpli_hello);
-//echo '</pre>';
-
+//e.g.:  $simpli_hello->getModule('Admin')->setMenuPosition ('67.141592653597777777');
 
 
 /**
@@ -125,77 +105,4 @@ $simpli_hello->init();
  *
  *
  */
-//register_activation_hook(__FILE__, array($simpli_hello, 'install'));
-        /**
- *
- *  Register activation hook. Must be called outside of a class.
- *
- *
- */
 register_activation_hook(__FILE__, array($simpli_hello, 'install'));
-
-
-//
-//add_filter('extra_simpli_headers','simpli_add_extra_headers');
-//add_filter('extra_plugin_headers','simpli_add_extra_headers');
-//
-//
-//function simpli_add_extra_headers($extra_headers){
-//        	$extra_headers = array(
-//            'Simpli Framework Version',
-//            'Simpli Base Class Version'
-//
-//	);
-//    return ($extra_headers);
-//}
-//
-//
-//if (is_admin()){
-//
-//
-//
-//
-//    	$default_headers = array(
-//		'Name' => 'Plugin Name',
-//		'PluginURI' => 'Plugin URI',
-//		'Version' => 'Version',
-//		'Description' => 'Description',
-//		'Author' => 'Author',
-//		'AuthorURI' => 'Author URI',
-//		'TextDomain' => 'Text Domain',
-//		'DomainPath' => 'Domain Path',
-//		'Network' => 'Network',
-//		// Site Wide Only is deprecated in favor of Network.
-//		'_sitewide' => 'Site Wide Only',
-//               'SimpliFrameworkVersion'=>'Simpli Framework Version',
-//           'SimpliBaseClassVersion'=>'Simpli Base Class Version'
-//
-//	);
-//
-////            	$default_headers = array(
-////
-////
-////            'SimpliFrameworkVersion'=>'Simpli Framework Version',
-////            'SimpliBaseClassVersion'=>'Simpli Base Class Version'
-////
-////	);
-//
-//
-//        $plugin_file=__FILE__;
-//        //$plugin_file=dirname(__FILE__) . '/lib/Simpli/Framework/plugin-data.php';
-// $plugin_data = get_file_data( $plugin_file, $default_headers ,'plugin' );
-//
-// $simpli_data=get_simpli_data(__FILE__);
-//echo '<pre>';
-//print_r($plugin_data);
-//echo '<pre>';
-//echo '<pre>';
-//print_r($simpli_data);
-//echo '<pre>';
-
-//}
-
-
-
-
-

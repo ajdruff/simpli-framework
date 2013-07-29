@@ -5,8 +5,15 @@
 //$this->getPlugin()->getModule('Form')->text($field_name, $value, $label, $hint, $help,$template_id);
 
 $f = $this->getPlugin()->getModule('Form');
-$f->setFormFilter('options');
-$f->setFormFilter('settings');
+$f->startForm(
+        array(
+            'filter'=>'options'
+            ,'theme'=>'seattle'
+
+
+        )
+
+        );
 
 //     $this->text('text', 'Text you want to insert', 'The text that will be inserted into the post', '') ;
 
@@ -17,14 +24,30 @@ wp_nonce_field($this->getPlugin()->getSlug(), $this->getPlugin()->getSlug());
 
 
     <?php
-    $f->text(array(
-        'option_name' => 'text',
+    $f->addField(array(
+        'type'=>'text',
+        'name' => 'text',
      //   , 'label' => 'Text you want to insert'
          'hint' => 'The text that will be inserted into the post'
         , 'value' => '22'
 
             )
     );
+
+    $f->addField(array(
+        'type'=>'text',
+        'name' => 'my_name',
+     //   , 'label' => 'Text you want to insert'
+         'hint' => 'The text that will be inserted into the post'
+        , 'value' => '22'
+
+            )
+    );
+
+
+$f->endForm();
+
+
     ?>
 
 

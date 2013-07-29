@@ -185,6 +185,107 @@ class Simpli_Basev1c0_Btools {
         return ($validity_result);
     }
 
+    /**
+     * Recursive Glob
+     *
+     * Returns an array of files under $dir that have the specified extension.
+     * ref:http://stackoverflow.com/a/12172687
+     * @param none
+     * @return void
+     */
+    public function getGlobFiles($dir, $file_pattern, $recursive = true, $files = array()) {
+
+
+        $globFiles = glob("$dir/$file_pattern");
+        $globDirs = glob("$dir/*", GLOB_ONLYDIR);
+
+        if ($recursive) {
+            foreach ($globDirs as $dir) {
+                $files = $this->getGlobFiles($dir, $file_pattern, true, $files);
+            }
+        }
+
+
+
+        foreach ($globFiles as $file) {
+
+            $files[] = $file; // Replace '\n' with '<br />' if outputting to browser
+            $file = null;
+        }
+
+        if (!empty($files)) {
+            $files = array_filter($files, 'is_file');
+
+            // echo '<pre>', print_r($files, true), '</pre>';
+            return $files;
+        }
+    }
+
+    /**
+     * Make Path Relative
+     *
+     * Removes base path from longer path. The resulting path will never contain a leading directory separator
+     * Base path must occur in longer path
+     * Paths will be normalized
+     * Ref:http://stackoverflow.com/a/6808275
+     * @throws Exception
+     * @param  $base_path
+     * @param  $longer_path
+     * @return string normalized relative path
+     */
+    function makePathRelative($base_path, $longer_path) {
+        $base_path = $this->normalizePath($base_path);
+        $longer_path = $this->normalizePath($longer_path);
+        if (0 !== strpos($longer_path, $base_path)) {
+            throw new Exception("Can not make relative path, base path does not occur at 0 in longer path: `" . $base_path . "`, `" . $longer_path . "`");
+        }
+        return substr($longer_path, strlen($base_path) + 1);
+    }
+
+    /**
+     * Normalize Path
+     *
+     * Normalizes the Path to always use forwards slash and to resolve indiration.
+     * This function is a proper replacement for realpath
+     * It will _only_ normalize the path and resolve indirections (.. and .)
+     * Normalization includes:
+     * - directiory separator is always /
+     * - there is never a trailing directory separator
+     * Ref:http://stackoverflow.com/a/6808275
+     * @param  $path
+     * @return String
+     */
+    function normalizePath($path, $resolve_indirection = false) {
+        $parts = preg_split(":[\\\/]:", $path); // split on known directory separators
+
+        if ($resolve_indirection) {
+
+
+            // resolve relative paths
+            for ($i = 0; $i < count($parts); $i +=1) {
+                if ($parts[$i] === "..") {          // resolve ..
+                    if ($i === 0) {
+                        throw new Exception("Cannot resolve path, path seems invalid: `" . $path . "`");
+                    }
+                    unset($parts[$i - 1]);
+                    unset($parts[$i]);
+                    $parts = array_values($parts);
+                    $i -= 2;
+                } else if ($parts[$i] === ".") {    // resolve .
+                    unset($parts[$i]);
+                    $parts = array_values($parts);
+                    $i -= 1;
+                }
+                if ($i > 0 && $parts[$i] === "") {  // remove empty parts
+                    unset($parts[$i]);
+                    $parts = array_values($parts);
+                }
+            }
+        }
+
+        return implode("/", $parts);
+    }
+
 }
 
 ?>

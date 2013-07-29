@@ -20,12 +20,115 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
      * buttons.
      *
      * @author Andrew Druffner
-     * @param void
+     * @param array $default_settings
      * @return string The parsed output of the form body tag
      */
-    private function setDefaultSettings() {
+    public function setDefaultSettings($default_settings) {
 
-        $default_settings = array(
+        $this->_setting_defaults = $default_settings;
+    }
+
+    /**
+     * Initialize Plugin
+     *
+     *
+     * @author Andrew Druffner
+     * @param none
+     * @return void
+     */
+    public function initPlugin() {
+
+        /*
+         * make sure wordpress is installed properly
+         */
+        if (!defined('ABSPATH'))
+            die('Cannot Load Plugin - WordPress installation not found');
+
+        /*
+         *  Load any libraries you need that may not be included with the default wordpress installation
+         */
+
+        if (!class_exists('WP_Http'))
+            include_once( ABSPATH . WPINC . '/class-http.php' );
+
+
+
+
+
+
+        /*
+         * Add some log messages
+         *
+         */
+
+        $this->getLogger()->log(' Starting ' . $this->getName() . ' Debug Log');
+
+        $this->getLogger()->log('Plugin Version: ' . $this->getVersion() . ' Framework Version: ' . $this->getFrameworkVersion() . ' Base Class Version: ' . $this->getBaseClassVersion());
+
+        /*
+         * Save Activation Errors for later display
+         */
+        add_action('activated_plugin', array($this, 'save_activation_error'));
+
+        /*
+         * Show Activation Error
+         *
+         */
+
+        add_action('admin_notices', array($this, 'show_activation_extra_characters'));
+
+
+
+
+
+        /*
+         * Enqueue the framework's namespace script so we can namespace our javascript
+         * Add our local variables
+         *
+         */
+        if (is_admin()) {
+            add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+            add_action('admin_print_footer_scripts', array(&$this, 'printLocalVars'));
+            add_action('admin_print_footer_scripts', array(&$this, 'printInlineFooterScripts'));
+        } else {
+            add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+            add_action('wp_print_footer_scripts', array(&$this, 'printLocalVars'));
+            add_action('wp_print_footer_scripts', array(&$this, 'printInlineFooterScripts'));
+        }
+
+
+
+
+
+
+
+
+
+
+        $this->getLogger()->log($this->getSlug() . ': Plugin Directory: ' . $this->getDirectory());
+        $this->getLogger()->log($this->getSlug() . ': Module Directory: ' . $this->getModuleDirectory());
+
+
+        $this->getLogger()->log($this->getSlug() . ': Plugin URL: ' . $this->getUrl());
+    }
+
+    /**
+     * Configure
+     *
+     * Configures Plugin after initialization
+     *
+     * @param none
+     * @return void
+     */
+    public function config() {
+
+        /*
+         *
+         * Set Default Settings
+         *
+         */
+
+        $this->setDefaultSettings(array(
             /*
              *
              * Defaults for Hello World Default Settings
@@ -58,76 +161,19 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
              *
              */
             , 'plugin_enabled' => 'enabled'    //'enabled' or 'disabled' Controls whether the plugins modules are loaded. Disabled still loads the admin pages
-        );
+        ));
 
 
-
-
-        $this->_setting_defaults = $default_settings;
-        return $this->_setting_defaults;
-    }
-
-    /**
-     * Initialize
-     *
-     *
-     * @author Andrew Druffner
-     * @param none
-     * @return void
-     */
-    public function init() {
+        /**
+         * Set the enabled regex pattern ( must be set prior to the call to loadModules or it will be ignored.
+         */
+        $this->setAlwaysEnabledRegex('/menu|admin/s'); //sets the regex pattern that allows matching modules to remain loaded even after the user selects 'disabled' from the plugin options. This allows the user to continue to acccess the admin options to re-enable the plugin.
 
         /*
-         * make sure wordpress is installed properly
+         * set disabled modules
          */
-        if (!defined('ABSPATH'))
-            die('Cannot Load Plugin - WordPress installation not found');
-
-        /*
-         *  Load any libraries you need that may not be included with the default wordpress installation
-         */
-
-        if (!class_exists('WP_Http'))
-            include_once( ABSPATH . WPINC . '/class-http.php' );
-
-
-        /*
-         *
-         * Set Default Settings
-         *
-         */
-
-        $this->setDefaultSettings();
-
-
-
-        /*
-         * Add some log messages
-         *
-         */
-
-        $this->getLogger()->log(' Starting ' . $this->getName() . ' Debug Log');
-
-        $this->getLogger()->log('Plugin Version: ' . $this->getVersion() . ' Framework Version: ' . $this->getFrameworkVersion() . ' Base Class Version: ' . $this->getBaseClassVersion());
-
-        /*
-         * Save Activation Errors for later display
-         */
-        add_action('activated_plugin', array($this, 'save_activation_error'));
-
-        /*
-         * Show Activation Error
-         *
-         */
-
-        add_action('admin_notices', array($this, 'show_activation_extra_characters'));
-
-
-        /*
-         * Finally, call the base class initialization routines
-         */
-
-        parent::init();
+        $this->setDisabledModule('Shortcodes');
+        $this->setDisabledModule('Queryvars');
     }
 
     /**

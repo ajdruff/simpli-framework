@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Logger Class
  *
@@ -8,6 +7,10 @@
  * @subpackage SimpliHello
  *
  */
+
 class Simpli_Hello_Logger extends Simpli_Basev1c0_Logger {
+
+
+
 
 }

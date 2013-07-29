@@ -7,13 +7,16 @@
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * @subpackage SimpliHello
+ * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Hello_Module_Form extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Addons_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Module {
 
     private $_form_theme;
     private $_field_prefix;
+    private $_form_filter_suffix;
+    private $_form;
+    private $_forms;
 
     /**
      * Initialize Module when in Admin environment
@@ -45,7 +48,43 @@ class Simpli_Hello_Module_Form extends Simpli_Basev1c0_Plugin_Module {
 
     }
 
-    private $_form_filter_suffix;
+    /**
+     * Start Form
+     *
+     * Creates a temporary form array to hold the fields until endForm which parses it
+     * @param none
+     * @return void
+     */
+    public function startForm($form_atts) {
+
+        $this->_form = array();
+        $this->_form['form_fields'] = array();
+        $this->_form['form_atts'] = $form_atts;
+    }
+
+    /**
+     * End Form
+     *
+     *  Parses the form that was added with startForm
+     * @param none
+     * @return void
+     */
+    public function endForm() {
+
+        $form = $this->_form;
+        extract($this->_form);
+        // $fields=$form['fields'];
+        // $form_atts=$form['form_atts'];
+        if (isset($form_atts['filter'])) {
+            $this->setFormFilter($form_atts['filter']); //sets default form filter
+        }
+        $elements_module=$this->getTheme()->getFormElementsModule();
+        foreach ($form_fields as $field_atts) {
+
+            $method = $field_atts['type'];
+            $elements_module->$method($field_atts);
+        }
+    }
 
     /**
      * Get Form Filter
@@ -55,9 +94,9 @@ class Simpli_Hello_Module_Form extends Simpli_Basev1c0_Plugin_Module {
      */
     public function getFormFilterTag() {
 
-        $filter_suffix=$this->_form_filter_suffix;
+        $filter_suffix = $this->_form_filter_suffix;
 
-        $filter_tag=$this->getPlugin()->getSlug() . '_form_filters_' . $this->_form_filter_suffix;
+        $filter_tag = $this->getPlugin()->getSlug() . '_form_filters_' . $this->_form_filter_suffix;
 
 
         return $filter_tag;
@@ -75,40 +114,22 @@ class Simpli_Hello_Module_Form extends Simpli_Basev1c0_Plugin_Module {
         return $this;
     }
 
-
-
     /**
-     * Text Field
+     * Add Form Field
      *
-     * Returns HTML for a Text Input Field
-     * @param string $name The field name of the input field
-     * @param string $value The value of the input
-     * @param string $label The field label
-     * @param string $hint Text that displays on the form to guide the user on how to fill in the field
-     * @param string $help More detailed text on what the field is and how it should be used.
-     * @return string The parsed output of the form body tag
+     * Adds the field to the form array to be processed at form end
+     * @param string $atts Field Attributes
+     * @return void
      */
-    function text($atts) {
-        $tag_id = __FUNCTION__;
-
-
-        $atts = apply_filters($this->getFormFilterTag(), $atts, $tag_id);
-
-                $defaults = array(
-            'name' => null  //the name of the form field.
-            , 'value' => null
-            , 'label' => $this->getDefaultFieldLabel($atts['name']) //take short form , remote prefix, remove underscores and capitalize it
-            , 'hint' => null
-            , 'help' => null
-            , 'template_id' => 'text'
-        );
-
-
-        echo ($this->_field($tag_id, $atts, $defaults));
+    public function addField($atts) {
+        $this->_form['form_fields'][$atts['name']] = $atts;
     }
 
-    private function _field($tag_id, $atts, $defaults) {
 
+
+    public function renderElement($tag_id, $atts, $defaults) {
+
+    $atts = apply_filters($this->getFormFilterTag(), $atts, $tag_id);
 
         /*
          * Raise Error
@@ -186,7 +207,7 @@ class Simpli_Hello_Module_Form extends Simpli_Basev1c0_Plugin_Module {
 
 
         $label = str_replace($this->getFieldPrefix(), '', $name);
-                $label = strtolower($label);
+        $label = strtolower($label);
         $label = str_replace('_', ' ', $label);
         $label = ucwords($label);
         return $label;

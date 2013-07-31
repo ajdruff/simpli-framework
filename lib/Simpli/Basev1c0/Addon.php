@@ -10,37 +10,40 @@
  */
 class Simpli_Basev1c0_Addon {
 
-    const ADDON_NAMESPACE = 'Simpli_Addons';
-    const ADDON_BASE_FILE_NAME = 'Addon';
-    const DIR_NAME_MODULES = 'Module';
-
     /**
-     * Base directory
+     * Plugin directory path
      *
      * @var string
      */
-    protected $_directory;
+    protected $_directory = null;
 
     /**
-     * Module directory
+     * Module directory path
      *
      * @var string
      */
-    protected $_module_directory;
+    protected $_module_directory = null;
 
     /**
      * Loaded Modules
      *
      * @var array
      */
-    protected $_modules = array();
+    protected $_modules = null;
 
     /**
      * Addon URL
      *
      * @var string
      */
-    protected $_addon_url;
+    protected $_addon_url = null;
+
+    /**
+     * Addon Slug
+     *
+     * @var string
+     */
+    protected $_slug = null;
 
     /**
      * Addon Name
@@ -49,22 +52,96 @@ class Simpli_Basev1c0_Addon {
      *
      * @var string
      */
-    protected $_addon_name;
+    protected $_addon_name = null;
 
     /**
      * Addon File Path
      *
      * @var string
      */
-    protected $_addon_file_path;
+    protected $_addon_file_path = null;
 
     /**
      * Plugin
      *
+     * @var object
+     */
+    protected $_plugin = null;
+
+    /**
+     * Always Enabled Regex
+     *
+     * Contains the regex expression that identifies modules which remain
+     * enabled after the user has disabled the plugin using the plugin settings
+     *
      * @var string
      */
-    protected $_plugin;
+    protected $_module_always_enabled_regex = null;
 
+    /**
+     * Disabled Modules
+     *
+     * Contains module names that have been manually added that identify
+     * modules that should not be loaded
+     *
+     * @var array
+     */
+    protected $_disabled_modules = null;
+
+    /**
+     * Available Modules
+     *
+     * Contains an array of module names that are in the Modules directory
+     * and organizes them as to type under an appropriate associative index
+     *
+     * @var array
+     */
+    protected $_available_modules = null;
+
+
+     private $_ro_properties = null;
+
+    /**
+     * Get Read Only Properties
+     *
+     * Use setProperty to define an array that can be used to retrieve read only properties
+     * Useful hardcoding strings without needing to search and replace when they change
+     * Usage: echo $this->propertyName
+     * To Set a property : $this->setProperty('PROPERTY_NAME',property_value);
+     * Returns read-only properties using a magic method __get
+     * ref: http://stackoverflow.com/questions/2343790/how-to-implement-a-read-only-member-variable-in-php
+     * @param none
+     * @return void
+     */
+    public function __get($name) {
+
+
+        if (is_null($this->_ro_properties)) {
+
+            return null;
+        }
+
+        if (isset($this->_ro_properties[$name])) {
+            return $this->_ro_properties[$name];
+        } else {
+            return null;
+        }
+    }
+
+
+    /**
+     * Set Read Only Property
+     *
+     * Use to configure readonly property in child class
+     *
+     * @param none
+     * @return void
+     */
+    protected function setProperty($name,$value) {
+
+$this->_ro_properties[$name]=$value;
+
+    }
     /**
      * Set Plugin
      *
@@ -104,7 +181,8 @@ class Simpli_Basev1c0_Addon {
          */
         if (is_null($this->_directory)) {
 
-            $class = strtolower(get_class());
+            $class = get_class($this);
+// echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style="color:blue;"> $class = ' . $class . '</strong>';
             /*
              * replace underscores of the class with slashes
              *
@@ -116,12 +194,13 @@ class Simpli_Basev1c0_Addon {
              * part of the class name represents the class file name
              * and prefix it with the plugin's directory to get the absolute path
              */
-            $path = dirname($this->getPlugin()->getDirectory() . '/' . $path);
+            $path = dirname($this->getPlugin()->getDirectory() . '/' . $this->getPlugin()->DIR_NAME_LIBS . '/' . $path);
 
             /*
              * Now normalize slashes
              */
             $this->_directory = $this->getPlugin()->getTools()->normalizePath($path);
+            //echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style = "color:blue;"> $path = ' . $path . '</strong>';
         }
 
         return ($this->_directory);
@@ -143,8 +222,10 @@ class Simpli_Basev1c0_Addon {
              * Addon class file is in.
              */
 
-            $path = $this->getDirectory() . '/' . self::DIR_NAME_MODULES;
-            $this->_directory = $this->getPlugin()->getTools()->normalizePath($path);
+            $path = $this->getDirectory() . '/' . $this->getPlugin()->DIR_NAME_MODULES;
+
+
+            $this->_module_directory = $this->getPlugin()->getTools()->normalizePath($path);
         }
 
 
@@ -154,83 +235,130 @@ class Simpli_Basev1c0_Addon {
     }
 
     /**
-     * Get Available Modules
+     * Get Disabled Modules
+     *
+     * Returns and array of module names that were manually disabledwith the setDisabledModule method
      *
      * @param none
-     * @return arrayReadOnly $modules
+     * @return void
      */
-    public function getAvailableModules() {
-        $modules = array();
+    public function getDisabledModules() {
 
-
-
-        $this->getPlugin()->getLogger()->log($this->getSlug() . ': Module directory = ' . $this->getModuleDirectory());
-
-        if (is_dir($this->getModuleDirectory()) && $module_directory = opendir($this->getModuleDirectory())) {
-            while (false !== ($entry = readdir($module_directory))) {
-                if (strpos($entry, '.') !== 0 && strpos($entry, '.php') !== false) { //if the entry doesnt start with a . and if it ends in php
-                    $module = str_replace('.php', '', $entry); //use the name of the file without the extension as the module name
-                    if ($module != 'Interface') { // dont use it if its name is Interface
-                        $modules[] = $module; // add it to the modules array
-                        if (is_dir($this->getModuleDirectory() . $module) && $sub_module_directory = opendir($this->getModuleDirectory() . $module)) {
-                            while (false !== ($entry = readdir($sub_module_directory))) {
-                                if ($entry != '.' && $entry != '..') {
-                                    $sub_module = str_replace('.php', '', $entry);
-                                    $modules[] = $module . '\\' . $sub_module;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        if (is_null($this->_disabled_modules)) {
+            $this->_disabled_modules = array();
         }
-        return $modules;
+
+        return $this->_disabled_modules;
+    }
+
+    /**
+     * Set Disabled Module
+     *
+     * Adds the name of a module to the $_disabled_modules array
+     *
+     * @param none
+     * @return void
+     */
+    public function setDisabledModule($module_name) {
+
+        $this->_disabled_modules[] = $module_name;
+    }
+
+    /**
+     * Get Available Modules ( Read Only )
+     *
+     * Returns a 2 dimensional array with the module file paths of the files that reside in the Modules Directory
+     * The dimensions of the array include 'type' and the module's name.
+     * Type can be 'enabled' 'disabled' 'always_enabled'
+     *
+     * @param string $filter 'enabled', 'all', 'disabled', 'always_enabled' .
+     * enabled are those that are permitted to be loaded
+     * disabled are those that appear within the '_disabled_modules' array
+     * 'always_active' are those modules not in the 'disabled' array that will load despite the plugins disabled setting
+     *
+     * @return arrayReadOnly
+     */
+    public function getAvailableModules($filter = 'enabled') {
+
+        if (is_null($this->_available_modules)) {
+
+            $available_modules = array();
+
+            $tools = $this->getPlugin()->getTools();
+
+            /*
+             * Find all the Module files in the module directory
+             */
+
+            $module_files = $tools->getGlobFiles($this->getModuleDirectory(), '*.php', false);
+
+
+            if (!is_array($module_files)) {
+                return;
+            }
+
+            /*
+             * Iterate through each of the files checking to see which filter they belong to
+             */
+            foreach ($module_files as $module_file_path) {
+                $module_name = basename($module_file_path, '.php');
+
+                /*
+                 * If the plugin settings have a 'disabled' setting,
+                 * check if the module should still be enabled per the regex
+                 * this is intended to allow admin menus to persist so
+                 * settings can be accessed even though the rest of the plugin
+                 * is disabled
+                 */
+                If (in_array($module_name, $this->getDisabledModules())) {
+
+                    $available_modules['disabled'][$module_name] = $module_file_path;
+                } else {
+
+                    $available_modules['enabled'][$module_name] = $module_file_path;
+                }
+
+                $available_modules['all'][$module_name] = $module_file_path;
+            }
+            $this->_available_modules = $available_modules;
+        }
+//      echo '$this->_available_modules = <pre>', print_r($this->_available_modules, true), '</pre>';
+        return $this->_available_modules[$filter];
     }
 
     /**
      * Get Module
      *
-     * @param string $module
-     * @return object
+     * Get the loaded module object, given its name
+     * @param string $module_name
+     * @return object $module
      */
-    public function getModule($module) {
-
-        if (isset($module)) {
-            $module = 'Module\\' . $module;
-            if (isset($this->_modules[$module])) {
-                return $this->_modules[$module];
-            }
-        } else {
-            $this->getPlugin()->getLogger()->logError('getModule() Failed, Module \'' . $module . '\' was not found');
-            return (false);
+    public function getModule($module_name) {
+        if (!isset($this->_modules[$module_name])) {
+            return null;
         }
+        return $this->_modules[$module_name];
     }
 
     /**
      * Get Modules
      *
-     * Returns an array of all loaded modules
-     *
+     * Returns and array of loaded modules
      * @param none
-     * @return array $modules
+     * @return array
      */
     public function getModules() {
-        $modules = array();
-        if (isset($this->_modules)) {
-            $modules = $this->_modules;
-        }
-        return $modules;
+        return $this->_modules;
     }
 
     /**
-     * Set Module
+     * Set Loaded Module
      *
-     * @param string $module
-     * @param object $object
-     * @return $this
+     * @param object $module
+     * @return object $this
      */
-    public function setModule($module, $object) {
-        $this->_modules[$module] = $object;
+    public function setModule($module_name, $module) {
+        $this->_modules[$module_name] = $module;
         return $this;
     }
 
@@ -243,7 +371,7 @@ class Simpli_Basev1c0_Addon {
     public function getUrl() {
 
 
-        if (is_null($this->_addon_ur)) {
+        if (is_null($this->_addon_url)) {
             $this->_addon_url = plugins_url('', $this->getDirectory());
         }
 
@@ -281,9 +409,15 @@ class Simpli_Basev1c0_Addon {
     public function getSlug() {
 
         if (is_null($this->_slug)) {
-            $class = get_class();
-            $slug = str_replace($this->ADDON_NAMESPACE, '', $class);
-            $this->_slug = str_replace($this->ADDON_BASE_FILE_NAME, '', $class);
+            /*
+             * The slug is just the name of the addon class with the word 'addon' removed.
+             */
+            $class = get_class($this); //e.g. Simpli_Addons_Simpli_Forms_Addon
+
+            $slug= substr_replace($class,'', -1*strlen('_Addon'),strlen('_Addon')); //Simpli_Addons_Simpli_Forms_Addon
+            $slug=strtolower($slug); //simpli_addons_simpli_forms
+            $this->_slug=$slug;
+
         }
 
 
@@ -336,7 +470,7 @@ class Simpli_Basev1c0_Addon {
     public function getClassNamespace() {
 
 
-        return $this->ADDON_NAMESPACE;
+        return $this->getPlugin()->ADDON_NAMESPACE;
     }
 
     /**
@@ -354,6 +488,17 @@ class Simpli_Basev1c0_Addon {
     }
 
     /**
+     * Add Hooks
+     *
+     * Adds WordPress Hooks. Function is called during addon initialization
+     * @param none
+     * @return void
+     */
+    public function addHooks() {
+
+    }
+
+    /**
      * Init
      *
      * Performs basic housekeeping tasks and initializes all modules
@@ -363,50 +508,49 @@ class Simpli_Basev1c0_Addon {
      */
     public function init() {
 
-        /*
-         * Enqueue the framework's namespace script so we can namespace our javascript
-         * Add our local variables
-         *
-         */
-
-        if (is_admin()) {
-            add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
-        } else {
-            add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
-        }
 
 
-        $this->getPlugin()->getLogger()->log($this->getSlug() . ': Addon Directory: ' . $this->getDirectory());
-        $this->getPlugin()->getLogger()->log($this->getSlug() . ': Addon Module Directory: ' . $this->getModuleDirectory());
+
+        $this->getPlugin()->getLogger()->log('Addon Directory: ' . $this->getDirectory());
+        $this->getPlugin()->getLogger()->log('Addon Module Directory: ' . $this->getModuleDirectory());
 
 
-        $this->getPlugin()->getLogger()->log($this->getSlug() . ': Addon URL: ' . $this->getUrl());
+        $this->getPlugin()->getLogger()->log('Addon URL: ' . $this->getUrl());
 
+
+  $this->addHooks();
+
+        $this->config();
 
         /**
          * Load Modules
          */
-        $this->loadModules(array(), '/menu|admin/s');
+        $this->loadModules();
 
 
         /*
          *
-         * Tell debugger that the addon and class library have been loaded
+         * Initialize Addon modules
          */
-        $this->getPlugin()->getLogger()->log($this->getSlug() . ': Initializing Addon ');
-        $this->getPlugin()->getLogger()->log($this->getSlug() . ': Loaded Base Class Library ' . ' from ' . dirname(__FILE__));
+
+
 
         $modules = $this->getModules();
 
-        foreach ($modules as $module) {
+        if (is_array($modules)) {
 
-            $module->init();
+
+            foreach ($modules as $module) {
+
+                $module->init();
+                $this->getPlugin()->getLogger()->log('Initialized Addon Module ' . $this->getSlug() . '/' .$module->getName());
+            }
         }
         if (isset($this->_slug)) {
             do_action($this->_slug . '_init');
         }
 
-
+        $this->getPlugin()->getLogger()->log('Completed Initialization for Addon ' . $this->getName());
 
 
         return $this;
@@ -432,42 +576,63 @@ class Simpli_Basev1c0_Addon {
      * Takes the module name  and loads the associated file.
      * e.g.: 'Admin' loads from '/simpli/hello/Module/Admin.php'
      *
-     * @author Andrew Druffner <andrew@nomstock.com>
-     * @param string $module
+     * @author Andrew Druffner
+     * @param string $module_name
      * @return $this
      */
-    public function loadModule($module) {
+    public function loadModule($module_name) {
 
 
-        $this->getPlugin()->getLogger()->log($this->getSlug() . ': Loading Module ' . $module);
 
-        $module_full = 'Module\\' . $module;  # Admin
-        $filename = str_replace('\\', '/', $module);
-        $filename = $filename . '.php'; # Admin.php
+        $available_modules = $this->getAvailableModules('enabled');
+
+        /*
+         * check to see if the module_name is enabled; if not, return.
+         */
+        if (!is_array($available_modules) || !isset($available_modules[$module_name])) {
+            $this->getPlugin()->getLogger()->log('unable to load Module ' . $module_name . ' , since it is an inactive module');
+            return;
+        }
+
+
+
 
 
         /*
-         *
-         * Derive the namespace ('Simpli_Hello') from the class name
-         *
+         * Include the class file
          */
-        $array_class_name = explode('_', get_class($this));  # Changes class Simpli_Hello_Addon to [0]='Simpli' [1]='Hello'  [2]='Addon'
-        array_pop($array_class_name);  # $array_class_name =  [0]='Simpli' [1]='Hello'
-        $namespace = implode('_', $array_class_name);  # $namespace =  Simpli_Hello
 
 
 
-        require_once($this->getModuleDirectory() . $filename); # simpli-framework/lib/simpli/hello/Module/Admin.php
+
+        $module_file_path = $available_modules[$module_name];
+        require_once($module_file_path); # simpli-framework/lib/simpli/hello/Module/Admin.php
+
+        /*
+         * Derive the class from the module file path
+         */
 
 
-        $class = $namespace . '_Module_' . $module;
+        $relative_path = $this->getPlugin()->getTools()->makePathRelative($this->getPlugin()->getAddonsDirectory(), $module_file_path);
+        $module_namespace = str_replace('/', '_', dirname($relative_path));
+
+
+        $class = $this->getClassNamespace() . '_' . $module_namespace . '_' . $module_name; //
+//  die('<br>' . __LINE__ . 'exiting to check class, $class = ' . $class);
+
+        /*
+         * Create the module object and attach it to $_modules
+         */
         if (!isset($this->_modules[$class]) || !is_object($this->_modules[$class]) || get_class($this->_modules[$class]) != $class) {
             try {
+
                 $object = new $class;
-                $this->setModule($module_full, $object);
-                $this->getModule($module)->setAddon($this);
+                $this->setModule($module_name, $object);
+                $this->getModule($module_name)->setPlugin($this->getPlugin()); //set the plugin dependency
+                $this->getModule($module_name)->setAddon($this); //set the addon dependency
+                 $this->getPlugin()->getLogger()->log('Loaded Addon Module ' . $this->getSlug() . '/'. $module_name);
             } catch (Exception $e) {
-                die('Unable to load module: \'' . $module . '\'. ' . $e->getMessage());
+                die('Unable to load Module: \'' . $module_name . '\'. ' . $e->getMessage());
             }
         }
 
@@ -477,42 +642,26 @@ class Simpli_Basev1c0_Addon {
     /**
      * Load Modules
      *
-     * Load specified modules. If no modules are specified, all modules are loaded.
+     * Load all modules
      * @author Andrew Druffner
      * @param array $modules
      * @param string $exclusion_regex Regex pattern in the form '/menu|admin/s' to exclude modules from loading
      * @return $this
      */
-    public function loadModules($modules = array(), $exclusion_regex = '') {
+    public function loadModules() {
 
+        $enabled_modules = $this->getAvailableModules('enabled');
 
-
-        if (sizeof($modules) == 0) {
-            $modules = $this->getAvailableModules();
+        if (!is_array($enabled_modules)) {
+            return array();
         }
 
-        foreach ($modules as $module) {
 
-            //if addon was disabled in settings, load only those modules
-            //with menu or admin in their name. that way we can still
-            // configure the addon but the rest of the addons functionality
-            // is disabled.
-            if ($this->getSetting('addon_enabled') == 'disabled') {
-                $haystack = strtolower($module);
 
-                if (preg_match_all($exclusion_regex, $haystack, $matches) < 1) {
+        foreach ($enabled_modules as $module_name => $module_path) {
 
-                    // Skip Module
-                    continue;
-                }
-            }
-
-            $this->loadModule($module);
+            $this->loadModule($module_name);
         }
-
-//        echo 'addon_enabled setting = ' ;
-//print_r($this->getSettings());
-        return $this;
     }
 
 }

@@ -12,23 +12,16 @@
  */
 class Simpli_Hello_Module_Shortcodes extends Simpli_Basev1c0_Plugin_Module {
 
-    /**
-     * Initialize Module when in Admin environment
-     *
-     * @param none
-     * @return object $this
-     */
-    public function initModuleAdmin() {
 
-    }
 
     /**
-     * Initialize Module
+     * Add Hooks
      *
+     * Adds WordPress Hooks, triggered during module initialization
      * @param none
-     * @return object $this
+     * @return void
      */
-    public function initModule() {
+    public function addHooks() {
 
 
 
@@ -49,15 +42,7 @@ class Simpli_Hello_Module_Shortcodes extends Simpli_Basev1c0_Plugin_Module {
          * example: add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_my_action', array(&$this, 'my_function'));
          * see http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
          */
-        /**
-         *
-         *
-         *  Add any other hooks you need to support this module
-         *
-         *
-         */
-        $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName());
-        return $this;
+
     }
 
     /**

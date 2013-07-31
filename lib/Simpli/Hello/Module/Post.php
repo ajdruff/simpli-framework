@@ -26,46 +26,29 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      */
     protected $_post_options = array();
 
+
+
     /**
-     * Initialize Module when in Admin environment
+     * Add Hooks
      *
+     * Adds WordPress Hooks, triggered during module initialization
      * @param none
-     * @return object $this
+     * @return void
      */
-    public function initModuleAdmin() {
+    public function addHooks() {
 
         /*
-         * check current_screen
-         * if not available yet, then add an action to execute this method again when it is
-         * If the screen is anything but an edit or 'add' page in admin, then stop
+         * Load Post options on front end
          */
-        /* Toggle Block
-          if (!function_exists('get_current_screen')) {
-
-          add_action('current_screen', array($this, 'initModuleAdmin'));
-          return;
-          }
-          else
-          {
-
-          //        ($this->isScreen('edit-add', 'post')) and print '<br><strong>Post Editor OR Post Add</strong>';
-          //        ($this->isScreen('edit', 'post')) and print '<br><strong>post editor</strong>';
-          //($this->isScreen('plugins-list', null)) and print '<br><strong>Plugins Listing</strong>';
-          //($this->isScreen('list', 'post')) and print '<br><strong>Post Listing</strong>';
-          //($this->isScreen('list', 'page')) and print '<br><strong>Page Listing</strong>';
-          //($this->isScreen('add', 'post')) and print '<br><strong>Post Add</strong>';
-          // echo "<pre>" . print_r(get_current_screen(), true) . "</pre>";
-
-          if (!$this->getPlugin()->getModule('Tools')->isScreen('edit-add', null)) {
-          //    return;
-          }
 
 
+        add_action('the_post', array($this, 'hookLoadPostOptions')); //archive pages will call multiple posts, and with each new post, the options have to be reloaded or you'll carry forward the topmost post's options to the ones below it
 
-          }
+        /*
+         * Admin Hooks Follow
+         */
 
-          // */    //END Toggle Block
-        // Save custom post data
+        if (!is_admin()){return;}
 
         /*
          * Hook our save method into the post's save action
@@ -89,31 +72,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
          * Hook into the form class so we can provide the value of forms with an option lookup
          */
         add_action('simpli_hello_forms_pre_parse',array($this,'forms_pre_parse'));
-        /*
-         * Log
-         */
 
-        $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName());
-        // global $post;
-
-        return $this;
-    }
-
-    /**
-     * Initialize Module
-     *
-     * @param none
-     * @return object $this
-     */
-    public function initModule() {
-
-        /*
-         * Load Post options on front end
-         */
-
-
-        add_action('the_post', array($this, 'hookLoadPostOptions')); //archive pages will call multiple posts, and with each new post, the options have to be reloaded or you'll carry forward the topmost post's options to the ones below it
-        return $this;
     }
 
     /**
@@ -136,7 +95,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
         //todo: replace with setOptionDefault('text','Hello World!','Enter Text Here','The you want to enter');
         $this->setPostOptionDefaults(
                 array(
- $this->getPlugin()->getSlug() . '_text' => 'default text' // any text
+ $this->getPlugin()->getSlug() . '_text' => 'Default text set within Post.php' // any text
                     , $this->getPlugin()->getSlug() . '_new' => 'im new man' // any text
                     , $this->getPlugin()->getSlug() . '_use_global_text' => 'true' // true/false
                     , $this->getPlugin()->getSlug() . '_enabled' => 'enabled' // true/false

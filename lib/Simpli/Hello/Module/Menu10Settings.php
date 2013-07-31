@@ -12,12 +12,13 @@
 class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
 
     /**
-     * Initialize Menu
+     * Add Menu Hooks
      *
+     * Called by the Plugin_Menu base class after the menu base has completed addHooks for the module
      * @param none
      * @return void
      */
-    public function initMenu() {
+    public function addMenuHooks() {
 
 
 

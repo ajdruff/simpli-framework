@@ -96,29 +96,17 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         return $this;
     }
 
+
     /**
-     * Initialize Module
+     * Add Hooks
      *
+     * Adds WordPress Hooks, triggered during module initialization
      * @param none
      * @return void
      */
-    public function initModule() {
+    public function addHooks() {
 
-        /*
-         * This is an admin module, so no initialization occurs
-         */
-        return $this;
-    }
-
-    /**
-     * Initialize Module when in Admin environment
-     *
-     * @param none
-     * @return void
-     */
-    public function initModuleAdmin() {
-
-
+if(!is_admin()){return;}
 
 
 
@@ -174,14 +162,8 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         add_action('current_screen', array(&$this, 'hookCurrentScreen'));
 
 
-        $this->initMenu();
+        $this->addMenuHooks();
 
-
-        do_action('init_' . $this->getPlugin()->getSlug() . '_' . $this->getSlug()); // Extend Hook for actions that depend on initialization
-
-        $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName());
-
-        return $this;
     }
 
     /**

@@ -10,33 +10,19 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Addons_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_Module {
 
     protected $_form_module;
 
-
-
     /**
-     * Initialize Module when in Admin environment
+     * Add Hooks
      *
+     * Adds WordPress Hooks, triggered during module initialization
      * @param none
-     * @return object $this
+     * @return void
      */
-    public function initModuleAdmin() {
-        $this->initModule();
-    }
+    public function addHooks() {
 
-    /**
-     * Initialize Module
-     *
-     * @param none
-     * @return object $this
-     */
-    public function initModule() {
-
-
-
-        return $this;
     }
 
     /**
@@ -49,19 +35,16 @@ class Simpli_Addons_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_Module 
 
     }
 
-
-
-/**
+    /**
      * Get Form Module
      *
- *  Read Only
+     *  Read Only
      * @param none
      * @return object Form Module
      */
     public function getFormModule() {
         return $this->getPlugin()->getModule('Form');
     }
-
 
     /**
      * Text Field
@@ -70,7 +53,7 @@ class Simpli_Addons_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_Module 
      * @param array $atts Shortcode attributes
      * @return void
      */
- public   function text($atts) {
+    public function text($atts) {
         $tag_id = __FUNCTION__;
 
 
@@ -80,14 +63,14 @@ class Simpli_Addons_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_Module 
             , 'label' => null
             , 'hint' => null
             , 'help' => null
-            , 'template_id' =>  null
+            , 'template_id' => $tag_id
         );
 
 
-        return($this->getPlugin()->getModule('Form')->renderElement($tag_id, $atts, $defaults));
+        return($this->getAddon()->getModule('Form')->renderElement($tag_id, $atts, $defaults));
     }
 
-        /**
+    /**
      * Select Field
      *
      * Returns HTML for a Select Input Field
@@ -110,8 +93,8 @@ class Simpli_Addons_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_Module 
             , 'label' => $this->getFormModule()->getDefaultFieldLabel($atts['name']) //take short form , remote prefix, remove underscores and capitalize it
             , 'hint' => null
             , 'help' => null
-            , 'options'=>null //array in the form 'value'=>'display_text'
-            , 'default_option'=>null //string indiciating the value that should be selected on default
+            , 'options' => null //array in the form 'value'=>'display_text'
+            , 'default_option' => null //string indiciating the value that should be selected on default
             , 'template_id' => $tag_id
         );
 
@@ -119,6 +102,5 @@ class Simpli_Addons_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_Module 
         echo ($this->_field($tag_id, $atts, $defaults));
     }
 
-
-
 }
+

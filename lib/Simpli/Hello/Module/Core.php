@@ -12,25 +12,9 @@
  */
 class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 
-    /**
-     * Initialize Module when in Admin environment
-     *
-     * @param none
-     * @return object $this
-     */
-    public function initModuleAdmin() {
 
-    }
 
-    /**
-     * Initialize Module
-     *
-     * @param none
-     * @return object $this
-     */
-    public function initModule() {
-        return $this;
-    }
+
 
     /**
      * Configure Module
@@ -43,12 +27,13 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
-     * Initialize Module
+     * Add Hooks
      *
+     * Adds WordPress Hooks, triggered during module initialization
      * @param none
      * @return void
      */
-    public function init() {
+    public function addHooks() {
 
 
 
@@ -81,7 +66,7 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName());
+
     }
 
     /**

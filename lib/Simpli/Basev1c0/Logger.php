@@ -150,8 +150,9 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
         }
 
         $time_now = date("Y-m-d H:i:s");
+        $prefix = ' ' . $this->getPlugin()->getSlug() . ': ';
         $this->_log[] = array(
-            'text' => $time_now . ' ' . $string
+            'text' => $time_now . $prefix . $string
             , 'type' => $type);
 
 
@@ -175,7 +176,7 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
         // echo '<br>adding logs within consolelog';
 
 
-        $code = "<script id=\"my_log\" type=\"text/javascript\">\n\tif ( typeof console === 'object' ) {\n";
+        $code = "<script  type=\"text/javascript\">\n\tif ( typeof console === 'object' ) {\n";
         $log = $this->getLog();
 
 
@@ -217,9 +218,13 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
             return;
         }
 
-
-
-
+        $log_entries = $this->getLog();
+        $contents = '';
+        foreach ($log_entries as $entry) {
+            $contents[] = $entry['text'];
+        }
+        // echo '<pre>', print_r($contents, true), '</pre>';
+        //  die('exiting logger');
         /*
          * Do not write to file if ajax request
          * AJAX check
@@ -231,7 +236,8 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
         if ($filename == '') {
             $filename = 'error.log.txt';
         }
-        return file_put_contents($filename, implode("\r\n", $this->getLog())); //, FILE_APPEND);
+
+        return file_put_contents($filename, implode("\r\n", $contents)); //, FILE_APPEND);
     }
 
     /**
@@ -279,3 +285,4 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
     }
 
 }
+

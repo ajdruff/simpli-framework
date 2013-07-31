@@ -29,41 +29,15 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
     }
 
     /**
-     * Initialize Plugin
+     * Add Hooks
      *
-     *
-     * @author Andrew Druffner
+     * Adds WordPress Hooks. Function is called during plugin initialization
      * @param none
      * @return void
      */
-    public function initPlugin() {
-
-        /*
-         * make sure wordpress is installed properly
-         */
-        if (!defined('ABSPATH'))
-            die('Cannot Load Plugin - WordPress installation not found');
-
-        /*
-         *  Load any libraries you need that may not be included with the default wordpress installation
-         */
-
-        if (!class_exists('WP_Http'))
-            include_once( ABSPATH . WPINC . '/class-http.php' );
+    public function addHooks() {
 
 
-
-
-
-
-        /*
-         * Add some log messages
-         *
-         */
-
-        $this->getLogger()->log(' Starting ' . $this->getName() . ' Debug Log');
-
-        $this->getLogger()->log('Plugin Version: ' . $this->getVersion() . ' Framework Version: ' . $this->getFrameworkVersion() . ' Base Class Version: ' . $this->getBaseClassVersion());
 
         /*
          * Save Activation Errors for later display
@@ -105,11 +79,11 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
 
 
 
-        $this->getLogger()->log($this->getSlug() . ': Plugin Directory: ' . $this->getDirectory());
-        $this->getLogger()->log($this->getSlug() . ': Module Directory: ' . $this->getModuleDirectory());
+        $this->getLogger()->log('Plugin Directory: ' . $this->getDirectory());
+        $this->getLogger()->log('Module Directory: ' . $this->getModuleDirectory());
 
 
-        $this->getLogger()->log($this->getSlug() . ': Plugin URL: ' . $this->getUrl());
+        $this->getLogger()->log('Plugin URL: ' . $this->getUrl());
     }
 
     /**
@@ -121,6 +95,15 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
      * @return void
      */
     public function config() {
+
+
+                /*
+         *  Load any libraries you need that may not be included with the default wordpress installation
+         */
+
+        if (!class_exists('WP_Http'))
+            include_once( ABSPATH . WPINC . '/class-http.php' );
+
 
         /*
          *
@@ -171,9 +154,14 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
 
         /*
          * set disabled modules
+         * e.g.:$this->setDisabledModule('Shortcodes');
          */
-        $this->setDisabledModule('Shortcodes');
-        $this->setDisabledModule('Queryvars');
+
+
+        /*
+         * Set disabled addons
+         * e.g.: $this->setDisabledAddon('Simpli_Forms');
+         */
     }
 
     /**

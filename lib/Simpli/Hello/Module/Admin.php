@@ -50,14 +50,20 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
-     * Initialize Module when in Admin environment
+     * Add Hooks
      *
+     * Adds WordPress Hooks, triggered during module initialization
      * @param none
-     * @return object $this
+     * @return void
      */
-    public function initModuleAdmin() {
+    public function addHooks() {
 
-
+        /*
+         * exit if not admin
+         */
+        if (!is_admin()) {
+            return;
+        }
 
         /*
          * Only load the plugin action and row meta actions if you are on the plugins listing page
@@ -77,8 +83,6 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
         // Add global admin scripts
         add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
 
-        $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName() . ' Slug = ' . $this->getSlug());
-        return $this;
     }
 
     /**
@@ -92,15 +96,6 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
         wp_enqueue_style($this->getPlugin()->getSlug() . '-admin-global', $this->getPlugin()->getUrl() . '/admin/css/admin.css', array(), $this->getPlugin()->getVersion());
     }
 
-    /**
-     * Initialize Module
-     *
-     * @param none
-     * @return object $this
-     */
-    public function initModule() {
-        return $this;
-    }
 
     /**
      * Configure Module

@@ -10,32 +10,22 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Addons_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Module {
 
     private $_form_theme;
-    private $_field_prefix;
-    private $_form_filter_suffix;
+    private $_form_filter;
     private $_form;
     private $_forms;
 
     /**
-     * Initialize Module when in Admin environment
+     * Add Hooks
      *
+     * Adds WordPress Hooks, triggered during module initialization
      * @param none
-     * @return object $this
+     * @return void
      */
-    public function initModuleAdmin() {
+    public function addHooks() {
 
-    }
-
-    /**
-     * Initialize Module
-     *
-     * @param none
-     * @return object $this
-     */
-    public function initModule() {
-        return $this;
     }
 
     /**
@@ -72,17 +62,25 @@ class Simpli_Addons_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Module {
     public function endForm() {
 
         $form = $this->_form;
-        extract($this->_form);
+        extract($this->_form); // now you have $form_fields and $form_atts as variables
         // $fields=$form['fields'];
         // $form_atts=$form['form_atts'];
+        /*
+         * set the form filter
+         */
         if (isset($form_atts['filter'])) {
             $this->setFormFilter($form_atts['filter']); //sets default form filter
         }
-        $elements_module=$this->getTheme()->getFormElementsModule();
+        /*
+         * parse each element by Echoing out the result of element methods within the elements module which contains the element methods
+         * The type of field *is* the method since it should be exactly the same as the method to be used for parsing.
+         */
+        $elements_module = $this->getTheme()->getFormElementsModule();
+
         foreach ($form_fields as $field_atts) {
 
             $method = $field_atts['type'];
-            $elements_module->$method($field_atts);
+            echo $elements_module->$method($field_atts);
         }
     }
 
@@ -92,14 +90,16 @@ class Simpli_Addons_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return string
      */
-    public function getFormFilterTag() {
-
-        $filter_suffix = $this->_form_filter_suffix;
-
-        $filter_tag = $this->getPlugin()->getSlug() . '_form_filters_' . $this->_form_filter_suffix;
+    public function getFormFilter() {
 
 
-        return $filter_tag;
+        if (is_null($this->_form_filter)) {
+
+            $this->_form_filter = ''; //this results in the default filter Module name defined by $this->getAddon->MODULE_NAME_FILTERS
+        }
+
+
+        return $this->_form_filter;
     }
 
     /**
@@ -109,9 +109,12 @@ class Simpli_Addons_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Module {
      * @param string getFormFilterTag
      * @return object $this
      */
-    public function setFormFilter($form_filter_tag) {
-        $this->_form_filter_suffix = $form_filter_tag;
-        return $this;
+    public function setFormFilter($form_filter) {
+        /*
+         * set the form filter, capatilzing the first word.
+         */
+
+        $this->_form_filter = ucwords($form_filter);
     }
 
     /**
@@ -122,17 +125,47 @@ class Simpli_Addons_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function addField($atts) {
-        $this->_form['form_fields'][$atts['name']] = $atts;
+        /*
+         * Index fields by their names
+         * If no names are provided, provide a '__undefined-_' index with counter
+         * This allows the fields to still be added, but you can later throw an
+         * error in a Filter module when checking if $atts['name'] is null
+         */
+        static $fieldCounter;
+        if (isset($atts['name'])) {
+
+
+            $this->_form['form_fields'][$atts['name']] = $atts;
+        } else {
+            $fieldCounter++;
+            $this->_form['form_fields']['__name_undefined__' . $fieldCounter] = $atts;
+        }
     }
-
-
 
     public function renderElement($tag_id, $atts, $defaults) {
 
-    $atts = apply_filters($this->getFormFilterTag(), $atts, $tag_id);
 
         /*
-         * Raise Error
+         * Merge the defaults and the attributes provided by the user together
+         */
+        $atts = shortcode_atts($defaults, $atts);
+
+
+        /*
+         * Apply the filter set by the template.
+         * If no filter was set, it will use the basic filter which
+         * is the 'Filter' module.
+         */
+
+
+        $filterModuleName = $this->getAddon()->MODULE_NAME_FILTERS . $this->getFormFilter(); // e.g.: 'FilterOptions'
+        $filterTag = $this->getAddon()->getModule($filterModuleName)->getFilterTag(); //find the module corresponding to the filter and use its getFilterTag() method so we call its filters
+        $atts = apply_filters($filterTag, $atts, $tag_id);
+
+
+     //   echo '<pre>', print_r($this->_form, true), '</pre>';
+        /*
+         * Print Our Any Errors that are returned by the filters
          */
 
         if ((isset($atts['_error'])) && (!is_null($atts['_error']))) {
@@ -160,7 +193,7 @@ class Simpli_Addons_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Module {
 
 
         extract($args);
-
+        //echo 'Args after extraction<pre>', print_r($args, true), '</pre>';
 
         $theme = $this->getTheme();
         $util = $this->getPlugin()->getModule('Tools');
@@ -187,56 +220,8 @@ class Simpli_Addons_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Module {
      */
     public function getTheme() {
 
-        if ($this->getPlugin()->getModule('FormTheme')) {
 
-            return ($this->getPlugin()->getModule('FormTheme'));
-        }
-
-
-        return null;
-    }
-
-    /**
-     * Get Default Field Label
-     *
-     * Uses name to derive a label
-     * @param string $content The shortcode content
-     * @return string The parsed output of the form body tag
-     */
-    function getDefaultFieldLabel($name) {
-
-
-        $label = str_replace($this->getFieldPrefix(), '', $name);
-        $label = strtolower($label);
-        $label = str_replace('_', ' ', $label);
-        $label = ucwords($label);
-        return $label;
-    }
-
-    /**
-     * Get Field Prefix
-     *
-     * @param none
-     * @return string
-     */
-    public function getFieldPrefix() {
-
-        if (is_null($this->_field_prefix)) {
-            $this->setFieldPrefix($this->getPlugin()->getSlug() . '_');
-        }
-
-        return $this->_field_prefix;
-    }
-
-    /**
-     * Set Field Prefix
-     *
-     * @param string $prefix
-     * @return object $this
-     */
-    public function setFieldPrefix($field_prefix) {
-        $this->_field_prefix = $field_prefix;
-        return $this;
+        return ($this->getAddon()->getModule('Theme'));
     }
 
     /**
@@ -253,3 +238,4 @@ class Simpli_Addons_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Module {
     }
 
 }
+

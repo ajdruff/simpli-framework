@@ -12,31 +12,7 @@
  */
 class Simpli_Hello_Module_Tools extends Simpli_Basev1c0_Plugin_Module {
 
-    /**
-     * Initialize Module when in Admin environment
-     *
-     * @param none
-     * @return object $this
-     */
-    public function initModuleAdmin() {
 
-        $this->initModule();
-    }
-
-    /**
-     * Initialize Module
-     *
-     * @param none
-     * @return object $this
-     */
-    public function initModule() {
-
-
-
-        $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName());
-
-        return $this;
-    }
 
     /**
      * Configure Module

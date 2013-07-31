@@ -32,6 +32,40 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
      * @var Module Name
      */
     protected $_name;
+    protected $_addon = null;
+
+    /**
+     * Get Addon
+     *
+     * Returns the addon of the module if set, otherwise it will return the addon
+     * with the name that is passed as an argument
+     *
+     * @param none
+     * @return void
+     */
+    public function getAddon($addon_name = null) {
+
+
+        if (is_null($addon_name)) {
+            return $this->_addon;
+        }
+
+        /* else, if not null, pass it onto the getPlugin->getAddon() method */
+        return $this->getPlugin()->getAddon($addon_name);
+    }
+
+    /**
+     * Set Addon Reference
+     *
+     * Set the Addon that the module is dependent on
+     *
+     * @param string $addon_name
+     * @return object Addon
+     */
+    public function setAddon($addon_object) {
+
+        $this->_addon = $addon_object;
+    }
 
     /*
      * Get Slug ( Read Only )
@@ -97,7 +131,7 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
      * @return string
      */
 
-    public function init() {
+    public function initOld() {
 
         if (is_admin()) {
 
@@ -107,6 +141,32 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
             $this->initModule();
         }
 
+        $this->config();
+    }
+
+    /**
+     * Add Hooks
+     *
+     * Initializes Module
+     *
+     * @param none
+     * @return void
+     */
+    public function addHooks() {
+
+    }
+
+    /**
+     * Init
+     *
+     * Initializes the Module
+     *
+     * @param none
+     * @return void
+     */
+    public function init() {
+
+        $this->addHooks();
         $this->config();
     }
 

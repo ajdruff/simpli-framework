@@ -42,35 +42,16 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
     private $_pages = array();
     private $_rewrite_rules = array();
 
-    /**
-     * Initialize Module when in Admin environment
-     *
-     * @param none
-     * @return object $this
-     */
-    public function initModuleAdmin() {
 
-        $this->initModule();
-    }
 
     /**
-     * Initialize Module
+     * Add Hooks
      *
+     * Adds WordPress Hooks, triggered during module initialization
      * @param none
-     * @return object $this
+     * @return void
      */
-    public function initModule() {
-
-
-
-        /*
-         * configure
-         *
-         */
-        $this->configure();
-
-
-
+    public function addHooks() {
 
 
 
@@ -131,13 +112,9 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
 
 
         $this->getPlugin()->addActivateAction(array(&$this, 'flushRewriteRules'));
-        /*
-         * Logging
-         */
 
-        $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName() . ' Slug = ' . $this->getSlug());
-        return $this;
     }
+
 
     /**
      * Configure Module
@@ -145,18 +122,7 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return void
      */
-    public function config() {
-
-    }
-
-    /**
-     * Short Description
-     *
-     * Long Description
-     * @param string $content The shortcode content
-     * @return string The parsed output of the form body tag
-     */
-    function configure() {
+    function config() {
 
         /*
          * Query Variables

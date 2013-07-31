@@ -28,7 +28,6 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -71,7 +70,7 @@ $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include u
 //(optional)
 $simpli_hello->setDebug(
         array(
-            'consolelog' => true  // true/false Turn on Logging to Javascript console for php logs
+            'consolelog' => false  // true/false Turn on Logging to Javascript console for php logs
             , 'js' => false // true/false Turn on Logging to Javascript console for javascript logs
             , 'src' => false  // true/false Whether to use the full source for javascript or just the minimized versions
             , 'filelog' => false // true/false Turn on Logging to File for php logs
@@ -86,12 +85,7 @@ $simpli_hello->setDebug(
 $simpli_hello->init();
 
 
-//echo '<pre>', print_r($simpli_hello->getAddon('Simpli_Forms'), true), '</pre>';
-////die('inspecting - exit');
 
-$print_this = $simpli_hello->getAddon('Simpli_Forms');
-//echo '<pre>', print_r($print_this, true), '</pre>';
-//echo '<pre>', print_r($simpli_hello->getAvailableModules('always_enabled'), true), '</pre>';
 /*
  * Configure Modules - Must Occur After Plugin Initialization
  */
@@ -106,3 +100,4 @@ $print_this = $simpli_hello->getAddon('Simpli_Forms');
  *
  */
 register_activation_hook(__FILE__, array($simpli_hello, 'install'));
+

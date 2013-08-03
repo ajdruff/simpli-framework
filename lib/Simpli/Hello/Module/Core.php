@@ -15,6 +15,9 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 
 
 
+ public function config1() {
+
+    }
 
     /**
      * Configure Module
@@ -23,7 +26,51 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function config() {
+$my_string = 'Hello';
 
+$this->debug()->setFilter('Simpli_Hello_Module_Core', false);
+        $this->debug()->setFilter('Simpli_Hello_Module_Menu10Settings', true);
+        $this->debug()->setFilter('Simpli_Hello_Module_Menu20Settings', true);
+        $this->debug()->setFilter('Simpli_Hello_Module_Admin', true);
+
+
+      $this->debug()->v(__LINE__, __CLASS__, __FUNCTION__, __FILE__, $always = true, 'filters', $this->debug()->getFilters());
+        /*
+         * Echo out any message
+         */
+
+   //     $this->debug()->e(__LINE__, __CLASS__, __FUNCTION__, __FILE__, $always = false, '$my_string=' . $my_string);
+        /*
+         * Echo out any variable, including an array
+         */
+        $test_array = array(
+            'apple' => 'red',
+            'orange' => 'orange',
+        );
+  //  $this->debug()->v(__LINE__, __CLASS__, __FUNCTION__, __FILE__, $always = false, '$my_string', $my_string);
+
+        $my_string = 'Hello';
+
+//  $this->debug()->v(__LINE__, __CLASS__, __FUNCTION__, __FILE__, $always = false, '$test_array', $test_array);
+        ///    $this->testDebug('apple', 'orange', array('element1' => 1, 'element2' => 2));
+
+
+        /*
+         * Stop Code Execution ( same as die() or exit )
+         */
+        //$this->debug()->stop(__LINE__, __CLASS__, __FUNCTION__, __FILE__, $always = true);
+    }
+
+    /**
+     * Test function to be used for debug testing
+     *
+     * Long Description
+     *
+     * @param none
+     * @return void
+     */
+    public function testDebug($fruit1, $fruit2, $stuff) {
+        $this->debug()->t(__LINE__, get_class($this), __FUNCTION__, __FILE__, $always_debug = false, debug_backtrace(), $arg_expansion = false, $levels = 1);
     }
 
     /**

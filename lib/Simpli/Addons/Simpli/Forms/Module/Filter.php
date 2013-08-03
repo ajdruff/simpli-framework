@@ -12,8 +12,6 @@
  */
 class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Module {
 
-
-
     /**
      * Add Hooks
      *
@@ -23,16 +21,15 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
      */
     public function addHooks() {
 
-/*
- * Add a hook for our filters
- */
+        /*
+         * Add a hook for our filters
+         */
 
-        add_filter($this->getFilterTag(), array($this, 'filter'), 10, 2);
+        add_filter($this->getHookName(), array($this, 'filter'), 10, 2);
 
 
         return $this;
     }
-
 
     /**
      * Get Filter Tag - Read Only
@@ -42,9 +39,9 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
      * @param none
      * @return stringReadOnly
      */
-    public function getFilterTag() {
-           $filter_tag=$this->getAddon()->getSlug() . '_' . $this->getSlug(); //e.g.: simpli_addons_simpli_forms_filters
-return $filter_tag;
+    public function getHookName() {
+        $hook_name = $this->getAddon()->getSlug() . '_' . $this->getSlug(); //e.g.: simpli_addons_simpli_forms_filters
+        return $hook_name;
     }
 
     /**
@@ -65,13 +62,14 @@ return $filter_tag;
      * @param string $atts The attributes of the tag
      * @return string $atts
      */
-    public function filter($atts, $tag_id) {
-        $method = '_filter' . ucwords($tag_id);
+    public function filter($properties) {
+     //   echo '<pre>', print_r($properties, true), '</pre>';
+        $method = 'filter' . ucwords($properties['scid']);
+        // die('exiting' . __METHOD__);
+        $properties = $this->_commonFilter($properties);
+        $properties = $this->$method($properties);
 
-        $atts = $this->_commonFilter($atts);
-        $atts = $this->$method($atts);
-
-        return ($atts);
+        return ($properties);
     }
 
     /**
@@ -81,16 +79,14 @@ return $filter_tag;
      * @param string $content The shortcode content
      * @return string The parsed output of the form body tag
      */
-    protected function _commonFilter($atts) {
-
+    protected function _commonFilter($properties) {
+        extract($properties);
         /*
          * Return error if required arguments are not found
          */
         if ((!isset($atts['name'])) || (is_null($atts['name']))) {
 
             $atts ['_error'][] = 'Name attribute is required';
-
-            return ($atts);
         }
 
 
@@ -113,7 +109,7 @@ return $filter_tag;
 
 
 
-        return($atts);
+        return(compact('atts', 'tags'));
     }
 
     /**
@@ -123,11 +119,36 @@ return $filter_tag;
      * @param string $atts The attributes of the tag
      * @return string $atts
      */
-    protected function _filterText($atts) {
+    protected function filterText($properties) {
+        extract($properties);
+        $atts['value'] = 'filtered by basic filters';
+        $tags['test_text'] = 'This is the test tag for a text template';
+        return (compact('atts', 'tags'));
+    }
 
-        $atts['value']='filtered by basic filters';
+      /**
+     * Filter Text
+     *
+     * Filters the Text Tag Attributers
+     * @param string $atts The attributes of the tag
+     * @return string $atts
+     */
+    protected function filterSelect($properties) {
+        extract($properties);
 
-        return ($atts);
+        $options_html = '';
+        foreach ($atts['options'] as $value => $display_text) {
+            $options_html.='<option ' . $value . '>' . $display_text . '</option>';
+        }
+
+        $atts['value'] = 'filtered by basic filters';
+        $tags['options_html'] = $options_html;
+
+
+
+
+
+        return (compact('atts', 'tags'));
     }
 
     /**
@@ -146,6 +167,7 @@ return $filter_tag;
         $label = ucwords($label);
         return $label;
     }
+
     /**
      * Get Field Prefix - Read Only
      *

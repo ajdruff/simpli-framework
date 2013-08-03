@@ -1,5 +1,7 @@
 <?php
 
+echo '<br> loading theme module';
+
 /**
  * Form Theme Module
  *
@@ -12,10 +14,10 @@
  */
 class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Module {
 
-    private $_templates = array();
-    private $_template;
-    private $_theme_directory;
-    private $_theme;
+    private $_templates = null;
+    private $_template = null;
+    private $_theme_directory = null;
+    private $_theme = null;
 
     const DEFAULT_THEME = 'default';
 
@@ -26,7 +28,8 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
      * @return array $this->_templates
      */
     public function getTemplates() {
-        if (!isset($this->_templates)) {
+        if (is_null($this->_templates)) {
+            echo '<br> templates are null, resetting to empty array';
             $this->_templates = array();
         }
         return $this->_templates;
@@ -40,15 +43,14 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
      */
     public function getTemplate($template_id) {
 
-        $templates = $this->getTemplates();
 
-        if (isset($this->_templates[$template_id])) {
-            $result = $templates[$template_id];
+        if (!is_null($this->_templates[$template_id])) {
+            $result = $this->_templates[$template_id];
         } else {
             $result = NULL;
         }
 
-
+        echo '<br>$templates = <pre>', print_r($this->_templates, true), '</pre>';
 
         return $result;
     }
@@ -61,7 +63,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
      */
     public function setTemplate($template_name, $template) {
 
-
+        echo '<br> setting template for ' . $template_name;
         $this->_templates[$template_name] = $template;
 
         return $this;
@@ -74,9 +76,22 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
      * @return void
      */
     public function addHooks() {
+
+        // add_action($this->getAddon()->_slug . '_init',array($this,'loadTheme'));
     }
 
-
+//    /**
+//     * Short Description
+//     *
+//     * Long Description
+//     *
+//     * @param none
+//     * @return void
+//     */
+//    public function loadTheme(args) {
+//
+//
+//    }
 
     /**
      * Configure Module
@@ -88,8 +103,12 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
 
         $this->setTheme('Seattle');
 
+       $this->getAddon()->loadModules($this->getThemeDirectory() . '/Module');
 
         $this->loadTemplates();
+
+        $addon_modules = $this->getAddon()->getModules();
+        echo 'Active Addon Modules: <pre>', print_r(array_keys($addon_modules), true), '</pre>';
     }
 
     /**
@@ -110,37 +129,25 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
             , 'textarea'
             , 'checkboxes'
         );
-        //   echo '<pre>', print_r($supported_tags, true), '</pre>';
-        //$e = create_function('$text', 'echo $text;');
 
-        /*
-         * Define a convenience function
-         */
-        if (!function_exists('simpli_framework_echo')) {
-
-            function simpli_framework_echo($text) {
-                echo $text;
-            }
-
-        }
+        echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style="color:blue;"> Loading Templates</strong>';
 
         foreach ($supported_tags as $tag) {
 
-            $template_path = $this->getThemeDirectory() .  '/' . $tag . '.template.php';
-            //   echo '<br/>' . __LINE__ . ' ' . __METHOD__ . ' $template_path=' . $template_path;
+            $template_path = $this->getThemeDirectory() . '/templates/' . $tag . '.template.php';
 
             if (!file_exists($template_path)) {
-               //    echo '<br> skipping file . ' . $template_path;
+                   echo '<br> skipping file . ' . $template_path;
                 continue; //skip if no template
             }
-             //  echo '<br> loading file . ' . $template_path;
+              echo '<br> loading file . ' . $template_path;
             ob_start();
             /*
              * temporarily define a conveniance function
              * todo: consider adding a special file called 'common.functions.php' to be included with
              * each template that would provide each with common functions
              */
-            $e = 'simpli_framework_echo';
+   //         $e = 'simpli_framework_echo';
             include($template_path);
             $template = ob_get_clean();
 
@@ -148,8 +155,10 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
 //
 //
             $this->setTemplate($tag, $template);
+
+
         }
-        //   echo '<pre>', print_r($this->getTemplates(), true), '</pre>';
+           echo '<pre>', print_r($this->getTemplates(), true), '</pre>';
     }
 
     /**
@@ -169,7 +178,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
         }
 
 
-        return $this->_theme_directory;
+          return $this->_theme_directory;
     }
 
 //    /**
@@ -206,6 +215,9 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
     public function setTheme($theme) {
         $theme = trim(ucwords($theme));
         $this->_theme = $theme;
+
+
+
         $this->getPlugin()->getLogger()->log('Set Simpli_Forms Theme to : ' . $this->getThemeName());
         return $this;
     }

@@ -67,6 +67,29 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
         $this->_addon = $addon_object;
     }
 
+   protected $_debug = null;
+
+    /**
+     * Debug
+     *
+     * Returns a debug object
+     *
+     * @param none
+     * @return void
+     */
+    public function debug() {
+
+        if (is_null($this->_debug)) {
+  $this->_debug = $this->getPlugin()->getModule('Debug');
+//            if ($this->getPlugin()->isModuleLoaded('Debug')) {
+//                $this->_debug = $this->getPlugin()->getModule('Debug');
+//            } else {
+//                $this->_debug = null;
+//            }
+        }
+        return $this->_debug;
+    }
+
     /*
      * Get Slug ( Read Only )
      *
@@ -120,29 +143,7 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
         return $this->_name;
     }
 
-    /* Initalizes Module by branching to child initModule and initModuleAdmin
-     *
-     *
-     * Wrapper around initModuleAdmin and initModule. By using a wrapper we provide backward compatibility and an easier interface  child classes since they dont
-     * need to remember to add the extra 'if is_admin()' logic and to help them more clearly differentiate the initialization,
-     * as well providing a cleaner interface to the Plugin class which can use just init()
-     *
-     * @param none
-     * @return string
-     */
 
-    public function initOld() {
-
-        if (is_admin()) {
-
-            $this->initModuleAdmin();
-        } else {
-
-            $this->initModule();
-        }
-
-        $this->config();
-    }
 
     /**
      * Add Hooks

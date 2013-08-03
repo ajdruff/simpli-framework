@@ -182,7 +182,7 @@ $this->_ro_properties[$name]=$value;
         if (is_null($this->_directory)) {
 
             $class = get_class($this);
-// echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style="color:blue;"> $class = ' . $class . '</strong>';
+
             /*
              * replace underscores of the class with slashes
              *
@@ -200,7 +200,7 @@ $this->_ro_properties[$name]=$value;
              * Now normalize slashes
              */
             $this->_directory = $this->getPlugin()->getTools()->normalizePath($path);
-            //echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style = "color:blue;"> $path = ' . $path . '</strong>';
+
         }
 
         return ($this->_directory);
@@ -322,7 +322,7 @@ $this->_ro_properties[$name]=$value;
             }
             $this->_available_modules = $available_modules;
         }
-//      echo '$this->_available_modules = <pre>', print_r($this->_available_modules, true), '</pre>';
+
         return $this->_available_modules[$filter];
     }
 
@@ -586,6 +586,12 @@ $this->_ro_properties[$name]=$value;
 
         $available_modules = $this->getAvailableModules('enabled');
 
+
+
+
+
+
+
         /*
          * check to see if the module_name is enabled; if not, return.
          */
@@ -606,6 +612,7 @@ $this->_ro_properties[$name]=$value;
 
 
         $module_file_path = $available_modules[$module_name];
+
         require_once($module_file_path); # simpli-framework/lib/simpli/hello/Module/Admin.php
 
         /*
@@ -651,6 +658,7 @@ $this->_ro_properties[$name]=$value;
     public function loadModules() {
 
         $enabled_modules = $this->getAvailableModules('enabled');
+
 
         if (!is_array($enabled_modules)) {
             return array();

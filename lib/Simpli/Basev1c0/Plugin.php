@@ -1159,16 +1159,16 @@ class Simpli_Basev1c0_Plugin {
         $this->getLogger()->log('Loaded Base Class Library ' . ' from ' . dirname(__FILE__));
 
 
-        /*
-         * Initialize Modules
-         */
-        $modules = $this->getModules();
-
-        foreach ($modules as $module) {
-
-            $module->init();
-            $this->getLogger()->log('Initialized Plugin Module ' . $this->getSlug() . '/' . $module->getName());
-        }
+//        /*
+//         * Initialize Modules
+//         */
+//        $modules = $this->getModules();
+//
+//        foreach ($modules as $module) {
+//
+//            $module->init();
+//            $this->getLogger()->log('Initialized Plugin Module ' . $this->getSlug() . '/' . $module->getName());
+//        }
 
         /*
          * Initialize Addons
@@ -1343,7 +1343,7 @@ class Simpli_Basev1c0_Plugin {
      *
      * @author Andrew Druffner
      * @param string $module_name
-     * @return $this
+     * @return mixed False if failed to load module, module object otherwise
      */
     public function loadModule($module_name) {
 
@@ -1356,7 +1356,7 @@ class Simpli_Basev1c0_Plugin {
          */
         if (!is_array($available_modules) || !isset($available_modules[$module_name])) {
             $this->getLogger()->log('unable to load Module ' . $module_name . ' , since it is an inactive module');
-            return;
+            return null;
         }
 
 
@@ -1385,16 +1385,31 @@ class Simpli_Basev1c0_Plugin {
          */
         if (!isset($this->_modules[$class]) || !is_object($this->_modules[$class]) || get_class($this->_modules[$class]) != $class) {
             try {
-                $object = new $class;
-                $this->setModule($module_name, $object);
+                /*
+                 * create the module object
+                 */
+                $module_object = new $class;
+                $this->setModule($module_name, $module_object);
+                /*
+                 * set the plugin reference
+                 */
                 $this->getModule($module_name)->setPlugin($this);
                 $this->getLogger()->log('Loaded Plugin Module ' . $this->getSlug() . '/' . $module_name);
+                /*
+                 * initialize the module
+                 */
+                $module_object->init();
+                $this->getLogger()->log('Initialized Plugin Module ' . $this->getSlug() . '/' . $module_object->getName());
             } catch (Exception $e) {
                 die('Unable to load Module: \'' . $module_name . '\'. ' . $e->getMessage());
             }
         }
 
-        return $this;
+
+
+
+
+        return $module_object;
     }
 
     /**
@@ -1422,7 +1437,8 @@ class Simpli_Basev1c0_Plugin {
      */
     public function getModule($module_name) {
         if (!isset($this->_modules[$module_name])) {
-            return null;
+            //attempt to load module
+            return($this->loadModule($module_name));
         }
         return $this->_modules[$module_name];
     }

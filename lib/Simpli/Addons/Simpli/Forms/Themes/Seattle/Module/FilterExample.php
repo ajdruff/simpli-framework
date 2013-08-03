@@ -22,38 +22,34 @@ class Simpli_Addons_Simpli_Forms_Module_FilterExample extends Simpli_Addons_Simp
      * @param string $content The shortcode content
      * @return string The parsed output of the form body tag
      */
-    protected function _commonFilter($atts) {
+    protected function _commonFilter($properties) {
+        $properties = parent::_commonFilter($properties);
 
-        /*
-         * Use parent filters so we dont need to duplicate
-         *  the common filter here, but we can extend it
-         */
-        $atts = parent::_commonFilter($atts);
+        extract($properties);
 
 
-
-
-
-
-
-
-
-        return($atts);
+        return(compact('atts', 'tags'));
     }
 
     /**
      * Filter Text
      *
-     * Filters the Text Tag Attributers
+     * Filters the Text Tag Attribute
      * @param string $atts The attributes of the tag
      * @return string $atts
      */
-    protected function _filterText($atts) {
+    protected function filterText($properties) {
+        extract($properties);
+
 
         $atts['value'] = 'filtered by Example';
 
-        return ($atts);
+
+        return (compact('atts', 'tags'));
     }
+
+
+
 
 }
 

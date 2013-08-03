@@ -13,7 +13,8 @@
 class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Module {
 
     private $_form_theme;
-    private $_form_filter;
+    private $_field_prefix;
+    private $_form_filter_suffix;
     private $_form;
     private $_forms;
 
@@ -39,50 +40,108 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
     }
 
     /**
-     * Start Form
+     * Create Form
      *
-     * Creates a temporary form array to hold the fields until endForm which parses it
+     * Creates a  form array for reference by each of the shortcodes
      * @param none
      * @return void
      */
-    public function startForm($form_atts) {
+    public function createForm($properties) {
 
-        $this->_form = array();
-        $this->_form['form_fields'] = array();
-        $this->_form['form_atts'] = $form_atts;
+        $defaults = array(
+            'filter' => null,
+            'theme' => null,
+            'is_shortcode' => false
+        );
+        $properties = shortcode_atts($defaults, $properties);
+
+        $this->setFilter($properties['filter']);
+
+ $this->getAddon()->getModule('Theme')->setTheme($properties['theme']);
+
+
+        if (!is_array($properties)) {
+            $properties = array();
+        }
+        $this->_form = array(); //initialize, clearing the old form
+        $this->_form['elements'] = array();
+//        $this->_form['elements']['atts'] = array();
+//        $this->_form['elements']['att_defaults'] = array();
+//        $this->_form['elements']['tags'] = array();
+        $this->_form['form'] = $properties;
     }
 
     /**
-     * End Form
+     * Set Form Property
      *
-     *  Parses the form that was added with startForm
+     * Updates the Form object with new property value
+     * e.g.: setFormProperty('atts',array('id'=>2);)
+     *
      * @param none
-     * @return void
+     * @return mixed False if no such property name, form object if successful
      */
-    public function endForm() {
-
-        $form = $this->_form;
-        extract($this->_form); // now you have $form_fields and $form_atts as variables
-        // $fields=$form['fields'];
-        // $form_atts=$form['form_atts'];
-        /*
-         * set the form filter
-         */
-        if (isset($form_atts['filter'])) {
-            $this->setFormFilter($form_atts['filter']); //sets default form filter
+    public function setFormProperty($property_name, $value) {
+        if (!isset($this->_form['form'][$property_name])) {
+            return false
+            ;
         }
-        /*
-         * parse each element by Echoing out the result of element methods within the elements module which contains the element methods
-         * The type of field *is* the method since it should be exactly the same as the method to be used for parsing.
-         */
-        $elements_module = $this->getTheme()->getFormElementsModule();
 
-        foreach ($form_fields as $field_atts) {
-
-            $method = $field_atts['type'];
-            echo $elements_module->$method($field_atts);
-        }
+        $this->_form['form'][$property_name] = $value;
+        return $this->_form;
     }
+
+    /**
+     * Set Element
+     *
+     *  Adds an element to the Form array for reference by other elements
+     *
+     * @param string $element_name The name of the element property, e.g.: 'my_name'
+     * @param string $property_name The name of the property, e.g.: att_defaults
+     * @return array $this->_form
+     */
+    public function setElement($element_name, $properties) {
+        /*
+         * Index fields by their names
+         * If no names are provided, provide a '__undefined__' index with counter
+         * This allows the fields to still be added, but you can later throw an
+         * error in a Filter module when checking if $atts['name'] is null
+         */
+
+
+        static $fieldCounter;
+        if (is_null($element_name)) {
+            // clear the fieldCounter if we are starting a new form with no elements in it
+            if (count($this->_form['elements']) == 0) {
+                $fieldCounter = 0;
+            }
+            $fieldCounter++;
+            $element_name = '__name_undefined__' . $fieldCounter;
+        }
+
+        $this->_form['elements'][$element_name] = $properties;
+        return $this->_form;
+    }
+
+    /**
+     * Get Element Property
+     *
+     * Gets a property of an element that has been added to the Form.
+     * e.g.: getElementProperty('my_name','atts')
+     *
+     * @param string $element_name The name of the element property, e.g.: 'my_name'
+     * @param string $property_name The name of the property, e.g.: att_defaults
+     * @return mixed null if no such property name already exists, requested value otherwise
+     */
+    public function getElementProperty($element_name, $property_name) {
+        if (!isset($this->_form['elements'][$element_name][$property_name])) {
+            return null;
+        }
+
+        $this->_form['elements'][$element_name][$property_name] = $value;
+        return $this->_form['elements'][$element_name][$property_name];
+    }
+
+    private $_form_filter;
 
     /**
      * Get Form Filter
@@ -90,7 +149,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @param none
      * @return string
      */
-    public function getFormFilter() {
+    public function getFilter() {
 
 
         if (is_null($this->_form_filter)) {
@@ -103,13 +162,14 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
     }
 
     /**
-     * Set Form Filter
+     * Set  Filter
      *
      * Sets the Form Filter Suffix
      * @param string getFormFilterTag
      * @return object $this
      */
-    public function setFormFilter($form_filter) {
+    public function setFilter($form_filter) {
+
         /*
          * set the form filter, capatilzing the first word.
          */
@@ -118,98 +178,153 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
     }
 
     /**
-     * Add Form Field
+     * Element Wrapper
      *
-     * Adds the field to the form array to be processed at form end
-     * @param string $atts Field Attributes
+     * Calls the appropriate element method to render the element
+     *
+     * @param string $properties The properties provided by the user
      * @return void
      */
-    public function addField($atts) {
+    public function el($properties) {
         /*
-         * Index fields by their names
-         * If no names are provided, provide a '__undefined-_' index with counter
-         * This allows the fields to still be added, but you can later throw an
-         * error in a Filter module when checking if $atts['name'] is null
+         * Use the name of the element id as the method
+         *
          */
-        static $fieldCounter;
-        if (isset($atts['name'])) {
-
-
-            $this->_form['form_fields'][$atts['name']] = $atts;
-        } else {
-            $fieldCounter++;
-            $this->_form['form_fields']['__name_undefined__' . $fieldCounter] = $atts;
-        }
+        $el_id = $properties['el_id'];
+        $method = $el_id;
+        unset($properties['el_id']); //remove the element id since we dont want it part of atts, and it served its only purpose
+        $this->getElementsModule()->$method($properties);
     }
 
-    public function renderElement($tag_id, $atts, $defaults) {
+    /**
+     * Get Form
+     *
+     * @param none
+     * @return string
+     */
+    public function getForm() {
+        return $this->_form;
+    }
+
+    public function renderElement($scid, $atts, $defaults) {
+
 
 
         /*
-         * Merge the defaults and the attributes provided by the user together
+         * Apply Defaults
+         * Use the shortcode_atts function which will also remove
+         * any attributes not specified in the element defaults
          */
         $atts = shortcode_atts($defaults, $atts);
 
+        /*
+         * Package Properties so we can hand off to filters
+         */
+        $tags = array();
+        $properties = array(
+            'scid' => $scid, //shortcode , represents the
+            'atts' => $atts,
+            'tags' => $tags
+        );
 
         /*
+         * Filter
          * Apply the filter set by the template.
          * If no filter was set, it will use the basic filter which
          * is the 'Filter' module.
          */
 
 
-        $filterModuleName = $this->getAddon()->MODULE_NAME_FILTERS . $this->getFormFilter(); // e.g.: 'FilterOptions'
-        $filterTag = $this->getAddon()->getModule($filterModuleName)->getFilterTag(); //find the module corresponding to the filter and use its getFilterTag() method so we call its filters
-        $atts = apply_filters($filterTag, $atts, $tag_id);
+        $filter_module_name = $this->getAddon()->MODULE_NAME_FILTERS . $this->getFilter(); // e.g.: 'FilterOptions'
+        $filter_hook_name = $this->getAddon()->getModule($filter_module_name)->getHookName(); //find the module corresponding to the filter and use its getHookName() method so we call its filters
+        $properties = apply_filters($filter_hook_name, $properties);
 
-
-     //   echo '<pre>', print_r($this->_form, true), '</pre>';
         /*
-         * Print Our Any Errors that are returned by the filters
+         * Unpack Properties
+         */
+        extract($properties); //unpacks to: $scid , $atts, $tags
+
+        /*
+         * Define convienance variables
+         */
+
+        $element_name = $atts['name'];
+
+
+        /*
+         * Raise Error
          */
 
         if ((isset($atts['_error'])) && (!is_null($atts['_error']))) {
-
-            foreach ($atts['_error'] as $error_message) {
-                echo $this->getTagErrorMessage($tag_id, $error_message);
+            if ($this->_form['form']['is_shortcode'] === false) {
+                echo $this->getElementErrorMessages($scid, $atts['_error']);
+                return;
+            } else {
+                return ($this->getElementErrorMessages($scid, $atts['_error']));
             }
-            /*
-             * Dont process any further
-             */
-            return;
         }
 
 
-        /*
-         * Fill in with defaults for those that werent provided
-         * Scrub attributes so only those defined in defaults show
-         */
-        $args = shortcode_atts($defaults, $atts);
 
 
-
-
-
-
-
-        extract($args);
-        //echo 'Args after extraction<pre>', print_r($args, true), '</pre>';
 
         $theme = $this->getTheme();
-        $util = $this->getPlugin()->getModule('Tools');
+
 
 
         /*
-         * apply the template
+         *
+         * Parse Template - Replace the Attribute Template Tags with their values
+         *
          */
 
 
-        $template = $theme->getTemplate($template_id);
+
+        $template = $theme->getTemplate($atts['template_id']);
 
 
-        $result = sprintf($template, $name, $value, $label, $hint, $help);
 
-        return $result;
+        $att_template_tags = $this->getTagPairs($atts); //convert to tag pairs
+        $template_with_atts_replaced = str_ireplace($att_template_tags['names'], $att_template_tags['values'], $template);
+
+        /*
+         *
+         * Parse Template - Replace the Element Template Tags with their values
+         *
+         */
+        $element_template_tags = $this->getTagPairs($tags); //convert to tag pairs
+        $processed_template = str_ireplace($element_template_tags['names'], $element_template_tags['values'], $template_with_atts_replaced);
+
+        /*
+         *
+         * Add the element to the Form array
+         * This is so other element filters can have access to their properties if needed
+         */
+        $this->setElement($element_name, $properties);
+        /*
+         * Only echo the result if function is being used outside of the shortcode
+         * otherwise, let the shortcode handle output (best practice)
+         */
+        if ($this->_form['form']['is_shortcode'] === false) {
+            echo $processed_template;
+        }
+        return $processed_template;
+    }
+
+    protected $_elements_module;
+
+    /**
+     * Get Elements Module
+     *
+     * Returns the module used for elements
+     *
+     * @param none
+     * @return object
+     */
+    public function getElementsModule() {
+
+        $this->_elements_module = $this->getTheme()->getFormElementsModule();
+        return($this->_elements_module);
     }
 
     /**
@@ -225,16 +340,111 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
     }
 
     /**
-     * Get Error Message
+     * Get Default Field Label
+     *
+     * Uses name to derive a label
+     * @param string $content The shortcode content
+     * @return string The parsed output of the form body tag
+     */
+    function getDefaultFieldLabel($name) {
+
+
+        $label = str_replace($this->getFieldPrefix(), '', $name);
+        $label = strtolower($label);
+        $label = str_replace('_', ' ', $label);
+        $label = ucwords($label);
+        return $label;
+    }
+
+    /**
+     * Get Field Prefix
+     *
+     * @param none
+     * @return string
+     */
+    public function getFieldPrefix() {
+
+        if (is_null($this->_field_prefix)) {
+            $this->setFieldPrefix($this->getPlugin()->getSlug() . '_');
+        }
+
+        return $this->_field_prefix;
+    }
+
+    /**
+     * Set Field Prefix
+     *
+     * @param string $prefix
+     * @return object $this
+     */
+    public function setFieldPrefix($field_prefix) {
+        $this->_field_prefix = $field_prefix;
+        return $this;
+    }
+
+    /**
+     * Get Element Error Messages
      *
      * Returns the formatted error message
      * @param string $error_message An error string
      * @return string The formatted error message
      */
-    public function getTagErrorMessage($tag, $error_message) {
+    public function getElementErrorMessages($tag, $error_messages) {
+        $error_messages = implode(',', $error_messages);
 
-        $result = '<p> <strong>Tag Error (' . $tag . ') : </strong><em style="color:red">' . $error_message . '</em></p>';
+        $result = '<p> <strong>Unable to Display (' . $tag . ') form element: </strong><em style="color:red">' . $error_messages . '</em></p>';
         return $result;
+    }
+
+    /**
+     * Get Tag Pairs
+     *
+     * Given an associative array of name/value pairs, it returns an array with indexes surrounded by brackets
+     * so you can use them in a str_replace
+     * give ['mytag']='my_value' , will return ['{mytag}']='my_value'
+     *
+     * @param none
+     * @return void
+     */
+    public function getTagPairs($tags) {
+
+        if (!is_array($tags)) {
+            return array('names' => null, 'values' => null);
+        }
+        $result['names'] = array_map(array($this, 'convertTagName'), array_keys($tags));
+        $result['values'] = array_map(array($this, 'convertTagValue'), array_values($tags));
+
+
+        return $result;
+    }
+
+    /**
+     * Convert Tag Name
+     *
+     * Wraps a word with brackets and uppercases it
+     *
+     * @param none
+     * @return void
+     */
+    private function convertTagName($tag_name) {
+
+        return '{' . strtoupper($tag_name) . '}';
+    }
+
+    /**
+     * Convert Tag Value
+     *
+     * Converts a Template Tag value into a string if not one already
+     *
+     * @param none
+     * @return void
+     */
+    private function convertTagValue($tag_value) {
+
+        if (is_array($tag_value) || is_object($tag_value)) {
+            return var_export($tag_value, true);
+        }
+        return $tag_value;
     }
 
 }

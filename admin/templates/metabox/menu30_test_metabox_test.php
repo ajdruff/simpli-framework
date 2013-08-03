@@ -13,7 +13,7 @@ $f = $this->getPlugin()->getAddon('Simpli_Forms')->getModule('Form');
  */
 $f->createForm(
         array(
-            'filter' => 'options'
+            'filter' => ''
             , 'theme' => 'Seattle'
         )
 );
@@ -27,8 +27,8 @@ wp_nonce_field($this->getPlugin()->getSlug(), $this->getPlugin()->getSlug());
 
 
 <?php
-$f->addField(array(
-    'type' => 'text',
+$f->el(array(
+    'el_id' => 'text',
     'name' => 'text',
     //   , 'label' => 'Text you want to insert'
    // 'hint' => 'The text that will be inserted into the post'
@@ -36,8 +36,8 @@ $f->addField(array(
         )
 );
 
-$f->addField(array(
-    'type' => 'text',
+$f->el(array(
+    'el_id' => 'text',
     'name' => 'my_name',
     'template_id' => 'text2',
     //   , 'label' => 'Text you want to insert'
@@ -46,8 +46,28 @@ $f->addField(array(
         )
 );
 
+$f->el(array(
+    'el_id' => 'select',
+    'name' => 'my_select_options'  //the name of the form field.
+    , 'value' => 'pa' //value of options that is selected
+    , 'label' => 'States'
+    , 'hint' => null
+    , 'help' => null
+    , 'options' => array(
+        'PA' => 'Pennsylvania',
+        'WA' => 'Washington',
+        'CA' => 'California',
+    )
+    , 'default_option' => 'CA' //string indiciating the value that should be selected on default
+        )
+);
 
-$f->endForm();
+
+
+
+
+
+echo '<pre>', print_r($f->getForm(), true), '</pre>';
 ?>
 
 

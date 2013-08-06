@@ -286,6 +286,105 @@ class Simpli_Basev1c0_Btools {
         return implode("/", $parts);
     }
 
+    /**
+     * In Include Path
+     *
+     * Determines whether a file is within the include path
+     *
+     * @param string $find The partial path to the file
+     * @return boolean Whether the path can be included
+     */
+    public function inIncludePath($find) {
+
+
+        $paths = explode(PATH_SEPARATOR, get_include_path());
+        $found = false;
+        foreach ($paths as $p) {
+            $fullname = $p . DIRECTORY_SEPARATOR . $find;
+            if (is_file($fullname)) {
+                $found = $fullname;
+                break;
+            }
+        }
+        return $found;
+    }
+
+    /**
+     * Strip HTML Whitespace
+     *
+     * Returns htmls without any unneccessary whitespace. Should not affect display strings
+     * There are times this is required so that whitespace doesnt impact layout.
+     * ref:http://stackoverflow.com/a/5324014
+     * @param none
+     * @return void
+     */
+    public function getHtmlWithoutWhitespace($html) { //
+        ini_set("pcre.recursion_limit", "16777");  // 8MB stack. *nix
+        $re = '%# Collapse whitespace everywhere but in blacklisted elements.
+        (?>             # Match all whitespans other than single space.
+          [^\S ]\s*     # Either one [\t\r\n\f\v] and zero or more ws,
+        | \s{2,}        # or two or more consecutive-any-whitespace.
+        ) # Note: The remaining regex consumes no text at all...
+        (?=             # Ensure we are not in a blacklist tag.
+          [^<]*+        # Either zero or more non-"<" {normal*}
+          (?:           # Begin {(special normal*)*} construct
+            <           # or a < starting a non-blacklist tag.
+            (?!/?(?:textarea|pre|script)\b)
+            [^<]*+      # more non-"<" {normal*}
+          )*+           # Finish "unrolling-the-loop"
+          (?:           # Begin alternation group.
+            <           # Either a blacklist start tag.
+            (?>textarea|pre|script)\b
+          | \z          # or end of file.
+          )             # End alternation group.
+        )  # If we made it here, we are not in a blacklist tag.
+        %Six';
+        $html = preg_replace($re, " ", $html);
+        if ($html === null)
+            exit("PCRE Error! File too big.\n");
+        return $html;
+    }
+
+//    /**
+//     * Get Temp File
+//     *
+//     * Writes a string to a temporary file and returns the path to the temp file.
+//     * Useful when functions expect a file path, not a string.
+//     *
+//     * ref: http://stackoverflow.com/a/14976027
+//     * @param none
+//     * @return void
+//     */
+//    public function getTempFile($string) {
+//
+//
+//        $tmpfname = tempnam(sys_get_temp_dir(), $this->getPlugin()->getSlug());
+//
+//        $handle = fopen($tmpfname, "w");
+//        fwrite($handle, $string);
+//        fclose($handle);
+//
+//
+//
+//        /*
+//         * create a temporary file
+//         */
+//        $tempHandle = tmpfile();
+//        /*
+//         * write the string to it
+//         */
+//        fwrite($tempHandle, $string);
+//        /*
+//         * return its path
+//         */
+//        $metaDatas = stream_get_meta_data($tempHandle);
+//        $tmpFilename = $metaDatas['uri'];
+//
+//
+//      //  echo file_get_contents($tmpFilename);
+//
+//        return $metaDatas['uri'];
+//    }
 }
 
 ?>

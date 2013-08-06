@@ -61,13 +61,43 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
          *
          */
         if (is_admin()) {
-            add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
-            add_action('admin_print_footer_scripts', array(&$this, 'printLocalVars'));
-            add_action('admin_print_footer_scripts', array(&$this, 'printInlineFooterScripts'));
+         /*
+             * Enqueue Inline and External Scripts
+             */
+            add_action('admin_enqueue_scripts', array($this, 'hookEnqueueScripts'), 0);
+            /*
+             * Print Header Inline Scripts
+             */
+            add_action('admin_print_scripts', array($this, 'hookPrintInlineHeaderScripts'));
+            /*
+             * Print Local Vars ( always print to the footer)
+             */
+            add_action('admin_print_footer_scripts', array($this, 'hookPrintLocalVars'));
+            /*
+             * Print Footer Inline Scripts
+             */
+            add_action('admin_print_footer_scripts', array($this, 'hookPrintInlineFooterScripts'));
         } else {
-            add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
-            add_action('wp_print_footer_scripts', array(&$this, 'printLocalVars'));
-            add_action('wp_print_footer_scripts', array(&$this, 'printInlineFooterScripts'));
+            /*
+             * Enqueue Inline and External Scripts
+             */
+            add_action('wp_enqueue_scripts', array($this, 'hookEnqueueScripts'));
+            /*
+             * Print Header Inline Scripts
+             */
+            add_action('wp_print_scripts', array($this, 'hookPrintInlineHeaderScripts'));
+            /*
+             * Print Local Vars ( always print to the footer)
+             */
+            add_action('wp_print_footer_scripts', array($this, 'hookPrintLocalVars'));
+            /*
+             * Print Footer Inline Scripts
+             */
+            add_action('wp_print_footer_scripts', array($this, 'hookPrintInlineFooterScripts'));
+
+//            add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+//            add_action('wp_print_footer_scripts', array($this, 'printLocalVars'));
+//            add_action('wp_print_footer_scripts', array($this, 'printInlineFooterScripts'));
         }
 
 
@@ -156,6 +186,9 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
          * set disabled modules
          * e.g.:$this->setDisabledModule('Shortcodes');
          */
+       $this->setDisabledModule('ExampleModule');
+        $this->setDisabledModule('AAtest');
+
 
 
         /*

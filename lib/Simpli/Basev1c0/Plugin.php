@@ -1276,6 +1276,9 @@ class Simpli_Basev1c0_Plugin {
     public function loadAddons() {
 
         $tools = $this->getTools();
+        /*
+         * get all the add on files in the add on directory
+         */
         $addon_files = $tools->getGlobFiles($this->getAddonsDirectory(), 'Addon.php');
         //echo '<br>add on files after return : ';
         //echo '<pre>', print_r($addon_files, true), '</pre>';
@@ -1313,6 +1316,9 @@ class Simpli_Basev1c0_Plugin {
             /*
              * skip loading the addon if it was manually disabled.
              */
+
+            //  echo '<pre>', print_r($this->getDisabledAddons(), true), '</pre>';
+            //   die('stopping to check disbled addons' . __LINE__ . __FILE__);
             if (in_array($addon_name, $this->getDisabledAddons())) {
                 $this->getLogger()->log('Addon ' . $addon_name . ' not loaded because it is has been disabled.');
                 continue;
@@ -1518,7 +1524,7 @@ class Simpli_Basev1c0_Plugin {
      * @para array $deps - An array of handles that the script is dependent on
      * @return array $this->_inline_script_queue The current array of queued scripts
      */
-    public function enqueueInlineScript($handle, $path, $inline_deps = array(), $external_deps = array()) {
+    public function enqueueInlineScript($handle, $path, $inline_deps = array(), $external_deps = array(), $footer = true) {
 
         /*
          * Its necessary to set defaults for arrays here since doing so in the declaration
@@ -1555,7 +1561,8 @@ class Simpli_Basev1c0_Plugin {
 
         $queue = $this->_inline_script_queue;
         $queue['scripts'][$handle] = $inline_script;
-        $queue['handles'][] = $handle;
+        $queue['footer'][$handle] = $footer;
+        $queue['handles'][$handle] = $handle;
         $queue['inline_deps'][$handle] = $inline_deps;
 
 //  $this->_inline_script_queue = array_merge($this->_inline_script_queue, array('handles'=>array($handle))); //needed to assist with sorting dependencies
@@ -1563,8 +1570,31 @@ class Simpli_Basev1c0_Plugin {
         $this->_inline_script_queue = $queue;
         return $queue;
     }
+    /**
+     * Print Inline Header Scripts (Wrapper/Hook Function)
+     *
+     * Hook Function for admin_print_scripts or wp_print_scripts and is a wrapper around _printInlineScripts so as to provide the correct $footer paramater.
+     * @param none
+     * @return void
+     */
+    function hookPrintInlineHeaderScripts() {
 
-    /*     * ge
+        $this->_printInlineScripts($footer = false);
+    }
+
+    /**
+     * Print Inline Footer Scripts (Wrapper/Hook Function)
+     *
+     * Hook Function for admin_print_footer_scripts or wp_print_footer_scripts and is a wrapper around _printInlineScripts so as to provide the correct $footer paramater.
+     * @param none
+     * @return void
+     */
+    function hookPrintInlineFooterScripts() {
+
+        $this->_printInlineScripts($footer = true);
+    }
+
+    /**
      * Print Inline Footer Scripts
      *
      * Echos the queued inline scripts to the WordPress footer
@@ -1573,14 +1603,15 @@ class Simpli_Basev1c0_Plugin {
      * @return void
      */
 
-    function printInlineFooterScripts() {
+    function _printInlineScripts($footer) {
 
         $dep_resolution = true;
         /*
          * get the script queue
          */
         $script_queue = $this->_inline_script_queue;
-
+//        echo '<br> printing scripts footer=' . $footer;
+//        echo '<pre>', print_r($script_queue, true), '</pre>';
         /*
          * dont go any further if there are no scripts to process
          */
@@ -1606,13 +1637,22 @@ class Simpli_Basev1c0_Plugin {
          * Now print out the scripts, in order of their dependencies
          */
 
-
+    //    echo '<pre>', print_r(wp_script_is(), true), '</pre>';
         echo '<script  type="text/javascript">';
 
         foreach ($handle_list as $handle) {
             $script = $script_queue['scripts'][$handle]; /* get the script queue properties from the script_queue */
+            $footer_flag = $script_queue['footer'][$handle];
+            /*
+             * Skip printing the script if the footer paramater doesnt match the location of printing
+             */
+            if ($footer !== $footer_flag) {
+                continue;
+            }
             $ext_dependencies_met = true; /* assume that external dependencies are met,, then toggle it false if found to be untrue */
+            $has_external_dependency = false;
             foreach ($script['external_deps'] as $ext_handle) {
+                $has_external_dependency = true;
                 if (!wp_script_is($ext_handle)) {
                     $ext_dependencies_met = false;
                 }
@@ -1625,7 +1665,16 @@ class Simpli_Basev1c0_Plugin {
             if ($ext_dependencies_met) {
 
                 if (file_exists($script['path'])) { //include the path to the script. if not found, output an error to the javascript console.
+                    if ($has_external_dependency && !$footer) {
+                        echo 'window.onload = function() {'; // need to do this since wordpress loads external scripts after inline and youl get jquery errors otherwise
+                    }
+
                     include($script['path']);
+
+                    if ($has_external_dependency && !$footer) {
+                        echo '}'; //window.onload closing bracket
+                    }
+
                     $this->getLogger()->log('loaded inline script: ' . $handle);
                 } else {
                     $this->getLogger()->log('couldnt load script: ' . $handle . ' due to missing script file');
@@ -1646,7 +1695,7 @@ class Simpli_Basev1c0_Plugin {
      * @param string $content The shortcode content
      * @return string The parsed output of the form body tag
      */
-    function enqueue_scripts() {
+    function hookEnqueueScripts() {
 
 
         /*
@@ -1722,18 +1771,18 @@ class Simpli_Basev1c0_Plugin {
      * @param string $content The shortcode content
      * @return string The parsed output of the form body tag
      */
-    function printLocalVars() {
+    function hookPrintLocalVars() {
 
         $vars = json_encode($this->getLocalVars());
         ?>
-        <script type='text/javascript'>
+                <script type='text/javascript'>
 
-            var <?php echo $this->getSlug(); ?> = <?php echo $vars; ?>
+                    var <?php echo $this->getSlug(); ?> = <?php echo $vars; ?>
 
-        </script>
+                        </script>
 
-        <?php
-    }
+                <?php
+            }
 
 }
 

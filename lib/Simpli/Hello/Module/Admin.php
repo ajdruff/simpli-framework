@@ -21,7 +21,23 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @return string
      */
     public function getMenuPosition() {
-        $this->debug()->t(__LINE__, get_class($this), __FUNCTION__, __FILE__, $always_debug = true, debug_backtrace(), $arg_expansion = false, $levels = 1);
+//        $this->debug()->dt(__LINE__, get_class($this), __FUNCTION__, __FILE__, $always_debug = true, debug_backtrace(),  $levels = 1);
+        $this->debug()->t(__LINE__, __METHOD__, $always_debug = true, debug_backtrace(), $levels = 1);
+  
+
+
+//        $method_parts = explode('::', __METHOD__);
+//
+//        $class = $method_parts[0];
+//        $function = $method_parts[1];
+//        $r = new ReflectionClass($class);
+//
+//        $file = ($r->getFileName());
+//
+//        echo '<br> Class =  ' . $class;
+//        echo '<br> Method =  ' . $function;
+//        echo '<br> $file =  ' . $file;
+
 
         /*
          * Provide a default menu position
@@ -58,7 +74,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function addHooks() {
-        $this->debug()->t(__LINE__, get_class($this), __FUNCTION__, __FILE__, $always_debug = true, debug_backtrace(), $arg_expansion = false, $levels = 1);
+        $this->debug()->dt(__LINE__, get_class($this), __FUNCTION__, __FILE__, $always_debug = true, debug_backtrace(),  $levels = 1);
         /*
          * exit if not admin
          */
@@ -117,7 +133,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      */
     public function meta_box_render($module, $metabox) {
 
-        $this->debug()->t(__LINE__, get_class($this), __FUNCTION__, __FILE__, $always_debug = true, debug_backtrace(), $arg_expansion = false, $levels = 1);
+        $this->debug()->dt(__LINE__, get_class($this), __FUNCTION__, __FILE__, $always_debug = true, debug_backtrace(),  $levels = 1);
 
         include($this->getPlugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php');
     }

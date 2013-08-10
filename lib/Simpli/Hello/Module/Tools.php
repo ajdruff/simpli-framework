@@ -21,7 +21,7 @@ class Simpli_Hello_Module_Tools extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function config() {
-
+        $this->debug()->t();
     }
 
     /**
@@ -34,16 +34,18 @@ class Simpli_Hello_Module_Tools extends Simpli_Basev1c0_Plugin_Module {
      * @return string The parsed output of the form body tag
      */
     function scrubArgs($args_passed, $defaults) {
+        $this->debug()->t();
+
         $pad_length = count($defaults);
         $atts = array_pad($args_passed, $pad_length, NULL); //pad the array so we can use it with array_combine which requires the same number of elements
         $atts = array_combine(array_keys($defaults), array_values($atts)); //create an assoc array using array_combine
         $atts = array_filter($atts, 'strlen'); //remove any null elements so merge wont overwrite defaults with null
 //                                echo '<pre>';
-//        print_r($atts);
+
 //        echo '</pre>';
         $args = array_merge($defaults, $atts); //merge it with defaults
 //                               echo '<pre>';
-//        print_r($args);
+
 //        echo '</pre>';
         return $args;
     }
@@ -55,6 +57,8 @@ class Simpli_Hello_Module_Tools extends Simpli_Basev1c0_Plugin_Module {
      * Requires that this be invoked at any time after the 'current_screen' action. one way to do this on an init function is to check of 'get_current_screen' function exists or is null, and if not, to add an action that calls the current function where your check appears. See the Post module's initModuleAdmin method for an example. below is another example for function hookLoadOptions
       function hookLoadOptions(){
       if ((!function_exists('get_current_screen') || (get_current_screen()===null))){
+$this->debug()->t();
+
       add_action('current_screen',array($this,'hookLoadPostOptions'));
       return;
 
@@ -68,6 +72,8 @@ class Simpli_Hello_Module_Tools extends Simpli_Basev1c0_Plugin_Module {
      * @return boolean
      */
     function isScreen($screen_id, $post_type = null, $debug = false) {
+        $this->debug()->t();
+
 
         $result = false;
 

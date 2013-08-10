@@ -26,7 +26,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return void
      */
     public function addHooks() {
-
+        $this->debug()->t();
     }
 
     /**
@@ -36,7 +36,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return void
      */
     public function config() {
-
+        $this->debug()->t();
     }
 
     /**
@@ -47,6 +47,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return void
      */
     public function createForm($properties) {
+        $this->debug()->t();
+
 
         $defaults = array(
             'filter' => null,
@@ -82,6 +84,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      */
     public function setFormProperty($property_name, $value) {
         if (!isset($this->_form['form'][$property_name])) {
+            $this->debug()->t();
+
             return false
             ;
         }
@@ -100,6 +104,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return array $this->_form
      */
     public function setElement($element_name, $properties) {
+        $this->debug()->t();
+
         /*
          * Index fields by their names
          * If no names are provided, provide a '__undefined__' index with counter
@@ -134,6 +140,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      */
     public function getElementProperty($element_name, $property_name) {
         if (!isset($this->_form['elements'][$element_name][$property_name])) {
+            $this->debug()->t();
+
             return null;
         }
 
@@ -150,6 +158,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return string
      */
     public function getFilter() {
+        $this->debug()->t();
+
 
 
         if (is_null($this->_form_filter)) {
@@ -169,6 +179,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return object $this
      */
     public function setFilter($form_filter) {
+        $this->debug()->t();
+
 
         /*
          * set the form filter, capatilzing the first word.
@@ -186,6 +198,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return void
      */
     public function el($properties) {
+        $this->debug()->t();
+
         /*
          * Use the name of the element id as the method
          *
@@ -207,6 +221,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
     }
 
     public function renderElement($scid, $atts, $defaults) {
+        $this->debug()->t();
+
 
 
 
@@ -322,6 +338,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return object
      */
     public function getElementsModule() {
+        $this->debug()->t();
+
 
         $this->_elements_module = $this->getTheme()->getFormElementsModule();
         return($this->_elements_module);
@@ -334,6 +352,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return object
      */
     public function getTheme() {
+        $this->debug()->t();
+
 
 
         return ($this->getAddon()->getModule('Theme'));
@@ -347,6 +367,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return string The parsed output of the form body tag
      */
     function getDefaultFieldLabel($name) {
+        $this->debug()->t();
+
 
 
         $label = str_replace($this->getFieldPrefix(), '', $name);
@@ -363,6 +385,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return string
      */
     public function getFieldPrefix() {
+        $this->debug()->t();
+
 
         if (is_null($this->_field_prefix)) {
             $this->setFieldPrefix($this->getPlugin()->getSlug() . '_');
@@ -378,6 +402,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return object $this
      */
     public function setFieldPrefix($field_prefix) {
+        $this->debug()->t();
+
         $this->_field_prefix = $field_prefix;
         return $this;
     }
@@ -390,6 +416,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return string The formatted error message
      */
     public function getElementErrorMessages($tag, $error_messages) {
+        $this->debug()->t();
+
         $error_messages = implode(',', $error_messages);
 
         $result = '<p> <strong>Unable to Display (' . $tag . ') form element: </strong><em style="color:red">' . $error_messages . '</em></p>';
@@ -407,6 +435,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return void
      */
     public function getTagPairs($tags) {
+        $this->debug()->t();
+
 
         if (!is_array($tags)) {
             return array('names' => null, 'values' => null);
@@ -427,6 +457,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return void
      */
     private function convertTagName($tag_name) {
+        $this->debug()->t();
+
 
         return '{' . strtoupper($tag_name) . '}';
     }
@@ -440,6 +472,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return void
      */
     private function convertTagValue($tag_value) {
+        $this->debug()->t();
+
 
         if (is_array($tag_value) || is_object($tag_value)) {
             return var_export($tag_value, true);

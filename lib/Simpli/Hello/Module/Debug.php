@@ -22,8 +22,34 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
 
         /*
-         * set defaults . when modules set their options, they will override these
+         * set defaults . if modules set their own options, they will override these
          */
+
+        $this->setOption('FilterBypass', false); //bypasses all filters
+
+        $this->debug()->setFilter('Simpli_Hello_Module_Admin', false);
+        $this->debug()->setFilter('Simpli_Hello_Module_Core', false);
+        $this->debug()->setFilter('Simpli_Hello_Module_Debug', false);
+
+
+        $this->debug()->setFilter('Simpli_Hello_Module_ExampleModule', false);
+        $this->debug()->setFilter('Simpli_Hello_Module_Menu10Settings', false);
+        $this->debug()->setFilter('Simpli_Hello_Module_Menu20Settings', false);
+        $this->debug()->setFilter('Simpli_Hello_Module_Menu30Test', false);
+
+
+        $this->debug()->setFilter('Simpli_Hello_Module_Post', false);
+        $this->debug()->setFilter('Simpli_Hello_Module_Queryvars', false);
+        $this->debug()->setFilter('Simpli_Hello_Module_Shortcodes', false);
+        $this->debug()->setFilter('Simpli_Hello_Module_Tools', false);
+        $this->debug()->setFilter('Simpli_Addons_Forms_Module_Elements', false);
+        $this->debug()->setFilter('Simpli_Addons_Simpli_Forms_Module_Filter', false);
+        $this->debug()->setFilter('Simpli_Addons_Simpli_Forms_Module_Form', false);
+        $this->debug()->setFilter('Simpli_Addons_Simpli_Forms_Module_Elements', false);
+        $this->debug()->setFilter('Simpli_Addons_Simpli_Forms_Module_Theme', true);
+
+
+
 
 
 
@@ -31,7 +57,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
          * turn debugging on/off
          */
         $this->debug()->turnOn();
-
+        //  $this->debug()->turnOff();
 
         /*
          * Graphiviz Visualization of the debug trace
@@ -43,18 +69,8 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
          *
          */
 
-        $this->debug()->setOption('graphviz', false);
+        $this->debug()->setOption('graphviz', true);
 
-        $this->visualizeBacktrace('');
-        // die('<br>exiting after testing visualize backtrace');
-        //require_once 'C:\cygwin\usr\share\pear\gv.php';
-
-        /*
-         * Argument Expansion
-         * whether you want the arguments to expand to a formatted cascading array
-         * in trace output
-         */
-        $this->debug()->setOption('argument_expansion', false);
 
 
 
@@ -80,6 +96,38 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
          * true/false
          */
         $this->setOption('console', false);
+
+
+
+        /*
+         * Excluded Functions Filter Enabled
+         * Default: true
+         * this filter removes unwanted functions from trace output
+         */
+
+        $this->setOption('excluded_functions_filter_enabled', false);
+        $this->setOption('excluded_functions_filter', array_merge(
+                        $this->getOption('excluded_functions_filter'), array()
+                )
+        );
+
+
+        /* example of how you would add a new function to the existing default filter . if you want to remove filters, either remove them from the default array (contained in the _getDefaultOption method , or redefine an entire new array. you can also just disable the filter by setting excluded_functions_filter_enabled to false
+
+          $this->setOption('excluded_functions_filter', array_merge(
+          $this->getOption('excluded_functions_filter'), array('init','config') // this will exclude any functions or method 'init' and 'config' as well as all the default filters
+          )
+          );
+         */
+
+
+        /*
+         * Line Numbers
+         * You can also change the template with line_numbers_prefix_template like this:
+         * $this->setOption('line_numbers_prefix_template','<em>{FUNCTION}/{LINE}</em>&nbsp;')
+         */
+        $this->setOption('line_numbers_prefix_enabled', true);
+        $this->setOption('line_numbers_prefix_template', '<em>{FUNCTION}/{LINE}</em>&nbsp;');
     }
 
     /**
@@ -111,38 +159,29 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
         $handle = $this->getPlugin()->getSlug() . '_' . 'debug-trace.js';
         $path = $this->getPlugin()->getDirectory() . '/admin/js/debug-trace.js';
-        $inline_deps = array();
+
+        $inline_deps = array(); //cannot rely on namespaces since namespaces must be loaded in footer for them to work.
         $external_deps = array('jquery');
-        $footer = false;
+        $footer = false; //must load in head in case there is a fatal error that prevents foot scripts from loading
         $this->getPlugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps, $footer);
         $this->getPlugin()->getLogger()->log('Added debug javascript ' . $path);
     }
 
     /**
-     * Stop Wrapper ( Use within a Method )
-     *
-     * Wrapper around dstop() that provides a shorter signature when used within a method
-     * Uses _getReflection which derives the class,function,and file from __METHOD__
-     *
-     * @param none
-     * @return void
-     */
-    public function stop($line, $method, $always_debug, $condition, $condition_message) {
-
-        extract($this->_getReflection($method));
-
-        $this->dstop($line, $class, $function, $file, $always_debug, $condition, $condition_message);
-    }
-
-    /**
-     * Stop  (Function Version)
+     * Stop
      *
      * Exits PHP directly or upon optional condition
      *
      * @param none
      * @return void
      */
-    public function dstop($line, $class, $function, $file, $always_debug, $condition = true, $condition_message = '') {
+    public function stop($always_debug = false, $condition = true, $condition_message = '') {
+
+        $properties = $this->_getDebugStatementProperties(debug_backtrace());
+        $line = $properties['line'];
+        $class = $properties['class'];
+        $function = $properties['function'];
+        $file = $properties['file'];
 
         if (!$this->_inFilters($class, $function, $always_debug)) {
             return;
@@ -154,7 +193,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         }
 
         if ($condition) {
-            die('$stop_message');
+            die($stop_message);
         }
 
         //eval(($condition) ? "die ('$stop_message');" : 'echo (\'\');');
@@ -168,7 +207,16 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return void
      */
-    public function e($line, $class, $function, $file, $always_debug = false, $message) {
+    public function e($message, $always_debug = false) {
+
+
+        $properties = $this->_getDebugStatementProperties(debug_backtrace());
+        $line = $properties['line'];
+        $class = $properties['class'];
+        $function = $properties['function'];
+        $file = $properties['file'];
+
+
 
         /*
          * check filters and debug state
@@ -182,22 +230,6 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
 
         $this->_sendToOutput($line, $class, $function, $file, $content);
-    }
-
-    /**
-     * Variable (Method Version)
-     *
-     * Shorter wrapper for use in methods.
-     * Uses _getReflection which derives the class,function,and file from __METHOD__
-     *
-     * @param none
-     * @return void
-     */
-    public function v($line, $method, $always_debug = false, $message, $var) {
-
-        extract($this->_getReflection($method));
-
-        $this->dv($line, $class, $function, $file, $always_debug, $message, $var);
     }
 
     /**
@@ -235,7 +267,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 //        echo '<br> Class =  ' . $class;
 //        echo '<br> Method =  ' . $function;
 //        echo '<br> $file =  ' . $file;
-        //    print_r($arg_names);
+
 
 
         return(array('class' => $class, 'file' => $file, 'function' => $function, 'arg_names' => $arg_names));
@@ -249,8 +281,25 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * @param mixed
      * @return void
      */
-    public function dv($line, $class, $function, $file, $always_debug = false, $message, $var) {
+    public function v($message, $var, $always_debug = false) {
 
+
+        /**
+         * Short Description
+         *
+         * Long Description
+         *
+         * @param none
+         * @return void
+         */
+        #init
+        $same_line = true;
+
+        $properties = $this->_getDebugStatementProperties(debug_backtrace());
+        $line = $properties['line'];
+        $class = $properties['class'];
+        $function = $properties['function'];
+        $file = $properties['file'];
 
 
         /*
@@ -263,165 +312,365 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
 
         if (is_array($var) || is_object($var)) {
-            ob_start();
-            echo "$line $message<br>";
-            print_r($var);
-            $content = ob_get_clean();
+            $same_line = true;
+            //  ob_start();
+            $content = $message . '<pre>' . print_r($var, true) . '</pre>';
+//            echo "$message<br>";
+
+            //   $content = ob_get_clean();
         } else {
-            $content = "$line $message = $var<br>";
+            $same_line = true;
+            $content = "$message " . $var;
         }
 
 
-        $this->_sendToOutput($line, $class, $function, $file, $content);
+        $this->_sendToOutput($line, $class, $function, $file, $content, $same_line);
     }
 
     /**
-     * Trace Wrapper ( Use within a Method )
+     * Debug Backtrace
      *
-     * Wrapper around dt that provides a shorter signature when used within a method
-     * Uses _getReflection which derives the class,function,and file from __METHOD__
+     * Removes the current function from the backtrace. Useful for debug functions that
+     * analyze the traces of the calling function
      *
      * @param none
      * @return void
      */
-    public function t($line, $method, $always_debug, $arr_btrace, $levels) {
+    private function _debug_backtrace() {
 
-        extract($this->_getReflection($method));
-
-
-//                echo '<br> Class in Wrapper =  ' . $class;
-//        echo '<br> Method in Wrapper  =  ' . $function;
-//        echo '<br> $file in Wrapper  =  ' . $file;
-
-
-        $this->dt($line, $class, $function, $file, $always_debug, $arr_btrace, $levels, $arg_names);
+        $arr_backtrace = debug_backtrace();
+        array_shift($arr_backtrace); //removes the current function
+        array_shift($arr_backtrace); //removes previous function
+        return $arr_backtrace;
     }
 
     /**
-     * Trace ( Use within a function )
+     * Super Simple Trace
      *
-     * Generates a simple output of the current method or a full backtrace if you set levels >1
-     * Usage:
-     *    simple trace : $this->debug()->_t(__LINE__, get_class($this), __FUNCTION__, __FILE__, false, debug_backtrace(), false, 1);
-     *     full backtrace with 5 levels:
-      $this->debug()->_t(__LINE__, get_class($this), __FUNCTION__, __FILE__, false, debug_backtrace(), true, 5)
+     * Provides a straight dump of debug_backtrace but retaining only line,class,function,file and args
+     * Does not rely on any functions within the Debug module so can be used anywhere without runaway recursion
+     * Does not respect filtering and is not reversed as in st() and t()
+     *
      * @param none
      * @return void
      */
-    public function dt($line, $class, $function, $file, $always_debug, $arr_btrace, $levels = 5, $arg_names = null) {
-        //  $classes = $traces['classes'];
-        //  $trace_methods = $traces['methods'];
-//  foreach ($arr_btrace as $key => $functions) {
-//
-//            unset($functions['object']); //remove object since they take up too much space to print
-//            $ref_vars = ($this->_getReflection($functions['class'] . '::' . $functions['function']));
-//         //   echo '<br>ref vars=<pre>', print_r($ref_vars, true), '</pre>';
-//
-//
-//
-//            echo '$arr_btrace<pre>', print_r($functions, true), '</pre>';
-//        }
-        //   die('stop');
-        if (!$this->_inFilters($class, $function, $always_debug)) {
+    public function sst() {
+
+        /*
+         * dont bother if debug is off
+         */
+        if ($this->isOff()) {
             return;
         }
 
 
-        $output = '';
-        $exclude_these_from_output = array(
-            'do_shortcode',
-            'load_template',
-            'locate_template',
-            'preg_replace_callback',
-            'do_shortcode_tag',
-            'call_user_func',
-            'include',
-            'call_user_func_array',
-            'require_once',
-            'apply_filters',
-            'do_action_ref_array',
-            'main',
-            'require'
+# init
+
+
+        $defaults = array(
+            'file' => '',
+            'line' => '',
+            'class' => '',
+            'function' => '',
+            'args' => array(),
         );
-        $debug_messages = ''; //initialize messages array
-        $counter = 0; //keep track of number of branches so we can add appropriate formatting
+        /*
+         * get the backtrace
+         */
+
+        $arr_btrace = $this->_debug_backtrace(debug_backtrace()); //get the backtrace
+
+        /*
+         * get where the debug statement was located
+         */
+
+
+
+        $ds_line = (isset($arr_btrace[0]['line']) ? $arr_btrace[0]['line'] : '');
+        $ds_file = (isset($arr_btrace[0]['file']) ? $arr_btrace[0]['file'] : '');
+        $ds_class = (isset($arr_btrace[1]['class']) ? $arr_btrace[1]['class'] : '');
+        $ds_function = (isset($arr_btrace[1]['function']) ? $arr_btrace[1]['function'] : '');
+
+
+        /*
+         * iterate through the loop so we can simplify each trace
+         */
+
+        foreach ($arr_btrace as $key => $trace_properties) {
+
+            $trace_properties = array_intersect_key(array_merge($defaults, $trace_properties), $defaults); //make sure the indexes we need are there or use their defaults
+            $traces[] = $trace_properties;
+        }
+        $content = 'Simplified debug_backtrace() <pre>' . print_r($traces, true) . '</pre>';
+        $this->_sendToOutput($ds_line, $ds_class, $ds_function, $ds_file, $content, true);
+    }
+
+    /**
+     * Simple Trace
+     *
+     * Provides a very simple trace without all the theatrics. Useful within the debug module itself, since using t() would cause unending loop and memory errors
+     *
+     * @param array $arr_btrace The backtrace array produced by debug_backtrace()
+     * @return void
+     */
+    public function st($always_debug = false, $levels = 1) {
+
+# init
+        $previous_string = '';
+        $lt = '&lt;';
+        $gt = '&gt;';
+        $defaults = array(
+            'file' => "$lt file? $gt",
+            'line' => "$lt #? $gt",
+            'class' => '::',
+            'function' => "$lt fn? $gt",
+            'args' => array(),
+        );
+
+
+
+
+        /*
+         * get the backtrace
+         */
+
+        $arr_btrace = $this->_debug_backtrace(); //get the backtrace
+
+        /*
+         * get where the debug statement was located
+         */
+
+
+
+        $ds_class = (isset($arr_btrace[0]['class']) ? $arr_btrace[0]['class'] : '');
+        $ds_function = (isset($arr_btrace[0]['function']) ? $arr_btrace[0]['function'] : '');
+
+        /*
+         * check if in filters
+         */
+        if (!$this->_inFilters($ds_class, $ds_function, $always_debug)) {
+
+            return;
+        }
+
+        /*
+         * iterate through the backtrace in reverse
+         */
+
+        $arr_btrace = array_reverse($arr_btrace); //reverse it
+        $counter = -1;
+        foreach ($arr_btrace as $key => $trace_properties) {
+            $counter++;
+            /*
+             * get only the properties shown in
+             * the defaults and overwrite the defaults if the property exists
+             */
+
+
+            $trace_properties = array_intersect_key(array_merge($defaults, $trace_properties), $defaults); //make sure the indexes we need are there or use their defaults
+
+            extract($trace_properties); //extract for the template
+
+            /*
+             * create a trace template laying out the properties to be human readable
+             */
+            $trace_template = '{file}/{line}/{class}->{function}(){args}';
+            $search = array('{file}', '{line}', '{class}', '{function}', '{args}');
+            $args_formatted_string = '<pre style="padding-left:20px">' . print_r($args, true) . '</pre>';
+            $replacements = array(basename($file), $line, $class, $function, $args_formatted_string);
+            $trace_string = str_ireplace($search, $replacements, $trace_template);
+            if ($counter > 0) {
+                $previous_string = $trace_string;
+            }
+            $margin = $counter * 10;
+            // $margin = 0;
+            $trace_string = '<span style="border:solid 1px grey;display:inline-block;margin-left:' . $margin . 'px">' . $trace_string . '</span>';
+
+
+            $traces[] = $trace_string;
+        }
+        $content = '<div>' . implode('<br/><br/>', $traces) . '</div>';
+
+        $this->_sendToOutput($line, $class, $function, $file, $content);
+        //   return $output;
+    }
+
+
+
+    /**
+     * Get Debug Statement Properties
+     *
+     * Returns an array of properties describing where the debug statement withint the calling function of the debug class's public method is located
+     *
+     * @param array $array_backtrace The output of debug_backtrace() from within the calling function
+     * @return array
+     */
+    private function _getDebugStatementProperties($array_backtrace, $wrapper = false) {
+        if ($wrapper) { //if this function is being called through a wrapper, then have to remove one additional level
+            array_shift($array_backtrace);
+        }
+        $props['line'] = (isset($array_backtrace[0]['line']) ? $array_backtrace[0]['line'] : '');
+        $props['file'] = (isset($array_backtrace[0]['file']) ? $array_backtrace[0]['file'] : '');
+        $props['class'] = (isset($array_backtrace[1]['class']) ? $array_backtrace[1]['class'] : '');
+        $props['function'] = (isset($array_backtrace[1]['function']) ? $array_backtrace[1]['function'] : '');
+        return $props;
+    }
+
+
+    /**
+     * Trace
+     *
+     * Generates a simple description of the current method or a full backtrace if you set levels >1
+     * You will also get a visual backtrace if it is enabled
+     * Usage:
+     *    $this->debug()->t();
+     *     full backtrace with all levels:
+      debug()->t(false,99)
+     *
+     * @param boolean $always_debug Whether you want to override the filters to always show debug output
+     * @param int $levels The number of levels you want to display. default is 1, showing the current function. 0 will show all.
+     * @return void
+     */
+    public function t($always_debug = false, $levels = 1) {
+        $properties = $this->_getDebugStatementProperties(debug_backtrace(), false);
+
+
+
+
+        $ds_line = $properties['line'];
+        $ds_class = $properties['class'];
+        $ds_function = $properties['function'];
+        $ds_file = $properties['file'];
+
+
+
+
+        $arr_btrace = $this->_debug_backtrace();
+
+
+        //  array_shift($arr_btrace);
+        /*
+         * Show trace only if in current filters
+         * if class is set to an empty string, use the backtrace class and function
+         */
+
+
+//        if ($class === '') {
+//            if (!$this->_inFilters($arr_btrace[0]['class'], $arr_btrace[0]['function'], $always_debug)) {
+//                return;
+//            }
+//        } else {
+//
+//            if (!$this->_inFilters($class, $function, $always_debug)) {
+//                return;
+//            }
+//        }
+
+        if (!$this->_inFilters($ds_class, $ds_function, $always_debug)) {
+            return;
+        }
+
+
+        /*
+         *  initialize variables
+         */
+
+
+        $traces = array(); // the visualize traces array
+        $traces_html = array(); //initialize traces html array
+        $counter = -1; //keep track of number of branches so we can add appropriate formatting
         $shift_counter = 0;
-        $previous_method = '';
-        $current_method = '';
-        $current_class = '';
-        $previous_class = '';
-        $padding = 5;
-        $background_color = '#E3DDB2';
+        $previous_function = ''; //tracks the previous method for use to determine branch to new method so we can change formatting
+        $current_function = ''; //tracks the method being processed
+        $current_class = ''; //tracks the class being processed
+        $previous_class = ''; //tracks the previous class for use to determine branch to new method so we can change formatting
+        $margin = 5; //the number of pixels the margin should shift during a trace when the trace branches to a new class
+        $bg_color1 = '#E3DDB2'; //first background color to display
+        $bg_color2 = '#ECC084'; //second background color to display
+        $background_color = $bg_color1; // the initial color of the trace background. colors will shift between 1 and 2 when classes shift
+        $link_text_expansion = 'More';
+        $link_text_expansion_visual = 'Visual Backtrace';
+        $trace_location = ''; // either the line and path where the debug statement is located, or the file path to the file that the class where the method being traced resides in
+
+
+
+
+
         /*
          * Slice the array for the number of levels we want
          * Reverse it so we get oldest first
 
-          if ($levels > 1) {
-          $backtrace_array = array_reverse(array_slice($arr_btrace, 0, $levels));
-          } else {
-          $backtrace_array = array_slice($arr_btrace, 0, $levels);
-          }
          */
 
-        //   $arr_btrace = array_slice($arr_btrace, 1, 1);
-        $backtrace_array = array_reverse(array_slice($arr_btrace, 0, $levels));
+        /*
+         * slice array only if level provided is sane
+         */
+        $sliced_arr_btrace = ($levels > 0 && $levels < count($arr_btrace)) ? array_slice($arr_btrace, 0, $levels) : $arr_btrace;
+
+        /*
+         * Reverse
+         */
+        $backtrace_array = array_reverse($sliced_arr_btrace);
+
+        /*
+         * Iterate through backtrace and extrace what we need, filling in the template as we go
+         */
+        $loop_length = count($backtrace_array);
         foreach ($backtrace_array as $key => $functions) {
-            if (in_array($functions['function'], $exclude_these_from_output)) {
-                continue; /* dont show the functions in $exclude_these_from_output array since they are internal and not interesting */
-            }
+            $counter++;
 
-//            $reflected_vars = ($this->_getReflection($functions['class'] . '::' . $functions['function']));
-//            $functions['file'] = $reflected_vars['file'];
-//            $functions['class'] = $reflected_vars['class'];
-//            $functions['function'] = $reflected_vars['function'];
-//            $functions['file'] = $reflected_vars['file'];
+            $defaults = array(
+                'file' => null,
+                'line' => null,
+                'class' => null,
+                'function' => null,
+                'args' => null
+            );
             /*
-             * sometimes the file is not provided
-             * this may be due to the way hooks are implemented
-             * check for this and attempt to get it using the reflection class
-              if (!isset($functions['file'])) {
-
-              if (isset($functions['class'])) {
-              $r = new ReflectionClass($class);
-              $functions['file'] = $r->getFileName();
-              } else {
-
-              $functions['file'] = '[unknown_file]';
-              }
-              }
-             *
-             *  */
+             * Remove Object Element
+             * in case you want to dump the backtrace for troubleshooting this function,we remove
+             * the object element in the backtrace array since we dont use it and it takes up
+             * too much ouput
+             */
+            unset($functions['object']); //remove object since they take up too much space to print
 
 
 
 
-            $current_method = $functions['function'];
 
 
 
-            if (isset($functions['class'])) {
-                $current_class = $functions['class'];
-            } else {
-                $current_class = '';
-            }
-//            echo '<br> counter = ' . $counter;
-//            echo '<br> $current_class = ' . $current_class;
-//
-//            echo '<br> $previous_class = ' . $previous_class;
-//            echo '<br> $current_method = ' . $current_method;
-//            echo '<br> $previous_method = ' . $previous_method;
-//            echo '<br> 2';
-            if ((($counter !== 0) && ($current_class !== $previous_class)) || (($current_class === '') && ($current_method != $previous_method))) {
+            /*
+             * Validate and define $current_ variables
+             */
+            $functions = array_merge($defaults, $functions);
+            $current_line = $functions['line'];
+            $current_function = $functions['function'];
+            $current_class = $functions['class'];
+            $current_file = $functions['file'];
+            $current_args = $functions['args'];
 
-                static $toggle = true;
-                $toggle = !$toggle && true;
 
-//                $previous_method = $current_method;
-//                $previous_class = $current_class;
-                $shift_counter++;  //shift the next method block to the right
-                $padding = $shift_counter * 50;
-                $background_color = ($toggle) ? '#E3DDB2' : '#ECC084'; //#CCCCCC'; //alternates colors when there is a change
+            /*
+             * Change formatting paramaters when the class changes or ( in the case of a plain function call) when the
+             * function changes
+             * We want all methods that occur in the same class to be displayed in the same column
+             */
+            if (
+                    (($counter !== 0) && ($current_class !== $previous_class)) //the first iteration will always have different current and previous since previous is set to null
+                    ||
+                    (($current_class === '') && ($current_function != $previous_function)) //to account for standalone functions
+            ) {
 
+                if (!($this->_inExcludedFilter($current_function))) { //only change formatting if not in excluded filter
+                    static $toggle = true; //tracks current state of toggle.
+                    $toggle = !$toggle && true; //flips toggle state each time this line is executed
+
+
+                    $shift_counter++;  //tracks how many times we shift so we can calculate the margin
+                    $margin = $shift_counter * 50; //shifts the formatting of the next method block to the right
+                    $background_color = ($toggle) ? $bg_color1 : $bg_color2; //alternates colors when there is a change
+                }
             }
 
             /*
@@ -433,89 +682,178 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 //
             //             $functions['function'] = $functions['function'] . '( \'' . current_filter() . '\' )';
             //        }
-            //     public function _getFunctionSignature($function, $arg_names, $function_args, $arg_expansion = true) {
-//            $function_args = $functions['args'];
-//            $function = $functions['function'];
-//            $fsig = $function;
-//            $arg_expansion = $this->getOption('argument_expansion');
+
+
 
 
             /*
              * modify the function string so its human readable, adding arguments if available
              */
-            $arg_expansion = $this->getOption('argument_expansion');
-            $fsig = $this->_getFunctionSignature($functions['class'], $functions['function'], $arg_names, $functions['args'], $arg_expansion);
-            $functions['function'] = $fsig['sig'];
+
+            $fsig = $this->_getFunctionSignature($current_class, $current_function, $current_args, true);
+
+            $current_function_sig = $fsig['sig'];
 
             /*
              * create the expanded args string from the $args array returned from the _getFunctionSignature function
+             * Expanded args just means if the args are an array , they will formatted vertically for easier reading
              */
             $expanded_args = '<pre>' . print_r($fsig['args'], true) . '</pre>';
 
+
+            //   $class_path = $fsig['class_path'];
+            //check file
+            if (is_null($current_file)) {
+
+                $current_file = 'unknown';
+                $trace_file_path = 'unknown';
+            } else {
+                $trace_file_path = $this->getPlugin()->getTools()->makePathRelative($this->getPlugin()->getDirectory(), $current_file);
+            }
+
+            if (is_null($current_line)) {
+
+                $current_line = 'unknown';
+            }
             /*
-             * get the file path of the class using reflection
-
-              echo '<br>' . __LINE__ . $functions['class'] . '::' . $functions['function'] . '<br>';
-              // $reflected_vars = $this->_getReflection($functions['class'], $functions['function']);
-              $reflected_vars = $this->_getReflectionWrapper($functions['class'], $functions['function']);
-              print_r($reflected_vars);
-              echo '<br>' . __LINE__;
-              $class_path = $this->getPlugin()->getTools()->makePathRelative($this->getPlugin()->getDirectory(), $reflected_vars['file']);
-              echo '<br>' . __LINE__ . '<br>';
+             * Debug Statement Location
              */
-            $class_path = $fsig['class_path'];
-
-            unset($backtrace_array[$key]['object']); //remove object since they take up too much space to print
-//            echo '<br> Class in dt =  ' . $class;
-//            echo '<br> Method in dt  =  ' . $function;
-//            echo '<br> $file in dt  =  ' . $functions['file'];
-
-            $trace_file_path = $this->getPlugin()->getTools()->makePathRelative($this->getPlugin()->getDirectory(), $functions['file']);
+            /*
+             * For the last trace item,show the line number and file path that the debug statement is located in
+             */
 
 
 
+            if ($counter === ($loop_length - 1)) {
+                $trace_location = 'Line ' . $ds_line . ' in file ' . $ds_file;
+
+            } else { //if not the last trace item, show the function location returned by _getFunctionSignature
+                $trace_location = $fsig['function_location'];
 
 
 
-        $debug_trace_html_template = '<div style="padding:0px;margin:0px;"><div style="height:50px;background-color:{BACKGROUND_COLOR};border:1px solid grey;padding:5px;text-align:left;display: inline-block;margin-left:{MARGIN}px;margin-top:5px;">
+
+            }
+
+
+
+
+            /* Link Text
+             */
+
+
+            if ($counter !== (count($backtrace_array) ) - 1) {//for all but the last level use 'more'
+                $link_text = $link_text_expansion;
+                $visual_backtrace = ''; // remove the visual backtrace tag if the current trace is not the last
+            } else {//the last level should use the visual backtrace text if enabled. do not add if only one level
+                if ($counter != 0 && $this->debug()->getOption('graphviz')) {
+                    $link_text = $link_text_expansion_visual; //e.g.: Visual Backtrace"
+                    $visual_backtrace = '{VISUAL_BACKTRACE}'; //keep the visual backtrace tag so it remains in the last trace
+                } else {
+                    $link_text = $link_text_expansion; //e.g.: "More"
+                    $visual_backtrace = ''; // if visual backtradce is not enabled, remove it from the last trace also
+                }
+            }
+
+
+            $debug_trace_html_template = '<div style="padding:0px;margin:0px;"><div style="height:50px;background-color:{BACKGROUND_COLOR};border:1px solid grey;padding:5px;text-align:left;display: inline-block;margin-left:{MARGIN}px;margin-top:5px;">
                 <strong>{CLASS}->{FUNCTION}</strong>
 
                 <div >
-                    <a class="simpli_debug_more" href="#"><em>More</em></a>
+                    <a class="simpli_debug_more" href="#"><em>{LINK_TEXT}</em></a>
                 </div>
 
                 <div >
 
                     <div  class="simpli_debug_toggle" style="display:none;visibility:hidden;padding:0px;margin:0px;">
 
-                        <span><strong><em>Location:</em></strong>&nbsp;&nbsp;{CLASS_PATH}</span><br/>
+                        <span><strong><em>Method Location:</em></strong>&nbsp;&nbsp;{TRACE_LOCATION}</span><br/>
 
                         <span><strong><em>Called From:</em></strong>&nbsp;&nbsp;Line {LINE} in  file {FILE_PATH} </span><br/>
 
-                        <span ><strong><em>Expanded Args:</em></strong>&nbsp;&nbsp;{EXPANDED_ARGS}</span><br/>
-                    </div>
+                        <span ><strong><em>Arguments:</em></strong>&nbsp;&nbsp;{EXPANDED_ARGS}</span><br/>
+                        {VISUAL_BACKTRACE}
+
+</div>
                 </div>
             </div>
         </div>';
             /*
              * Now populate the html template
              */
-            $search = array('{LINE}', '{FILE_PATH}', '{CLASS}', '{FUNCTION}', '{MARGIN}', '{BACKGROUND_COLOR}', '{CLASS_PATH}', '{EXPANDED_ARGS}');
-            $replacements = array($functions['line'], $trace_file_path, $current_class, $functions['function'], $padding, $background_color, $class_path, $expanded_args);
-            $debug_message = str_replace($search, $replacements, $debug_trace_html_template);
-           $debug_message = $this->getPlugin()->getTools()->getHtmlWithoutWhitespace($debug_message); //this is necessary since for some reason, layout is impacted due to the whitespace in the source. You could remove it using the 'remove unnecessary whitespace' untility in notepad++ but this allows us to instead to retain the whitespace in our source so its human readable, while still removing it when its displayed.
+            $search = array('{LINE}', '{FILE_PATH}', '{CLASS}', '{FUNCTION}', '{MARGIN}', '{BACKGROUND_COLOR}', '{TRACE_LOCATION}', '{EXPANDED_ARGS}', '{VISUAL_BACKTRACE}', '{LINK_TEXT}');
+            $replacements = array($current_line, $trace_file_path, $current_class, $current_function_sig, $margin, $background_color, $trace_location, $expanded_args, $visual_backtrace, $link_text);
+            $current_trace_html = str_replace($search, $replacements, $debug_trace_html_template);
+            $current_trace_html = $this->getPlugin()->getTools()->getHtmlWithoutWhitespace($current_trace_html); //this is necessary since for some reason, layout is impacted due to the whitespace in the source. You could remove it using the 'remove unnecessary whitespace' untility in notepad++ but this allows us to instead to retain the whitespace in our source so its human readable, while still removing it when its displayed.
 
-            $debug_messages .= $debug_message;
-            $previous_method = $current_method;
+
+            /*
+             * Exclude uninteresting internal  functions from trace so as to
+             * make the trace cleaner
+             */
+            if ($this->_inExcludedFilter($current_function)) {
+
+                continue; /* dont show the functions in $excluded_functions_filter array since they are internal and not interesting */
+            }
+
+            /*
+             * Build Visual Backtrace Array
+             * This builds a traces array that is used by the getVisualBacktrace method
+             * Classes are saved as keys to ensure uniqueness
+             * and to preserve order
+             * Methods are saved as class and function elements
+             */
+            if (!isset($traces['classes'][$current_class])) {
+                $traces['classes'][$current_class] = '';
+            }
+
+
+            $traces['methods'][] = array(
+                'class' => $current_class,
+                'function' => $current_function . '()'
+            );
+
+
+            /*
+             * Wrap up the loop
+             * Assemble the final trace output
+             * Update the previous variables
+             */
+            $traces_html[] = $current_trace_html;
+            $previous_function = $current_function;
             $previous_class = $current_class;
-            $counter++;
+        } //Backtrace loop complete
+
+        /*
+         * clean up the traces array
+         * Since the classes we want are keys, but the
+         * visual backtrace function expects an array of values,
+         * convert the array to one that consists of just its former keys
+         */
+
+        $traces['classes'] = array_keys($traces['classes']); //use only the keys of the classes
+
+        /*
+         * Get the visual backtrace. If visual backtrace is not enabled,
+         * it will return an empty string
+         */
+
+        //   die('$traces_html[count($traces_html) - 1] = ' . $traces_html[count($traces_html) - 1]);
+        if ($counter > 1) {//only add backtrace for levels greater than 1
+            $visual_backtrace = $this->getVisualBacktrace($traces);
+            $traces_html[count($traces_html) - 1] = str_replace('{VISUAL_BACKTRACE}', $visual_backtrace, $traces_html[count($traces_html) - 1]);
+        } else {
+            $traces_html[count($traces_html) - 1] = str_replace('{VISUAL_BACKTRACE}', '', $traces_html[count($traces_html) - 1]);
         }
 
 
-        $content = '<div>' . $debug_messages . '</div>';
+        /*
+         * Assemble teh final content for the output
+         */
+        $content = '<div><pre>' . implode('', $traces_html) . '</pre></div>';
 
 
-        $this->_sendToOutput($line, $class, $function, $file, $content);
+        $this->_sendToOutput($ds_line, $ds_class, $ds_function, $ds_file, $content);
     }
 
     /**
@@ -532,17 +870,32 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * ['sig'],  A string in the form my_function(arg1='arg value',arg2='arg value')
      * ['args'], An array that contains an associative array of the arguments
      */
-    public function _getFunctionSignature($class, $function, $arg_names, $arg_values, $arg_expansion = false) {
+    private function _getFunctionSignature($class, $function, $arg_values, $arg_expansion = false) {
+
+        #init
+        $arg_string = '';
+        $args = array();
+        $class_path = '';
+        $function_path = '';
+        $function_line = '';
+        $function_location = '';
+        /*
+         * if a class was given, derive class path and arg names using
+         * reflection. otherwise, set to null
+         * this also avoids an 'class does not exist' error when doing
+         * reflection on a class that isnt available
+         */
+        if ($class === null) {
+
+            $arg_names = null;
+            $class_path = '';
+        } else {
+            $reflected_vars = ($this->_getReflection($class . '::' . $function));
+            $class_path = $this->getPlugin()->getTools()->makePathRelative($this->getPlugin()->getDirectory(), $reflected_vars['file']);
 
 
-
-        $reflected_vars = ($this->_getReflection($class . '::' . $function));
-        $class_path = $this->getPlugin()->getTools()->makePathRelative($this->getPlugin()->getDirectory(), $reflected_vars['file']);
-
-        // $functions['class'] = $reflected_vars['class'];
-        // $functions['function'] = $reflected_vars['function'];
-        //  $functions['file'] = $reflected_vars['file'];
-
+            $arg_names = $reflected_vars['arg_names'];
+        }
 
         if ((!is_null($arg_values))) {
 
@@ -560,22 +913,44 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
              */
             $arg_string = '$' . urldecode(http_build_query($args, null, ',$'));
             $arg_string = ($arg_string === '$') ? '' : $arg_string; //remove the $ if thats the only thing left in the string
-
-
-
-            $fsig['sig'] = $function . '(' . $arg_string . ')';
-            $fsig['args'] = $args;
-            $fsig['class_path'] = $class_path;
-//            if (($arg_expansion === true) && (!empty($args))) {
-//                $argument_expansion_html = '<pre>' . print_r($args, true) . '</pre>';
-//            } else {
-//                $argument_expansion_html = '';
-//            }
-//
-//            $fsig = $fsig . $argument_expansion_html . '<div><em style="color:grey;font-size:medium;">' . '(Method ' . $class . '->' . $function . '() is located in ' . $class_path . ') </em></div>';
-//        } else {
-//            $fsig = $function . '()';
         }
+
+
+
+        /*
+         * if class path is not defined, its a function (not a method) , so set its line and function from function reflection
+         */
+        if ($class_path === '') {
+
+            try {
+                $reflFunc = new ReflectionFunction($function);
+                $function_line = $reflFunc->getStartLine();
+                $function_path = $reflFunc->getFileName();
+                $function_location = "Line $function_line in $function_path";
+            } catch (Exception $exc) {
+                /*
+                 * need to catch fatal exceptions caused by language constructs that cant be found by php
+                 */
+                $error_message = $exc->getMessage();
+
+                if (stripos($error_message, 'does not exist') !== false) {
+
+
+                    $function_location = 'PHP built-in function or language construct';
+                }
+                $this->debug()->e('Exception Message = ' . $error_message);
+            }
+        } else {
+           $function_location = $class_path;
+        }
+
+        $fsig['sig'] = $function . '(' . $arg_string . ')';
+        $fsig['args'] = $args;
+        $fsig['class_path'] = $class_path;
+        $fsig['function_path'] = $function_path;
+        $fsig['function_line'] = $function_line;
+        $fsig['function_location'] = $function_location;
+
         return $fsig;
     }
 
@@ -697,12 +1072,44 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         /*
          * create groups for js console expand/collapse groups
          */
-        if ($function == '') {
-            $group_label = basename($file);
-        } else {
-            $group_label = $class . '->' . $function . "() /" . basename($file);
-        }
+
+
+
+        $class = ($class === '') ? '' : $class . '::';
+        $function = ($function === '') ? '' : $function . '()';
+        $file = ($file === '') ? '<unknown>' . ' /' : $file . ' /';
+//        if ($function == '') {
+//            $group_label = basename($file);
+//        } else {
+//            $group_label = basename($file) . '/' . $class . $function;
+//        }
+//
+        $group_label = basename($file) . $class . $function;
         return ($group_label);
+    }
+
+    /**
+     * Get Line Numbers Prefix
+     *
+     * Gets the line number prefix as defined by the options
+     *
+     * @param none
+     * @return void
+     */
+    private function _getLineNumbersPrefix($line, $class, $function, $file) {
+
+        $prefix = '';
+        $line_number_template = $this->getOption('line_numbers_prefix_template');
+
+
+        if ($this->getOption('line_numbers_prefix_enabled')) {
+
+            $search = array('{LINE}', '{CLASS}', '{FUNCTION}', '{FILE}');
+            $replacements = array($line, $class, $function, $file);
+            $prefix = str_replace($search, $replacements, $line_number_template);
+        }
+
+        return $prefix;
     }
 
     /**
@@ -713,7 +1120,21 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return void
      */
-    protected function _sendToOutput($line, $class, $function, $file, $content) {
+    protected function _sendToOutput($line, $class, $function, $file, $content, $same_line = true) {
+
+
+        $prefix = $this->_getLineNumbersPrefix($line, $class, $function, $file);
+
+
+        if ($same_line) {
+            $content = $prefix . $content;
+        } else {
+            $content = $prefix . '<br>' . $content;
+        }
+
+
+
+
 
 
 
@@ -786,10 +1207,12 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         if ('inline' === $this->getOption('browser_output')) {
 
             if ($last_group_label == $group_label) { //dont repeat the group if exactly the same
-                echo '<div>' . '<pre style="margin:20px;background-color:#E7E7E7;">' . $content . '</pre></div>';
+                // echo '<div>' . '<pre style="margin:20px;background-color:#E7E7E7;">' . $content . '</pre></div>';
+                echo '<div>' . '<div style="margin:20px;background-color:#E7E7E7;">' . $content . '</div></div>';
             } else {
 
-                echo '<div style="background-color:#F1F1DA;">' . $group_label . '</div><div>' . '<pre style="margin:20px;background-color:#E7E7E7;">' . $content . '</pre></div>';
+                //echo '<div style="background-color:#F1F1DA;">' . $group_label . '</div><div>' . '<pre style="margin:20px;background-color:#E7E7E7;">' . $content . '</pre></div>';
+                echo '<div style="background-color:#F1F1DA;">' . $group_label . '</div><div>' . '<div style="margin:20px;background-color:#E7E7E7;">' . $content . '</div></div>';
             }
         }
         $last_group_label = $group_label;
@@ -837,6 +1260,34 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
+     * In Excluded Filter
+     *
+     * Checks to see if the function is in the excluded filter and returns true or false. Will always return true if filters are disabled
+     *
+     * @param string $function_name The name of the excluded function
+     * @return boolean True if the function should be excluded from output, false if otherwise
+     */
+    private function _inExcludedFilter($function) {
+
+        /*
+         * if the excluded function is not enabled, return false
+         */
+        if (!$this->getOption('excluded_functions_filter_enabled')) {
+            return false;
+        }
+        /*
+         * otherwise, check whether its in the filter
+         */
+        $excluded_functions_filter = $this->getOption('excluded_functions_filter');
+
+        if (in_array($function, $excluded_functions_filter)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * In Filters
      *
      * Checks to see if the passed filters array from a debug method's arguments
@@ -848,13 +1299,22 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
     protected function _inFilters($class, $function, $always_debug) {
 
         //$args = func_get_args();
-        //  echo '<pre>', print_r($args, true), '</pre>';
+
         /*
          * dont debug if debugging is off
          */
 
         if ($this->isOff()) {
             return false;
+        }
+
+        /*
+         * If Filter Bypass is set to true,
+         * ignore all filters so return true
+         *
+         */
+        if ($this->getOption('FilterBypass')) {
+            return true;
         }
 
         /*
@@ -868,7 +1328,6 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
          * Debug if in filters, otherwise, dont
          */
         $filters = $this->getFilters();
-
 
         if (in_array($class, array_keys($filters['enabled']))) {
             return(true);
@@ -885,14 +1344,19 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
     /**
      * Visualize Backtrace
      *
-     * Outputs a graphical representation of the backtrace
+     * Returns a graphviz graphical representation of the backtrace
      *
      * @param array $traces
      * contains the classes and the methods in the format contained in the example in the comments within the function
      *
      * @return void
      */
-    public function visualizeBacktrace($traces) {
+    public function getVisualBacktrace($traces) {
+
+        /*
+         * check if enabled, if not, return an empty string
+         * if enabled, but not configured properly, return an error message
+         */
 
         $is_graphviz_enabled = $this->debug()->getOption('graphviz');
 
@@ -911,57 +1375,67 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
             }
         } else {
 
-            return; //if graphviz is not enabled, dont attempt to graph
+            return ''; //if graphviz is not enabled, dont attempt to graph and return an empty string
         }
 //ref:http://bebo.minka.name/k2thingz/doxydoc/html/d9/d49/class_image___graph_viz_e13b94d8b7b7e83d3c36f819110bf929.html#e13b94d8b7b7e83d3c36f819110bf929
 
 
-        $traces = array(
-            'classes' => array(
-                'class1'
-                , 'class2'
-                , 'class3'
-            ),
-            'methods' => array(array(
-                    'class' => 'class1'
-                    , 'function' => 'function3'
-                )
-                , array(
-                    'class' => 'class2'
-                    , 'function' => 'function1'
-                )
-                , array(
-                    'class' => 'class3'
-                    , 'function' => 'function1'
-                )
-                , array(
-                    'class' => 'class2'
-                    , 'function' => 'function2'
-                )
-                , array(
-                    'class' => 'class1'
-                    , 'function' => 'function2'
-                )
-                , array(
-                    'class' => 'class3'
-                    , 'function' => 'function1'
-                )
-                , array(
-                    'class' => 'class2'
-                    , 'function' => 'function1'
-                )
-            )
-        );
-
 
 
         /*
-         * extrace the classes and traces into difference arrays
+         *
+         * Example traces array
+         * Demonstrates the format that the traces array expects
+         */
+//        $traces = array(
+//            'classes' => array(
+//                'class1'
+//                , 'class2'
+//                , 'class3'
+//            ),
+//            'methods' => array(array(
+//                    'class' => 'class1'
+//                    , 'function' => 'function3'
+//                )
+//                , array(
+//                    'class' => 'class2'
+//                    , 'function' => 'function1'
+//                )
+//                , array(
+//                    'class' => 'class3'
+//                    , 'function' => 'function1'
+//                )
+//                , array(
+//                    'class' => 'class2'
+//                    , 'function' => 'function2'
+//                )
+//                , array(
+//                    'class' => 'class1'
+//                    , 'function' => 'function2'
+//                )
+//                , array(
+//                    'class' => 'class3'
+//                    , 'function' => 'function1'
+//                )
+//                , array(
+//                    'class' => 'class2'
+//                    , 'function' => 'function1'
+//                )
+//            )
+//        );
+//
+//
+
+
+        /*
+         * extract the classes and traces into different arrays
          */
         $classes = $traces['classes'];
         $trace_methods = $traces['methods'];
 
-
+        /*
+         * Define the cluster template
+         */
         $cluster_template = ' subgraph cluster{CLASS} {
             node [style = filled, color = white];
             style = filled;
@@ -970,6 +1444,11 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
             label = "{CLASS}";
         }
         ';
+
+        /*
+         * Define the digraph template
+         */
+
         $digraph_template = 'digraph G {
     {CLUSTERS}
     // Method Connections
@@ -977,15 +1456,24 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
     splines=false; //forces straight edges
 }';
+
+        /*
+         * Initialize
+         */
         $clusters_dot_markup = '';
 
         $connections = '';
+
+        /*
+         * Iterate through the classes
+         * With each new class, build connections for each of its methods
+         */
         foreach ($classes as $class) {
 
-
+            /*
+             * Initialize Loop
+             */
             $methods = '';
-
-
             $clusters_dot_markup_array = array(); //create an array to hold the dot markup for each of the class clusters
             $flow_sequence = 0; //keep track of where we are in the flow, so we can label the connections
 
@@ -1003,8 +1491,8 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
                 if ($trace['class'] === $class) {
 
 
-                    $method1 = '"' . $trace['class'] . "::" . $trace['function'] . '"'; //e.g.: MyClass::MyFunction to create a unique node name
-                    $methods.= $method1 . '[label=' . $trace['function'] . '];'; //add it to a $methods string that we can add to the class cluster, give it a label that only includes its function name since the cluster will identify its class
+                    $method1 = '"' . $trace['class'] . "::" . $trace['function'] . '"'; //e.g.: MyClass::MyFunction to create a unique node name . Need to surround with double quotes so it wont break on special chars
+                    $methods.= $method1 . '[label=' . '"' . $trace['function'] . '"' . '];'; //add it to a $methods string that we can add to the class cluster, give it a label that only includes its function name since the cluster will identify its class. Need to surround with double quotes so it wont break on special chars
 
                     /* Add a connection
                      * Connections track the trace from one point to another
@@ -1047,14 +1535,15 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        echo '<pre>';
-        echo str_replace(';', ';<br>', $graph_dot_markup);
-        echo '</pre>';
 
-        $this->gvGraphString($graph_dot_markup);
+//        echo '<pre>';
+//        echo str_replace(';', ';<br>', $graph_dot_markup);
+//        echo '</pre>';
 
-        die('exiting');
 
+
+        return $this->gvGraphString($graph_dot_markup);
+        //  die('<br> ' . __METHOD__ . __LINE__ . ' exiting after printing digraph ');
 
 
         /*
@@ -1118,7 +1607,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
     /**
      * Graph String
      *
-     * Long Description
+     * Returns a graph image produced by graphviz, given a string containing the dot markup
      *
      * @param none
      * @return void
@@ -1165,14 +1654,21 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
          */
         $metaDatas = stream_get_meta_data($tempFileOutHandle);
         $tmpFileOutName = $metaDatas['uri'];
+
+
+
+
         $gv->renderDotFile($tmpFilename, $tmpFileOutName, 'svg');
+
 
         if (file_exists($tmpFileOutName)) {
             $img = file_get_contents($tmpFileOutName);
-            echo $img;
+            $result = $img;
         } else {
-            echo '<br> The image could not be rendered.';
+            $result = '<br> The image could not be rendered.';
         }
+
+        return $result;
     }
 
     /**
@@ -1183,9 +1679,15 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return void
      */
-    public function _getDefaultOption($option_name) {
+    private function _getDefaultOption($option_name) {
 
         $default_options = array(
+            /*
+             * Filter Bypass
+             * True ignores all filters set by setFilter()
+             */
+
+            'FilterBypass' => false,
             /*
              * Graphiviz Include Path
              */
@@ -1197,12 +1699,6 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
              */
             'graphviz' => false,
             /*
-             * Argument Expansion
-             * whether you want the arguments to expand to a formatted cascading array
-             * in trace output
-             */
-            'argument_expansion' => false,
-            /*
              * Browser Output
              * Where you want the output
              * 'footer' to output to footer, 'inline' to output at time of error , false for all output off
@@ -1213,8 +1709,39 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
              * Log All Actions - will output every hook action - generates a ton of output. do you really want to do this ?
              * true/false
              */
-            'log_all_actions' => false
-        );
+            'log_all_actions' => false,
+            /*
+             *
+             * Excluded Functions
+             * Exclude these functions from traces
+             */
+            'excluded_functions_filter' =>
+            array(
+                'require',
+                'require_once',
+                'include',
+                'include_once',
+                'do_shortcode',
+                'load_template',
+                'locate_template',
+                'preg_replace_callback',
+                'do_shortcode_tag',
+                'call_user_func',
+                'call_user_func_array',
+                'apply_filters',
+                'do_action_ref_array',
+                'main'
+            ),
+            /*
+             * Enable or disable the Excluded Functrions Filter
+             */
+            'excluded_functions_filter_enabled' => true,
+            /*
+             * Line Number Template
+             */
+            'line_numbers_prefix_enabled' => true,
+            'line_numbers_prefix_template' => '<em>{FUNCTION}/{LINE}</em>&nbsp;'
+        ); //end of options array
 
         if (isset($default_options[$option_name])) {
             return($default_options[$option_name]);

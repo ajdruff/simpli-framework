@@ -20,6 +20,8 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
      * @return void
      */
     public function addHooks() {
+        $this->debug()->t();
+
 
         /*
          * Add a hook for our filters
@@ -40,6 +42,8 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
      * @return stringReadOnly
      */
     public function getHookName() {
+        $this->debug()->t();
+
         $hook_name = $this->getAddon()->getSlug() . '_' . $this->getSlug(); //e.g.: simpli_addons_simpli_forms_filters
         return $hook_name;
     }
@@ -51,7 +55,7 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
      * @return void
      */
     public function config() {
-
+        $this->debug()->t();
     }
 
     /**
@@ -63,7 +67,9 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
      * @return string $atts
      */
     public function filter($properties) {
-     //   echo '<pre>', print_r($properties, true), '</pre>';
+        $this->debug()->t();
+
+
         $method = 'filter' . ucwords($properties['scid']);
         // die('exiting' . __METHOD__);
         $properties = $this->_commonFilter($properties);
@@ -80,6 +86,8 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
      * @return string The parsed output of the form body tag
      */
     protected function _commonFilter($properties) {
+        $this->debug()->t();
+
         extract($properties);
         /*
          * Return error if required arguments are not found
@@ -120,6 +128,8 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
      * @return string $atts
      */
     protected function filterText($properties) {
+        $this->debug()->t();
+
         extract($properties);
         $atts['value'] = 'filtered by basic filters';
         $tags['test_text'] = 'This is the test tag for a text template';
@@ -134,6 +144,8 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
      * @return string $atts
      */
     protected function filterSelect($properties) {
+        $this->debug()->t();
+
         extract($properties);
 
         $options_html = '';
@@ -159,6 +171,8 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
      * @return string The parsed output of the form body tag
      */
     function getDefaultFieldLabel($name) {
+        $this->debug()->t();
+
 
 
         $label = str_replace($this->getFieldPrefix(), '', $name);
@@ -175,6 +189,8 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
      * @return string
      */
     public function getFieldPrefix() {
+        $this->debug()->t();
+
 
         $this->getPlugin()->getSlug() . '_';
     }

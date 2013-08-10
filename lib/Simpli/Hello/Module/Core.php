@@ -12,10 +12,6 @@
  */
 class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 
-
-
-
-
     /**
      * Configure Module
      *
@@ -23,74 +19,10 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function config() {
-$my_string = 'Hello';
-
-$this->debug()->setFilter('Simpli_Hello_Module_Core', false);
-        $this->debug()->setFilter('Simpli_Hello_Module_Menu10Settings', true);
-        $this->debug()->setFilter('Simpli_Hello_Module_Menu20Settings', true);
-        $this->debug()->setFilter('Simpli_Hello_Module_Admin', true);
-        $this->debug()->setOption('argument_expansion', true);
-
-
-        $this->debug()->v(__LINE__, __METHOD__, $always = true, 'filters', $this->debug()->getFilters());
- $this->debug()->t(__LINE__, __METHOD__, $always_debug = true, debug_backtrace(), 5);
-
-        $this->testDebug('apple', 'orange', array('element1' => 1, 'element2' => 2));
-
-//        $r = new ReflectionMethod(__CLASS__, __METHOD__);
-//        $params = $r->getParameters();
-//        foreach ($params as $param) {
-//            //$param is an instance of ReflectionParameter
-//            echo $param->getName();
-//            echo $param->isOptional();
-//        }
-
-        /*
-         * Echo out any message
-         */
-
-   //     $this->debug()->e(__LINE__, __CLASS__, __FUNCTION__, __FILE__, $always = false, '$my_string=' . $my_string);
-        /*
-         * Echo out any variable, including an array
-         */
-        $test_array = array(
-            'apple' => 'red',
-            'orange' => 'orange',
-        );
-  //  $this->debug()->dv(__LINE__, __CLASS__, __FUNCTION__, __FILE__, $always = false, '$my_string', $my_string);
-
-        $my_string = 'Hello';
-
-//  $this->debug()->dv(__LINE__, __CLASS__, __FUNCTION__, __FILE__, $always = false, '$test_array', $test_array);
-        ///    $this->testDebug('apple', 'orange', array('element1' => 1, 'element2' => 2));
-
-
-        /*
-         * Stop Code Execution ( same as die() or exit )
-         */
-        $this->debug()->stop(__LINE__, __METHOD__, $always = true, false, 'The condition is true');
+        $this->debug()->t();
     }
 
-    /**
-     * Test function to be used for debug testing
-     *
-     * Long Description
-     *
-     * @param none
-     * @return void
-     */
-    public function testDebug($fruit1, $fruit2, $stuff) {
 
-
-        $this->debug()->t(__LINE__, __METHOD__, $always_debug = true, debug_backtrace(), $levels = 5);
-
-
-
-
-        $this->debug()->dt(__LINE__, get_class($this), __FUNCTION__, __FILE__, $always_debug = false, debug_backtrace(),  $levels = 1);
-
-        $this->debug()->dv(__LINE__, __CLASS__, __FUNCTION__, __FILE__, $always = true, 'filters', $this->debug()->getFilters());
-    }
 
     /**
      * Add Hooks
@@ -100,6 +32,13 @@ $this->debug()->setFilter('Simpli_Hello_Module_Core', false);
      * @return void
      */
     public function addHooks() {
+        $this->debug()->t();
+//
+
+
+
+
+
 
 
 
@@ -107,7 +46,7 @@ $this->debug()->setFilter('Simpli_Hello_Module_Core', false);
         /*
          * add scripts
          *  */
-
+//something
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
 
         //__START_EXAMPLE_CODE__
@@ -129,10 +68,6 @@ $this->debug()->setFilter('Simpli_Hello_Module_Core', false);
 //this is where you map any form actions with the php function that handles the ajax request
 //  add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array(&$this, 'save'));
 // Add any other hooks you need to support this module
-
-
-
-
     }
 
     /**
@@ -143,6 +78,7 @@ $this->debug()->setFilter('Simpli_Hello_Module_Core', false);
      * @return void
      */
     public function enqueue_scripts() {
+        $this->debug()->t();
         // Example
 //       wp_enqueue_style($this->getPlugin()->getSlug() . '-admin-page', $this->getPlugin()->getUrl() . '/admin/css/settings.css', array(), $this->getPlugin()->getVersion());
 //        wp_enqueue_script('jquery');
@@ -171,6 +107,7 @@ $this->debug()->setFilter('Simpli_Hello_Module_Core', false);
      * @uses is_single()
      */
     public function say_hello($content) {
+        $this->debug()->t();
         global $post;
 
 

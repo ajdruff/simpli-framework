@@ -20,6 +20,8 @@ class Simpli_Addons_Simpli_Forms_Themes_Seattle_Module_FilterOptions extends Sim
      * @return string The parsed output of the form body tag
      */
     protected function _commonFilter($properties) {
+        $this->debug()->t();
+
         $properties = parent::_commonFilter($properties);
 
         extract($properties);
@@ -38,6 +40,8 @@ class Simpli_Addons_Simpli_Forms_Themes_Seattle_Module_FilterOptions extends Sim
      * @return string $atts
      */
     protected function filterText($properties) {
+        $this->debug()->t();
+
         extract($properties);
        // $atts['value'] = 'filtered by options filter';
         $tags['test_text'] = 'This is the test tag for a text template';

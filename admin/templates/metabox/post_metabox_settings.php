@@ -1,6 +1,6 @@
 <?php
 //echo '<pre>';
-//print_r($post_options);
+
 //echo '<pre>';
 //$this->getPlugin()->getModule('Form')->text($field_name, $value, $label, $hint, $help,$template_id);
 

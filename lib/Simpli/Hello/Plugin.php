@@ -187,7 +187,7 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
          * e.g.:$this->setDisabledModule('Shortcodes');
          */
        $this->setDisabledModule('ExampleModule');
-        $this->setDisabledModule('AAtest');
+
 
 
 
@@ -195,7 +195,7 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
          * Set disabled addons
          * e.g.: $this->setDisabledAddon('Simpli_Forms');
          */
-        $this->setDisabledAddon('Simpli_Forms');
+    //    $this->setDisabledAddon('Simpli_Forms');
     }
 
     /**

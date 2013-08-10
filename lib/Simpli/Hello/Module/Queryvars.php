@@ -52,6 +52,8 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function addHooks() {
+        $this->debug()->t();
+
 
 
 
@@ -123,6 +125,8 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     function config() {
+        $this->debug()->t();
+
 
         /*
          * Query Variables
@@ -194,6 +198,8 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @return string The parsed output of the form body tag
      */
     function sayHello() {
+        $this->debug()->t();
+
         echo '<br> Hello';
     }
 
@@ -205,6 +211,8 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @return string The parsed output of the form body tag
      */
     function sayGoodbye() {
+        $this->debug()->t();
+
         echo '<br> Goodbye';
     }
 
@@ -216,6 +224,8 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @return string The parsed output of the form body tag
      */
     function phpInfo() {
+        $this->debug()->t();
+
         phpinfo();
     }
 
@@ -229,6 +239,8 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @return string $query_vars
      */
     function registerQueryVar($query_vars) {
+        $this->debug()->t();
+
 
         /*
          * Register query variables in the form:
@@ -255,6 +267,8 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     function checkQueryVars() {
+        $this->debug()->t();
+
 
         global $wp_query;
 
@@ -311,13 +325,7 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
              * For example, ?simpli-framework-action=reactivate would trigger any functions that were mapped using:
              * add_action('simpli_framework_action_reactivate','my_function);
              * $query_vars['simpli-framework-action']
-             *             echo '<br>' . $query_var; echo '<br>query var value=' . $query_var_value;
-              echo '<pre>';
-              print_r($_GET);
-              echo '</pre>';
-              echo '<pre>';
-              print_r($wp_query->query_vars);
-              echo '</pre>';
+
              */
 
             do_action($query_var . '_' . $query_var_value); // instead of get? what happens in admin ?
@@ -335,6 +343,8 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @return string The parsed output of the form body tag
      */
     function rewriteRules($rules) {
+        $this->debug()->t();
+
         $newrules['action/(.+)/?$'] = 'index.php?simpli_hello_action=' . '$matches[1]';
 
         foreach ($this->_rewrite_rules as $new_rule) {
@@ -355,6 +365,8 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @global type $wp_rewrite
      */
     function flushRewriteRules() {
+        $this->debug()->t();
+
         global $wp_rewrite;
 
         $wp_rewrite->flush_rules();

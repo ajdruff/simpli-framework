@@ -93,18 +93,18 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
          * by applying the defaults attributes against them using shortcode_atts.
          *
          */
-        echo '<pre>', print_r($this->_form, true), '</pre>';
+
         foreach ($this->_form['elements'] as $element_name => $element_properties) {
             $element_atts = $element_properties['atts'];
 
-            //   echo '<pre>', print_r($element_atts, true), '</pre>';
+
 //
-//            echo '<pre>', print_r($this->_form['elements'], true), '</pre>';
+
             $element_type = $element_atts['type'];
 
 
             $default_atts = $this->getElementsModule()->getAttDefaults($element_atts);
-  //          echo 'default atts=<pre>', print_r($default_atts, true), '</pre>';
+
 
             $element_atts = shortcode_atts($default_atts, $element_atts);
 
@@ -169,9 +169,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
          */
 
 
-        echo '<pre>', print_r($this->_form, true), '</pre>';
 
-        die('exiting line ' . __LINE__);
 
 
 
@@ -377,7 +375,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         $atts = apply_filters($filter_hook_name, $atts, $tag_id);
 
 
-        //   echo '<pre>', print_r($this->_form, true), '</pre>';
+
         /*
          * Print Our Any Errors that are returned by the filters
          */
@@ -431,7 +429,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
 
         $tags = array_merge($template_tags, $att_tags); //merge all the tags together
         $tags = $this->getTagPairs($tags); //convert to tag pairs
-        echo '<pre>', print_r($tags, true), '</pre>';
+
         $result = str_ireplace($tags['names'], $tags['values'], $template);
 
         return $result;

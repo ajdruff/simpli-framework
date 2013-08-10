@@ -36,6 +36,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function addHooks() {
+        $this->debug()->t();
+
 
         /*
          * Load Post options on front end
@@ -82,6 +84,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function config() {
+        $this->debug()->t();
+
 
         /*
          * Set the Post Option defaults
@@ -110,6 +114,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return string
      */
     public function getPostOptionDefaults() {
+        $this->debug()->t();
+
         return $this->_post_option_defaults;
     }
 
@@ -120,6 +126,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return object $this
      */
     public function setPostOptionDefaults($post_option_defaults) {
+        $this->debug()->t();
+
         $this->_post_option_defaults = $post_option_defaults;
         return $this;
     }
@@ -135,7 +143,9 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //     * @param string $help More detailed text on what the field is and how it should be used.
 //     * @return string The parsed output of the form body tag
 //     */
-    function text($option_id, $label=null, $hint=null, $help=null,$template_id=null) {
+    function text($option_id, $label = null, $hint = null, $help = null, $template_id = null) {
+        $this->debug()->t();
+
 
         $field_name = $this->getPostOptionName($option_id);
         $value = $this->getPostOption($option_id);
@@ -151,6 +161,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return string The parsed output of the form body tag
      */
     function postOption($name) {
+        $this->debug()->t();
+
         echo $this->getPostOption($name);
     }
 
@@ -163,13 +175,15 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return mixed
      */
     public function getPostOption($name) {
+        $this->debug()->t();
+
 
         $post_options = $this->getPostOptions();
         $name_with_added_prefix = $this->getPlugin()->getSlug() . '_' . $name;
 
 //echo '<br/> getPostOptions()=';
 //        echo '<pre>';
-//print_r($post_options);
+
 //echo '</pre>';
 //echo  '<br/> Name with added prefix=' .$name_with_added_prefix;
         /* assume access is by short version, so tack on prefix */
@@ -192,6 +206,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     function fieldName($accessor_name) {
+        $this->debug()->t();
+
 
         echo $this->getPostOptionName($accessor_name);
     }
@@ -204,6 +220,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return string
      */
     function getFieldName($accessor_name) {
+        $this->debug()->t();
+
 
         return $this->getPostOptionName($accessor_name);
     }
@@ -217,6 +235,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     function fieldLabel($accessor_name) {
+        $this->debug()->t();
+
 
         echo '__NEW_LABEL__'; // replace with lookup of the option's label
     }
@@ -229,6 +249,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return string
      */
     function getFieldLabel($accessor_name) {
+        $this->debug()->t();
+
 
         return '__NEW_LABEL__'; // replace with lookup of the option's label
     }
@@ -242,6 +264,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     function fieldHelp($accessor_name) {
+        $this->debug()->t();
+
 //stub
         echo '__HELP_TEXT__'; // replace with lookup of the option's help
         //echo getPostOptionsName($accessor_name);
@@ -255,6 +279,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return string
      */
     function getFieldHelp($accessor_name) {
+        $this->debug()->t();
+
 //stub
         return '__HELP_TEXT__'; // replace with lookup of the option's help
         //echo getPostOptionsName($accessor_name);
@@ -270,6 +296,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return mixed
      */
     public function getPostOptionName($name) {
+        $this->debug()->t();
+
 
 
         /*
@@ -293,6 +321,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return array
      */
     public function getPostOptions() {
+        $this->debug()->t();
+
 
         return $this->_post_options;
     }
@@ -306,6 +336,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return $this
      */
     public function setPostOption($option_name, $option_value) {
+        $this->debug()->t();
+
 
         /*
          * Update settings array with new value but only if the setting
@@ -332,6 +364,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return $this
      */
     public function savePostOptions($post_id) {
+        $this->debug()->t();
+
 
 
 
@@ -352,6 +386,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return $this
      */
     public function hookLoadPostOptions() {
+        $this->debug()->t();
+
 
 
 
@@ -369,7 +405,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
         global $post;
 //                 echo '<br/>post=';
 //                echo '<pre>';
-//                print_r($post);
+
 //                echo '</pre>';
         $post = (isset($_GET['post'])) ? get_post($_GET['post']) : $post;
         $post = (empty($post) && !empty($_POST['post_ID'])) ? get_post($_POST['post_ID']) : $post;
@@ -378,14 +414,14 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
             // $this->hookLoadPostOptions($post->ID);
             $post_id = $post->ID;
             $post_meta_options = get_post_meta($post_id, $wp_option_name, true);
-            // print_r($this->getPostOptions());die('stopping');
+
         } else {
             $default_options = $this->getPostOptionDefaults();
             // echo '<br> loading defaults' ;
         }
 //                echo '<br/>post=';
 //                echo '<pre>';
-//                print_r($post);
+
 //                echo '</pre>';
 
         /*
@@ -418,11 +454,11 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 
 //        echo '<br/>$this->_post_options=';
 //        echo '<pre>';
-//        print_r($this->_post_options);
+
 //        echo '</pre>';
 //                echo '<br/>Loading Options : post=';
 //                echo '<pre>';
-//                print_r($this->_post_options);
+
 //                echo '</pre>';
         return $this->_post_options;
     }
@@ -435,6 +471,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function hookAddMetaBoxToPost() {
+        $this->debug()->t();
+
 
 //        if (!$this->pageCheck()) {
 //            return;
@@ -485,16 +523,18 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return int $post_id
      */
     public function hookPostSave($post_id) {
+        $this->debug()->t();
+
 
         if (!$this->pageCheck()) {
             return;
         }
 
 //echo '<pre>';
-//        print_r($_POST);
+
 //echo '</pre>';
 //die('exiting' .__FILE__);
-//        print_r($this->getPostOptions());die('exiting' .__FILE__);
+
         //if the post variable doesnt include our plugin, than exit.
         if (is_admin()) {
             if (!array_key_exists($this->getPlugin()->getSlug(), $_POST)) {
@@ -605,6 +645,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function renderMetaBoxTemplate($module, $metabox) {
+        $this->debug()->t();
+
 
         /*
          * If no template path provided, use the metabox id as the template name and /admin/templates/metabox as the path
@@ -629,6 +671,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function renderMetaBoxAjax($module, $metabox) {
+        $this->debug()->t();
+
 
 
         include($this->getPlugin()->getDirectory() . '/admin/templates/metabox/ajax.php');
@@ -642,6 +686,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return boolean
      */
     private function pageCheck() {
+        $this->debug()->t();
+
 
         if (!is_admin()) {
             return;
@@ -658,7 +704,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        //  $screen=get_current_screen();print_r($screen);
+
         /*
          * check to see if we are either on the edit or add screen
          */
@@ -672,6 +718,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @return string The parsed output of the form body tag
  */
     function forms_pre_parse($template_args) {
+        $this->debug()->t();
+
 
         $template_args['value']='snowy';
 

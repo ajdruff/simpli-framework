@@ -22,7 +22,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
      * @return void
      */
     public function addHooks() {
-
+        $this->debug()->t();
     }
 
     /**
@@ -32,7 +32,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
      * @return void
      */
     public function config() {
-
+        $this->debug()->t();
     }
 
     /**
@@ -43,6 +43,8 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
      * @return object Form Module
      */
     public function getFormModule() {
+        $this->debug()->t();
+
         return $this->getPlugin()->getModule('Form');
     }
 
@@ -54,6 +56,8 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
      * @return void
      */
     public function text($atts) {
+        $this->debug()->t();
+
 
 
         $defaults = array(
@@ -76,6 +80,8 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
      * @return void
      */
     public function select($atts) {
+        $this->debug()->t();
+
 
 
         $defaults = array(

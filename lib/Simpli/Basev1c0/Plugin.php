@@ -137,7 +137,7 @@ class Simpli_Basev1c0_Plugin {
      *
      * @var string
      */
-    protected $_debug = null;
+    protected $_debug_options = null;
 
     /**
      * Utility Object
@@ -274,6 +274,31 @@ class Simpli_Basev1c0_Plugin {
 
 
         return $this;
+    }
+
+    /**
+     * Debug Object
+     *
+     * The debug object
+     *
+     * @var object
+     */
+    protected $_debug = null;
+
+    /**
+     * Debug
+     *
+     * Returns a debug object
+     *
+     * @param none
+     * @return void
+     */
+    public function debug() {
+
+        if (is_null($this->_debug)) {
+            $this->_debug = $this->getModule('Debug');
+        }
+        return $this->_debug;
     }
 
     /**
@@ -475,7 +500,7 @@ class Simpli_Basev1c0_Plugin {
             }
             $this->_available_modules = $available_modules;
         }
-        //      echo '$this->_available_modules = <pre>', print_r($this->_available_modules, true), '</pre>';
+
         return $this->_available_modules[$filter];
     }
 
@@ -524,7 +549,7 @@ class Simpli_Basev1c0_Plugin {
 //     */
 //    public function setAddon($addon_name, $object) {
 //        $this->_addons[$addon_name] = $object;
-//     //   echo '<pre>', print_r($this->_addons, true), '</pre>';
+
 //return $this;
 //    }
 
@@ -688,7 +713,7 @@ class Simpli_Basev1c0_Plugin {
 
         $this->_settings = $options;
 //           echo '<br/> options = <pre>' ;
-//        print_r($this->_settings) ;
+
 //        echo '</pre>';
 
 
@@ -971,16 +996,16 @@ class Simpli_Basev1c0_Plugin {
     public function getDebug($key = null) {
 
 #if debug has not  yet been set, call the set method to set defaults
-        if (is_null($this->_debug)) {
+        if (is_null($this->_debug_options)) {
             $this->setDebug(array());
         }
 
 
 
         if (!is_null($key)) { //if key provided, return only a single element
-            $result = $this->_debug[$key];
+            $result = $this->_debug_options[$key];
         } else {
-            $result = $this->_debug;
+            $result = $this->_debug_options;
         }
 
         return $result;
@@ -995,7 +1020,7 @@ class Simpli_Basev1c0_Plugin {
     public function setDebug($debug) {
 
 
-        if (is_null($this->_debug)) {
+        if (is_null($this->_debug_options)) {
             $debug_defaults = array(
                 'js' => false
                 , 'consolelog' => false
@@ -1003,7 +1028,7 @@ class Simpli_Basev1c0_Plugin {
                 , 'filelog' => false
             );
 
-            $this->_debug = $debug_defaults;
+            $this->_debug_options = $debug_defaults;
         }
 
         /*
@@ -1033,7 +1058,7 @@ class Simpli_Basev1c0_Plugin {
         /*
          * Merge what was provided with existing, so existing can provide defaults or previously set options
          */
-        $debug = array_merge($this->_debug, $debug);
+        $debug = array_merge($this->_debug_options, $debug);
 
         if (($debug['consolelog']) || $debug['filelog']) {
 
@@ -1055,7 +1080,7 @@ class Simpli_Basev1c0_Plugin {
             }
         }
 
-        $this->_debug = $debug;
+        $this->_debug_options = $debug;
         return $this;
     }
 
@@ -1281,7 +1306,7 @@ class Simpli_Basev1c0_Plugin {
          */
         $addon_files = $tools->getGlobFiles($this->getAddonsDirectory(), 'Addon.php');
         //echo '<br>add on files after return : ';
-        //echo '<pre>', print_r($addon_files, true), '</pre>';
+
 //    const ADDON_BASE_FILE_NAME = 'Addon';
 //do a glob search to get add_on_files
         if (!is_array($addon_files)) {
@@ -1317,7 +1342,7 @@ class Simpli_Basev1c0_Plugin {
              * skip loading the addon if it was manually disabled.
              */
 
-            //  echo '<pre>', print_r($this->getDisabledAddons(), true), '</pre>';
+
             //   die('stopping to check disbled addons' . __LINE__ . __FILE__);
             if (in_array($addon_name, $this->getDisabledAddons())) {
                 $this->getLogger()->log('Addon ' . $addon_name . ' not loaded because it is has been disabled.');
@@ -1473,7 +1498,7 @@ class Simpli_Basev1c0_Plugin {
 
         $enabled_modules = $this->getAvailableModules('enabled');
 
-//        echo '<br> modules = ' . '<pre>', print_r($enabled_modules, true), '</pre>';
+
 
         foreach ($enabled_modules as $module_name => $module_path) {
 
@@ -1611,7 +1636,7 @@ class Simpli_Basev1c0_Plugin {
          */
         $script_queue = $this->_inline_script_queue;
 //        echo '<br> printing scripts footer=' . $footer;
-//        echo '<pre>', print_r($script_queue, true), '</pre>';
+
         /*
          * dont go any further if there are no scripts to process
          */
@@ -1628,6 +1653,9 @@ class Simpli_Basev1c0_Plugin {
         if ($dep_resolution) {
             $handle_list = $this->getTools()->sortDependentList($handle_list, $deps);
         }
+
+
+
 //        else
 //        {
 //            $handle_list = $unsorted_handles;
@@ -1637,7 +1665,7 @@ class Simpli_Basev1c0_Plugin {
          * Now print out the scripts, in order of their dependencies
          */
 
-    //    echo '<pre>', print_r(wp_script_is(), true), '</pre>';
+
         echo '<script  type="text/javascript">';
 
         foreach ($handle_list as $handle) {
@@ -1666,7 +1694,7 @@ class Simpli_Basev1c0_Plugin {
 
                 if (file_exists($script['path'])) { //include the path to the script. if not found, output an error to the javascript console.
                     if ($has_external_dependency && !$footer) {
-                        echo 'window.onload = function() {'; // need to do this since wordpress loads external scripts after inline and youl get jquery errors otherwise
+                        echo ' ;window.onload = function() {'; // need to do this since wordpress loads external scripts after inline and youl get jquery errors otherwise
                     }
 
                     include($script['path']);
@@ -1715,8 +1743,9 @@ class Simpli_Basev1c0_Plugin {
         $handle = $this->getSlug() . '_simpli-framework-namespace.js';
         $path = $this->getDirectory() . '/js/simpli-framework-namespace.js';
         $inline_deps = array();
-        $external_deps = array('jquery');
-        $this->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+        $external_deps = array();
+        $footer = false; //for some reason, this always needs to be true or you will receive errors when using namespaces
+        $this->enqueueInlineScript($handle, $path, $inline_deps, $external_deps, $footer);
 
         $handle = $this->getSlug() . '_test1.js';
         $path = $this->getDirectory() . '/js/test1.js';

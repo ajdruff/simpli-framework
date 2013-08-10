@@ -71,7 +71,7 @@ $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include u
 $simpli_hello->setDebug(
         array(
             'consolelog' => true  // true/false Turn on Logging to Javascript console for php logs
-            , 'js' => false // true/false Turn on Logging to Javascript console for javascript logs
+            , 'js' => true // true/false Turn on Logging to Javascript console for javascript logs
             , 'src' => false  // true/false Whether to use the full source for javascript or just the minimized versions
             , 'filelog' => false // true/false Turn on Logging to File for php logs
         )
@@ -101,3 +101,18 @@ $simpli_hello->init();
  */
 register_activation_hook(__FILE__, array($simpli_hello, 'install'));
 
+/**
+ * Short Description
+ *
+ * Long Description
+ * @param string $content The shortcode content
+ * @return string The parsed output of the form body tag
+ */
+function testMyFunction($a = 1, $b = 2) {
+
+    global $simpli_hello;
+    $simpli_hello->getModule('Debug')->t(true, 99);
+    //$simpli_hello->getModule('Debug')->t($always_debug = true, debug_backtrace(), 5);
+
+ //   $simpli_hello->getModule('Debug')->dt(__LINE__, '', __FUNCTION__, __FILE__, true, debug_backtrace(), $levels = 3);
+}

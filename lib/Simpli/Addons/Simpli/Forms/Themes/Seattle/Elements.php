@@ -23,6 +23,8 @@ class Simpli_Addons_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_Module 
      * @return object $this
      */
     public function initModuleAdmin() {
+        $this->debug()->t();
+
         $this->initModule();
     }
 
@@ -33,6 +35,8 @@ class Simpli_Addons_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_Module 
      * @return object $this
      */
     public function initModule() {
+        $this->debug()->t();
+
 
 
 
@@ -46,7 +50,7 @@ class Simpli_Addons_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_Module 
      * @return void
      */
     public function config() {
-
+        $this->debug()->t();
     }
 
 
@@ -59,6 +63,8 @@ class Simpli_Addons_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_Module 
      * @return object Form Module
      */
     public function getFormModule() {
+        $this->debug()->t();
+
         return $this->getPlugin()->getModule('Form');
     }
 
@@ -70,7 +76,9 @@ class Simpli_Addons_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_Module 
      * @param array $atts Shortcode attributes
      * @return void
      */
- public   function text($atts) {
+ public function text($atts) {
+        $this->debug()->t();
+
         $tag_id = __FUNCTION__;
 
 
@@ -99,6 +107,8 @@ class Simpli_Addons_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_Module 
      * @return string The parsed output of the form body tag
      */
     function select($atts) {
+        $this->debug()->t();
+
         $tag_id = __FUNCTION__;
 
 

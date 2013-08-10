@@ -2,7 +2,7 @@
 
 require_once('includes/template.php'); // WordPress Dashboard Functions
 //echo '<pre>';
-//print_r($this);
+
 //echo '</pre>';
 
 /*

@@ -65,7 +65,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         }
 
 //            echo '<pre>';
-//            print_r($metabox_default_states);
+
 //            echo '</pre>';
 
 
@@ -644,7 +644,7 @@ if(!is_admin()){return;}
              * Set new setting value equal to the post value only if the setting was actually submitted, otherwise, keep the setting value the same.
              *  Add extra code to scrub the values for specific settings if needed
              */
-//print_r($_POST);die();
+
             $previous_setting_value = $setting_value;
             $setting_value = ((isset($_POST[$setting_name]) === true) ? $_POST[$setting_name] : $previous_setting_value);
 // validtion errors here

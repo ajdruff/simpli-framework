@@ -97,9 +97,7 @@ class Simpli_Basev1c0_Addon {
      * @var array
      */
     protected $_available_modules = null;
-
-
-     private $_ro_properties = null;
+    private $_ro_properties = null;
 
     /**
      * Get Read Only Properties
@@ -128,7 +126,6 @@ class Simpli_Basev1c0_Addon {
         }
     }
 
-
     /**
      * Set Read Only Property
      *
@@ -137,11 +134,11 @@ class Simpli_Basev1c0_Addon {
      * @param none
      * @return void
      */
-    protected function setProperty($name,$value) {
+    protected function setProperty($name, $value) {
 
-$this->_ro_properties[$name]=$value;
-
+        $this->_ro_properties[$name] = $value;
     }
+
     /**
      * Set Plugin
      *
@@ -166,6 +163,31 @@ $this->_ro_properties[$name]=$value;
         }
 
         return $this->_plugin;
+    }
+
+    /**
+     * Debug Object
+     *
+     * The debug object
+     *
+     * @var object
+     */
+    protected $_debug = null;
+
+    /**
+     * Debug
+     *
+     * Returns a debug object
+     *
+     * @param none
+     * @return void
+     */
+    public function debug() {
+
+        if (is_null($this->_debug)) {
+            $this->_debug = $this->getPlugin()->getModule('Debug');
+        }
+        return $this->_debug;
     }
 
     /**
@@ -200,7 +222,6 @@ $this->_ro_properties[$name]=$value;
              * Now normalize slashes
              */
             $this->_directory = $this->getPlugin()->getTools()->normalizePath($path);
-
         }
 
         return ($this->_directory);
@@ -414,10 +435,9 @@ $this->_ro_properties[$name]=$value;
              */
             $class = get_class($this); //e.g. Simpli_Addons_Simpli_Forms_Addon
 
-            $slug= substr_replace($class,'', -1*strlen('_Addon'),strlen('_Addon')); //Simpli_Addons_Simpli_Forms_Addon
-            $slug=strtolower($slug); //simpli_addons_simpli_forms
-            $this->_slug=$slug;
-
+            $slug = substr_replace($class, '', -1 * strlen('_Addon'), strlen('_Addon')); //Simpli_Addons_Simpli_Forms_Addon
+            $slug = strtolower($slug); //simpli_addons_simpli_forms
+            $this->_slug = $slug;
         }
 
 
@@ -518,7 +538,7 @@ $this->_ro_properties[$name]=$value;
         $this->getPlugin()->getLogger()->log('Addon URL: ' . $this->getUrl());
 
 
-  $this->addHooks();
+        $this->addHooks();
 
         $this->config();
 
@@ -543,7 +563,7 @@ $this->_ro_properties[$name]=$value;
             foreach ($modules as $module) {
 
                 $module->init();
-                $this->getPlugin()->getLogger()->log('Initialized Addon Module ' . $this->getSlug() . '/' .$module->getName());
+                $this->getPlugin()->getLogger()->log('Initialized Addon Module ' . $this->getSlug() . '/' . $module->getName());
             }
         }
         if (isset($this->_slug)) {
@@ -637,7 +657,7 @@ $this->_ro_properties[$name]=$value;
                 $this->setModule($module_name, $object);
                 $this->getModule($module_name)->setPlugin($this->getPlugin()); //set the plugin dependency
                 $this->getModule($module_name)->setAddon($this); //set the addon dependency
-                 $this->getPlugin()->getLogger()->log('Loaded Addon Module ' . $this->getSlug() . '/'. $module_name);
+                $this->getPlugin()->getLogger()->log('Loaded Addon Module ' . $this->getSlug() . '/' . $module_name);
             } catch (Exception $e) {
                 die('Unable to load Module: \'' . $module_name . '\'. ' . $e->getMessage());
             }

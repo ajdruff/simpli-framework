@@ -50,7 +50,7 @@ class Simpli_Basev1c0_Btools {
           $sorted_handles=$this->getTools()->sortDependentList($list,$dependencies);
           echo '<br> ______________   FINAL RESULT _________';
           echo '<pre>';
-          print_r($sorted_handles);
+
           echo '</pre>';
 
           __ END CODE ___
@@ -86,12 +86,12 @@ class Simpli_Basev1c0_Btools {
 //
 //          echo '<pre>';
 //
-//          print_r($list);
+
 //          echo '</pre>';
 //
 //                    echo '<pre>';
 //
-//          print_r($dependencies);
+
 //          echo '</pre>';
         // $dependent_handles = $dependencies;//
         $dependent_handles = array_keys($dependencies); //makes the keys in dependencies their own array
@@ -116,6 +116,7 @@ class Simpli_Basev1c0_Btools {
                             $requirements_met = false; // then requirement is not met
                         }
                         if (!in_array($required_handle, array_keys($todo_list)) && !in_array($required_handle, $sorted_handles)) { //if required_handle isnt on todo list, flag missing dependency or we will loop forever since the handle dependent on it will never be satisfied.
+
                             $missing_dependency = true;
                         }
                     }
@@ -125,8 +126,10 @@ class Simpli_Basev1c0_Btools {
                         unset($todo_list[$handle]); //and remove from todo list
                     } elseif ($missing_dependency === true) {
 
+
                         unset($todo_list[$handle]); //if required handle isnt on hte list at all, we cant include the handle that relies on it, so remove it.
                     }
+
                 }
             }
         }
@@ -216,7 +219,7 @@ class Simpli_Basev1c0_Btools {
         if (!empty($files)) {
             $files = array_filter($files, 'is_file');
 
-            // echo '<pre>', print_r($files, true), '</pre>';
+
             return $files;
         }
     }
@@ -225,7 +228,7 @@ class Simpli_Basev1c0_Btools {
      * Make Path Relative
      *
      * Removes base path from longer path. The resulting path will never contain a leading directory separator
-     * Base path must occur in longer path
+     * If base path is not contained in longer path, the longer path will be returned.
      * Paths will be normalized
      * Ref:http://stackoverflow.com/a/6808275
      * @throws Exception
@@ -237,7 +240,8 @@ class Simpli_Basev1c0_Btools {
         $base_path = $this->normalizePath($base_path);
         $longer_path = $this->normalizePath($longer_path);
         if (0 !== strpos($longer_path, $base_path)) {
-            throw new Exception("Can not make relative path, base path does not occur at 0 in longer path: `" . $base_path . "`, `" . $longer_path . "`");
+            return ($longer_path);
+            //throw new Exception("Can not make relative path, base path is not contained in longer path: `" . $base_path . "`, `" . $longer_path . "`");
         }
         return substr($longer_path, strlen($base_path) + 1);
     }

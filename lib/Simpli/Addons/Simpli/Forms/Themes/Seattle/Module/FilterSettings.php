@@ -20,6 +20,8 @@ class Simpli_Addons_Simpli_Forms_Module_FilterSettings extends Simpli_Addons_Sim
      * @return string The parsed output of the form body tag
      */
     protected function _commonFilter($atts) {
+        $this->debug()->t();
+
 
         /*
          * Return error if required arguments are not found
@@ -31,7 +33,7 @@ class Simpli_Addons_Simpli_Forms_Module_FilterSettings extends Simpli_Addons_Sim
             return ($atts);
         }
 
-        //  echo '<pre>', print_r($atts, true), '</pre>';
+
         $atts['value'] = $this->getPlugin()->getModule('Post')->getPostOption($atts['name']);
         $atts['name'] = $this->getPlugin()->getSlug() . '_' . $atts['name'];
 
@@ -39,7 +41,7 @@ class Simpli_Addons_Simpli_Forms_Module_FilterSettings extends Simpli_Addons_Sim
 
 
 
-        //  echo '<pre>', print_r($atts, true), '</pre>';
+
         return($atts);
     }
 
@@ -51,6 +53,8 @@ class Simpli_Addons_Simpli_Forms_Module_FilterSettings extends Simpli_Addons_Sim
      * @return string $atts
      */
     protected function _filterText($atts) {
+        $this->debug()->t();
+
 
         $atts['value'] = 'filtered by Settings';
 

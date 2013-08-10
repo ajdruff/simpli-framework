@@ -237,7 +237,7 @@ class Simpli_Basev1c0_Loader {
         $matches = array();
         $matches = explode('_', $class); // alternative :  $pattern='/[A-Za-z0-9]+/';preg_match_all($pattern, $class, $matches);
 //echo '<pre>';
-//print_r($matches);
+
 //echo '</pre>';
 //
 
@@ -257,7 +257,7 @@ class Simpli_Basev1c0_Loader {
 //echo '<br/>' . __LINE__ . ' ' . __METHOD__ . ' $plugin_class_match =  ' . $plugin_class_match;
 //   $base_class_match = strpos($class, $this->getClassNamespace()) !== false;
 //echo '<pre>';
-//print_r($matches);
+
 //echo '</pre>';
 //echo '<br/>' . __LINE__ . ' ' . __METHOD__ . ' $base_class_match =  ' . $base_class_match;
         if (in_array($matches[0] . '_' . $matches[1], $namespaces)) {  // match[0]='Simpli' match[1]='Hello' match[2]='Plugin'
@@ -325,7 +325,7 @@ class Simpli_Basev1c0_Loader {
 // echo '<br> class:' . $class;
 //    $matches = explode('_', $class); // alternative :  $pattern='/[A-Za-z0-9]+/';preg_match_all($pattern, $class, $matches);
 //echo '<pre>';
-//print_r($matches);
+
 //echo '</pre>';
 //
 //if (isset($matches[0]) && ($matches[0]!='Simpli')) {echo '<br>$class foujnd to be not simpli';return;}
@@ -342,7 +342,7 @@ class Simpli_Basev1c0_Loader {
 //echo '<br/>' . __LINE__ . ' ' . __METHOD__ . ' $plugin_class_match =  ' . $plugin_class_match;
 //   $base_class_match = strpos($class, $this->getClassNamespace()) !== false;
 //echo '<pre>';
-//print_r($matches);
+
 //echo '</pre>';
 //echo '<br/>' . __LINE__ . ' ' . __METHOD__ . ' $base_class_match =  ' . $base_class_match;
 // if (in_array($matches[0] . '_' . $matches[1], $namespaces)) {  // match[0]='Simpli' match[1]='Hello' match[2]='Plugin'

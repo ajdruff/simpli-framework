@@ -23,6 +23,8 @@ class Simpli_Addons_Simpli_Forms_Module_FilterExample extends Simpli_Addons_Simp
      * @return string The parsed output of the form body tag
      */
     protected function _commonFilter($properties) {
+        $this->debug()->t();
+
         $properties = parent::_commonFilter($properties);
 
         extract($properties);
@@ -39,6 +41,8 @@ class Simpli_Addons_Simpli_Forms_Module_FilterExample extends Simpli_Addons_Simp
      * @return string $atts
      */
     protected function filterText($properties) {
+        $this->debug()->t();
+
         extract($properties);
 
 

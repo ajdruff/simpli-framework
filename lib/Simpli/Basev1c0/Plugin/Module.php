@@ -81,11 +81,7 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
 
         if (is_null($this->_debug)) {
   $this->_debug = $this->getPlugin()->getModule('Debug');
-//            if ($this->getPlugin()->isModuleLoaded('Debug')) {
-//                $this->_debug = $this->getPlugin()->getModule('Debug');
-//            } else {
-//                $this->_debug = null;
-//            }
+
         }
         return $this->_debug;
     }

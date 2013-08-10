@@ -18,7 +18,7 @@ class Simpli_Addons_Simpli_Forms_Addon extends Simpli_Basev1c0_Addon {
      * @return void
      */
     public function addHooks() {
-
+        $this->debug()->t();
     }
 
     /**
@@ -30,9 +30,11 @@ class Simpli_Addons_Simpli_Forms_Addon extends Simpli_Basev1c0_Addon {
      * @return void
      */
     public function config() {
+        $this->debug()->t();
 
 
-       // $this->setDisabledModule('FilterOptions');
+
+        // $this->setDisabledModule('FilterOptions');
 
         $this->setDisabledModule('Tags');
         $this->setDisabledModule('ElementsOld');
@@ -68,6 +70,8 @@ class Simpli_Addons_Simpli_Forms_Addon extends Simpli_Basev1c0_Addon {
      * @return $this
      */
     public function loadModules($module_directory = null) {
+        $this->debug()->t();
+
 
         if (is_null($module_directory)) {
             parent::loadModules();
@@ -104,6 +108,8 @@ class Simpli_Addons_Simpli_Forms_Addon extends Simpli_Basev1c0_Addon {
     private $_sub_modules = null;
 
     public function getAvailableModules($filter = 'enabled', $module_directory = null) {
+        $this->debug()->t();
+
 
         if (is_null($module_directory)) {
             parent::getAvailableModules($filter);

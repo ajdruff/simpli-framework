@@ -21,22 +21,9 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @return string
      */
     public function getMenuPosition() {
-//        $this->debug()->dt(__LINE__, get_class($this), __FUNCTION__, __FILE__, $always_debug = true, debug_backtrace(),  $levels = 1);
-        $this->debug()->t(__LINE__, __METHOD__, $always_debug = true, debug_backtrace(), $levels = 1);
-  
+        $this->debug()->t();
 
 
-//        $method_parts = explode('::', __METHOD__);
-//
-//        $class = $method_parts[0];
-//        $function = $method_parts[1];
-//        $r = new ReflectionClass($class);
-//
-//        $file = ($r->getFileName());
-//
-//        echo '<br> Class =  ' . $class;
-//        echo '<br> Method =  ' . $function;
-//        echo '<br> $file =  ' . $file;
 
 
         /*
@@ -62,6 +49,9 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @return object $this
      */
     public function setMenuPosition($menu_position) {
+        $this->debug()->t();
+
+
         $this->_menu_position = $menu_position;
         return $this;
     }
@@ -74,7 +64,10 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function addHooks() {
-        $this->debug()->dt(__LINE__, get_class($this), __FUNCTION__, __FILE__, $always_debug = true, debug_backtrace(),  $levels = 1);
+        $this->debug()->t();
+
+
+
         /*
          * exit if not admin
          */
@@ -110,6 +103,9 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function admin_enqueue_scripts() {
+        $this->debug()->t();
+
+
         wp_enqueue_style($this->getPlugin()->getSlug() . '-admin-global', $this->getPlugin()->getUrl() . '/admin/css/admin.css', array(), $this->getPlugin()->getVersion());
     }
 
@@ -121,7 +117,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function config() {
-
+        $this->debug()->t();
     }
 
     /**
@@ -132,8 +128,10 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function meta_box_render($module, $metabox) {
+        $this->debug()->t();
 
-        $this->debug()->dt(__LINE__, get_class($this), __FUNCTION__, __FILE__, $always_debug = true, debug_backtrace(),  $levels = 1);
+
+
 
         include($this->getPlugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php');
     }
@@ -147,6 +145,9 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @return array $links
      */
     public function plugin_links($links, $file) {
+        $this->debug()->t();
+
+
 
         /* Stop and return if this isnt our plugin...
          * Do this by checking if $file ( in the form plugin_subdirectory/plugin_file) matches our plugin
@@ -177,6 +178,9 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @return array $links
      */
     public function plugin_action_links($links) {
+        $this->debug()->t();
+
+
         $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->getPlugin()->getSlug() . '_' . $this->getPlugin()->getModule('Menu10Settings')->getSlug() . '">Settings</a>';
         return $links;
     }

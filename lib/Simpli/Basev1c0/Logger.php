@@ -223,7 +223,7 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
         foreach ($log_entries as $entry) {
             $contents[] = $entry['text'];
         }
-        // echo '<pre>', print_r($contents, true), '</pre>';
+
         //  die('exiting logger');
         /*
          * Do not write to file if ajax request

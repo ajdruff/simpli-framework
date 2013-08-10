@@ -19,6 +19,8 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
      * @return void
      */
     public function addMenuHooks() {
+        $this->debug()->t();
+
 
 
 
@@ -58,6 +60,8 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
      * @return string The parsed output of the form body tag
      */
     public function config() {
+        $this->debug()->t();
+
         /*
          * Set default metabox states - must place this after parent::init to get access to the module's slug
          */
@@ -77,6 +81,8 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
      * @return void
      */
     public function hookAdminMenu() {
+        $this->debug()->t();
+
         /*
          *
          * Add the main menu
@@ -101,6 +107,8 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
      * @return void
      */
     public function add_meta_boxes() {
+        $this->debug()->t();
+
 
 
 
@@ -192,6 +200,8 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
      *
      */
     public function showDisabledMessage() {
+        $this->debug()->t();
+
 
 
         //dont show if you are not on the main menu ( general settings )

@@ -10,7 +10,7 @@
  * @subpackage SimpliHello
  *
  */
-class Simpli_Hello_Module_AAtest extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Hello_Module_ExampleModule extends Simpli_Basev1c0_Plugin_Module {
 
     /**
      * Add Hooks
@@ -20,7 +20,7 @@ class Simpli_Hello_Module_AAtest extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function addHooks() {
-
+        $this->debug()->t();
     }
 
     /**
@@ -31,7 +31,7 @@ class Simpli_Hello_Module_AAtest extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function admin_enqueue_scripts() {
-
+        $this->debug()->t();
     }
 
 
@@ -42,7 +42,7 @@ class Simpli_Hello_Module_AAtest extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function config() {
-
+        $this->debug()->t();
     }
 
 }

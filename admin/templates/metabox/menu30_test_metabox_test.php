@@ -1,6 +1,6 @@
 <?php
 //echo '<pre>';
-//print_r($post_options);
+
 //echo '<pre>';
 //$this->getPlugin()->getModule('Form')->text($field_name, $value, $label, $hint, $help,$template_id);
 
@@ -64,10 +64,7 @@ $f->el(array(
 
 
 
-
-
-
-echo '<pre>', print_r($f->getForm(), true), '</pre>';
+$this->debug()->v('$f->getForm() = ', $f->getForm());
 ?>
 
 

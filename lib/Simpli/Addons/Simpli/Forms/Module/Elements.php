@@ -56,7 +56,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
      * @return void
      */
     public function text($atts) {
-        $this->debug()->t();
+
 
 
 
@@ -70,7 +70,9 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
         );
 
 
-        return($this->getAddon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
+        $result = $this->getAddon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults);
+        $this->debug()->t(true, 1, get_defined_vars());
+        return($result);
     }
     /**
      * Select Element

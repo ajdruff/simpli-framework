@@ -39,10 +39,6 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-
-
-
-
         /*
          * add scripts
          *  */

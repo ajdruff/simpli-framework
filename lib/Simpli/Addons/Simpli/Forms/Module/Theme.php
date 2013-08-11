@@ -68,7 +68,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
         $this->debug()->t();
 
 
-        $this->debug()->v('setting template for {var} ...', $template_name);
+        $this->debug()->v('setting template for ' . $template_name, $template_name);
         $this->_templates[$template_name] = $template;
 
         return $this;
@@ -118,7 +118,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
 
         $addon_modules = $this->getAddon()->getModules();
 
-      
+
     }
 
     /**

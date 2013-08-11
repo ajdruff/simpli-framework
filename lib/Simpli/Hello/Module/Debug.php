@@ -22,10 +22,16 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
 
         /*
-         * set defaults . if modules set their own options, they will override these
+         * turn debugging on/off
+         */
+        $this->debug()->turnOn();
+        //  $this->debug()->turnOff();
+
+        /*
+         * set options . if modules set their own options, they will override these
          */
 
-        $this->setOption('FilterBypass', false); //bypasses all filters
+        $this->setOption('FilterBypass', false); //true will bypasses all filters
 
         $this->debug()->setFilter('Simpli_Hello_Module_Admin', false);
         $this->debug()->setFilter('Simpli_Hello_Module_Core', false);
@@ -46,18 +52,12 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         $this->debug()->setFilter('Simpli_Addons_Simpli_Forms_Module_Filter', false);
         $this->debug()->setFilter('Simpli_Addons_Simpli_Forms_Module_Form', false);
         $this->debug()->setFilter('Simpli_Addons_Simpli_Forms_Module_Elements', false);
-        $this->debug()->setFilter('Simpli_Addons_Simpli_Forms_Module_Theme', true);
+        $this->debug()->setFilter('Simpli_Addons_Simpli_Forms_Module_Theme', false);
 
 
 
 
 
-
-        /*
-         * turn debugging on/off
-         */
-        $this->debug()->turnOn();
-        //  $this->debug()->turnOff();
 
         /*
          * Graphiviz Visualization of the debug trace
@@ -274,7 +274,44 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
-     * Variable (Function Version)
+     * Variables
+     *
+     * Intended to be used with get_defined_vars() as the argument, but will work with any array. Takes an array, and outputs each of its indexes as if it were a separate variable, almost like extract, but wont impact the symbol table and is for display purposes only.
+     *
+     * @param none
+     * @return void
+     */
+    public function vars($defined_vars, $always_debug = false) {
+
+        /*
+         * gets the properties of the debug statement for filtering and output
+         */
+        $properties = $this->_getDebugStatementProperties(debug_backtrace());
+        $line = $properties['line'];
+        $class = $properties['class'];
+        $function = $properties['function'];
+        $file = $properties['file'];
+
+        /*
+         * check filters and debug state
+         */
+        if (!$this->_inFilters($class, $function, $always_debug)) {
+            return;
+        }
+
+        /*
+         * Check each element of the array, and output in the format $<index_name> = $value , using
+         * the normal $this->_v() method.
+         */
+        foreach ($defined_vars as $var_name => $var_value) {
+
+            $content = $this->_v('$' . $var_name . ' = ', $var_value, $always_debug, $line, $class, $function, $file);
+            $this->_sendToOutput($line, $class, $function, $file, $content);
+        }
+    }
+
+    /**
+     * Variable Wrapper
      *
      * Prints a Formatted Variable
      *
@@ -282,19 +319,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function v($message, $var, $always_debug = false) {
-
-
-        /**
-         * Short Description
-         *
-         * Long Description
-         *
-         * @param none
-         * @return void
-         */
-        #init
         $same_line = true;
-
         $properties = $this->_getDebugStatementProperties(debug_backtrace());
         $line = $properties['line'];
         $class = $properties['class'];
@@ -308,23 +333,74 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         if (!$this->_inFilters($class, $function, $always_debug)) {
             return;
         }
+        /*
+         * bump output to next line from the label if an array or object so the $message is easier to read
+         */
+        if (is_array($var) || is_object($var)) {
+            $same_line = false;
+        }
+        $content = $this->_v($message, $var, $always_debug, $line, $class, $function, $file);
 
 
+        $this->_sendToOutput($line, $class, $function, $file, $content, $same_line);
+    }
+
+    /**
+     * Variable
+     *
+     * Prints a Formatted Variable
+     *
+     * @param mixed
+     * @return void
+     */
+    private function _v($message, $var, $always_debug, $line, $class, $function, $file) {
+
+        #init
 
         if (is_array($var) || is_object($var)) {
-            $same_line = true;
-            //  ob_start();
-            $content = $message . '<pre>' . print_r($var, true) . '</pre>';
-//            echo "$message<br>";
+            /*
+             * Surround the element with a collapsible div, controlled by the debug-trace.js javascript
+             * The javascript requires a specific format (see javascript comments), so be careful when editing.
+             */
+            $template = '
+        <div style="display:inline-block;">
+            {TYPE}&nbsp;<a class="simpli_debug_citem" href="#"><span>More</span><span style="visibility:hidden;display:none">Less</span></a>
+            <div style="visibility:hidden;display:none;background-color:#E7DFB5;">
+                [{KEY_NAME}]=> {VALUE}
+            </div>
+        </div>
 
-            //   $content = ob_get_clean();
+';
+            $template = $this->getPlugin()->getTools()->getHtmlWithoutWhitespace($template);
+            $var = (array) $var; //cast objects as an array for the purpose of iterating through them for display. without this, objects will give you errors when when setting $var[$key]
+            foreach ($var as $key => $value) {
+                if (is_array($value) || is_object($value)) {
+                    $same_line = false;
+                    $type = ucwords(gettype($value)); //e.g.: 'Array'
+                    if (is_object($value)) {
+                        $type = get_class($value) . ' ' . $type;
+                    }
+                    $value_string = '<pre>' . trim(htmlspecialchars(print_r($value, true))) . '</pre>';
+                    $search = array('{TYPE}', '{KEY_NAME}', '{VALUE}');
+                    $replacements = array($type, $key, $value_string);
+                    $var[$key] = str_replace($search, $replacements, $template);
+                } else {
+                    $var[$key] = htmlspecialchars($value);
+                }
+            }
+
+
+
+
+
+
+            $content = $message . '<pre>' . print_r($var, true) . '</pre>';
         } else {
             $same_line = true;
             $content = "$message " . $var;
         }
 
-
-        $this->_sendToOutput($line, $class, $function, $file, $content, $same_line);
+        return $content;
     }
 
     /**
@@ -495,8 +571,6 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         //   return $output;
     }
 
-
-
     /**
      * Get Debug Statement Properties
      *
@@ -516,7 +590,6 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         return $props;
     }
 
-
     /**
      * Trace
      *
@@ -531,7 +604,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * @param int $levels The number of levels you want to display. default is 1, showing the current function. 0 will show all.
      * @return void
      */
-    public function t($always_debug = false, $levels = 1) {
+    public function t($always_debug = false, $levels = 1, $defined_vars = array()) {
         $properties = $this->_getDebugStatementProperties(debug_backtrace(), false);
 
 
@@ -542,6 +615,21 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         $ds_function = $properties['function'];
         $ds_file = $properties['file'];
 
+        /*
+         *
+         */
+
+        /*
+         * Check each element of the array, and output in the format $<index_name> = $value , using
+         * the normal $this->_v() method.
+         */
+        $ds_function_defined_vars = ''; //holds the defined vars html
+        foreach ($defined_vars as $var_name => $var_value) {
+
+            $content = $this->_v('$' . $var_name . ' = ', $var_value, $always_debug, $ds_line, $ds_class, $ds_function, $ds_file);
+            //        $defined_var = $this->_sendToOutput($ds_line, $ds_class, $ds_function, $ds_file, $content, false);
+            $ds_function_defined_vars.= '<br/>' . $content;
+        }
 
 
 
@@ -594,7 +682,13 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
 
 
+        /*
+         * if a mask is set, then use all levels
+         */
 
+        if (isset($_GET['simpli_debug_mask_class']) || (isset($_GET['simpli_debug_mask_method']))) {
+            $levels = 0; //this will provide a complete drilldown for the masked method
+        }
 
         /*
          * Slice the array for the number of levels we want
@@ -604,6 +698,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
         /*
          * slice array only if level provided is sane
+         * this means that 0 will always give you a full trace
          */
         $sliced_arr_btrace = ($levels > 0 && $levels < count($arr_btrace)) ? array_slice($arr_btrace, 0, $levels) : $arr_btrace;
 
@@ -624,20 +719,9 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
                 'line' => null,
                 'class' => null,
                 'function' => null,
-                'args' => null
+                'args' => null,
+                'function_comment' => null
             );
-            /*
-             * Remove Object Element
-             * in case you want to dump the backtrace for troubleshooting this function,we remove
-             * the object element in the backtrace array since we dont use it and it takes up
-             * too much ouput
-             */
-            unset($functions['object']); //remove object since they take up too much space to print
-
-
-
-
-
 
 
             /*
@@ -649,7 +733,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
             $current_class = $functions['class'];
             $current_file = $functions['file'];
             $current_args = $functions['args'];
-
+            $current_function_comment = $functions['function_comment'];
 
             /*
              * Change formatting paramaters when the class changes or ( in the case of a plain function call) when the
@@ -692,13 +776,22 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
             $fsig = $this->_getFunctionSignature($current_class, $current_function, $current_args, true);
 
-            $current_function_sig = $fsig['sig'];
+            $current_function_sig = $fsig['function_sig_simple'];
 
             /*
              * create the expanded args string from the $args array returned from the _getFunctionSignature function
              * Expanded args just means if the args are an array , they will formatted vertically for easier reading
              */
-            $expanded_args = '<pre>' . print_r($fsig['args'], true) . '</pre>';
+            $expanded_args = '<pre>' . htmlspecialchars(print_r($fsig['args'], true)) . '</pre>';
+            $expanded_args = '';
+            foreach ($fsig['args'] as $var_name => $var_value) {
+
+                $content = $this->_v('$' . $var_name . ' = ', $var_value, $always_debug, $ds_line, $ds_class, $ds_function, $ds_file);
+
+                $expanded_args.= '<br/>' . $content;
+            }
+
+
 
 
             //   $class_path = $fsig['class_path'];
@@ -726,17 +819,15 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
             if ($counter === ($loop_length - 1)) {
                 $trace_location = 'Line ' . $ds_line . ' in file ' . $ds_file;
-
             } else { //if not the last trace item, show the function location returned by _getFunctionSignature
                 $trace_location = $fsig['function_location'];
-
-
-
-
             }
 
+            /*
+             * Method Comment
+             */
 
-
+            $current_function_comment = $fsig['function_comment'];
 
             /* Link Text
              */
@@ -755,36 +846,64 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
                 }
             }
 
+            /*
+             * create explore_url
+             * @todo: need to add the get params in a more robust fashion - maybe use getTools() that would check if there is a ? using url_parts.
+             */
+            $explore_url = $_SERVER['REQUEST_URI'] . '&simpli_debug_mask_class=' . $current_class . '&simpli_debug_mask_method=' . $current_function;
 
-            $debug_trace_html_template = '<div style="padding:0px;margin:0px;"><div style="height:50px;background-color:{BACKGROUND_COLOR};border:1px solid grey;padding:5px;text-align:left;display: inline-block;margin-left:{MARGIN}px;margin-top:5px;">
-                <strong>{CLASS}->{FUNCTION}</strong>
+            $new_get_params = array(
+                'simpli_debug_mask_class' => $current_class,
+                'simpli_debug_mask_method' => $current_function,
+            );
+            $explore_url = $this->getPlugin()->getTools()->rebuildURL($new_get_params); //takes current url and uses the new get paramaters
 
-                <div >
-                    <a class="simpli_debug_more" href="#"><em>{LINK_TEXT}</em></a>
-                </div>
 
-                <div >
+            $debug_trace_html_template = '<div style="padding:0px;margin:0px;"><div style="background-color:{BACKGROUND_COLOR};border:1px solid grey;padding:5px;text-align:left;display: inline-block;margin-left:{MARGIN}px;margin-top:5px;">
+                <strong>{CLASS}::{FUNCTION_SIG}</strong>
 
-                    <div  class="simpli_debug_toggle" style="display:none;visibility:hidden;padding:0px;margin:0px;">
 
-                        <span><strong><em>Method Location:</em></strong>&nbsp;&nbsp;{TRACE_LOCATION}</span><br/>
+                    <a class="simpli_debug_citem" href="#"><span>Info</span><span style="visibility:hidden;display:none">Collapse</span></a>
+<a  href="{EXPLORE_URL}">Focus</a>
 
-                        <span><strong><em>Called From:</em></strong>&nbsp;&nbsp;Line {LINE} in  file {FILE_PATH} </span><br/>
 
-                        <span ><strong><em>Arguments:</em></strong>&nbsp;&nbsp;{EXPANDED_ARGS}</span><br/>
+
+                    <div  class="simpli_debug_toggle" style="display:none;visibility:hidden;padding:0px;margin:0px;"><!-- Collapsable -->
+                        <div style="margin:10px 0px 10px 0px;"> <strong style="font-size:xx-large">Description</strong></div>
+                        <p> {FUNCTION_COMMENT}</p>
+
+
+
+                        <div style="margin:10px 0px 10px 0px;"> <strong style="font-size:xx-large">Location</strong></div>
+                        <p> {TRACE_LOCATION}</p>
+
+                        <div style="margin:10px 0px 10px 0px;">  <strong style="font-size:xx-large">Called From</strong></div>
+                        <p > Line {LINE} in  {FILE_PATH}</p>
+                        <div style="margin:10px 0px 10px 0px;"> <strong style="font-size:xx-large">Arguments</strong></div>
+                        {EXPANDED_ARGS}
+                        <div style="margin:10px 0px 10px 0px;">  <strong style="font-size:xx-large">Defined Variables</strong></div>
+
+                        {DEFINED_VARS}
+
+
+
+
                         {VISUAL_BACKTRACE}
 
-</div>
-                </div>
+                    </div>
+
             </div>
         </div>';
+
+
+            $debug_trace_html_template = $this->getPlugin()->getTools()->getHtmlWithoutWhitespace($debug_trace_html_template); //this is necessary since there are pre tags in the source . You could just remove it manually using a macro in a text editor , like the 'remove unnecessary whitespace' utility in notepad++ , but using getHtmlWithoutWhitespace allows us to retain the whitespace in our source file so its human readable, while still removing it when its displayed.
             /*
              * Now populate the html template
              */
-            $search = array('{LINE}', '{FILE_PATH}', '{CLASS}', '{FUNCTION}', '{MARGIN}', '{BACKGROUND_COLOR}', '{TRACE_LOCATION}', '{EXPANDED_ARGS}', '{VISUAL_BACKTRACE}', '{LINK_TEXT}');
-            $replacements = array($current_line, $trace_file_path, $current_class, $current_function_sig, $margin, $background_color, $trace_location, $expanded_args, $visual_backtrace, $link_text);
+            $search = array('{LINE}', '{FILE_PATH}', '{CLASS}', '{FUNCTION_SIG}', '{MARGIN}', '{BACKGROUND_COLOR}', '{TRACE_LOCATION}', '{EXPANDED_ARGS}', '{VISUAL_BACKTRACE}', '{LINK_TEXT}', '{FUNCTION_COMMENT}', '{DEFINED_VARS}', '{EXPLORE_URL}');
+            $replacements = array($current_line, $trace_file_path, $current_class, $current_function_sig, $margin, $background_color, $trace_location, $expanded_args, $visual_backtrace, $link_text, $current_function_comment, $ds_function_defined_vars, $explore_url);
             $current_trace_html = str_replace($search, $replacements, $debug_trace_html_template);
-            $current_trace_html = $this->getPlugin()->getTools()->getHtmlWithoutWhitespace($current_trace_html); //this is necessary since for some reason, layout is impacted due to the whitespace in the source. You could remove it using the 'remove unnecessary whitespace' untility in notepad++ but this allows us to instead to retain the whitespace in our source so its human readable, while still removing it when its displayed.
+
 
 
             /*
@@ -840,7 +959,10 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
         //   die('$traces_html[count($traces_html) - 1] = ' . $traces_html[count($traces_html) - 1]);
         if ($counter > 1) {//only add backtrace for levels greater than 1
+            $header = '<div style = "margin:10px 0px 10px 0px;"> <strong style = "font-size:xx-large">Visual Backtrace</strong></div>';
+            //add header only if visual backtrace is not empty
             $visual_backtrace = $this->getVisualBacktrace($traces);
+            $visual_backtrace = ($visual_backtrace === '') ? '' : $header . $visual_backtrace;
             $traces_html[count($traces_html) - 1] = str_replace('{VISUAL_BACKTRACE}', $visual_backtrace, $traces_html[count($traces_html) - 1]);
         } else {
             $traces_html[count($traces_html) - 1] = str_replace('{VISUAL_BACKTRACE}', '', $traces_html[count($traces_html) - 1]);
@@ -855,6 +977,8 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
         $this->_sendToOutput($ds_line, $ds_class, $ds_function, $ds_file, $content);
     }
+
+
 
     /**
      * Get Function Signature
@@ -877,8 +1001,12 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         $args = array();
         $class_path = '';
         $function_path = '';
+        $function_sig = '';
+        $function_sig_simple;
+        $function_sig_super_simple;
         $function_line = '';
         $function_location = '';
+        $function_comment = '';
         /*
          * if a class was given, derive class path and arg names using
          * reflection. otherwise, set to null
@@ -941,15 +1069,28 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
                 $this->debug()->e('Exception Message = ' . $error_message);
             }
         } else {
-           $function_location = $class_path;
+            $function_location = $class_path;
+            /*
+             * Get the method comment
+             */
+            $method = new ReflectionMethod($class, $function);
+
+            $function_comment = '<p>' . str_replace('*', '<br/>*', $method->getDocComment()) . '</p>';
         }
 
-        $fsig['sig'] = $function . '(' . $arg_string . ')';
+        $function_sig = htmlspecialchars($function . '(' . $arg_string . ')'); //function name with arg names and values. convert html in arg values so you can view code.
+        $function_sig_simple = (is_array($arg_names)) ? $function . '(' . implode(',', $arg_names) . ')' : $function . '()'; //function name with argument names
+        $function_sig_super_simple = $function . '()'; //just the function name with parens, no arguments
+
+        $fsig['function_sig'] = $function_sig;
+        $fsig['function_sig_simple'] = $function_sig_simple;
+        $fsig['function_sig_super_simple'] = $function_sig_super_simple;
         $fsig['args'] = $args;
         $fsig['class_path'] = $class_path;
         $fsig['function_path'] = $function_path;
         $fsig['function_line'] = $function_line;
         $fsig['function_location'] = $function_location;
+        $fsig['function_comment'] = $function_comment;
 
         return $fsig;
     }
@@ -1113,9 +1254,10 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
-     * Short Description
+     * Send to Output
      *
-     * Long Description
+     * Formats and sends a debug message to browser output if configured for inline debugging, and makes it
+     * available for the footer or console output
      *
      * @param none
      * @return void
@@ -1141,14 +1283,17 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         $group_label = $this->_getGroupLabel($class, $function, $file);
         $this->_addMessageToQueue($content, $group_label, null, true);
         $this->_echoInline($group_label, $content);
+
+        $result['group_label'] = $group_label;
+        $result['content'] = $content;
+
+        return $result;
     }
 
     /**
-     * Collects the debug messages for later printout by javascript or php.
+     * Add Message To Queue
      *
-     * Long Description
-
-
+     *  Collects the debug messages for later printout by javascript or php.
      * @param string $message The debug message to add to the $debug_messages array
      * @param string $group_name (optional) If specified, can be used as a flag to indent or group the message.
      * @param bool $console_output Whether Messages will be written to the javascript console. This helps prevent firebug from reaching its log limit.
@@ -1307,6 +1452,34 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         if ($this->isOff()) {
             return false;
         }
+
+        /*
+         * Check for mask
+         * A mask blocks all other debug output and shows only a single requested method
+         * as determined by the $_GET variables
+         */
+//wpdev.com/wp-admin/admin.php?page=simpli_hello_menu30_test&simpli_debug_mask_class=Simpli_Addons_Simpli_Forms_Module_Form&simpli_debug_mask_method=renderElement
+        //   $_GET['simpli_debug_mask_class'] = 'Simpli_Addons_Simpli_Forms_Module_Form';
+        //   $_GET['simpli_debug_mask_method'] = 'renderElement';
+
+        if (isset($_GET['simpli_debug_mask_class'])) {
+            if ($class === $_GET['simpli_debug_mask_class']) {
+
+                if (isset($_GET['simpli_debug_mask_method'])) {
+                    if ($function === $_GET['simpli_debug_mask_method']) {
+                        return true; //masks the class/method
+                    } else {
+                        return false; //returns false if a method is set, but does not match the mask
+                    }
+                } else {
+
+                    return true;  // return true if class matches, but no method given (wildcard method)
+                }
+            } else {
+                return false; //return false if class is set, but does not match the mask
+            }
+        }
+
 
         /*
          * If Filter Bypass is set to true,
@@ -1691,7 +1864,6 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
             /*
              * Graphiviz Include Path
              */
-
             'graphviz_include_path' => 'Image/GraphViz.php',
             /*
              * Whether graphviz is enabled
@@ -1721,6 +1893,8 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
                 'require_once',
                 'include',
                 'include_once',
+                'do_action',
+                'do_meta_boxes',
                 'do_shortcode',
                 'load_template',
                 'locate_template',

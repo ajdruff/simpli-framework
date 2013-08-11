@@ -47,7 +47,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return void
      */
     public function createForm($properties) {
-        $this->debug()->t();
+        //$this->debug()->t(true,1);
 
 
         $defaults = array(
@@ -220,9 +220,20 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         return $this->_form;
     }
 
-    public function renderElement($scid, $atts, $defaults) {
-        $this->debug()->t();
 
+    /**
+     * Render Element
+     *
+     * Renders the element into HTML using its template and user supplied attributes
+     *
+     * @param $scid
+     * @param $atts
+     * @param $defaults
+     * @return string (if used in a shortcode) or void if used directly as it echos its output
+     */
+    public function renderElement($scid, $atts, $defaults) {
+
+     
 
 
 
@@ -324,6 +335,13 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         if ($this->_form['form']['is_shortcode'] === false) {
             echo $processed_template;
         }
+
+
+
+
+
+        $this->debug()->t(true, 1, get_defined_vars());
+
         return $processed_template;
     }
 

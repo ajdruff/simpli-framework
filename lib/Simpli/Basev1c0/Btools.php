@@ -86,12 +86,10 @@ class Simpli_Basev1c0_Btools {
 //
 //          echo '<pre>';
 //
-
 //          echo '</pre>';
 //
 //                    echo '<pre>';
 //
-
 //          echo '</pre>';
         // $dependent_handles = $dependencies;//
         $dependent_handles = array_keys($dependencies); //makes the keys in dependencies their own array
@@ -116,7 +114,6 @@ class Simpli_Basev1c0_Btools {
                             $requirements_met = false; // then requirement is not met
                         }
                         if (!in_array($required_handle, array_keys($todo_list)) && !in_array($required_handle, $sorted_handles)) { //if required_handle isnt on todo list, flag missing dependency or we will loop forever since the handle dependent on it will never be satisfied.
-
                             $missing_dependency = true;
                         }
                     }
@@ -129,7 +126,6 @@ class Simpli_Basev1c0_Btools {
 
                         unset($todo_list[$handle]); //if required handle isnt on hte list at all, we cant include the handle that relies on it, so remove it.
                     }
-
                 }
             }
         }
@@ -139,14 +135,111 @@ class Simpli_Basev1c0_Btools {
     }
 
     /**
+     * Rebuild Url
+     *
+     * Returns the current or provided url, adding new or, replacing existing, $_GET url paramaters
+     *
+     * @param array new values for $_GET . Existing values will remain
+     * @return string $url The url
+     */
+    public function rebuildURL($get_args, $url = null) {
+
+        if (is_null($url)) {
+            $url = $_SERVER['REQUEST_URI'];
+        }
+        $existing_url_parts = parse_url($url);
+
+
+
+        $existing_get_vars = array();
+        /*
+         * take the query string in url parts
+         * and create an array from it
+         * by first splitting it by the ampersand
+         * and then iterating through that array to and split its elements by the = sign
+         */
+        $arr_existing_query_parts = explode('&', $existing_url_parts['query']); //creates {'myvar=myval','myvar2=myval2',etc}
+
+        foreach ($arr_existing_query_parts as $arr_existing_query_part) {
+            $namevalue = explode('=', $arr_existing_query_part); //split into {'name'=>var}
+            $name = $namevalue[0];
+            $value = $namevalue[1];
+            $existing_get_vars[$name] = $value;
+        }
+
+
+
+        $defaults = array(
+            'scheme' => null,
+            'host' => null,
+            'path' => null,
+            'query' => null,
+        );
+        $url_parts = parse_url($url); //creates an array of the different parts of the url
+        //$url_parts = array_intersect_key(array_merge($defaults, $url_parts), $defaults); //make sure the indexes we need are there or use their defaults
+
+        $url_parts = $this->defaultsScreen($defaults, $url_parts);
+
+
+
+
+
+
+        $get_args = array_merge($existing_get_vars, $get_args); //merge existing GET paramaters
+
+
+
+        $url_parts['query'] = http_build_query($get_args); //replace the query string part with a new query string using the new values
+
+
+
+
+
+
+
+
+        $result = $this->http_build_url($url_parts); //rebuild the url with the new parts;
+
+
+        return $result;
+    }
+
+    /**
+     * defaultsScreen
+     *
+     * Takes an array and takes only those elements whose indexes match one in the defaults array, then fills in any gaps with the default values
+     *
+     * @param array $defaults An associative array of default name/value pairs
+     * @param array $variables An associative array of name/value pairs
+     * @return array An array that has only the indexes that are listed in the defaults array and values that are supplied by either defaults or the provided $variables array
+     */
+    public function defaultsScreen($defaults, $array) {
+        return (array_intersect_key(array_merge($defaults, $array), $defaults));
+    }
+
+    /**
      * Given an array in the form of parse_url result, builds a url
      *
      * @param array $http_array
      */
     public function http_build_url($url_parts) {
 
+        $defaults = array(
+            'scheme' => null,
+            'host' => null,
+            'path' => null,
+            'query' => null,
+        );
 
-        $url = $url_parts['scheme'] . '://' . $url_parts['host'] . $url_parts['path'] . '?' . $url_parts['query'];
+        $url_parts = $this->defaultsScreen($defaults, $url_parts); //make sure the indexes we need are there or use their defaults
+
+
+
+
+        $scheme = (trim($url_parts['scheme']) !== '') ? $url_parts['scheme'] . '://' : '';
+        $host = (trim($url_parts['host']) !== '') ? $url_parts['host'] : '';
+        $url = $scheme . $host . $url_parts['path'] . '?' . $url_parts['query'];
+
         return($url);
     }
 
@@ -318,12 +411,13 @@ class Simpli_Basev1c0_Btools {
      *
      * Returns htmls without any unneccessary whitespace. Should not affect display strings
      * There are times this is required so that whitespace doesnt impact layout.
+     * Be carefule when using this function! it will hang on some strings, especially if very long. try to limit its usage.
      * ref:http://stackoverflow.com/a/5324014
      * @param none
      * @return void
      */
     public function getHtmlWithoutWhitespace($html) { //
-        ini_set("pcre.recursion_limit", "16777");  // 8MB stack. *nix
+        //ini_set("pcre.recursion_limit", "16777");  // 8MB stack. *nix //you can try using this, but better just to use small strings
         $re = '%# Collapse whitespace everywhere but in blacklisted elements.
         (?>             # Match all whitespans other than single space.
           [^\S ]\s*     # Either one [\t\r\n\f\v] and zero or more ws,

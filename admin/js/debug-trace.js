@@ -1,43 +1,78 @@
 /**
  * Debug Trace
  *
- * Hides or Displays a 'more' debug block on click
+ * Functions supporting the Debug module trace method
  * Always load this in the header
  * @package SimpliFramework
  * @subpackage SimpliHello
  */
 
 
-    simpli.hello.bind_debug_events = function()
-{
- 
-    var previous_trace_link_text = ''; //remembers the previous link text so we can revert to it when we collapse the trace
-    var less_link_text = '<em>Less</em>';
-    jQuery('.simpli_debug_more').click(function(e) {
+
+/**
+ * Binds a collapsible item's click events
+ *
+ * This script will toggle collapse/expand divs between hidden and visible states
+ * Usage: Use HTML in the following format (Example below). The content must be surrounded by a hidden div which is in turn surrounded by a div that contains an anchor element, and 2 spans which contain the anchor text that holds the expand/collapse text.
+ * Note that the Expand Span element must always come before the Collapse element
+ * For a working example, see the v() method in the Debug module.
+ *         <div style="display:inline-block;">
+ <a class="simpli_debug_citem" href="#"><span>More</span><span style="visibility:hidden;display:none">Less</span></a>
+ <div style="visibility:hidden;display:none;">
+ {CONTENT}
+ </div>
+ </div>
+ * @package MintForms
+ * @since 0.1.1
+ * @uses
+ * @param string $content The shortcode content
+ * @return string The parsed output of the form body tag
+ */
+
+simpli.hello.debug_bind_collapse_expand_events =
+function()
+        {
+
+
+
+    jQuery('.simpli_debug_citem').click(function(e) {
 
         e.preventDefault();
 
 
-        el = jQuery(this).parent().parent().find('.simpli_debug_toggle');
+        el = jQuery(this).parent().find('div:first');//get the child div of the parent div of the <a> tag >
+        anchor_text_expand_element = jQuery(this).find('span:first');//.html();
+
+        anchor_text_collapse_element = anchor_text_expand_element.next('span');
 
         if (el.css('visibility') === 'visible') {
-
+            /*
+             * If already visible, hide it and update the anchor text
+             */
             el.css('visibility', 'hidden').css('display', 'none');
-            jQuery(this).html(previous_trace_link_text);
+            anchor_text_collapse_element.css('visibility', 'hidden').css('display', 'none');
+            anchor_text_expand_element.css('visibility', 'visible').css('display', 'inline');
         }
         else {
-            previous_trace_link_text = jQuery(this).html();
+            /*
+             * If not visible, make it visible and update the anchor text
+             */
+
 
             el.css('visibility', 'visible').css('display', 'block')
 
-            jQuery(this).html(less_link_text);
+            anchor_text_collapse_element.css('visibility', 'visible').css('display', 'inline');
+            anchor_text_expand_element.css('visibility', 'hidden').css('display', 'none');
         }
-        });
+    });
 
 }
 
 
+
+
 /*
- * Must come after function definition and not surrounded by ready
+ * Bind the collapse/expand events for the $this->debug()->v function
  */
-simpli.hello.bind_debug_events();
+
+simpli.hello.debug_bind_collapse_expand_events();

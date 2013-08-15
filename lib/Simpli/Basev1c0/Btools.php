@@ -178,7 +178,7 @@ class Simpli_Basev1c0_Btools {
         $url_parts = parse_url($url); //creates an array of the different parts of the url
         //$url_parts = array_intersect_key(array_merge($defaults, $url_parts), $defaults); //make sure the indexes we need are there or use their defaults
 
-        $url_parts = $this->defaultsScreen($defaults, $url_parts);
+        $url_parts = $this->screenDefaults($defaults, $url_parts);
 
 
 
@@ -205,7 +205,7 @@ class Simpli_Basev1c0_Btools {
     }
 
     /**
-     * defaultsScreen
+     * screenDefaults
      *
      * Takes an array and takes only those elements whose indexes match one in the defaults array, then fills in any gaps with the default values
      *
@@ -213,7 +213,7 @@ class Simpli_Basev1c0_Btools {
      * @param array $variables An associative array of name/value pairs
      * @return array An array that has only the indexes that are listed in the defaults array and values that are supplied by either defaults or the provided $variables array
      */
-    public function defaultsScreen($defaults, $array) {
+    public function screenDefaults($defaults, $array) {
         return (array_intersect_key(array_merge($defaults, $array), $defaults));
     }
 
@@ -231,7 +231,7 @@ class Simpli_Basev1c0_Btools {
             'query' => null,
         );
 
-        $url_parts = $this->defaultsScreen($defaults, $url_parts); //make sure the indexes we need are there or use their defaults
+        $url_parts = $this->screenDefaults($defaults, $url_parts); //make sure the indexes we need are there or use their defaults
 
 
 

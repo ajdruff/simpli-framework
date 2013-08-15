@@ -183,10 +183,20 @@ class Simpli_Basev1c0_Addon {
      * @return void
      */
     public function debug() {
-
+        /*
+         * If no debug object, attempt to load it
+         * If it didnt load, return a phantom object instead, effectively
+         * disabling any debug calls but not creating any errors
+         *
+         */
         if (is_null($this->_debug)) {
-            $this->_debug = $this->getPlugin()->getModule('Debug');
+            $isLoaded = $this->_debug = $this->getPlugin()->getModule('Debug', false);
+            if ($isLoaded === false) {
+
+                $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
+            }
         }
+
         return $this->_debug;
     }
 

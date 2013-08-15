@@ -45,6 +45,9 @@ function()
 
         anchor_text_collapse_element = anchor_text_expand_element.next('span');
 
+
+
+
         if (el.css('visibility') === 'visible') {
             /*
              * If already visible, hide it and update the anchor text
@@ -58,12 +61,13 @@ function()
              * If not visible, make it visible and update the anchor text
              */
 
-
+           
             el.css('visibility', 'visible').css('display', 'block')
 
             anchor_text_collapse_element.css('visibility', 'visible').css('display', 'inline');
             anchor_text_expand_element.css('visibility', 'hidden').css('display', 'none');
         }
+
     });
 
 }
@@ -74,5 +78,7 @@ function()
 /*
  * Bind the collapse/expand events for the $this->debug()->v function
  */
+
+
 
 simpli.hello.debug_bind_collapse_expand_events();

@@ -59,7 +59,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
 
         $this->setFilter($properties['filter']);
 
- $this->getAddon()->getModule('Theme')->setTheme($properties['theme']);
+        $this->getAddon()->getModule('Theme')->setTheme($properties['theme']);
 
 
         if (!is_array($properties)) {
@@ -220,7 +220,6 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         return $this->_form;
     }
 
-
     /**
      * Render Element
      *
@@ -232,8 +231,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return string (if used in a shortcode) or void if used directly as it echos its output
      */
     public function renderElement($scid, $atts, $defaults) {
+        $this->debug()->t(true, 1);
 
-     
 
 
 
@@ -337,10 +336,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         }
 
 
-
-
-
-        $this->debug()->t(true, 1, get_defined_vars());
+        $this->debug()->definedVars(get_defined_vars(), true);
 
         return $processed_template;
     }

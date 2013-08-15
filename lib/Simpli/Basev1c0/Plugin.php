@@ -294,10 +294,20 @@ class Simpli_Basev1c0_Plugin {
      * @return void
      */
     public function debug() {
-
+        /*
+         * If no debug object, attempt to load it
+         * If it didnt load, return a phantom object instead, effectively
+         * disabling any debug calls but not creating any errors
+         *
+         */
         if (is_null($this->_debug)) {
-            $this->_debug = $this->getModule('Debug');
+            $isLoaded = $this->_debug = $this->getPlugin()->getModule('Debug', false);
+            if ($isLoaded === false) {
+
+                $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
+            }
         }
+
         return $this->_debug;
     }
 
@@ -1373,10 +1383,11 @@ class Simpli_Basev1c0_Plugin {
      * e.g.: 'Admin' loads from '/simpli/hello/Module/Admin.php'
      *
      * @author Andrew Druffner
-     * @param string $module_name
+     * @param string $module_name The name of the module
+     * @param boolean $halt_on_fail True = will die if cant load module. False will return 'false' if module failed to load. This allows you to let the plugin silently ignore modules that are missing, for example, in the case of the debug module, and handle the failure
      * @return mixed False if failed to load module, module object otherwise
      */
-    public function loadModule($module_name) {
+    public function loadModule($module_name, $halt_on_fail = true) {
 
 
 
@@ -1387,7 +1398,7 @@ class Simpli_Basev1c0_Plugin {
          */
         if (!is_array($available_modules) || !isset($available_modules[$module_name])) {
             $this->getLogger()->log('unable to load Module ' . $module_name . ' , since it is an inactive module');
-            return null;
+            return false;
         }
 
 
@@ -1432,7 +1443,11 @@ class Simpli_Basev1c0_Plugin {
                 $module_object->init();
                 $this->getLogger()->log('Initialized Plugin Module ' . $this->getSlug() . '/' . $module_object->getName());
             } catch (Exception $e) {
-                die('Unable to load Module: \'' . $module_name . '\'. ' . $e->getMessage());
+                if ($halt_on_fail) {
+                    die('Unable to load Module: \'' . $module_name . '\'. ' . $e->getMessage());
+                } else {
+                    return false;
+                }
             }
         }
 

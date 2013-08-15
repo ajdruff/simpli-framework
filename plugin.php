@@ -70,8 +70,8 @@ $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include u
 //(optional)
 $simpli_hello->setDebug(
         array(
-            'consolelog' => true  // true/false Turn on Logging to Javascript console for php logs
-            , 'js' => true // true/false Turn on Logging to Javascript console for javascript logs
+            'consolelog' => false  // true/false Turn on Logging to Javascript console for php logs
+            , 'js' => false // true/false Turn on Logging to Javascript console for javascript logs
             , 'src' => false  // true/false Whether to use the full source for javascript or just the minimized versions
             , 'filelog' => false // true/false Turn on Logging to File for php logs
         )

@@ -13,8 +13,8 @@
  * 2) log to either inline or footer, but not both
  * 3) if filter bypass is set to true, set it to false
  * 4) set the module filters to true only for those modules that you really need.
- * 5) if all else fails, set all filters to off, and go to the function that you need, and set $always_debug to true for those log statements that you need.
-  * 7) setOption('show_objects',false) ( this is the default)
+ * 5) if all else fails, set all filters to off, and go to the function that you need, and set $force_output to true for those log statements that you need.
+ * 7) setOption('show_objects',false) ( this is the default)
  *  7) setOption('show_arrays',false) This will simply not display arrays when using logVars to display defined variables.
  * 8) do not increase timeout or memory , as this just invites abuse and can be a security hazard.
  *
@@ -47,7 +47,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
          * set options . if modules set their own options, they will override these
          */
 
-        $this->setOption('FilterBypass', true); //true will bypasses all filters, logging everything
+        $this->setOption('FilterBypass', false); //true will bypasses all filters, logging everything
 
         $this->debug()->setFilter('Simpli_Hello_Module_Admin', false);
         $this->debug()->setFilter('Simpli_Hello_Module_Core', true);
@@ -112,13 +112,14 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
 
         /*
-         * Debug Outpt
+         * Debug Output
          * Where you want to send the log output
          */
         $this->setOption('output_to_inline', true);
         $this->setOption('output_to_footer', false);
         $this->setOption('output_to_file', false);
         $this->setOption('output_to_console', false);
+        $this->setOption('log_file_path', $this->getPlugin()->getDirectory() . '/debug.log.txt');
 
 
 
@@ -166,11 +167,11 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
         /*
          * Line Numbers
-         * You can also change the template with line_numbers_prefix_template like this:
-         * $this->setOption('line_numbers_prefix_template','<em>{FUNCTION}/{LINE}</em>&nbsp;')
+         * You can also change the template with browser_prefix_template like this:
+         * $this->setOption('browser_prefix_template','<em>{FUNCTION}/{LINE}</em>&nbsp;')
          */
-        $this->setOption('line_numbers_prefix_enabled', true);
-        $this->setOption('line_numbers_prefix_template', '<em>{FUNCTION}/{LINE}</em>&nbsp;');
+        $this->setOption('browser_prefix_enabled', true);
+        $this->setOption('browser_prefix_template', '<em>{FUNCTION}/{LINE}</em>&nbsp;');
     }
 
     /**
@@ -252,7 +253,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return void
      */
-    public function stop($always_debug = false, $condition = true, $condition_message = '') {
+    public function stop($force_output = false, $condition = true, $condition_message = '') {
 
         $properties = $this->_getDebugStatementProperties(debug_backtrace());
         $line = $properties['line'];
@@ -260,7 +261,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         $method = $properties['method'];
         $file = $properties['file'];
 
-        if (!$this->_inFilters($class, $method, $always_debug)) {
+        if (!$this->_inFilters($class, $method, $force_output)) {
             return;
         }
         $stop_message = ' <div style="color:red">Debug Stop - to continue script, remove the stop() function or edit its condition on line ' . $line . ' in file ' . basename($file) . ' <br/><span style="color:black;">(' . $file . ' )' . ' </span></div>';
@@ -276,6 +277,159 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         //eval(($condition) ? "die ('$stop_message');" : 'echo (\'\');');
     }
 
+    public function __call($methodName, $args) {
+
+        switch ($methodName) {
+            case 'log':
+        }
+        // Note: value of $name is case sensitive.
+        echo "Calling object method '$name' "
+        . implode(', ', $arguments) . "\n";
+    }
+
+    /**
+     * Log to Browser
+     *
+     * Log content to browser
+     *
+     * @param $content Content to be logged
+     * @param $force_output Whether to override filters and force output
+     * @return void
+     */
+    public function logb($content, $force_output = false) {
+
+        $properties = $this->_getDebugStatementProperties(debug_backtrace());
+        $line = $properties['line'];
+        $class = $properties['class'];
+        $method = $properties['method'];
+        $file = $properties['file'];
+
+
+
+        /*
+         * check filters and debug state
+         */
+        if (!$this->_inFilters($class, $method, $force_output)) {
+            return;
+        }
+        _log($content, $line, $file, $class, $method, $use_prefix = true, $target = 'browser');
+    }
+    /**
+     * Log  to Console
+     *
+     * Log content to console
+     *
+     * @param $content Content to be logged
+     * @param $force_output Whether to override filters and force output
+     * @return void
+     */
+    public function logc($content, $force_output = false) {
+
+        $properties = $this->_getDebugStatementProperties(debug_backtrace());
+        $line = $properties['line'];
+        $class = $properties['class'];
+        $method = $properties['method'];
+        $file = $properties['file'];
+
+
+
+        /*
+         * check filters and debug state
+         */
+        if (!$this->_inFilters($class, $method, $force_output)) {
+            return;
+        }
+        $this->_log($content, $line, $file, $class, $method, $use_prefix = true, $target = 'console', $type = 'info');
+    }
+
+    /**
+     * Log error to console
+     *
+     * Log error to console
+     *
+     * @param $content Content to be logged
+     * @param $force_output Whether to override filters and force output
+     * @return void
+     */
+    public function logcError($content, $force_output = false) {
+
+        $properties = $this->_getDebugStatementProperties(debug_backtrace());
+        $line = $properties['line'];
+        $class = $properties['class'];
+        $method = $properties['method'];
+        $file = $properties['file'];
+
+
+
+        /*
+         * check filters and debug state
+         */
+        if (!$this->_inFilters($class, $method, $force_output)) {
+            return;
+        }
+        $this->_log($content, $line, $file, $class, $method, $use_prefix = true, $target = 'console', $type = 'error');
+    }
+
+    /**
+     * Log to File
+     *
+     * Log content to file
+     *
+     * @param $content Content to be logged
+     * @param $force_output Whether to override filters and force output
+     * @return void
+     */
+    public function logf($content, $force_output = false) {
+
+
+
+
+        $properties = $this->_getDebugStatementProperties(debug_backtrace());
+        $line = $properties['line'];
+        $class = $properties['class'];
+        $method = $properties['method'];
+        $file = $properties['file'];
+
+
+
+        /*
+         * check filters and debug state
+         */
+        if (!$this->_inFilters($class, $method, $force_output)) {
+            return;
+        }
+        $this->_log($content, $line, $file, $class, $method, $use_prefix = true, $target = 'file');
+    }
+
+    /**
+     * Log
+     *
+     * Log content to all targets
+     *
+     * @param none
+     * @return void
+     */
+    public function log($content, $force_output = false) {
+
+
+
+        $properties = $this->_getDebugStatementProperties(debug_backtrace());
+        $line = $properties['line'];
+        $class = $properties['class'];
+        $method = $properties['method'];
+        $file = $properties['file'];
+
+
+
+        /*
+         * check filters and debug state
+         */
+        if (!$this->_inFilters($class, $method, $force_output)) {
+            return;
+        }
+        $this->_log($content, $line, $file, $class, $method, $use_prefix = true, $target = 'all');
+    }
+
     /**
      * Logs a message
      *
@@ -284,7 +438,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return void
      */
-    public function log($browser_html, $console_text = null, $always_debug = false) {
+    public function _logOLD($browser_html, $console_text = null, $force_output = false) {
 
         /*
          * if you want to log only to console, leave $html blank and add $text.
@@ -306,7 +460,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         /*
          * check filters and debug state
          */
-        if (!$this->_inFilters($class, $method, $always_debug)) {
+        if (!$this->_inFilters($class, $method, $force_output)) {
             return;
         }
 
@@ -322,11 +476,17 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * Log Extract
      *
      * Takes an array, and outputs each of its indexes as if it were a separate variable,  like extract(), but wont impact the symbol table and is for display purposes only.
+     * Output is logged only to browser due to potential for a large amount of output and expected usage as a tracing tool.
+     * example: logExtract(array('fruit1'=>'apple','fruit2'=>'orange'))
+     * will output:
+     * $fruit1='apple'
+     * $fruit2='orange'
      *
-     * @param none
+     * @param array $array_vars Any associative array in which you'd like each index to be shown as its own variable with value equal to the element's value
+     * @param boolean $force_output True Overrides filter settings
      * @return void
      */
-    public function logExtract($array_vars, $always_debug = false) {
+    public function logExtract($array_vars, $force_output = false) {
 
         /*
          * gets the properties of the debug statement for filtering and output
@@ -342,7 +502,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         /*
          * check filters and debug state
          */
-        if (!$this->_inFilters($class, $method, $always_debug)) {
+        if (!$this->_inFilters($class, $method, $force_output)) {
             return;
         }
 
@@ -352,25 +512,29 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
          */
         foreach ($array_vars as $var_name => $var_value) {
 
-            $html = $this->_logVar('$' . $var_name . ' = ', $var_value, $always_debug);
-            $text = '';
-            $this->_log($line, $class, $method, $file, $html, $text, true);
+            $content = $this->_logVar('$' . $var_name . ' = ', $var_value, $force_output);
+
+
+
+            $this->_log($content, $line, $file, $class, $method, $use_prefix = true, $target = 'browser');
         }
     }
 
     /**
      * Logs a Variable
      *
-     * Prints a Formatted Variable
+     * Logs a variable to all output targets. Will format arrays and objects vertically for
+     * easier reading.
      *
-     * @param mixed
+     * @param mixed $var
      * @return void
      */
-    public function logVar($message, $var, $always_debug = false) {
-
-
-        $same_line = true;
-        $arr_btrace = $this->_debug_backtrace(false);
+    public function logVar($var, $force_output = false) {
+        /*
+         * derive the variable name from defined vars
+         */
+        $defined_vars = get_defined_vars();
+        $message = '$' . key($defined_vars) . ' = ';
 
         $properties = $this->_getDebugStatementProperties(debug_backtrace());
 
@@ -384,7 +548,54 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         /*
          * check filters and debug state
          */
-        if (!$this->_inFilters($class, $method, $always_debug)) {
+        if (!$this->_inFilters($class, $method, $force_output)) {
+            return;
+        }
+
+
+
+
+
+        /*
+         * bump output to next line from the label if an array or object so the $message is easier to read
+         */
+        if (is_array($var) || is_object($var)) {
+            $message = '<br/> ' . $message;
+        }
+
+        $content = $this->_logVar($message, $var, $force_output, true, true);
+
+
+        $this->_log($content, $line, $file, $class, $method, $use_prefix = true, $target = 'all');
+    }
+
+    /**
+     * Logs a Variable
+     *
+     * Logs a variable to the browser output target. Will format arrays and objects vertically for
+     * easier reading.
+     *
+     * @param mixed $var
+     * @return void
+     */
+    public function logVarb($var, $force_output = false) {
+
+
+
+
+        $properties = $this->_getDebugStatementProperties(debug_backtrace());
+
+
+        $line = $properties['line'];
+        $class = $properties['class'];
+        $method = $properties['method'];
+        $file = $properties['file'];
+
+
+        /*
+         * check filters and debug state
+         */
+        if (!$this->_inFilters($class, $method, $force_output)) {
             return;
         }
 
@@ -395,11 +606,97 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         if (is_array($var) || is_object($var)) {
             $message = '<br/> ' . $message;
         }
-        $html = $this->_logVar($message, $var, $always_debug, true, true);
-        $text = '';
+
+        $content = $this->_logVar($message, $var, $force_output, true, true);
 
 
-        $this->_log($line, $class, $method, $file, $html, $text, true);
+        $this->_log($content, $line, $file, $class, $method, $use_prefix = true, $target = 'browser');
+    }
+
+    /**
+     * Logs a Variable to the Console
+     *
+     * Logs a variable to the javascript console target. Will format arrays and objects vertically for
+     * easier reading.
+     *
+     * @param mixed $var
+     * @return void
+     */
+    public function logVarc($var, $force_output = false) {
+
+
+
+        $properties = $this->_getDebugStatementProperties(debug_backtrace());
+
+
+        $line = $properties['line'];
+        $class = $properties['class'];
+        $method = $properties['method'];
+        $file = $properties['file'];
+
+
+        /*
+         * check filters and debug state
+         */
+        if (!$this->_inFilters($class, $method, $force_output)) {
+            return;
+        }
+
+
+        /*
+         * bump output to next line from the label if an array or object so the $message is easier to read
+         */
+        if (is_array($var) || is_object($var)) {
+            $message = '\n' . $message;
+        }
+
+        $content = $this->_logVar($message, $var, $force_output, true, true);
+
+
+        $this->_log($content, $line, $file, $class, $method, $use_prefix = true, $target = 'console', $type = 'info');
+    }
+
+    /**
+     * Logs a Variable to a file
+     *
+     * Logs a variable to a file. Will format arrays and objects vertically for
+     * easier reading.
+     *
+     * @param mixed $var
+     * @return void
+     */
+    public function logVarf($var, $force_output = false) {
+
+
+
+        $properties = $this->_getDebugStatementProperties(debug_backtrace());
+
+
+        $line = $properties['line'];
+        $class = $properties['class'];
+        $method = $properties['method'];
+        $file = $properties['file'];
+
+
+        /*
+         * check filters and debug state
+         */
+        if (!$this->_inFilters($class, $method, $force_output)) {
+            return;
+        }
+
+
+        /*
+         * bump output to next line from the label if an array or object so the $message is easier to read
+         */
+        if (is_array($var) || is_object($var)) {
+            $message = '\n' . $message;
+        }
+
+        $content = $this->_logVar($message, $var, $force_output, true, true);
+
+
+        $this->_log($content, $line, $file, $class, $method, $use_prefix = true, $target = 'file');
     }
 
     /**
@@ -410,7 +707,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * @param mixed
      * @return void
      */
-    private function _logVar($message, $var, $always_debug, $show_arrays = null, $show_objects = null) {
+    private function _logVar($message, $var, $force_output, $show_arrays = null, $show_objects = null) {
 
         /*
          * If allow_arrays is not set explicitly, use the configured value
@@ -607,7 +904,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * @param array $arr_btrace The backtrace array produced by debug_backtrace()
      * @return void
      */
-    public function st($always_debug = false, $levels = 1) {
+    public function st($force_output = false, $levels = 1) {
 
 # init
         $previous_string = '';
@@ -642,7 +939,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         /*
          * check if in filters
          */
-        if (!$this->_inFilters($ds_class, $ds_method, $always_debug)) {
+        if (!$this->_inFilters($ds_class, $ds_method, $force_output)) {
 
             return;
         }
@@ -712,11 +1009,12 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * Log Variables
      *
      * Logs the variables returned by get_defined_vars
+     * Output is logged only to browser due to potential for a large amount of output and expected usage as a tracing tool.
      *
      * @param none
      * @return void
      */
-    public function logVars($arr_defined_vars = array(), $always_debug = false) {
+    public function logVars($arr_defined_vars = array(), $force_output = false) {
 
         /*
          * Check each element of the array, and output in the format $<index_name> = $value , using
@@ -725,7 +1023,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         $string_defined_vars = ''; //holds the defined vars html
         foreach ($arr_defined_vars as $var_name => $var_value) {
 
-            $content = $this->_logVar('$' . $var_name . ' = ', $var_value, $always_debug);
+            $content = $this->_logVar('$' . $var_name . ' = ', $var_value, $force_output);
 
 
 
@@ -738,7 +1036,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        if (!$this->_inFilters($props['class'], $props['method'], $always_debug)) {
+        if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
             return;
         }
 
@@ -773,11 +1071,12 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         $template = $this->getPlugin()->getTools()->getHtmlWithoutWhitespace($template);
 
 
-        $html = str_replace(array_keys($tags), array_values($tags), $template);
-        $text = 'Defined Vars = ' . ($string_defined_vars !== '') ? $string_defined_vars : $not_available_text;
+        $content = str_replace(array_keys($tags), array_values($tags), $template);
 
 
-        $this->_log($props['line'], $props['class'], $props['method'], $props['file'], $html, $text, false);
+
+
+        $this->_log($content, $props['line'], $props['file'], $props['class'], $props['method'], $use_prefix = false, $target = 'browser');
     }
 
     /**
@@ -788,29 +1087,30 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return void
      */
-    public function t($always_debug = false, $levels = 0) {
+    public function t($force_output = false, $levels = 0) {
         $arr_btrace = $this->_debug_backtrace();
         $ds_properties = $this->_getDebugStatementProperties(debug_backtrace());
 
-        if (!$this->_inFilters($ds_properties['class'], $ds_properties['method'], $always_debug)) {
+        if (!$this->_inFilters($ds_properties['class'], $ds_properties['method'], $force_output)) {
             return;
         }
         $this->_logTrace($ds_properties, $arr_btrace);
     }
 
     /**
-     * Trace Wrapper
+     * Log Trace Wrapper
      *
      * Wrapper around _logTrace to provide a more human readable method
+     * Because of huge amount of ouput, target is browser only
      *
      * @param none
      * @return void
      */
-    public function trace($always_debug = false, $levels = 0) {
+    public function logTrace($force_output = false, $levels = 0) {
         $arr_btrace = $this->_debug_backtrace();
         $ds_properties = $this->_getDebugStatementProperties(debug_backtrace());
 
-        if (!$this->_inFilters($ds_properties['class'], $ds_properties['method'], $always_debug)) {
+        if (!$this->_inFilters($ds_properties['class'], $ds_properties['method'], $force_output)) {
             return;
         }
         $this->_logTrace($ds_properties, $arr_btrace);
@@ -913,14 +1213,15 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
             $template = $this->getPlugin()->getTools()->getHtmlWithoutWhitespace($template);
 
             $visual_trace_html = str_replace(array_keys($tags), array_values($tags), $template);
-            $html = $non_visual_trace_html . $visual_trace_html;
+            $content = $non_visual_trace_html . $visual_trace_html;
         } else {
-            $html = $non_visual_trace_html;
+            $content = $non_visual_trace_html;
         }
 
-        $text = 'not-defined';
 
-        $this->_log($ds_properties['line'], $ds_properties['class'], $ds_properties['method'], $ds_properties['file'], $html, $text, false);
+
+
+        $this->_log($content, $ds_properties['line'], $ds_properties['file'], $ds_properties['class'], $ds_properties['method'], $use_prefix = false, $target = 'browser');
     }
 
     /**
@@ -929,7 +1230,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * Trace internal function , intended to be called from a wrapper. Outputs the callstack of a method
      *
      * @param array $ds_properties The returned properties from _getDebugStatementProperties
-     * @param boolean $always_debug Whether to always display regardless of filter settings
+     * @param boolean $force_output Whether to always display regardless of filter settings
      * @param int $levels The number of levels of the call stack to show. 0 to show all
      * @return array , 'backtrace' is html output , 'visual_backtrace' is the output from graphviz if enabled.
      */
@@ -1051,7 +1352,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
                 <strong>{CLASS}::{METHOD_SIG}</strong>
 
 
-                <a id="expand_info_{CLASS}{FUNCTION}_{COUNTER}" class="simpli_debug_citem simpli_debug_get_debug_info" href="#"><span>Info</span><span style="visibility:hidden;display:none">Collapse</span></a>
+                <a  class="simpli_debug_citem simpli_debug_get_debug_info" href="#"><span>Info</span><span style="visibility:hidden;display:none">Collapse</span></a>
 
 
 
@@ -1563,24 +1864,31 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
-     * Get Line Numbers Prefix
+     * Get Prefix
      *
-     * Gets the line number prefix as defined by the options
+     * Gets the log output prefix as defined by the options
      *
      * @param none
      * @return void
      */
-    private function _getLineNumbersPrefix($line, $class, $method, $file) {
+    private function _getPrefix($line, $class, $method, $file, $target) {
 
         $prefix = '';
-        $line_number_template = $this->getOption('line_numbers_prefix_template');
 
 
-        if ($this->getOption('line_numbers_prefix_enabled')) {
 
-            $search = array('{LINE}', '{CLASS}', '{FUNCTION}', '{FILE}');
-            $replacements = array($line, $class, $method, $file);
-            $prefix = str_replace($search, $replacements, $line_number_template);
+        if ($this->getOption($target . '_prefix_enabled')) {
+            $template = $this->getOption($target . '_prefix_template');
+            $tags = array(
+                '{PLUGIN_SLUG}' => $this->getPlugin()->getSlug(),
+                '{TIME}' => date($this->getOption('prefix_time_format')),
+                '{LINE}' => $line,
+                '{CLASS}' => $class,
+                '{METHOD}' => $method,
+                '{FILE}' => $file,
+            );
+
+            $prefix = str_replace(array_keys($tags), array_keys($values), $template);
         }
 
         return $prefix;
@@ -1589,26 +1897,23 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
     protected $_footer_log_handle = null;
 
     /**
-     * log
+     * Print to Browser
      *
-     * Adds a log entry to the log or outputs it to browser if inline debugging is on
+     * Prints a log entry inline and to the footer file
      *
-     * @param none
+     * @param array $log_entry The log entry
      * @return void
      */
-    protected function _log($line, $class, $method, $file, $html, $text, $use_prefix = true) {
+    private function _printToBrowser($log_entry) {
+
+        /*
+         * Print to Browser
+         */
 
 
-        $log_entry = compact('line', 'class', 'method', 'file', 'html', 'text', 'use_prefix');
-
-//        if ($this->getOption('output_to_footer') || $this->getOption('output_to_console')) {
-//            $this->_addToLog($line, $class, $method, $file, $html, $text, $use_prefix);
-//
-//
-//        }
-
-        $browser_output = $this->_formatForBrowser($log_entry);
-
+        if ($this->getOption('output_to_inline') || $this->getOption('output_to_footer')) {
+            $browser_output = $this->_formatForBrowser($log_entry);
+        }
         if ($this->getOption('output_to_inline')) {
             echo $browser_output;
         }
@@ -1626,20 +1931,155 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
             /*
              * write the string to it
              */
-            //  fwrite($tempFileOutHandle, $example);
-            /*
-             * return its path
-             */
-            //     static $counter;
-            //    $counter++;
-            //    $metaDatas = stream_get_meta_data($this->_footer_log_handle);
-            //    $footer_log_file_name = $metaDatas['uri'];
-
-
-
 
             fwrite($this->_footer_log_handle, '<br>' . $browser_output);
         }
+    }
+
+    protected $_console_log;
+
+    /**
+     * Print to Console
+     *
+     * Prints a log entry inline and to the console file
+     *
+     * @param array $log_entry The log entry
+     * @return void
+     */
+    private function _printToConsole($log_entry) {
+
+        /*
+         * Print to Console File
+         */
+
+
+
+
+        if ($this->getOption('output_to_console')) {
+
+
+            if ($log_entry['use_prefix']) {
+
+                /*
+                 * add prefix
+                 */
+
+                $prefix = $this->_getPrefix($log_entry['line'], $log_entry['class'], $log_entry['method'], $log_entry['file'], $log_entry['target']);
+                $log_entry['content'] = $prefix . $log_entry['content'];
+            }
+            $this->_console_log[] = $log_entry;
+
+
+
+//            /*
+//             * take same output that was echoed and save it to a temporary file that will be included at
+//             * upon script shutdown
+//             */
+//            if (is_null($this->_console_log_handle)) {
+//                $this->_console_log_handle = tmpfile(); //create a temporary file
+//            }
+//            $footer_log_handle = $this->_console_log_handle;
+//            /*
+//             * write the string to it
+//             */
+//
+//            fwrite($this->_footer_log_handle, '<br>' . $browser_output);
+        }
+    }
+
+    /**
+     * Print to File
+     *
+     * Prints a log entry inline and to the console file
+     *
+     * @param array $log_entry The log entry
+     * @return void
+     */
+    private function _printToFile($log_entry) {
+
+
+
+
+        if ($this->getOption('output_to_file')) {
+
+            $log_file_path = $this->getOption('log_file_path');
+
+            if ($log_entry['use_prefix']) {
+
+                /*
+                 * add prefix
+                 */
+
+                $prefix = $this->_getPrefix($log_entry['line'], $log_entry['class'], $log_entry['method'], $log_entry['file'], $log_entry['target']);
+                $log_entry['content'] = $prefix . $log_entry['content'];
+            }
+
+
+            /*
+             * write the string to it
+             */
+
+            file_put_contents($log_file_path, $log_entry['content'], FILE_APPEND); //, FILE_APPEND);
+        }
+    }
+
+    /**
+     * log
+     *
+     * Adds a log entry to the log or outputs it to browser if inline debugging is on
+     *
+     * @param string $line Line of the debug statement
+     * @param string $class Class containing the debug statement
+     * @param string $method Method or function containing the debug statement
+     * @param string $file File path containing the debug statement
+     * @param boolean $use_prefix Whether to use a prefix ( a line number template)
+     * @param string $target  'all','browser','console','file'
+     * @return void
+     */
+    protected function _log($content, $line, $file, $class, $method, $use_prefix, $target, $type) {
+
+
+        $log_entry = compact('line', 'class', 'method', 'file', 'content', 'use_prefix', 'target', 'type');
+
+
+        switch ($target) {
+
+            case 'browser':
+                if ($this->getOption('output_to_inline') || $this->getOption('output_to_footer')) {
+                    $this->_printToBrowser($log_entry);
+                }
+                break;
+            case 'file':
+                if ($this->getOption('output_to_file')) {
+                    $this->_printToFile($log_entry);
+                }
+                break;
+            case 'console':
+                if ($this->getOption('output_to_console')) {
+                    $this->_printToConsole($log_entry);
+                }
+                break;
+
+            case 'all':
+                if ($this->getOption('output_to_inline') || $this->getOption('output_to_footer')) {
+                    $this->_printToBrowser($log_entry);
+                }
+                if ($this->getOption('output_to_file')) {
+                    $this->_printToFile($log_entry);
+                }
+                if ($this->getOption('output_to_console')) {
+                    $this->_printToConsole($log_entry);
+                }
+                break;
+        }
+
+
+
+//        if ($this->getOption('output_to_footer') || $this->getOption('output_to_console')) {
+//            $this->_addToLog($line, $class, $method, $file, $html, $text, $use_prefix);
+//
+//
+//        }
     }
 
     /**
@@ -1673,7 +2113,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         if ($log_entry['use_prefix'] === true) {
 
 
-            $prefix = $this->_getLineNumbersPrefix($log_entry['line'], $log_entry['class'], $log_entry['method'], $log_entry['file']);
+            $prefix = $this->_getPrefix($log_entry['line'], $log_entry['class'], $log_entry['method'], $log_entry['file'], $log_entry['target']);
             $log_entry['html'] = $prefix . $log_entry['html'];
         }
 
@@ -1791,7 +2231,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return boolean
      */
-    protected function _inFilters($class, $method, $always_debug) {
+    protected function _inFilters($class, $method, $force_output) {
 
         //$args = func_get_args();
 
@@ -1804,6 +2244,14 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
             return false;
         }
 
+        /*
+         * Do not do any logging if ajax request
+         * AJAX check
+         */
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+            /* special ajax here */
+            return;
+        }
 
 
 
@@ -1819,7 +2267,7 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
         /*
          * Debug if always_debug is set to true
          */
-        if ($always_debug === true) {
+        if ($force_output === true) {
             return true;
         }
 
@@ -2208,6 +2656,10 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
              */
             'output_to_file' => false,
             /*
+             * Log File Location
+             */
+            'log_file_path' => $this->getPlugin()->getDirectory() . '/debug.log.txt',
+            /*
              * Output to Console
              * Whether to echo debug output to the javascript console
              */
@@ -2263,10 +2715,22 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
              */
             'excluded_functions_filter_enabled' => true,
             /*
-             * Line Number Template
+             * Prefix Template
+             * Available tags:
+             * {PLUGIN_SLUG}
+             * {TIME}
+             * {LINE}
+             * {CLASS}
+             * {METHOD}
+             * {FILE}
              */
-            'line_numbers_prefix_enabled' => true,
-            'line_numbers_prefix_template' => '<em>{FUNCTION}/{LINE}</em>&nbsp;'
+            'browser_prefix_enabled' => true,
+            'console_prefix_enabled' => true,
+            'file_prefix_enabled' => true,
+            'browser_prefix_template' => '<em>{METHOD}/{LINE}</em>&nbsp;',
+            'console_prefix_template' => '{TIME} | {PLUGIN_SLUG} :',
+            'file_prefix_template' => '{TIME} {METHOD}/{LINE}',
+            'prefix_time_format' => 'Y-m-d H:i:s',
         ); //end of options array
 
         if (isset($default_options[$option_name])) {
@@ -2320,24 +2784,31 @@ class Simpli_Hello_Module_Debug extends Simpli_Basev1c0_Plugin_Module {
      */
     function hookPrintLogToConsole() {
 
-        if (!$this->getOption('output_to_console')) {
-            return;
-        }
 
 
+        $code = "<script  type=\"text/javascript\">\n\tif ( typeof console === 'object' ) {\n";
+        $log = $this->_console_log;
 
-        $vars = json_encode($this->getLocalVars());
-        ?>
-                <script type='text/javascript'>
 
-                            var <?php echo $this->getSlug(); ?> = <?php echo $vars; ?>
+        foreach ($log as $log_entry) {
+            $log_text = $log_entry['content'];
 
-                        </script>
+            $log_text = "'" . addslashes($log_text) . "'";
 
-                <?php
+
+            if ($log_entry['type'] === 'info') {
+
+                $code .= "\t\tconsole.log(" . $log_text . ");\n";
+            } elseif ($log_entry['type'] === 'error') {
+
+                $code .= "\t\tconsole.error(" . $log_text . ");\n";
             }
+        }
+        $code .= "\t}\n</script>\n";
+        echo $code;
+    }
 
-//            protected $_log = null;
+    //            protected $_log = null;
 //
 //            /**
 //             * Get Log

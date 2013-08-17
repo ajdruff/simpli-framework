@@ -30,7 +30,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
             $this->debug()->t();
 
 
-            $this->debug()->e('$this->_templates is null, resetting to empty array');
+            $this->debug()->log('$this->_templates is null, resetting to empty array');
             $this->_templates = array();
         }
         return $this->_templates;
@@ -53,7 +53,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
             $result = NULL;
         }
 
-        $this->debug()->v('Result of getTemplates() = $this->_templates = ', $result);
+        $this->debug()->logVar('Result of getTemplates() = $this->_templates = ', $result);
 
         return $result;
     }
@@ -68,7 +68,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
         $this->debug()->t();
 
 
-        $this->debug()->v('setting template for ' . $template_name, $template_name);
+        $this->debug()->logVar('setting template for ' . $template_name, $template_name);
         $this->_templates[$template_name] = $template;
 
         return $this;
@@ -142,7 +142,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
             , 'checkboxes'
         );
 
-        $this->debug()->e('Loading Templates...');
+        $this->debug()->log('Loading Templates...');
 
         foreach ($supported_tags as $tag) {
 
@@ -150,11 +150,11 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
 
             if (!file_exists($template_path)) {
 
-                   $this->debug()->v('Skipping file $template_path = ', $template_path);
+                   $this->debug()->logVar('Skipping file $template_path = ', $template_path);
                 continue; //skip if no template
             }
 
-            $this->debug()->v('Loading File $template_path = ', $template_path);
+            $this->debug()->logVar('Loading File $template_path = ', $template_path);
             ob_start();
             /*
              * temporarily define a conveniance function
@@ -173,7 +173,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
 
         }
 
-           $this->debug()->v('$this->getTemplates() = ', $this->getTemplates());
+           $this->debug()->logVar('$this->getTemplates() = ', $this->getTemplates());
     }
 
     /**

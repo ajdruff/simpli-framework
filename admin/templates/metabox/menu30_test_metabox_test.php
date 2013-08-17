@@ -64,7 +64,7 @@ $f->el(array(
 
 
 
-$this->debug()->v('$f->getForm() = ', $f->getForm());
+$this->debug()->logVar('$f->getForm() = ', $f->getForm());
 ?>
 
 

@@ -118,6 +118,9 @@ class Simpli_Hello_Module_Menu30Test extends Simpli_Basev1c0_Plugin_Menu {
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                 , null //$metabox['args'] in callback function
         );
+
+
+        $this->debug()->logVars(get_defined_vars());
     }
 
 }

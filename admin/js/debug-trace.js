@@ -35,8 +35,8 @@ function()
 
 
 
-    jQuery('.simpli_debug_citem').click(function(e) {
-
+   
+    jQuery("a.simpli_debug_citem").click(function(e) {
         e.preventDefault();
 
 
@@ -61,7 +61,7 @@ function()
              * If not visible, make it visible and update the anchor text
              */
 
-           
+
             el.css('visibility', 'visible').css('display', 'block')
 
             anchor_text_collapse_element.css('visibility', 'visible').css('display', 'inline');

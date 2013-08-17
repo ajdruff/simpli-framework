@@ -1412,6 +1412,7 @@ class Simpli_Basev1c0_Plugin {
 
 
         $class = $this->getClassNamespace() . '_' . $this->DIR_NAME_MODULES . '_' . $module_name;
+        $module_object = new $class;
 //        $module_file_path = $available_modules[$module_name];
 //        require_once($module_file_path); # simpli-framework/lib/simpli/hello/Module/Admin.php
 //        echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style="color:blue;"> $module_file_path = ' . $module_file_path . '</strong>';
@@ -1425,12 +1426,12 @@ class Simpli_Basev1c0_Plugin {
         /*
          * Create the module object and attach it to $_modules
          */
-        if (!isset($this->_modules[$class]) || !is_object($this->_modules[$class]) || get_class($this->_modules[$class]) != $class) {
+        if (!isset($this->_modules[$module_name]) || !is_object($this->_modules[$module_name]) || get_class($this->_modules[$module_name]) != $class) {
             try {
                 /*
                  * create the module object
                  */
-                $module_object = new $class;
+
                 $this->setModule($module_name, $module_object);
                 /*
                  * set the plugin reference

@@ -56,7 +56,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
      * @return void
      */
     public function text($atts) {
- $this->debug()->t(true, 0, get_defined_vars());
+ $this->debug()->t();
 
 
 
@@ -69,10 +69,10 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
             , 'template_id' => __FUNCTION__
         );
 
-   $this->debug()->definedVars(get_defined_vars(), true);
+
         $result = $this->getAddon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults);
 
-
+  $this->debug()->logVars(get_defined_vars());
         return($result);
     }
     /**
@@ -83,7 +83,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
      * @return void
      */
     public function select($atts) {
-         $this->debug()->t(true, 1, get_defined_vars());
+         $this->debug()->t();
 
 
 
@@ -98,7 +98,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
             , 'template_id' => __FUNCTION__
         );
 
-        $this->debug()->v('get_defined_vars() = ', get_defined_vars(), true);
+
         return($this->getAddon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
     }
 

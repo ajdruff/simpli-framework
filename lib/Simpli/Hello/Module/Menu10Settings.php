@@ -191,6 +191,8 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                 , array('url' => 'http://www.simpliwp.com/simpli-framework/metabox-donate-example/') //$metabox['args'] in callback function
         );
+
+        
     }
 
     /**

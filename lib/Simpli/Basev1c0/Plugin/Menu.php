@@ -106,20 +106,21 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      */
     public function addHooks() {
 
-if(!is_admin()){return;}
+
+        if(!is_admin()){return;}
 
 
 
         /*
          * Fire all actions that must occur after the menu page has been added
          */
-        add_action($this->getPlugin()->getSlug() . '_menuPageAdded', array(&$this, 'hookMenuPageAdded'));
+        add_action($this->getPlugin()->getSlug() . '_menuPageAdded', array($this, 'hookMenuPageAdded'));
 
 
         /*
          * Add Menu Page Created in the Parent Class
          */
-        add_action('admin_menu', array(&$this, 'hookAdminMenu'));
+        add_action('admin_menu', array($this, 'hookAdminMenu'));
 
         /*
          *  add custom ajax handlers
@@ -131,35 +132,36 @@ if(!is_admin()){return;}
         //this is where you map any form actions with the php function that handles the ajax request
 
         /* save without reloading the page */
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array(&$this, 'hookAjaxSave'));
+        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array($this, 'hookAjaxSave'));
 
         /* save with reloading the page */
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save_with_reload', array(&$this, 'hookAjaxSaveWithReload'));
+        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save_with_reload', array($this, 'hookAjaxSaveWithReload'));
 
 
 
 
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_reset', array(&$this, 'hookAjaxReset'));
+        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_reset', array($this, 'hookAjaxReset'));
 
         /*
          * Reset all settings to defaults
          *
          */
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_reset_all', array(&$this, 'hookAjaxResetAll'));
+        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_reset_all', array($this, 'hookAjaxResetAll'));
         /*
          * Manuall Update settings so as to add any newly added settings due to a developer update
          *
          */
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_update_all', array(&$this, 'hookAjaxUpdateAll'));
+        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_update_all', array($this, 'hookAjaxUpdateAll'));
 
 
 
 // add ajax action
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_ajax_metabox', array(&$this, 'hookAjaxMetabox'));
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_ajax_metabox_cache', array(&$this, 'hookAjaxMetaboxCache'));
+        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_ajax_metabox', array($this, 'hookAjaxMetabox'));
+        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_ajax_metabox_cache', array($this, 'hookAjaxMetaboxCache'));
 
 
-        add_action('current_screen', array(&$this, 'hookCurrentScreen'));
+        add_action('current_screen', array($this, 'hookCurrentScreen'));
+
 
 
         $this->addMenuHooks();
@@ -199,7 +201,7 @@ if(!is_admin()){return;}
         /*
          * Set some metaboxes as closed
          */
-        add_action('get_user_option_closedpostboxes_' . $this->getScreenId(), array(&$this, 'hookCloseMetaboxes'));
+        add_action('get_user_option_closedpostboxes_' . $this->getScreenId(), array($this, 'hookCloseMetaboxes'));
     }
 
     /**
@@ -269,7 +271,7 @@ if(!is_admin()){return;}
          * Class Method to display the HTML for the menu
          */
 
-        $function = array(&$this, 'renderMenuPage');
+        $function = array($this, 'renderMenuPage');
 
         /* Set the Menu Position
          *
@@ -346,6 +348,9 @@ if(!is_admin()){return;}
             , 'type' => $type
         );
         do_action($this->getPlugin()->getSlug() . '_menuPageAdded');
+
+
+
     }
 
     /**

@@ -68,14 +68,18 @@ $simpli_hello = Simpli_Framework::load('simpli_hello', __FILE__);
 $simpli_hello->setName('Simpli Hello'); // Name should match the value of 'Plugin Name' in the comments at the top of this file);
 $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include underscores and uniquely identifies the language domain for your plugin
 //(optional)
-$simpli_hello->setDebug(
-        array(
-            'consolelog' => false  // true/false Turn on Logging to Javascript console for php logs
-            , 'js' => false // true/false Turn on Logging to Javascript console for javascript logs
-            , 'src' => false  // true/false Whether to use the full source for javascript or just the minimized versions
-            , 'filelog' => false // true/false Turn on Logging to File for php logs
-        )
-);
+//$simpli_hello->setDebug(
+//        array(
+//            'consolelog' => false  // true/false Turn on Logging to Javascript console for php logs
+//            , 'js' => false // true/false Turn on Logging to Javascript console for javascript logs
+//            , 'src' => false  // true/false Whether to use the full source for javascript or just the minimized versions
+//            , 'filelog' => false // true/false Turn on Logging to File for php logs
+//        )
+//);
+
+//$simpli_hello->debug()->TurnOff();
+
+
 
 
 /*

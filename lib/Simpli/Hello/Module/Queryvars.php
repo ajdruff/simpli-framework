@@ -371,8 +371,8 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
 
         $wp_rewrite->flush_rules();
 
-        if ($this->getPlugin()->getLogger()->getLoggingState() === true) {
-            echo '<br> Logger: activated flush rewrite rules from ' . __METHOD__;
+        if ($this->debug()->isOn()) {
+            $this->debug()->log('<br> Activated flush rewrite rules');
         }
     }
 

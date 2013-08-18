@@ -917,7 +917,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         }
         if (!file_exists($template_path)) {
             _e('Not available at this time.', $this->getPlugin()->getTextDomain());
-            $this->getPlugin()->getLogger()->logError($this->getPlugin()->getSlug() . ' : Meta Box ' . $metabox['id'] . ' error - template path does not exist ' . $template_path);
+            $this->getPlugin()->debug()->logcError($this->getPlugin()->getSlug() . ' : Meta Box ' . $metabox['id'] . ' error - template path does not exist ' . $template_path);
             return;
         }
         include($template_path);

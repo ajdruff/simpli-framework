@@ -67,38 +67,18 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
         $this->_addon = $addon_object;
     }
 
-    protected $_debug = null;
-
     /**
      * Debug
      *
-     * Returns a debug object
+     * Returns the Plugin's debug object
      *
      * @param none
      * @return void
      */
     public function debug() {
-        /*
-         * If no debug object, attempt to load it
-         * If it didnt load, return a phantom object instead, effectively
-         * disabling any debug calls but not creating any errors
-         *
-         */
-        if (is_null($this->_debug)) {
-            $isLoaded = $this->_debug = $this->getPlugin()->getModule('Debug', false);
-            if ($isLoaded === false) {
-              //  echo 'plugin module disabled, returning phantom';
-                $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
-                //  $phantom->hello();
-                // $phantom->t('hello');
-                //$this->_debug = $phantom;
-                //  return $this->_debug;
-                //object which pretends its handling the objects methods but
-                //is instead ignoring them. See the Phantom class comments for more
-            }
-        }
-   //     echo '<pre>', print_r($this->_debug, true), '</pre>';
-        return $this->_debug;
+
+        return $this->getPlugin()->debug();
+
     }
 
     /*
@@ -175,9 +155,9 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
      * @return void
      */
     public function init() {
-
+   $this->config();
         $this->addHooks();
-        $this->config();
+
     }
 
     /**

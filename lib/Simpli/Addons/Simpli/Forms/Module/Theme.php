@@ -154,7 +154,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
                 continue; //skip if no template
             }
 
-            $this->debug()->logVar('Loading File $template_path = ', $template_path);
+            $this->debug()->logVar('Loading template ...', $template_path);
             ob_start();
             /*
              * temporarily define a conveniance function
@@ -173,7 +173,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
 
         }
 
-           $this->debug()->logVar('$this->getTemplates() = ', $this->getTemplates());
+           $this->debug()->logVar('$this->getTemplates', $this->getTemplates());
     }
 
     /**
@@ -190,7 +190,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
             $dir=$this->getAddon()->getDirectory() . '/' . $this->getAddon()->DIR_NAME_THEMES. '/' . $this->getThemeName();
             $dir=$this->getPlugin()->getTools()->normalizePath($dir);
             $this->_theme_directory=$dir;
-             $this->getPlugin()->getLogger()->log('Set Theme Template Directory to : ' . $this->_theme_directory);
+             $this->debug()->log('Set Theme Template Directory to : ' . $this->_theme_directory);
 
         }
 
@@ -206,7 +206,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
 //     */
 //    public function setTemplateDirectory($template_directory) {
 //        $this->_template_directory = $template_directory;
-//         $this->getPlugin()->getLogger()->log('Set Simpli_Forms Theme Directory to : ' . $this->_template_directory);
+//         $this->debug()->log('Set Simpli_Forms Theme Directory to : ' . $this->_template_directory);
 //        return $this;
 //    }
 
@@ -239,7 +239,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
 
 
 
-        $this->getPlugin()->getLogger()->log('Set Simpli_Forms Theme to : ' . $this->getThemeName());
+        $this->debug()->log('Set Simpli_Forms Theme to : ' . $this->getThemeName());
         return $this;
     }
 

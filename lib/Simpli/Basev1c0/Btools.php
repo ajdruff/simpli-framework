@@ -443,6 +443,60 @@ class Simpli_Basev1c0_Btools {
         return $html;
     }
 
+
+    /**
+     * Short Description
+     *
+     * Long Description
+     *
+     * @param none
+     * @return void
+     */
+    public function backtrace() {
+        /*
+         * A simple backtrace
+         */
+
+        $defaults = array(
+            'file' => '',
+            'line' => '',
+            'class' => '',
+            'function' => '',
+            'args' => array(),
+        );
+        /*
+         * get the backtrace
+         */
+
+        $arr_btrace = debug_backtrace();
+        array_shift($arr_btrace);
+       // array_shift($arr_btrace);
+        /*
+         * get where the debug statement was located
+         */
+
+
+
+        $ds_line = (isset($arr_btrace[0]['line']) ? $arr_btrace[0]['line'] : '');
+        $ds_file = (isset($arr_btrace[0]['file']) ? $arr_btrace[0]['file'] : '');
+        $ds_class = (isset($arr_btrace[1]['class']) ? $arr_btrace[1]['class'] : '');
+        $ds_method = (isset($arr_btrace[1]['function']) ? $arr_btrace[1]['function'] : '');
+
+
+        /*
+         * iterate through the loop so we can simplify each trace
+         */
+
+        foreach ($arr_btrace as $key => $trace_properties) {
+
+            $trace_properties = array_intersect_key(array_merge($defaults, $trace_properties), $defaults); //make sure the indexes we need are there or use their defaults
+            $traces[] = $trace_properties;
+        }
+        $content = 'Simplified debug_backtrace() <pre>' . print_r($traces, true) . '</pre>';
+
+        echo $content;
+    }
+
 //    /**
 //     * Get Temp File
 //     *

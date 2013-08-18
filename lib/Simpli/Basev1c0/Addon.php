@@ -172,32 +172,18 @@ class Simpli_Basev1c0_Addon {
      *
      * @var object
      */
-    protected $_debug = null;
 
     /**
      * Debug
      *
-     * Returns a debug object
+     * Returns the Plugin's debug object
      *
      * @param none
      * @return void
      */
     public function debug() {
-        /*
-         * If no debug object, attempt to load it
-         * If it didnt load, return a phantom object instead, effectively
-         * disabling any debug calls but not creating any errors
-         *
-         */
-        if (is_null($this->_debug)) {
-            $isLoaded = $this->_debug = $this->getPlugin()->getModule('Debug', false);
-            if ($isLoaded === false) {
 
-                $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
-            }
-        }
-
-        return $this->_debug;
+        return $this->getPlugin()->debug();
     }
 
     /**
@@ -541,11 +527,11 @@ class Simpli_Basev1c0_Addon {
 
 
 
-        $this->getPlugin()->getLogger()->log('Addon Directory: ' . $this->getDirectory());
-        $this->getPlugin()->getLogger()->log('Addon Module Directory: ' . $this->getModuleDirectory());
+        $this->debug()->log('Addon Directory: ' . $this->getDirectory());
+        $this->debug()->log('Addon Module Directory: ' . $this->getModuleDirectory());
 
 
-        $this->getPlugin()->getLogger()->log('Addon URL: ' . $this->getUrl());
+        $this->debug()->log('Addon URL: ' . $this->getUrl());
 
 
         $this->addHooks();
@@ -573,14 +559,14 @@ class Simpli_Basev1c0_Addon {
             foreach ($modules as $module) {
 
                 $module->init();
-                $this->getPlugin()->getLogger()->log('Initialized Addon Module ' . $this->getSlug() . '/' . $module->getName());
+                $this->debug()->log('Initialized Addon Module ' . $this->getSlug() . '/' . $module->getName());
             }
         }
         if (isset($this->_slug)) {
             do_action($this->_slug . '_init');
         }
 
-        $this->getPlugin()->getLogger()->log('Completed Initialization for Addon ' . $this->getName());
+        $this->debug()->log('Completed Initialization for Addon ' . $this->getName());
 
 
         return $this;
@@ -626,7 +612,7 @@ class Simpli_Basev1c0_Addon {
          * check to see if the module_name is enabled; if not, return.
          */
         if (!is_array($available_modules) || !isset($available_modules[$module_name])) {
-            $this->getPlugin()->getLogger()->log('unable to load Module ' . $module_name . ' , since it is an inactive module');
+            $this->debug()->log('unable to load Module ' . $module_name . ' , since it is an inactive module');
             return;
         }
 
@@ -667,7 +653,7 @@ class Simpli_Basev1c0_Addon {
                 $this->setModule($module_name, $object);
                 $this->getModule($module_name)->setPlugin($this->getPlugin()); //set the plugin dependency
                 $this->getModule($module_name)->setAddon($this); //set the addon dependency
-                $this->getPlugin()->getLogger()->log('Loaded Addon Module ' . $this->getSlug() . '/' . $module_name);
+                $this->debug()->log('Loaded Addon Module ' . $this->getSlug() . '/' . $module_name);
             } catch (Exception $e) {
                 die('Unable to load Module: \'' . $module_name . '\'. ' . $e->getMessage());
             }

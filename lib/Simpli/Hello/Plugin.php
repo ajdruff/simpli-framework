@@ -109,11 +109,11 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
 
 
 
-        $this->getLogger()->log('Plugin Directory: ' . $this->getDirectory());
-        $this->getLogger()->log('Module Directory: ' . $this->getModuleDirectory());
+        $this->debug()->log('Plugin Directory: ' . $this->getDirectory());
+        $this->debug()->log('Module Directory: ' . $this->getModuleDirectory());
 
 
-        $this->getLogger()->log('Plugin URL: ' . $this->getUrl());
+        $this->debug()->log('Plugin URL: ' . $this->getUrl());
     }
 
     /**
@@ -187,9 +187,9 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
          * e.g.:$this->setDisabledModule('Shortcodes');
          */
        $this->setDisabledModule('ExampleModule');
-     //  $this->setDisabledModule('Debug');
+      // $this->setDisabledModule('Debug');
 
-
+      $this->debug()->t(true);
 
         /*
          * Set disabled addons

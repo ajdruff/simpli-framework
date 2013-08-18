@@ -137,7 +137,7 @@ class Simpli_Basev1c0_Plugin {
      *
      * @var string
      */
-    protected $_debug_options = null;
+    protected $_debug_optionsDEPRECATED = null;
 
     /**
      * Utility Object
@@ -299,11 +299,27 @@ class Simpli_Basev1c0_Plugin {
          * If it didnt load, return a phantom object instead, effectively
          * disabling any debug calls but not creating any errors
          *
-         */
+
         if (is_null($this->_debug)) {
-            $isLoaded = $this->_debug = $this->getPlugin()->getModule('Debug', false);
+            $isLoaded = $this->_debug = $this->getModule('Debug');
             if ($isLoaded === false) {
 
+                $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
+            }
+        }
+
+        return $this->_debug;
+         */
+        if (is_null($this->_debug)) {
+
+
+            try {
+                $this->_debug = new Simpli_Basev1c0_Debug();
+                $this->_debug->setPlugin($this);
+                $this->_debug->config();
+                $this->_debug->addHooks();
+            } catch (Exception $exc) {
+                echo $exc->getMessage();
                 $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
             }
         }
@@ -420,6 +436,7 @@ class Simpli_Basev1c0_Plugin {
      * @return void
      */
     public function getDisabledModules() {
+      //  $this->debug()->t(true);
         if (is_null($this->_disabled_modules)) {
             $this->_disabled_modules = array();
         }
@@ -454,6 +471,8 @@ class Simpli_Basev1c0_Plugin {
      * @return arrayReadOnly
      */
     public function getAvailableModules($filter = 'enabled') {
+       // $this->getTools()->backtrace();
+        $this->debug()->t(true);
         $available_modules = array();
         if (is_null($this->_available_modules)) {
 
@@ -484,6 +503,10 @@ class Simpli_Basev1c0_Plugin {
                  * settings can be accessed even though the rest of the plugin
                  * is disabled
                  */
+
+             //   echo 'Disabled Modules<pre>', print_r($this->getDisabledModules(), true), '</pre>';
+
+
                 if ($this->getSetting('plugin_enabled') == 'disabled') {
                     $haystack = strtolower($module_name);
 // if module doesnt match the always enabled regex, add it to 'disabled'
@@ -493,12 +516,12 @@ class Simpli_Basev1c0_Plugin {
                         $available_modules['enabled'][$module_name] = $module_file_path;
                     } else {
 
-                        $this->getLogger()->log('Module ' . $module_name . ' not loaded because user has disabled the plugin');
+                        $this->debug()->log('Module ' . $module_name . ' not loaded because user has disabled the plugin');
                         $available_modules['disabled'][$module_name] = $module_file_path;
                     }
                 } elseif (in_array($module_name, $this->getDisabledModules())) {
 
-                    $this->getLogger()->log('Module ' . $module_name . ' not loaded because it has been disabled');
+                    $this->debug()->log('Module ' . $module_name . ' not loaded because it has been disabled');
 
                     $available_modules['disabled'][$module_name] = $module_file_path;
                 } else {
@@ -510,7 +533,7 @@ class Simpli_Basev1c0_Plugin {
             }
             $this->_available_modules = $available_modules;
         }
-
+        $this->debug()->logVar('$this->_available_modules[disabled]', $this->_available_modules['disabled'], true);
         return $this->_available_modules[$filter];
     }
 
@@ -528,7 +551,7 @@ class Simpli_Basev1c0_Plugin {
             return $this->_addons[$addon_name];
         } else {
 
-            $this->getLogger()->logError('getAddon Failed, Addon \'' . $addon_name . '\' was not found');
+            $this->debug()->logcError('getAddon Failed, Addon \'' . $addon_name . '\' was not found');
             return (false);
         }
     }
@@ -1003,7 +1026,7 @@ class Simpli_Basev1c0_Plugin {
      * @param $key (optional) . If provided, returns the element identified by the key instead of the entire array
      * @return string
      */
-    public function getDebug($key = null) {
+    public function getDebugDEPRECATED($key = null) {
 
 #if debug has not  yet been set, call the set method to set defaults
         if (is_null($this->_debug_options)) {
@@ -1027,7 +1050,7 @@ class Simpli_Basev1c0_Plugin {
      * @param array $debug
      * @return object $this
      */
-    public function setDebug($debug) {
+    public function setDebugDEPRECATED($debug) {
 
 
         if (is_null($this->_debug_options)) {
@@ -1076,10 +1099,7 @@ class Simpli_Basev1c0_Plugin {
         }
 
 
-//        if (isset($debug['filelog'])) {
-//
-//            $this->getLogger()->setLoggingOn($debug['filelog']);
-//        }
+
 
 
 
@@ -1155,9 +1175,9 @@ class Simpli_Basev1c0_Plugin {
          *
          */
 
-        $this->getLogger()->log('Starting Debug Log for Plugin ' . $this->getName());
+        $this->debug()->log('Starting Debug Log for Plugin ' . $this->getName());
 
-        $this->getLogger()->log('Plugin Version: ' . $this->getVersion() . ' Framework Version: ' . $this->getFrameworkVersion() . 'Base Class Version: ' . $this->getBaseClassVersion());
+        $this->debug()->log('Plugin Version: ' . $this->getVersion() . ' Framework Version: ' . $this->getFrameworkVersion() . 'Base Class Version: ' . $this->getBaseClassVersion());
 
 
 
@@ -1177,7 +1197,7 @@ class Simpli_Basev1c0_Plugin {
          * Load Settings
          */
         $this->loadSettings();
-        $this->getLogger()->log('Loaded Plugin User Settings ');
+        $this->debug()->log('Loaded Plugin User Settings ');
 
         /**
          * Load Modules
@@ -1191,7 +1211,7 @@ class Simpli_Basev1c0_Plugin {
 
 
 
-        $this->getLogger()->log('Loaded Base Class Library ' . ' from ' . dirname(__FILE__));
+        $this->debug()->log('Loaded Base Class Library ' . ' from ' . dirname(__FILE__));
 
 
 //        /*
@@ -1202,7 +1222,7 @@ class Simpli_Basev1c0_Plugin {
 //        foreach ($modules as $module) {
 //
 //            $module->init();
-//            $this->getLogger()->log('Initialized Plugin Module ' . $this->getSlug() . '/' . $module->getName());
+//            $this->debug()->log('Initialized Plugin Module ' . $this->getSlug() . '/' . $module->getName());
 //        }
 
         /*
@@ -1225,7 +1245,7 @@ class Simpli_Basev1c0_Plugin {
             do_action($this->_slug . '_init');
         }
 
-        $this->getLogger()->log('Completed Initialization for Plugin ' . $this->getName());
+        $this->debug()->log('Completed Initialization for Plugin ' . $this->getName());
     }
 
     /**
@@ -1271,7 +1291,7 @@ class Simpli_Basev1c0_Plugin {
          */
         $addon_namespace = $this->ADDON_NAMESPACE;
         $addon_file_path = $this->getAddonsDirectory() . '/' . str_replace('_', '/', $addon_name) . '/' . $this->FILE_NAME_ADDON . '.php';
-        $this->getLogger()->log('add on file path = ' . $addon_file_path);
+        $this->debug()->log('add on file path = ' . $addon_file_path);
         require_once($addon_file_path); # simpli-framework/lib/simpli/hello/Module/Admin.php
 
         /*
@@ -1290,7 +1310,7 @@ class Simpli_Basev1c0_Plugin {
                 //$obj_addon=$this->getAddon($addon_name);
                 $obj_addon->setName($addon_name);
                 $obj_addon->setPlugin($this); //set the add on's plugin reference
-                $this->getLogger()->log('Loaded Addon ' . $addon_name);
+                $this->debug()->log('Loaded Addon ' . $addon_name);
             } catch (Exception $e) {
 
                 die('Unable to load Addon: \'' . $addon_name . '\'. ' . $e->getMessage());
@@ -1355,7 +1375,7 @@ class Simpli_Basev1c0_Plugin {
 
             //   die('stopping to check disbled addons' . __LINE__ . __FILE__);
             if (in_array($addon_name, $this->getDisabledAddons())) {
-                $this->getLogger()->log('Addon ' . $addon_name . ' not loaded because it is has been disabled.');
+                $this->debug()->log('Addon ' . $addon_name . ' not loaded because it is has been disabled.');
                 continue;
             }
             $this->loadAddon($addon_name);
@@ -1389,15 +1409,16 @@ class Simpli_Basev1c0_Plugin {
      */
     public function loadModule($module_name, $halt_on_fail = true) {
 
-
+        $this->debug()->t();
 
         $available_modules = $this->getAvailableModules('enabled');
+
 
         /*
          * check to see if the module_name is enabled; if not, return.
          */
         if (!is_array($available_modules) || !isset($available_modules[$module_name])) {
-            $this->getLogger()->log('unable to load Module ' . $module_name . ' , since it is an inactive module');
+            $this->debug()->log('Will not attempt to load module \'' . $module_name . '\' , since it is has been manually disabled');
             return false;
         }
 
@@ -1437,12 +1458,12 @@ class Simpli_Basev1c0_Plugin {
                  * set the plugin reference
                  */
                 $this->getModule($module_name)->setPlugin($this);
-                $this->getLogger()->log('Loaded Plugin Module ' . $this->getSlug() . '/' . $module_name);
+                $this->debug()->log('Loaded Plugin Module ' . $this->getSlug() . '/' . $module_name);
                 /*
                  * initialize the module
                  */
                 $module_object->init();
-                $this->getLogger()->log('Initialized Plugin Module ' . $this->getSlug() . '/' . $module_object->getName());
+                $this->debug()->log('Initialized Plugin Module ' . $this->getSlug() . '/' . $module_object->getName());
             } catch (Exception $e) {
                 if ($halt_on_fail) {
                     die('Unable to load Module: \'' . $module_name . '\'. ' . $e->getMessage());
@@ -1454,7 +1475,7 @@ class Simpli_Basev1c0_Plugin {
 
 
 
-
+        $this->debug()->logVars(get_defined_vars());
 
         return $module_object;
     }
@@ -1520,6 +1541,7 @@ class Simpli_Basev1c0_Plugin {
 
             $this->loadModule($module_name);
         }
+        $this->debug()->logVars(get_defined_vars());
     }
 
     /**
@@ -1719,13 +1741,13 @@ class Simpli_Basev1c0_Plugin {
                         echo '}'; //window.onload closing bracket
                     }
 
-                    $this->getLogger()->log('loaded inline script: ' . $handle);
+                    $this->debug()->log('loaded inline script: ' . $handle);
                 } else {
-                    $this->getLogger()->log('couldnt load script: ' . $handle . ' due to missing script file');
+                    $this->debug()->log('couldnt load script: ' . $handle . ' due to missing script file');
                     echo 'jQuery(document).ready(function() { console.error (\' WordPrsss Plugin ' . $this->getSlug() . ' attempted to enqueue ' . ' Missing Script File ' . str_replace('\\', '\\\\', $script['path']) . '\')});';
                 }
             } else {
-                $this->getLogger()->log($handle . ' not loaded, missing dependency ' . $ext_handle);
+                $this->debug()->log($handle . ' not loaded, missing dependency ' . $ext_handle);
             }
         }
 
@@ -1775,6 +1797,16 @@ class Simpli_Basev1c0_Plugin {
          * Use wp_enqueue for longer local scripts
          */
 
+        /*
+         *
+         */
+        $handle = 'simpli-wp-common.js';
+        $src = $this->getUrl() . '/js/simpli-wp-common.js';
+        $deps = array();
+        $ver = null;
+        $in_footer = false;
+        wp_enqueue_script($handle, $src, $deps, $ver, $in_footer);
+
 
 
         /*
@@ -1793,7 +1825,7 @@ class Simpli_Basev1c0_Plugin {
                 , 'url' => $this->getUrl()
                 , 'version' => $this->getVersion()
                 , 'directory' => $this->getDirectory()
-                , 'debug' => $this->getDebug('js')
+                , 'debug' => $this->debug()->isOn() //flag telling javascript whether debugging is on
                 , 'admin_url' => get_admin_url()
                 , 'nonce' => wp_create_nonce($this->getSlug())
             )

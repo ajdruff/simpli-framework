@@ -15,7 +15,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
     private $_templates = null;
     private $_template = null;
     private $_theme_directory = null;
-    private $_theme = null;
+    private $_theme_name = null;
 
     const DEFAULT_THEME = 'default';
 
@@ -26,8 +26,9 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
      * @return array $this->_templates
      */
     public function getTemplates() {
+        $this->debug()->t();
         if (is_null($this->_templates)) {
-            $this->debug()->t();
+
 
 
             $this->debug()->log('$this->_templates is null, resetting to empty array');
@@ -53,8 +54,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
             $result = NULL;
         }
 
-        $this->debug()->logVar('Result of getTemplates() = $this->_templates = ', $result);
-
+        $this->debug()->logVars(get_defined_vars());
         return $result;
     }
 
@@ -173,7 +173,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
 
         }
 
-           $this->debug()->logVar('$this->getTemplates', $this->getTemplates());
+           $this->debug()->logVar('Templates that were loaded: ', $this->getTemplates());
     }
 
     /**
@@ -217,12 +217,12 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
      * @return string
      */
     public function getThemeName() {
-        if (is_null($this->_theme)) {
+        if (is_null($this->_theme_name)) {
             $this->debug()->t();
 
             $this->setTheme(self::DEFAULT_THEME);
         }
-        return $this->_theme;
+        return $this->_theme_name;
     }
 
     /**
@@ -235,7 +235,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
         $this->debug()->t();
 
         $theme = trim(ucwords($theme));
-        $this->_theme = $theme;
+        $this->_theme_name = $theme;
 
 
 

@@ -34,6 +34,8 @@ class Simpli_Addons_Simpli_Forms_Addon extends Simpli_Basev1c0_Addon {
 
 
 
+
+
         // $this->setDisabledModule('FilterOptions');
 
         $this->setDisabledModule('Tags');
@@ -71,6 +73,7 @@ class Simpli_Addons_Simpli_Forms_Addon extends Simpli_Basev1c0_Addon {
      */
     public function loadModules($module_directory = null) {
         $this->debug()->t();
+
 
 
         if (is_null($module_directory)) {

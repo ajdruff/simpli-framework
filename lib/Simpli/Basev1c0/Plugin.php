@@ -300,15 +300,15 @@ class Simpli_Basev1c0_Plugin {
          * disabling any debug calls but not creating any errors
          *
 
-        if (is_null($this->_debug)) {
-            $isLoaded = $this->_debug = $this->getModule('Debug');
-            if ($isLoaded === false) {
+          if (is_null($this->_debug)) {
+          $isLoaded = $this->_debug = $this->getModule('Debug');
+          if ($isLoaded === false) {
 
-                $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
-            }
-        }
+          $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
+          }
+          }
 
-        return $this->_debug;
+          return $this->_debug;
          */
         if (is_null($this->_debug)) {
 
@@ -436,7 +436,7 @@ class Simpli_Basev1c0_Plugin {
      * @return void
      */
     public function getDisabledModules() {
-      //  $this->debug()->t(true);
+        //  $this->debug()->t();
         if (is_null($this->_disabled_modules)) {
             $this->_disabled_modules = array();
         }
@@ -471,8 +471,8 @@ class Simpli_Basev1c0_Plugin {
      * @return arrayReadOnly
      */
     public function getAvailableModules($filter = 'enabled') {
-       // $this->getTools()->backtrace();
-        $this->debug()->t(true);
+        // $this->getTools()->backtrace();
+        $this->debug()->t();
         $available_modules = array();
         if (is_null($this->_available_modules)) {
 
@@ -504,7 +504,7 @@ class Simpli_Basev1c0_Plugin {
                  * is disabled
                  */
 
-             //   echo 'Disabled Modules<pre>', print_r($this->getDisabledModules(), true), '</pre>';
+                //   echo 'Disabled Modules<pre>', print_r($this->getDisabledModules(), true), '</pre>';
 
 
                 if ($this->getSetting('plugin_enabled') == 'disabled') {
@@ -533,7 +533,7 @@ class Simpli_Basev1c0_Plugin {
             }
             $this->_available_modules = $available_modules;
         }
-        $this->debug()->logVar('$this->_available_modules[disabled]', $this->_available_modules['disabled'], true);
+      
         return $this->_available_modules[$filter];
     }
 
@@ -582,7 +582,6 @@ class Simpli_Basev1c0_Plugin {
 //     */
 //    public function setAddon($addon_name, $object) {
 //        $this->_addons[$addon_name] = $object;
-
 //return $this;
 //    }
 
@@ -746,7 +745,6 @@ class Simpli_Basev1c0_Plugin {
 
         $this->_settings = $options;
 //           echo '<br/> options = <pre>' ;
-
 //        echo '</pre>';
 
 
@@ -1336,7 +1334,6 @@ class Simpli_Basev1c0_Plugin {
          */
         $addon_files = $tools->getGlobFiles($this->getAddonsDirectory(), 'Addon.php');
         //echo '<br>add on files after return : ';
-
 //    const ADDON_BASE_FILE_NAME = 'Addon';
 //do a glob search to get add_on_files
         if (!is_array($addon_files)) {
@@ -1633,6 +1630,7 @@ class Simpli_Basev1c0_Plugin {
         $this->_inline_script_queue = $queue;
         return $queue;
     }
+
     /**
      * Print Inline Header Scripts (Wrapper/Hook Function)
      *
@@ -1665,8 +1663,8 @@ class Simpli_Basev1c0_Plugin {
      * @param boolean $dep_resolution  Dependency Resolution - Whether load the scripts in order of dependency which helps to prevent conflicts but may take longer
      * @return void
      */
-
     function _printInlineScripts($footer) {
+        $this->debug()->t();
 
         $dep_resolution = true;
         /*
@@ -1704,9 +1702,9 @@ class Simpli_Basev1c0_Plugin {
          */
 
 
-        echo '<script  type="text/javascript">';
 
         foreach ($handle_list as $handle) {
+
             $script = $script_queue['scripts'][$handle]; /* get the script queue properties from the script_queue */
             $footer_flag = $script_queue['footer'][$handle];
             /*
@@ -1731,17 +1729,41 @@ class Simpli_Basev1c0_Plugin {
             if ($ext_dependencies_met) {
 
                 if (file_exists($script['path'])) { //include the path to the script. if not found, output an error to the javascript console.
-                    if ($has_external_dependency && !$footer) {
-                        echo ' ;window.onload = function() {'; // need to do this since wordpress loads external scripts after inline and youl get jquery errors otherwise
-                    }
+  $this->debug()->log('start load inline script: ' . $handle);
 
+                    /*
+                     * get the script source
+                     */
+
+                    ob_start();
                     include($script['path']);
+                    $script_source = ob_get_clean();
 
-                    if ($has_external_dependency && !$footer) {
-                        echo '}'; //window.onload closing bracket
-                    }
 
-                    $this->debug()->log('loaded inline script: ' . $handle);
+                    /*
+                     * create and populate template
+                     */
+                    $template = '<script type="text/javascript">
+         {START_WINDOW_LOAD}
+         {SCRIPT_SOURCE}
+{END_WINDOW_LOAD}
+</script>
+';
+                    $template = $this->getTools()->scrubHtmlWhitespace($template);
+                    $tags = array(
+                        '{START_WINDOW_LOAD}' => ($has_external_dependency && !$footer) ? 'window.onload = function() {' : '', // need to do this since wordpress loads external scripts after inline and youl get jquery errors otherwise
+                        '{END_WINDOW_LOAD}' => ($has_external_dependency && !$footer) ? '}' : '', ////window.onload closing bracket
+                        '{SCRIPT_SOURCE}' => $script_source,
+                    );
+
+
+                    $script_html = str_ireplace(array_keys($tags), array_values($tags), $template);
+
+
+                    echo $script_html;
+
+
+                    $this->debug()->log('end load inline script: ' . $handle);
                 } else {
                     $this->debug()->log('couldnt load script: ' . $handle . ' due to missing script file');
                     echo 'jQuery(document).ready(function() { console.error (\' WordPrsss Plugin ' . $this->getSlug() . ' attempted to enqueue ' . ' Missing Script File ' . str_replace('\\', '\\\\', $script['path']) . '\')});';
@@ -1750,8 +1772,6 @@ class Simpli_Basev1c0_Plugin {
                 $this->debug()->log($handle . ' not loaded, missing dependency ' . $ext_handle);
             }
         }
-
-        echo '</script>';
     }
 
     /**
@@ -1854,12 +1874,12 @@ class Simpli_Basev1c0_Plugin {
         ?>
                 <script type='text/javascript'>
 
-                    var <?php echo $this->getSlug(); ?> = <?php echo $vars; ?>
+                            var <?php echo $this->getSlug(); ?> = <?php echo $vars; ?>
 
                         </script>
 
                 <?php
             }
 
-}
+        }
 

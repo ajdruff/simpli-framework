@@ -114,6 +114,8 @@ class Simpli_Basev1c0_Addon {
     public function __get($name) {
 
 
+
+
         if (is_null($this->_ro_properties)) {
 
             return null;
@@ -136,6 +138,8 @@ class Simpli_Basev1c0_Addon {
      */
     protected function setProperty($name, $value) {
 
+
+
         $this->_ro_properties[$name] = $value;
     }
 
@@ -147,6 +151,8 @@ class Simpli_Basev1c0_Addon {
      * @uses Simpli_Basev1c0_Plugin
      */
     public function setPlugin(Simpli_Basev1c0_Plugin $plugin) {
+
+
         $this->_plugin = $plugin;
         return $this;
     }
@@ -158,6 +164,9 @@ class Simpli_Basev1c0_Addon {
      * @return Simpli_Basev1c0_Plugin
      */
     public function getPlugin() {
+
+
+
         if (!isset($this->_plugin)) {
             die('Module ' . __CLASS__ . ' missing Plugin dependency.');
         }
@@ -183,6 +192,8 @@ class Simpli_Basev1c0_Addon {
      */
     public function debug() {
 
+
+
         return $this->getPlugin()->debug();
     }
 
@@ -193,6 +204,8 @@ class Simpli_Basev1c0_Addon {
      * @return stringReadOnly
      */
     public function getDirectory() {
+
+
 
         /*
          * Use the class namespace to derive a directory path
@@ -233,6 +246,8 @@ class Simpli_Basev1c0_Addon {
 
 
 
+
+
         if (is_null($this->_module_directory)) {
             /*
              * The module directory is always a subdirectory of the directory that the
@@ -261,6 +276,8 @@ class Simpli_Basev1c0_Addon {
      */
     public function getDisabledModules() {
 
+
+
         if (is_null($this->_disabled_modules)) {
             $this->_disabled_modules = array();
         }
@@ -277,6 +294,8 @@ class Simpli_Basev1c0_Addon {
      * @return void
      */
     public function setDisabledModule($module_name) {
+
+
 
         $this->_disabled_modules[] = $module_name;
     }
@@ -296,6 +315,8 @@ class Simpli_Basev1c0_Addon {
      * @return arrayReadOnly
      */
     public function getAvailableModules($filter = 'enabled') {
+
+
 
         if (is_null($this->_available_modules)) {
 
@@ -351,9 +372,15 @@ class Simpli_Basev1c0_Addon {
      * @return object $module
      */
     public function getModule($module_name) {
+
+        $this->debug()->t();
+        $this->debug()->logVar('Modules Loaded: ', $this->_modules);
+
         if (!isset($this->_modules[$module_name])) {
+            $this->debug()->log('Module not found,returning null');
             return null;
         }
+        $this->debug()->log('Module found, returning module ' . $module_name);
         return $this->_modules[$module_name];
     }
 
@@ -365,6 +392,8 @@ class Simpli_Basev1c0_Addon {
      * @return array
      */
     public function getModules() {
+
+
         return $this->_modules;
     }
 
@@ -375,6 +404,8 @@ class Simpli_Basev1c0_Addon {
      * @return object $this
      */
     public function setModule($module_name, $module) {
+
+
         $this->_modules[$module_name] = $module;
         return $this;
     }
@@ -386,6 +417,9 @@ class Simpli_Basev1c0_Addon {
      * @return stringReadOnly $this->_addon_url
      */
     public function getUrl() {
+
+
+
 
 
         if (is_null($this->_addon_url)) {
@@ -403,6 +437,8 @@ class Simpli_Basev1c0_Addon {
      * @return object $this
      */
     public function setName($name) {
+
+
         $this->_addon_name = $name;
         return $this;
     }
@@ -414,6 +450,8 @@ class Simpli_Basev1c0_Addon {
      * @return string
      */
     public function getName() {
+
+
         return $this->_addon_name;
     }
 
@@ -424,6 +462,8 @@ class Simpli_Basev1c0_Addon {
      * @return stringReadOnly
      */
     public function getSlug() {
+
+
 
         if (is_null($this->_slug)) {
             /*
@@ -451,6 +491,8 @@ class Simpli_Basev1c0_Addon {
     public function getVersion() {
 
 
+
+
         $headers = array('Version' => 'Version');
 
         $addon_file_data = get_file_data($this->getFilePath(), $headers, 'addon');
@@ -470,6 +512,8 @@ class Simpli_Basev1c0_Addon {
 
 
 
+
+
         $slug_parts = explode('_', $this->getSlug());
 
 
@@ -486,6 +530,8 @@ class Simpli_Basev1c0_Addon {
     public function getClassNamespace() {
 
 
+
+
         return $this->getPlugin()->ADDON_NAMESPACE;
     }
 
@@ -498,6 +544,8 @@ class Simpli_Basev1c0_Addon {
      * @return stringReadOnly
      */
     public function getClassNamespaceParts() {
+
+
 
 
         return explode('_', $this->getClassNamespace());
@@ -523,6 +571,8 @@ class Simpli_Basev1c0_Addon {
      * @return $this
      */
     public function init() {
+
+
 
 
 
@@ -579,6 +629,10 @@ class Simpli_Basev1c0_Addon {
      * @return boolean
      */
     public function isModuleLoaded($module) {
+
+
+
+
         if (is_object($this->getModule($module))) {
             return true;
         } else {
@@ -597,6 +651,8 @@ class Simpli_Basev1c0_Addon {
      * @return $this
      */
     public function loadModule($module_name) {
+
+
 
 
 
@@ -672,6 +728,8 @@ class Simpli_Basev1c0_Addon {
      * @return $this
      */
     public function loadModules() {
+
+
 
         $enabled_modules = $this->getAvailableModules('enabled');
 

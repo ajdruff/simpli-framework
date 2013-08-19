@@ -22,7 +22,7 @@
  * @example
  *         $this->debug()->t(); //trace provides a information about the method and arguments, and provides a backtrace in an expandable box. A visual trace is also provided if graphiviz is enabled.
 
-  $this->debug()->log('loga gets logged to browser, javascript console, and file');
+  $this->debug()->log('log gets logged to browser, javascript console, and file');
   $this->debug()->logb('logb gets logged only to the browser');
   $this->debug()->logc('logc gets logged only to the javascript console');
   $this->debug()->logf('logf to the log file');
@@ -68,10 +68,21 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          */
 
         $this->setOption('method_filters_enabled', true); //set to false to ignore all filters and print all module debug output
-        $this->debug()->setMethodFilter('config', false);
-        $this->debug()->setMethodFilter('addHooks', false);
-        $this->debug()->setMethodFilter('Plugin', true);
-        $this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin', true);
+     //dont forget you can also just use a method   $this->debug()->setMethodFilter('config', false);
+        $this->debug()->setMethodFilter('text', true);
+        $this->debug()->setMethodFilter('el', true);
+        $this->debug()->setMethodFilter('getTheme', true);
+        $this->debug()->setMethodFilter('renderElement', true);
+        $this->debug()->setMethodFilter('getModule', true);
+        $this->debug()->setMethodFilter('Plugin', false);
+        $this->debug()->setMethodFilter('Plugin', false);
+
+
+
+        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Addon', false);
+        $this->debug()->setMethodFilter('Simpli_Basev1c0_Addon', false);
+
+        $this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin', false);
         $this->debug()->setMethodFilter('Simpli_Hello_Module_Admin', false);
         $this->debug()->setMethodFilter('Simpli_Hello_Module_Core', false);
         $this->debug()->setMethodFilter('Simpli_Hello_Module_Debug', false);
@@ -87,7 +98,6 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $this->debug()->setMethodFilter('Simpli_Hello_Module_Queryvars', false);
         $this->debug()->setMethodFilter('Simpli_Hello_Module_Shortcodes', false);
         $this->debug()->setMethodFilter('Simpli_Hello_Module_Tools', false);
-        $this->debug()->setMethodFilter('Simpli_Addons_Forms_Module_Elements', false);
         $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Filter', false);
         $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Form', false);
         $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Elements', false);
@@ -100,6 +110,34 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          * Outputs an information box and cascading trace for each method that has the logTrace() call
          */
         $this->debug()->setOption('trace_enabled', true);
+
+
+        /*
+         * Simple Trace Enabled
+         *
+         * Simple Trace forces the normal trace output to a single line which
+         * simply logs the class and method oin which the logTrace()
+         * call is placed.
+         * example output:
+          getAvailableModules/475 |-----TRACE-----|Simpli_Basev1c0_Plugin::getAvailableModules(["enabled"])
+
+
+         */
+
+
+
+        $this->setOption('simple_trace_enabled', false); //requires trace_enabled to be set to true to produce output
+
+
+        /*
+         * Exclude All Logs - Turns off all logging with the exception of simple traces.
+         *
+         * Blocks all logging except a simple trace. Helpful to reduce ouput and see whats going on.
+
+
+         */
+
+        $this->setOption('logging_enabled', true);
 
         /*
          * Define Vars
@@ -166,7 +204,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $this->setOption('output_to_inline', true);
         $this->setOption('output_to_footer', false);
         $this->setOption('output_to_file', false);
-        $this->setOption('output_to_console', true);
+        $this->setOption('output_to_console', false);
         $this->setOption('log_file_path', $this->getPlugin()->getDirectory() . '/debug.log.txt');
 
 
@@ -228,12 +266,12 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          * you to view the human readable versions of jquery,etc.
          */
 
-
-        if (!defined('SCRIPT_DEBUG')) {
-            if ($this->isOn()) {
-                define('SCRIPT_DEBUG', true); //true to step through readable source code, false for minification,
-            }
-        }
+        /* this wont work after 3.4 - must be defined before wp-settings loads */
+        //    if (!defined('SCRIPT_DEBUG')) {
+        //        if ($this->isOn()) {
+        //           define('SCRIPT_DEBUG', true); //true to step through readable source code, false for minification,
+        //       }
+        //  }
 
 
         /*
@@ -340,7 +378,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return void
      */
-    public function stop($force_output = false, $condition = true, $condition_message = '') {
+    public function stop($force_output = false) {
 
         $properties = $this->_getDebugStatementProperties(debug_backtrace());
         $line = $properties['line'];
@@ -351,17 +389,16 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         if (!$this->_inFilters($class, $method, $force_output)) {
             return;
         }
-        $stop_message = ' <div style="color:red">Debug Stop - to continue script, remove the stop() function or edit its condition on line ' . $line . ' in file ' . basename($file) . ' <br/><span style="color:black;">(' . $file . ' )' . ' </span></div>';
+        $template = ' <div style="color:red">Debug Stop - to continue script, remove the $this->debug()->stop() call on line {LINE} in file {BASENAME_FILE} <br/><span style="color:black;">( {FILE} )</span></div>';
+        $basename_file = basename($file);
+        $tags = (compact('line', 'file', 'basename_file'));
+        $stop_message = $this->getPlugin()->getTools()->crunchTpl($tags, $template);
 
-        if ($condition_message !== '') {
-            $stop_message = ' <div style="color:red">Debug Stop - ' . $condition_message . '<br/> To continue script, remove the stop() function or edit its condition on line ' . $line . ' in file ' . basename($file) . ' <br/><span style="color:black;">(' . $file . ' )' . ' </span></div>';
-        }
 
-        if ($condition) {
-            die($stop_message);
-        }
+            $this->log($stop_message, $force_output);
+            die();
 
-//eval(($condition) ? "die ('$stop_message');" : 'echo (\'\');');
+
     }
 
     /**
@@ -653,7 +690,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         </div>
 
 ';
-            $template = $this->getPlugin()->getTools()->getHtmlWithoutWhitespace($template);
+            $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
 
 
             foreach ($var as $key => $value) {
@@ -901,6 +938,8 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $props['file'] = (isset($array_backtrace[0]['file']) ? $array_backtrace[0]['file'] : '');
         $props['class'] = (isset($array_backtrace[1]['class']) ? $array_backtrace[1]['class'] : '');
         $props['method'] = (isset($array_backtrace[1]['function']) ? $array_backtrace[1]['function'] : '');
+        $props['args'] = (isset($array_backtrace[1]['args']) ? $array_backtrace[1]['args'] : '');
+
         return $props;
     }
 
@@ -979,7 +1018,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 </div>
 </div>
 ';
-        $template = $this->getPlugin()->getTools()->getHtmlWithoutWhitespace($template);
+        $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
 
 
         $content = str_replace(array_keys($tags), array_values($tags), $template);
@@ -988,6 +1027,43 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
         $this->_log($content, $props['line'], $props['file'], $props['class'], $props['method'], $use_prefix = false, $target = 'browser');
+    }
+
+
+
+    /**
+     * Get Simple Trace String
+     *
+     * Returns the trace string displayed for each method
+      *
+     * @param array $ds_props The debug statement properties that include line,class,method,file,args
+     * @return string $trace_string The string that will be displayed for the method
+     */
+    private function _getSimpleTraceString($ds_props) {
+        /*
+         * Available tags for $ds_props are:
+         * {LINE}
+         * {CLASS}
+         * {METHOD}
+         * {FILE}
+         * {ARGS}
+         *
+         */
+
+   $ds_props['args'] = htmlspecialchars(json_encode($ds_props['args']));
+
+
+
+        $template = $this->getOption('simple_trace_template');
+        /*
+         * populate the template
+         */
+        $trace_string = $this->getPlugin()->getTools()->crunchTpl($ds_props, $template);
+        $trace_string = str_ireplace('[[', '', $trace_string); //removes double brackets that appear after json encode
+        $trace_string = str_ireplace(']]', '', $trace_string); // ditto
+
+
+        return $trace_string;
     }
 
     /**
@@ -1014,6 +1090,15 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         if (!$this->_inFilters($ds_properties['class'], $ds_properties['method'], $force_output)) {
             return;
         }
+        /*
+         * Use simple trace if enabled
+         */
+        if ($this->getOption('simple_trace_enabled')) {
+           $content = $this->_getSimpleTraceString($ds_properties);
+            $this->_log($content, $ds_properties['line'], $ds_properties['file'], $ds_properties['class'], $ds_properties['method'], $use_prefix = true, $target = 'all', $type = 'trace');
+            return;
+        }
+
         $this->_logTrace($ds_properties, $arr_btrace, $levels);
     }
 
@@ -1041,6 +1126,17 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         if (!$this->_inFilters($ds_properties['class'], $ds_properties['method'], $force_output)) {
             return;
         }
+
+
+         /*
+         *  Use simple trace if enabled
+         */
+        if ($this->getOption('simple_trace_enabled')) {
+            $content = $this->_getSimpleTraceString($ds_properties);
+            $this->_log($content, $ds_properties['line'], $ds_properties['file'], $ds_properties['class'], $ds_properties['method'], $use_prefix = true, $target = 'all', $type = 'trace');
+            return;
+        }
+
         $this->_logTrace($ds_properties, $arr_btrace, $levels);
     }
 
@@ -1101,7 +1197,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         /*
          * get the final output of the non-visual traces
          */
-        $template = $this->getPlugin()->getTools()->getHtmlWithoutWhitespace($template);
+        $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
         $non_visual_trace_html = $method_header_html . str_replace(array_keys($tags), array_values($tags), $template);
 
         /*
@@ -1140,7 +1236,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 </div>
 </div>
 ';
-            $template = $this->getPlugin()->getTools()->getHtmlWithoutWhitespace($template);
+            $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
 
             $visual_trace_html = str_replace(array_keys($tags), array_values($tags), $template);
             $content = $non_visual_trace_html . $visual_trace_html;
@@ -1305,7 +1401,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             </div>';
 
 
-            $debug_trace_html_template = $this->getPlugin()->getTools()->getHtmlWithoutWhitespace($debug_trace_html_template); //this is necessary since there are pre tags in the source . You could just remove it manually using a macro in a text editor , like the 'remove unnecessary whitespace' utility in notepad++ , but using getHtmlWithoutWhitespace allows us to retain the whitespace in our source file so its human readable, while still removing it when its displayed.
+            $debug_trace_html_template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($debug_trace_html_template); //this is necessary since there are pre tags in the source . You could just remove it manually using a macro in a text editor , like the 'remove unnecessary whitespace' utility in notepad++ , but using scrubHtmlWhitespace allows us to retain the whitespace in our source file so its human readable, while still removing it when its displayed.
             /*
              * Now populate the html template
              */
@@ -1984,6 +2080,14 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      */
     protected function _log($content, $line, $file, $class, $method, $use_prefix = true, $target = 'browser', $type = 'info') {
 
+        /*
+         * allows only trace through. all other logs are not printed.
+         */
+        if (!$this->getOption('logging_enabled')) {
+            if ($type !== 'trace') {
+                return;
+            }
+        }
 
         $log_entry = compact('line', 'class', 'method', 'file', 'content', 'use_prefix', 'target', 'type');
 
@@ -2032,7 +2136,6 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     protected function _formatForBrowser($log_entry) {
-
         /*
          * Make sure that the $log_entry contains all the elements we need
          */
@@ -2089,33 +2192,31 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 // echo '<div>' . '<pre style="margin:20px;background-color:#E7E7E7;">' . $content . '</pre></div>';
             $template = '<div>
             <div style="background-color:#E7E7E7;">
-                {CONTENT1}
+                {CONTENT}
             </div>
 
         </div>';
-            $template = '<div></div>';
         } else {
 
 
             $template = '<div style="padding:5px;margin:5px 0px 5px 0px;background-color:#F1F1DA;">
 
-            <strong>{GROUP_LABEL1}</strong>
+            <strong>{GROUP_LABEL}</strong>
 
         </div>
 
         <div>
 
-            <div style="background-color:#E7E7E7;">{CONTENT1}</div>
+            <div style="background-color:#E7E7E7;">{CONTENT}</div>
 
 
         </div>';
-            $template = '';
         }
-        $this->getPlugin()->getTools()->getHtmlWithoutWhitespace($template);
+        $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
 
         $content = str_ireplace(array_keys($tags), array_values($tags), $template);
 
-  //      echo htmlspecialchars($content);
+        //      echo htmlspecialchars($content);
 
 
 
@@ -2603,14 +2704,39 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
              * Disabling it might be nice if all you are intersested in is logs
              */
 
-            'trace_enabled' => true,
+            'trace_enabled' => false,
+            /*
+             * Simple Trace Enabled
+             *
+             * Simple Trace forces the normal trace output to a single line which
+             * simply logs the class and method of the method in which the logTrace()
+             * call is placed.
+             * example output:
+              getAvailableModules/475 |-----TRACE-----|Simpli_Basev1c0_Plugin::getAvailableModules(["enabled"])
+
+
+             */
+            'simple_trace_enabled' => false,
+            /*
+             * Logging Enabled
+             *
+             * Enables /Disables logging. Will still allow traces.
+
+             */
+            'logging_enabled' => true,
+            /*
+             * simple trace template.
+             * Can use the following tags:
+             *
+             */
+            'simple_trace_template' => ' |-----TRACE-----|{CLASS}::{METHOD}([{ARGS}])',
             /*
              * Defined Variables Enabled
              *
              * Trace can produce a lot of output
              * Disabling it might be nice if all you are intersested in is logs
              */
-            'defined_vars_enabled' => true,
+            'defined_vars_enabled' => false,
             /*
              * Filter Bypass
              * True ignores all filters set by setMethodFilter()
@@ -3013,7 +3139,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
              <div style="color:green!important;border:thin grey solid;"> Arguments </div>
         {ARGUMENTS}
         </div>';
-        $template = $this->getPlugin()->getTools()->getHtmlWithoutWhitespace($template);
+        $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
         $tags = array(
             '{HOOK_COUNT}' => $hook_count,
             '{CURRENT_FILTER}' => $current_filter,

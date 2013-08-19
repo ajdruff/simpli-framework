@@ -297,7 +297,6 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         $theme = $this->getTheme();
 
 
-
         /*
          *
          * Parse Template - Replace the Attribute Template Tags with their values
@@ -321,6 +320,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         $element_template_tags = $this->getTagPairs($tags); //convert to tag pairs
         $processed_template = str_ireplace($element_template_tags['names'], $element_template_tags['values'], $template_with_atts_replaced);
 
+                $this->debug()->logVars(get_defined_vars());
+        $this->debug()->stop(true);
         /*
          *
          * Add the element to the Form array
@@ -369,7 +370,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         $this->debug()->t();
 
 
-
+        $this->debug()->logVar('Theme object = ', $this->getAddon()->getModule('Theme'));
         return ($this->getAddon()->getModule('Theme'));
     }
 

@@ -125,9 +125,9 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
      * @return void
      */
     public function config() {
+    $this->debug()->t();
 
-
-                /*
+        /*
          *  Load any libraries you need that may not be included with the default wordpress installation
          */
 
@@ -189,7 +189,7 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
        $this->setDisabledModule('ExampleModule');
       // $this->setDisabledModule('Debug');
 
-      $this->debug()->t(true);
+
 
         /*
          * Set disabled addons

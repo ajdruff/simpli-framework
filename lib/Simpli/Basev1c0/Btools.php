@@ -407,6 +407,38 @@ class Simpli_Basev1c0_Btools {
     }
 
     /**
+     * Crunch Template
+     *
+     * Replaces the key's tokens within the $template with the array's value for that key
+     * A key token is simple the key with a bracket around it.
+     * @example
+     * $tags=array('name'=>'Joe','role'=>'admin');
+     * $template='{NAME} is a great {ROLE}';
+     * $html=crunchTpl($tags,$template);
+     * $html is 'Joe is a great admin';
+     *
+     *
+     *
+     * @param array $tags An associative array containing tokens as indexes and replacements as its values.
+     * @param string $template A string containing tokens to be replaced
+     * @return void
+     */
+    public function crunchTpl($tags, $template) {
+
+        /*
+         * add a bracket around each key
+         */
+        foreach ($tags as $key => $value) {
+            $tags['{' . $key . '}'] = $value;
+            unset($tags[$key]);
+        }
+
+
+        $html = str_ireplace(array_keys($tags), array_values($tags), $template);
+        return $html;
+    }
+
+    /**
      * Strip HTML Whitespace
      *
      * Returns htmls without any unneccessary whitespace. Should not affect display strings
@@ -416,7 +448,7 @@ class Simpli_Basev1c0_Btools {
      * @param none
      * @return void
      */
-    public function getHtmlWithoutWhitespace($html) { //
+    public function scrubHtmlWhitespace($html) { //
         //ini_set("pcre.recursion_limit", "16777");  // 8MB stack. *nix //you can try using this, but better just to use small strings
         $re = '%# Collapse whitespace everywhere but in blacklisted elements.
         (?>             # Match all whitespans other than single space.
@@ -442,7 +474,6 @@ class Simpli_Basev1c0_Btools {
             exit("PCRE Error! File too big.\n");
         return $html;
     }
-
 
     /**
      * Short Description
@@ -470,7 +501,7 @@ class Simpli_Basev1c0_Btools {
 
         $arr_btrace = debug_backtrace();
         array_shift($arr_btrace);
-       // array_shift($arr_btrace);
+        // array_shift($arr_btrace);
         /*
          * get where the debug statement was located
          */

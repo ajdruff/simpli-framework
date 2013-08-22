@@ -533,7 +533,7 @@ class Simpli_Basev1c0_Plugin {
             }
             $this->_available_modules = $available_modules;
         }
-      
+
         return $this->_available_modules[$filter];
     }
 
@@ -1529,7 +1529,7 @@ class Simpli_Basev1c0_Plugin {
      * @return $this
      */
     public function loadModules() {
-
+        $this->debug()->t();
         $enabled_modules = $this->getAvailableModules('enabled');
 
 

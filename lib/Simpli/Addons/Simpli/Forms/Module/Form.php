@@ -47,7 +47,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return void
      */
     public function createForm($properties) {
-        //$this->debug()->t(true,1);
+        $this->debug()->t(true,1);
 
 
         $defaults = array(
@@ -57,20 +57,35 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         );
         $properties = shortcode_atts($defaults, $properties);
 
-        $this->setFilter($properties['filter']);
-
-        $this->getAddon()->getModule('Theme')->setTheme($properties['theme']);
 
 
         if (!is_array($properties)) {
             $properties = array();
         }
         $this->_form = array(); //initialize, clearing the old form
+
+
+
+                  $this->getTheme()->setTheme($properties['theme']);
+
+             $this->getTheme()->getAddon()->loadModules($this->getTheme()->getThemeDirectory() . '/Module');
+
+        $this->getTheme()->loadTemplates();
+
+
+
+        $this->setFilter($properties['filter']);
+
+        $this->getAddon()->getModule('Theme')->setTheme($properties['theme']);
+
+
+
         $this->_form['elements'] = array();
 //        $this->_form['elements']['atts'] = array();
 //        $this->_form['elements']['att_defaults'] = array();
 //        $this->_form['elements']['tags'] = array();
         $this->_form['form'] = $properties;
+        $this->debug()->logVars(get_defined_vars());
     }
 
     /**
@@ -204,11 +219,48 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
          * Use the name of the element id as the method
          *
          */
+        $this->sayHello('hello');
         $el_id = $properties['el_id'];
         $method = $el_id;
         unset($properties['el_id']); //remove the element id since we dont want it part of atts, and it served its only purpose
+        $this->debug()->logVars(get_defined_vars());
         $this->getElementsModule()->$method($properties);
     }
+    /**
+     * Short Description
+     *
+     * Long Description
+     *
+     * @param none
+     * @return void
+     */
+    public function sayHello($text) {
+         $this->debug()->t();
+        if ($text==='goodbye') {
+            return;
+        }
+
+        echo 'hello';
+$this->sayHello2('hello');
+
+$this->sayHello('goodbye');
+    }
+
+
+        /**
+     * Short Description
+     *
+     * Long Description
+     *
+     * @param none
+     * @return void
+     */
+    public function sayHello2($text) {
+        $this->debug()->t();
+        echo 'hello';
+
+    }
+
 
     /**
      * Get Form
@@ -295,7 +347,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
 
 
         $theme = $this->getTheme();
-
+        $this->debug()->logVar('$theme = ', $theme);
 
         /*
          *
@@ -320,8 +372,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         $element_template_tags = $this->getTagPairs($tags); //convert to tag pairs
         $processed_template = str_ireplace($element_template_tags['names'], $element_template_tags['values'], $template_with_atts_replaced);
 
-                $this->debug()->logVars(get_defined_vars());
-        $this->debug()->stop(true);
+
+
         /*
          *
          * Add the element to the Form array
@@ -370,8 +422,10 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         $this->debug()->t();
 
 
-        $this->debug()->logVar('Theme object = ', $this->getAddon()->getModule('Theme'));
-        return ($this->getAddon()->getModule('Theme'));
+
+        $result = $this->getAddon()->getModule('Theme');
+        $this->debug()->logVar('$this->getAddon()->getModule(\'Theme\') ', $result);
+        return ($result);
     }
 
     /**

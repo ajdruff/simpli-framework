@@ -1,4 +1,5 @@
-<div  style="display:block;border:solid 1px grey;"><span>Text Element - Using <em>Seattle</em> Theme <em>Text</em> Template<br/></span>
+
+<div  style="display:block;border:solid 1px grey;"><span>Text Element - Using Saratoga Theme Text Template<br/></span>
     <fieldset>(template1)
     <label class="label-radio">
         <span>{label}</span>

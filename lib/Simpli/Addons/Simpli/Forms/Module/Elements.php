@@ -73,6 +73,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
         $result = $this->getAddon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults);
 
   $this->debug()->logVars(get_defined_vars());
+    
         return($result);
     }
     /**

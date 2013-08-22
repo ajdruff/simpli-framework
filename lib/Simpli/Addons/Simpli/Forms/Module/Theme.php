@@ -110,15 +110,13 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
         $this->debug()->t();
 
 
-        $this->setTheme('Seattle');
+        $this->setTheme('Saratoga');
 
-       $this->getAddon()->loadModules($this->getThemeDirectory() . '/Module');
+        $this->getAddon()->loadModules($this->getThemeDirectory() . '/Module');
 
         $this->loadTemplates();
 
-        $addon_modules = $this->getAddon()->getModules();
-
-
+      //  $addon_modules = $this->getAddon()->getModules();
     }
 
     /**
@@ -231,11 +229,11 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
      * @param string $theme
      * @return object $this
      */
-    public function setTheme($theme) {
+    public function setTheme($theme_name) {
         $this->debug()->t();
 
-        $theme = trim(ucwords($theme));
-        $this->_theme_name = $theme;
+        $theme = trim(ucwords($theme_name));
+        $this->_theme_name = $theme_name;
 
 
 

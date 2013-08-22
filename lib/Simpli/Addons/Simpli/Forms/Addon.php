@@ -78,6 +78,7 @@ class Simpli_Addons_Simpli_Forms_Addon extends Simpli_Basev1c0_Addon {
 
         if (is_null($module_directory)) {
             parent::loadModules();
+            $this->debug()->logVars(get_defined_vars());
             return;
         }
         $enabled_modules = $this->getAvailableModules('enabled', $module_directory);
@@ -92,6 +93,7 @@ class Simpli_Addons_Simpli_Forms_Addon extends Simpli_Basev1c0_Addon {
 
             $this->loadModule($module_name);
         }
+        $this->debug()->logVars(get_defined_vars());
     }
 
     /**

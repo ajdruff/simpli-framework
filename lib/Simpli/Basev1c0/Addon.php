@@ -373,14 +373,28 @@ class Simpli_Basev1c0_Addon {
      */
     public function getModule($module_name) {
 
-        $this->debug()->t();
-        $this->debug()->logVar('Modules Loaded: ', $this->_modules);
 
-        if (!isset($this->_modules[$module_name])) {
+        $this->debug()->t();
+     //   $this->debug()->logVar('Modules Loaded: ', $this->_modules);
+    
+        if (!isset($this->_modules[$module_name]) || !is_object($this->_modules[$module_name])) {
             $this->debug()->log('Module not found,returning null');
             return null;
         }
         $this->debug()->log('Module found, returning module ' . $module_name);
+        $this->debug()->logVar('$this->_modules[' . $module_name . '] = ', $this->_modules[$module_name]);
+        // $this->debug()->logVars(get_defined_vars());
+//       if (isset($this->_modules['Theme'])) {
+//            try {
+//                $this->debug()->log('Theme Name is : ' . $this->_modules['Theme']->getThemeName());
+//            } catch (Exception $exc) {
+//                echo $exc->getMessage();
+//            }
+//        }
+        if (!is_object($this->_modules[$module_name])) {
+            $this->debug()->log('Module not found,returning null');
+            return null;
+        }
         return $this->_modules[$module_name];
     }
 
@@ -652,7 +666,7 @@ class Simpli_Basev1c0_Addon {
      */
     public function loadModule($module_name) {
 
-
+        $this->debug()->t();
 
 
 
@@ -702,14 +716,17 @@ class Simpli_Basev1c0_Addon {
         /*
          * Create the module object and attach it to $_modules
          */
-        if (!isset($this->_modules[$class]) || !is_object($this->_modules[$class]) || get_class($this->_modules[$class]) != $class) {
+        if (!isset($this->_modules[$module_name]) || !is_object($this->_modules[$module_name]) || get_class($this->_modules[$module_name]) != $class) {
             try {
 
                 $object = new $class;
                 $this->setModule($module_name, $object);
                 $this->getModule($module_name)->setPlugin($this->getPlugin()); //set the plugin dependency
                 $this->getModule($module_name)->setAddon($this); //set the addon dependency
-                $this->debug()->log('Loaded Addon Module ' . $this->getSlug() . '/' . $module_name);
+                if ($module_name === 'Theme') {
+                    $this->debug()->log('Theme Name is ' . $this->getModule($module_name)->getThemeName(), true);
+                }
+                $this->debug()->log('Loaded Addon Module ' . $this->getSlug() . '/' . $module_name, true);
             } catch (Exception $e) {
                 die('Unable to load Module: \'' . $module_name . '\'. ' . $e->getMessage());
             }

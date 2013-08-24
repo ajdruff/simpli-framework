@@ -77,7 +77,7 @@ $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include u
 //        )
 //);
 
-//$simpli_hello->debug()->TurnOff();
+$simpli_hello->debug()->TurnOn();
 
 
 
@@ -88,6 +88,7 @@ $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include u
  */
 $simpli_hello->init();
 
+$simpli_hello->debug()->stop(true);
 
 
 /*
@@ -105,18 +106,4 @@ $simpli_hello->init();
  */
 register_activation_hook(__FILE__, array($simpli_hello, 'install'));
 
-/**
- * Short Description
- *
- * Long Description
- * @param string $content The shortcode content
- * @return string The parsed output of the form body tag
- */
-function testMyFunction($a = 1, $b = 2) {
 
-    global $simpli_hello;
-    $simpli_hello->getModule('Debug')->t(true, 99);
-    //$simpli_hello->getModule('Debug')->t($always_debug = true, debug_backtrace(), 5);
-
- //   $simpli_hello->getModule('Debug')->dt(__LINE__, '', __FUNCTION__, __FILE__, true, debug_backtrace(), $levels = 3);
-}

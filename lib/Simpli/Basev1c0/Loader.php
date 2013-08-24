@@ -232,7 +232,7 @@ class Simpli_Basev1c0_Loader {
          * it then looks to see if the first two words of the class name match any element in namespaces.
          * the two namespaces are 'Simpli_Base' and the Plugin's slug captialized.
          */
-// echo '<br> class:' . $class;
+//echo '<br> class:' . $class;
 
         $matches = array();
         $matches = explode('_', $class); // alternative :  $pattern='/[A-Za-z0-9]+/';preg_match_all($pattern, $class, $matches);

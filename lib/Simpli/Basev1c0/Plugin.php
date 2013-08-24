@@ -285,10 +285,10 @@ class Simpli_Basev1c0_Plugin {
      */
     protected $_debug = null;
 
-    /**
+     /**
      * Debug
      *
-     * Returns a debug object
+     * Returns a debug object. Required to override base plugin method so the correct config() method is used.
      *
      * @param none
      * @return void
@@ -298,35 +298,30 @@ class Simpli_Basev1c0_Plugin {
          * If no debug object, attempt to load it
          * If it didnt load, return a phantom object instead, effectively
          * disabling any debug calls but not creating any errors
+         * For Debug to work, it must always be located under the /lib/Simpli/Hello folder or its equivilent and must be named Debug.php
          *
-
-          if (is_null($this->_debug)) {
-          $isLoaded = $this->_debug = $this->getModule('Debug');
-          if ($isLoaded === false) {
-
-          $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
-          }
-          }
-
-          return $this->_debug;
          */
         if (is_null($this->_debug)) {
+            $class_namespace_parts = $this->getClassNamespaceParts();
+            if (!file_exists($this->getDirectory() . '/lib/' . $class_namespace_parts[0] . '/' . $class_namespace_parts[1] . '/Debug.php')) {
 
-
-            try {
-                $this->_debug = new Simpli_Basev1c0_Debug();
-                $this->_debug->setPlugin($this);
-                $this->_debug->config();
-                $this->_debug->addHooks();
-            } catch (Exception $exc) {
-                echo $exc->getMessage();
                 $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
+            } else {
+                try {
+                    $debug_class=$this->getClassNamespace() . '_Debug';
+                    $this->_debug = new $debug_class();
+                    $this->_debug->setPlugin($this);
+                    $this->_debug->config();
+                    $this->_debug->addHooks();
+                } catch (Exception $exc) {
+                    echo $exc->getMessage();
+                    $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
+                }
             }
         }
 
         return $this->_debug;
     }
-
     /**
      * Get Directory - Read Only
      *

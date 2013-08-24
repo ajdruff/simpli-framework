@@ -52,7 +52,7 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 //
 
 
-
+$this->say_hello('saying hello from core addHooks');
 
 
         /*
@@ -122,9 +122,15 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
         $this->debug()->t();
         global $post;
 
+$my_array=array(
+    'apple'=>'red','orange'=>'orange'
+);
+$this->debug()->logExtract($my_array);
+  $this->debug()->logVars($my_array);
+   $this->debug()->logVar('$my_array',$my_array);
 
 
-        /*
+  /*
          * If the global setting is configured for disabled, then dont
          * add the hello text
          */

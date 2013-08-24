@@ -54,255 +54,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      */
 
     public function config() {
-
-
-        /*
-         * turn debugging on/off
-         */
-        $this->debug()->turnOn();
-
-//  $this->debug()->turnOff();
-
-        /*
-         * set options . if modules set their own options, they will override these
-         */
-
-        $this->setOption('method_filters_enabled', true); //set to false to ignore all filters and print all module debug output
-        //dont forget you can also just use a method   $this->debug()->setMethodFilter('config', false);
-        $this->debug()->setMethodFilter('text', true);
-        $this->debug()->setMethodFilter('el', true);
-        $this->debug()->setMethodFilter('getTheme', true);
-        $this->debug()->setMethodFilter('renderElement', true);
-        $this->debug()->setMethodFilter('getModule', false);
-        $this->debug()->setMethodFilter('sayHello', true);
-        $this->debug()->setMethodFilter('sayHello2', true);
-        $this->debug()->setMethodFilter('loadModule', false);
-        $this->debug()->setMethodFilter('loadModules', false);
-        $this->debug()->setMethodFilter('createForm', true);
-
-
-        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Addon', false);
-        $this->debug()->setMethodFilter('Simpli_Basev1c0_Addon', false);
-
-        $this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin', false);
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Admin', false);
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Core', false);
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Debug', false);
-
-
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_ExampleModule', false);
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Menu10Settings', false);
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Menu20Settings', false);
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Menu30Test', false);
-
-
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Post', false);
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Queryvars', false);
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Shortcodes', false);
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Tools', false);
-        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Filter', false);
-        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Form', false);
-        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Elements', false);
-        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Theme', false);
-
-
-        /*
-         * Tracing
-         *
-         * Outputs an information box and cascading trace for each method that has the logTrace() call
-         */
-        $this->debug()->setOption('trace_enabled', false);
-
-
-        /*
-         * Simple Trace Enabled
-         *
-         * Simple Trace forces the normal trace output to a single line which
-         * simply logs the class and method oin which the logTrace()
-         * call is placed.
-         * example output:
-          getAvailableModules/475 |-----TRACE-----|Simpli_Basev1c0_Plugin::getAvailableModules(["enabled"])
-
-
-         */
-
-
-
-        $this->setOption('simple_trace_enabled', true); //requires trace_enabled to be set to true to produce output
-
-        /*
-         * simple trace template.
-         * Can use the following tags:
-         *
-         */
-        $this->setOption('simple_trace_template', '{CLASS}::{METHOD}([{ARGS}])<div style="font-size:xx-small"><em>called from:{CALLING_CLASS}::{CALLING_METHOD}</em></div>');
-
-
-        /*
-         * Exclude All Logs - Turns off all logging with the exception of simple traces.
-         *
-         * Blocks all logging except a simple trace. Helpful to reduce ouput and see whats going on.
-
-
-         */
-
-        $this->setOption('logging_enabled', true);
-
-        /*
-         * Define Vars
-         *
-         * Outputs the variables defined in a function for each method that has a logVars() call
-         */
-
-        $this->debug()->setOption('defined_vars_enabled', true);
-
-
-        /*
-         *
-         * Log All Actions
-         *  - will output every hook action - generates a ton of output. do you really want to do this ?
-         * Can be filtered using the action_inclusion_filter and action_exclusion_filter
-         * true/false
-         */
-        $this->setOption('log_all_actions', false);
-
-
-        /*
-         *
-         * Visual Trace
-         *
-         * Graphiviz Visualization of the debug trace
-         * Requires both the PEAR Image_GraphViz module
-         * and graphviz binary to be installed using either
-         * a php extension or the windows installation package
-         * ref:
-         *
-         *
-         */
-
-        $this->debug()->setOption('visual_trace_enabled', true);
-
-
-        /*
-         * Memory and Execution Time Tweaks
-         *
-         * Show Arrays
-         * Show Objects
-         *
-         * Will allow logTrace and logVars to recursively
-         * show members that are arrays and objects, allowing you to click
-         * the 'more' link to expand them further. Setting to true
-         * is very memory and cpu intensive, and may
-         * drive execution time and memory past their limits.
-         * Recommend arrays to true and objects to false.
-         *
-         * Setting to false does not mean you can never view objects and arrays.
-         * It only impacts the logVars() and the 'Info' (when displaying attributes)
-         *  behavior. You can always show arrays
-         * and variables using logVar() directly, which will always show them.
-         *
-         */
-        $this->debug()->setOption('show_arrays', true);
-        $this->debug()->setOption('show_objects', false);
-
-
-        /*
-         * Debug Output
-         * Where you want to send the log output
-         */
-        $this->setOption('output_to_inline', false);
-        $this->setOption('output_to_footer', true);
-        $this->setOption('output_to_file', false);
-        $this->setOption('output_to_console', false);
-        $this->setOption('log_file_path', $this->getPlugin()->getDirectory() . '/debug.log.txt');
-
-
-
-        /*
-         * Excluded Functions Filter Enabled
-         * Default: true
-         * this filter removes unwanted functions from trace output
-         */
-
-        $this->setOption('function_exclusion_filter_enabled', true);
-        $this->setOption('function_exclusion_filter', array_merge(
-                        $this->getOption('function_exclusion_filter'), array()
-                )
-        );
-
-
-
-
-
-        /* example of how you would add a new function to the existing default filter . if you want to remove filters, either remove them from the default array (contained in the _getDefaultOption method , or redefine an entire new array. you can also just disable the filter by setting function_exclusion_filter_enabled to false
-
-          $this->setOption('function_exclusion_filter', array_merge(
-          $this->getOption('function_exclusion_filter'), array('init','config') // this will exclude any functions or method 'init' and 'config' as well as all the default filters
-          )
-          );
-         */
-
-
-        /*
-         * Action Exclusion Filter
-         * Exclude these actions when 'log_all_actions' is enabled
-         * Works the same way as the Excluded Functions filter above
-         */
-
-        $this->setOption('action_exclusion_filter_enabled', true);
-        $this->setOption('action_exclusion_filter', array_merge(
-                        $this->getOption('action_exclusion_filter'), array()
-                )
-        );
-
-
-        /*
-         * Action Inclusion Filter
-         * Log only those actions listed in the filter when enabled
-         */
-
-        $this->setOption('action_inclusion_filter_enabled', true);
-        $this->setOption('action_inclusion_filter', array_merge(
-                        $this->getOption('action_inclusion_filter'), array('simpli_addons_simpli_forms_init')
-                )
-        );
-
-
-        /*
-         * Javascript Source Code
-         * Set to True to use the WordPress source versions
-         * instead of the minified versions of the builtin javascript libraries, allowing
-         * you to view the human readable versions of jquery,etc.
-         */
-
-        /* this wont work after 3.4 - must be defined before wp-settings loads */
-        //    if (!defined('SCRIPT_DEBUG')) {
-        //        if ($this->isOn()) {
-        //           define('SCRIPT_DEBUG', true); //true to step through readable source code, false for minification,
-        //       }
-        //  }
-
-
-        /*
-         * Prefixes
-         * Prefix Template Available tags:
-         * {PLUGIN_SLUG}
-         * {TIME}
-         * {LINE}
-         * {CLASS}
-         * {METHOD}
-         * {FILE}
-         */
-        //$this->setOption('browser_prefix_enabled', true);
-        //  $this->setOption('browser_prefix_template', '<em>{METHOD}/{LINE}</em>&nbsp;');
-
-        $this->setOption('browser_prefix_template', true);
-        $this->setOption('console_prefix_enabled', true);
-        $this->setOption('file_prefix_enabled', true);
-        $this->setOption('browser_prefix_template', '<em>{METHOD}/{LINE}</em>&nbsp;');
-        $this->setOption('console_prefix_template', '{TIME} | {LINE} | {PLUGIN_SLUG} | {CLASS}->{METHOD}() |  : ');
-        $this->setOption('file_prefix_template', '{TIME} {METHOD}/{LINE}');
-        $this->setOption('prefix_time_format', 'Y-m-d H:i:s');
+        /* this method intentionally left empty since it should be implemented using the child class */
     }
 
     /**
@@ -334,9 +86,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          * You must therefore register the hookPrintTraceStack before the hookPrintLogToFooter
          * or you'll receive invalid resource errors because the trace will print to a non-existent handle
          */
-        if ($this->getOption('simple_trace_enabled') || ($this->getOption('trace_enabled'))) {
-            //register_shutdown_function(array($this, 'hookPrintTraceStack'));
-        }
+
         if ($this->getOption('output_to_footer')) {
             register_shutdown_function(array($this, 'hookPrintLogToFooter'));
         }
@@ -404,12 +154,11 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      */
     public function stop($force_output = false) {
 
-        $properties = $this->_getDebugStatementProperties(debug_backtrace());
-        $line = $properties['line'];
-        $class = $properties['class'];
-        $method = $properties['method'];
-        $file = $properties['file'];
 
+        $props = $this->_getMethodProperties($this->_debug_backtrace());
+
+        $line = $props['line'];
+        $file = $props['file'];
         if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
             return;
         }
@@ -418,8 +167,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $tags = (compact('line', 'file', 'basename_file'));
         $stop_message = $this->getPlugin()->getTools()->crunchTpl($tags, $template);
 
-
-        $this->log($stop_message, $force_output);
+        $this->_log($stop_message, $props, false, 'all', 'info');
         die();
     }
 
@@ -527,7 +275,8 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      *
      * Log content to all targets
      *
-     * @param none
+     * @param string $content The html or plain text to be logged
+     * @param boolean $force_output True to override any blocking filters so as to force output to the log.
      * @return void
      */
     public function log($content, $force_output = false) {
@@ -546,54 +295,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
             return;
         }
-        /*
-         * Add to simple trace array so we can print it in footer later
-         */
-        if (($this->getOptions('simple_trace_enabled'))) {
 
-
-
-
-//            $indent = $this->_getStackTraceIndent($props, $this->_trace_props_previous);
-//
-//
-//            $margin = $indent * 50;
-//            $color[0] = '#E7E7E7';
-//            $color[1] = '#D8E4F1';
-//            $color[2] = '#F1C68C';
-//            $bgcolor = '';
-//
-//            if ($indent < 1) {
-//                $bgcolor = $color[0];
-//            } elseif ($indent > 1) {
-//                $bgcolor = $color[2];
-//            } else {
-//                $bgcolor = $color[1];
-//            }
-//
-//
-//            $current_trace_class = ((isset($this->_trace_props_current['class'])) ? $this->_trace_props_current['class'] : null);
-//
-//            $current_trace_method = ((isset($this->_trace_props_current['method'])) ? $this->_trace_props_current['method'] : null);
-//
-//            if (($current_trace_class !== $props['class']) || ($current_trace_method !== $props['method'])) {
-//                $method_label = '<div style="background-color:' . $bgcolor . ';display:inline-block;border: 1px solid grey;margin:5px 0 5px;margin-left:' . $margin . 'px"><div>' . $this->_getSimpleTraceString($props) . '</div></div>';
-//                            $this->_log($method_label, $props['line'], $props['file'], $props['class'], $props['method'], $use_prefix = false, $target = 'browser', $type = 'trace');
-//
-//
-//            }
-//
-//
-//
-//            $content = '<div style="background-color:#E7E7E7;display:inline-block;border: 0px solid grey;margin:5px 0 5px;margin-left:' . $margin . 'px"><div>' . $content . '</div>';
-//
-//
-//
-//            $this->_trace_props_previous = $props;
-
-            $this->_log($content, $props, $use_prefix = true, $target = 'browser', $type = 'info');
-            return;
-        }
 
         $this->_log($content, $props, $use_prefix = true, $target = 'all', $type = 'info');
     }
@@ -648,10 +350,12 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      * Logs a variable to the browser as the output target. Will format arrays and objects vertically for
      * easier reading.
      *
-     * @param mixed $var
+     * @param string $var_name A short name or  description of the variable
+     * @param $var The variable to be logged
+     * @param boolean $force_output True Overrides filter settings
      * @return void
      */
-    public function logVar($message, $var, $force_output = false) {
+    public function logVar($var_name, $var, $force_output = false) {
 
 
 
@@ -671,13 +375,13 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
         /*
-         * bump output to next line from the label if an array or object so the $message is easier to read
+         * bump output to next line from the label if an array or object so the $var_name is easier to read
          */
         if (is_array($var) || is_object($var)) {
-            $message = '<br/> ' . $message;
+            $var_name = '<br/> ' . $var_name;
         }
 
-        $content = $this->_logVar($message, $var, $force_output, true, true);
+        $content = $this->_logVar($var_name, $var, $force_output, true, true);
 
         $this->_log($content, $props, $use_prefix = true, $target = 'browser', $type = 'info');
     }
@@ -687,10 +391,15 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      *
      * Returns the name and value of a variable. Arrays and objects are formatted vertically.
      *
-     * @param mixed
+     * @param string $var_name A short name or  description of the variable
+     * @param $var The variable to be logged
+     * @param boolean $force_output True Overrides filter settings
+     * @param boolean $show_arrays Whether to iterate through arrays. Used to help reduce the amount of memory used. If not provided, it will take its value from the main settings.
+     * @param boolean $show_objects Whether to iterate through objects. Used to help reduce the amount of memory used. If not provided, it will take its value from the main settings.
+     *
      * @return void
      */
-    private function _logVar($message, $var, $force_output, $show_arrays = null, $show_objects = null) {
+    private function _logVar($var_name, $var, $force_output, $show_arrays = null, $show_objects = null) {
 
         /*
          * If allow_arrays is not set explicitly, use the configured value
@@ -781,11 +490,11 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-            $content = $message . '<pre>' . print_r($arr_result, true) . '</pre>';
+            $content = $var_name . '<pre>' . print_r($arr_result, true) . '</pre>';
         } else {
 
             $same_line = true;
-            $content = "$message " . $var;
+            $content = $var_name . $var;
         }
 
         return $content;
@@ -794,11 +503,12 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
     /**
      * Debug Backtrace
      *
-     * Removes the current function from the backtrace. Useful for debug functions that
-     * analyze the traces of the calling function
+     * Provides the array from the php function debug_backtrace. Useful since
+     * it requires no paramaters
      *
-     * @param none
-     * @return void
+     * @param boolean $wrapper True if called by another *private* method that is in turn called by a puble method.
+     * This helps determine to remove another layer from the backtrace
+     * @return array The
      */
     private function _debug_backtrace($wrapper = false) {
 
@@ -817,6 +527,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      * Super Simple Trace
      *
      * Provides a straight dump of debug_backtrace but retaining only line,class,function,file and args
+     * This helps to reduce the amount of output for easier viewing.
      * Does not rely on any functions within the Debug module so can be used anywhere without runaway recursion
      * Does not respect filtering and is not reversed as in st() and t()
      *
@@ -840,7 +551,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             'file' => '',
             'line' => '',
             'class' => '',
-            'method' => '',
+            'function' => '',
             'args' => array(),
         );
         /*
@@ -853,12 +564,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          * get where the debug statement was located
          */
 
-
-
-        $ds_line = (isset($arr_btrace[0]['line']) ? $arr_btrace[0]['line'] : '');
-        $ds_file = (isset($arr_btrace[0]['file']) ? $arr_btrace[0]['file'] : '');
-        $ds_class = (isset($arr_btrace[1]['class']) ? $arr_btrace[1]['class'] : '');
-        $ds_method = (isset($arr_btrace[1]['function']) ? $arr_btrace[1]['function'] : '');
+        $props = $this->_getMethodProperties($arr_btrace);
 
 
         /*
@@ -873,7 +579,8 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $content = 'Simplified debug_backtrace() <pre>' . print_r($traces, true) . '</pre>';
 
 
-        $this->_log($ds_line, $ds_class, $ds_method, $ds_file, $content, $text, true);
+
+        $this->_log($content, $props, true, 'browser', 'info');
     }
 
     /**
@@ -884,7 +591,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      * @param array $arr_btrace The backtrace array produced by debug_backtrace()
      * @return void
      */
-    public function st($force_output = false, $levels = 1) {
+    public function st($force_output = false) {
 
 # init
         $previous_string = '';
@@ -905,21 +612,18 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          * get the backtrace
          */
 
-        $arr_btrace = $this->_debug_backtrace(); //get the backtrace
+        $arr_btrace = $this->_debug_backtrace(false); //get the backtrace
 
         /*
          * get where the debug statement was located
          */
 
-
-
-        $ds_class = (isset($arr_btrace[0]['class']) ? $arr_btrace[0]['class'] : '');
-        $ds_method = (isset($arr_btrace[0]['function']) ? $arr_btrace[0]['function'] : '');
+        $props = $this->_getMethodProperties($arr_btrace);
 
         /*
          * check if in filters
          */
-        if (!$this->_inFilters($ds_class, $ds_method, $force_output)) {
+        if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
 
             return;
         }
@@ -945,27 +649,28 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             /*
              * create a trace template laying out the properties to be human readable
              */
-            $trace_template = '{file}/{line}/{class}->{function}(){args}';
+            $trace_template = '{line}/{file}/{class}->{function}<br>(<br>{args}<br>)';
             $search = array('{file}', '{line}', '{class}', '{function}', '{args}');
             $args_formatted_string = '<pre style="padding-left:20px">' . print_r($args, true) . '</pre>';
             $replacements = array(basename($file), $line, $class, $function, $args_formatted_string);
             $trace_string = str_ireplace($search, $replacements, $trace_template);
+
+
+
+
+
             if ($counter > 0) {
                 $previous_string = $trace_string;
             }
             $margin = $counter * 10;
-// $margin = 0;
+
             $trace_string = '<span style="border:solid 1px grey;display:inline-block;margin-left:' . $margin . 'px">' . $trace_string . '</span>';
 
 
             $traces[] = $trace_string;
         }
-        $content = '<div>' . implode('<br/><br/>', $traces) . '</div>';
-
-        $this->_log($line, $class, $function, $file, $content, $text, true);
-
-
-//   return $output;
+        $content = '<em>Simple Trace : </em><div>' . implode('<br/><br/>', $traces) . '</div>';
+        $this->_log($content, $props, true, 'browser', 'info'); //info so as not to trigger the special handling that trace gets
     }
 
     /**
@@ -1059,19 +764,19 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        $template = '<div style="padding:0px;margin:0px;">
+        $template = '
 
-<div style="border:1px solid grey;padding:5px;text-align:left;display: inline-block;">
-<a class="simpli_debug_citem" href="#"><span><em>{CLASS}::{METHOD}() Variables</em></span><span style="visibility:hidden;display:none">{CLASS}::{METHOD}() Variables</span></a>
+<div style=";padding:5px;text-align:left;display: inline-block;">
+<a class="simpli_debug_citem" href="#"><span><em>Variables</em></span><span style="visibility:hidden;display:none">Collapse Variables</span></a>
 
 
 
-                <div  class="simpli_debug_toggle" style="display:none;visibility:hidden;padding:0px;margin:0px;"><!-- Collapsable --><p ><span>{CLASS}::{METHOD} Variables</span> {DEFINED_VARS}</p>
+                <div  class="simpli_debug_toggle" style="display:none;visibility:hidden;padding:0px;margin:0px;"><!-- Collapsable --><p >{DEFINED_VARS}</p>
 
 
 </div>
 </div>
-</div>
+
 ';
         $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
 
@@ -1081,7 +786,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        $this->_log($content, $props, $use_prefix = false, $target = 'browser');
+        $this->_log($content, $props, $use_prefix = true, $target = 'browser');
     }
 
     /**
@@ -1089,10 +794,11 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      *
      * Returns the trace string displayed for each method
      *
-     * @param array $ds_props The debug statement properties that include line,class,method,file,args
+     * @param array $props The properties of the method that generated the debug call. You can get this using _getMethodProperties()
+     * @param string type 'normal','simple','text'
      * @return string $trace_string The string that will be displayed for the method
      */
-    private function _getSimpleTraceString($props) {
+    private function _getMethodLabel($props) {
         /*
          * Available tags for $ds_props are:
          * {LINE}
@@ -1105,47 +811,34 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 #init
         $not_available_text = "not available";
 
-        if (false) { // @todo put here an option for a simple trace (might speed things up)
+
+        $template_type = $this->getOption('trace_output_format');
+        $method_label_template = $this->getOption('method_label_template_' . $template_type);
+        /*
+         * use a simple trace format to reduce html and speed things up.
+         * this just provides a simple label
+         */
+        if ($template_type === 'text') {
             $props['args'] = htmlspecialchars(json_encode($props['args']));
 
 
 
-            $template = $this->getOption('simple_trace_template');
+
+
+
             /*
              * populate the template
              */
-            $trace_string = $this->getPlugin()->getTools()->crunchTpl($props, $template);
-            $trace_string = str_ireplace('[[', '', $trace_string); //removes double brackets that appear after json encode
-            $trace_string = str_ireplace(']]', '', $trace_string); // ditto
+            $method_label_text = $this->getPlugin()->getTools()->crunchTpl($props, $method_label_template);
+            $method_label_text = str_ireplace('[[', '', $method_label_text); //removes double brackets that appear after json encode
+            $method_label_text = str_ireplace(']]', '', $method_label_text); // ditto
+            return $method_label_text;
         }
 
-        $debug_trace_html_template = '<div style="border:1px solid grey;padding:5px;text-align:left;display: inline-block;">
-                <strong>{CLASS}::{METHOD_SIG}</strong>
-
-
-                <a  class="simpli_debug_citem simpli_debug_get_debug_info" href="#"><span>Info</span><span style="visibility:hidden;display:none">Collapse</span></a>
 
 
 
-                <div  class="simpli_debug_toggle" style="display:none;visibility:hidden;padding:0px;margin:0px;"><!-- Collapsable -->
-
-                    <div style = "margin:10px 0px 10px 0px;"> <strong style = "font-size:xx-large">Class </strong></div>
-                    <div style = "margin:10px 0px 10px 0px;"> <strong style = "font-size:large">{CLASS}</strong></div>
-                    <div style = "margin:10px 0px 10px 0px;"> <strong style = "font-size:xx-large">Method</strong></div>
-                    <div style = "margin:10px 0px 10px 0px;"> <strong style = "font-size:large">{METHOD_SIG_SIMPLE}</strong></div>
-
-                    <div style = "margin:10px 0px 10px 0px;"> <strong style = "font-size:xx-large">Description</strong></div><p>{COMMENT}</p><div style = "margin:10px 0px 10px 0px;"> <strong style = "font-size:xx-large">Location</strong></div>
-                    <p>{LOCATION}</p>
-
-                    <div style = "margin:10px 0px 10px 0px;"> <strong style = "font-size:xx-large">Called From</strong></div>
-                    <p > {CALLING_LOCATION}</p>
-
-
-                </div>
-            </div>';
-
-
-        $debug_trace_html_template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($debug_trace_html_template); //this is necessary since there are pre tags in the source . You could just remove it manually using a macro in a text editor , like the 'remove unnecessary whitespace' utility in notepad++ , but using scrubHtmlWhitespace allows us to retain the whitespace in our source file so its human readable, while still removing it when its displayed.
+        $method_label_template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($method_label_template); //this is necessary since there are pre tags in the source . You could just remove it manually using a macro in a text editor , like the 'remove unnecessary whitespace' utility in notepad++ , but using scrubHtmlWhitespace allows us to retain the whitespace in our source file so its human readable, while still removing it when its displayed.
         /*
          * Now populate the html template
          */
@@ -1176,84 +869,11 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         );
 
 
-        $current_trace_html = str_replace(array_keys($tags), array_values($tags), $debug_trace_html_template);
+        $current_trace_html = str_replace(array_keys($tags), array_values($tags), $method_label_template);
 
 
 
         return $current_trace_html;
-    }
-
-    /**
-     * Get Simple Trace String
-     *
-     * Returns the trace string displayed for each method
-     *
-     * @param array $ds_props The debug statement properties that include line,class,method,file,args
-     * @return string $trace_string The string that will be displayed for the method
-     */
-    private function _getVerySimpleTraceString($props) {
-        /*
-         * Available tags for $ds_props are:
-         * {LINE}
-         * {CLASS}
-         * {METHOD}
-         * {FILE}
-         * {ARGS}
-         *
-         */
-
-
-
-        $props['args'] = htmlspecialchars(json_encode($props['args']));
-
-
-
-        $template = $this->getOption('simple_trace_template');
-        /*
-         * populate the template
-         */
-        $trace_string = $this->getPlugin()->getTools()->crunchTpl($props, $template);
-        $trace_string = str_ireplace('[[', '', $trace_string); //removes double brackets that appear after json encode
-        $trace_string = str_ireplace(']]', '', $trace_string); // ditto
-
-
-        return $trace_string;
-    }
-
-    /**
-     * t
-     *
-     * Same as logTrace - shorter form for convienance and backward compability
-     *
-     * @param none
-     * @return void
-     */
-    public function t_Version1($force_output = false, $levels = 0) {
-
-        /*
-         * dont bother if trace is not enabled
-         */
-        if (!$this->debug()->getOption('trace_enabled')) {
-            return;
-        }
-
-
-        $arr_btrace = $this->_debug_backtrace();
-        $ds_properties = $this->_getDebugStatementProperties(debug_backtrace());
-
-        if (!$this->_inFilters($ds_properties['class'], $ds_properties['method'], $force_output)) {
-            return;
-        }
-        /*
-         * Use simple trace if enabled
-         */
-        if ($this->getOption('simple_trace_enabled')) {
-            $content = $this->_getSimpleTraceString($ds_properties);
-            $this->_log($content, $ds_properties['line'], $ds_properties['file'], $ds_properties['class'], $ds_properties['method'], $use_prefix = true, $target = 'all', $type = 'trace');
-            return;
-        }
-
-        $this->_logTrace($ds_properties, $arr_btrace, $levels);
     }
 
     protected $_trace_stack;
@@ -1280,7 +900,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
         $arr_btrace = $this->_debug_backtrace();
-        //   $ds_properties = $this->_getDebugStatementProperties(debug_backtrace());
+
 
         $props = $this->_getMethodProperties($this->_debug_backtrace());
 
@@ -1290,46 +910,13 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             return;
         }
 
+        $content = $this->_formatTraceForBrowser($props, $arr_btrace, 0);
 
-        /*
-         * Add to simple trace array so we can print it in footer later
-         */
-        if (($this->getOptions('simple_trace_enabled'))) {
+        $this->_log($content, $props, $use_prefix = false, $target = 'browser', $type = 'trace');
 
 
 
-            $content = $this->_formatTraceForBrowser($props, $arr_btrace, 0);
-
-            $this->_log($content, $props, $use_prefix = false, $target = 'browser', $type = 'trace');
-
-
-
-
-
-
-
-
-
-            return;
-        }
-
-
-
-//
-//
-//
-//
-//        /*
-//         * Use simple trace if enabled
-//         */
-//        if ($this->getOption('simple_trace_enabled')) {
-//            $content = $this->_getSimpleTraceString($props);
-//            $this->_log($content, $props['line'], $props['file'], $props['class'], $props['method'], $use_prefix = true, $target = 'all', $type = 'trace');
-//            return;
-//        }
-
-
-        $this->_formatTraceForBrowser($props, $arr_btrace, $levels);
+        return;
     }
 
     /**
@@ -1342,7 +929,6 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function logTrace($force_output = false, $levels = 0) {
-
         /*
          * dont bother if trace is not enabled
          */
@@ -1350,26 +936,25 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             return;
         }
 
+
         $arr_btrace = $this->_debug_backtrace();
-        //   $ds_properties = $this->_getDebugStatementProperties(debug_backtrace());
+
 
         $props = $this->_getMethodProperties($this->_debug_backtrace());
+
+
 
         if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
             return;
         }
 
+        $content = $this->_formatTraceForBrowser($props, $arr_btrace, 0);
+
+        $this->_log($content, $props, $use_prefix = false, $target = 'browser', $type = 'trace');
 
 
-        /*
-         * Add to simple trace array so we can print it in footer later
-         */
-        if (($this->getOptions('simple_trace_enabled'))) {
-            $this->_trace_stack[] = $props;
-            return;
-        }
 
-        $this->_formatTraceForBrowser($props, $arr_btrace, $levels);
+        return;
     }
 
     /**
@@ -1384,7 +969,8 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      */
     private function _formatTraceForBrowser($props, $arr_btrace, $levels) {
 
-
+        $non_visual_backtrace_html = '';
+        $visual_backtrace_html = '';
 
         /*
          * Get the full backtrace, hiding it under a link to expand/collapse it
@@ -1414,34 +1000,34 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 </div>
 </div>
 ';
-
-        /*
-         * Build Non-Visual Trace Html
-         */
-        $tags = array(
+        if ($this->getOption('backtrace_enabled')) {
+            /*
+             * Build Non-Visual Trace Html
+             */
+            $tags = array(
 // '{CLASS}' => ($props['class'] !== '') ? $props['class'] : $not_available_text,
-            '{BACKGROUND_COLOR}' => '#E3DDB2',
-            // '{METHOD}' => ($props['method'] !== '') ? $props['method'] : $not_available_text,
-            '{TRACE}' => $arr_trace['backtrace'],
-            '{EXPAND_TEXT}' => 'Backtrace',
-            '{COLLAPSE_TEXT}' => 'Visual Backtrace',
-            '{METHOD}' => $props['method']
-        );
-        $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
-        $non_visual_trace_html = str_replace(array_keys($tags), array_values($tags), $template);
+                // '{METHOD}' => ($props['method'] !== '') ? $props['method'] : $not_available_text,
+                '{TRACE}' => $arr_trace['backtrace'],
+                '{EXPAND_TEXT}' => 'Backtrace',
+                '{COLLAPSE_TEXT}' => 'Hide Backtrace',
+                '{METHOD}' => $props['method']
+            );
+            $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
+            $non_visual_backtrace_html = str_replace(array_keys($tags), array_values($tags), $template);
+        }
+
 
         /*
          * Now get the visual backtrace html
          */
 
-        if ($this->getOption('visual_trace_enabled')) {
+        if ($this->getOption('visual_backtrace_enabled')) {
 
             /*
              * Build Visual Trace Html
              */
             $tags = array(
 // '{CLASS}' => ($props['class'] !== '') ? $props['class'] : $not_available_text,
-                '{BACKGROUND_COLOR}' => '#E3DDB2',
                 // '{METHOD}' => ($props['method'] !== '') ? $props['method'] : $not_available_text,
                 '{TRACE}' => $arr_trace['visual_backtrace'],
                 '{EXPAND_TEXT}' => 'Visual Backtrace',
@@ -1449,20 +1035,14 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
                 '{METHOD}' => $props['method']
             );
             $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
-            $visual_trace_html = str_replace(array_keys($tags), array_values($tags), $template);
-
-
-            $content = $non_visual_trace_html . $visual_trace_html;
-        } else {
-            $content = $non_visual_trace_html;
+            $visual_backtrace_html = str_replace(array_keys($tags), array_values($tags), $template);
         }
-
+        $content = $non_visual_backtrace_html . $visual_backtrace_html;
 
         return $content;
 
         //  $this->_log($content, $props, $use_prefix = false, $target = 'browser', $type = 'trace');
     }
-
 
     /**
      * Get Backtrace
@@ -1478,7 +1058,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-//     $ds_properties = $this->_getDebugStatementProperties(debug_backtrace());
+
 
 
 
@@ -1560,11 +1140,11 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-            $debug_trace_html_template = '<div style="padding:0px;margin:0px;margin-left:{MARGIN}px;margin-top:5px;">
-                <div style="background-color:{BACKGROUND_COLOR};padding:5px;text-align:left;display: inline-block;">
+            $debug_trace_html_template = '<div style="margin-top:5px;margin-left:{MARGIN}px">
+
 {METHOD_HEADER}
 
-            </div></div>';
+            </div>';
 
 
             $debug_trace_html_template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($debug_trace_html_template); //this is necessary since there are pre tags in the source . You could just remove it manually using a macro in a text editor , like the 'remove unnecessary whitespace' utility in notepad++ , but using scrubHtmlWhitespace allows us to retain the whitespace in our source file so its human readable, while still removing it when its displayed.
@@ -1576,7 +1156,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
                 '{MARGIN}' => $margin,
                 '{BACKGROUND_COLOR}' => $background_color,
                 '{COUNTER}' => $counter,
-                '{METHOD_HEADER}' => $this->_getSimpleTraceString($props)
+                '{METHOD_HEADER}' => $this->_getMethodLabel($props)
             );
 
 
@@ -1633,7 +1213,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
          */
 
-        $backtrace = '<div><pre>' . implode('', $traces_html) . '</pre></div>';
+        $backtrace = implode('', $traces_html);
         $result['backtrace'] = $backtrace;
         $result['visual_backtrace'] = $visual_backtrace;
 
@@ -1644,8 +1224,8 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      * Get Method Properties
      *
      * Returns a list of properties describing the method or standalone function.
-     * @todo: this should remove the need for getFunctionSignature, getReflection, and _getDebugStatementProperties_old
-     * @param $array_
+     * @param array $array_backtrace A backtrace array as returned by debug_backtrace or $this->debug_backtrace()
+     * @param $reverse Whether the array_backtrace is a reverse backtrace so we know which way to traverse the backtrace array
      * @return void
      */
     private function _getMethodProperties($array_backtrace, $reverse = false) {
@@ -2028,34 +1608,6 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
     protected $_debug_state;
 
     /**
-     * Get Group Label
-     *
-     * create group label for js console expand/collapse groups and browser output
-     *
-     * @param none
-     * @return void
-     */
-    protected function _getGroupLabel($class, $method, $file) {
-        /*
-         * create groups for js console expand/collapse groups
-         */
-
-
-
-        $class = ($class === '') ? '' : $class . '::';
-        $method = ($method === '') ? '' : $method . '()';
-        $file = ($file === '') ? '<unknown>' . ' /' : $file . ' /';
-//        if ($method == '') {
-//            $group_label = basename($file);
-//        } else {
-//            $group_label = basename($file) . '/' . $class . $method;
-//        }
-//
-        $group_label = basename($file) . $class . $method;
-        return ($group_label);
-    }
-
-    /**
      * Get Prefix
      *
      * Gets the log output prefix as defined by the options
@@ -2323,182 +1875,62 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         }
 
 
+
+
+
+
+
+
+
+        $indent = $this->_getTraceLevel($props, $this->_trace_props_previous);
+
+
+        $margin = $indent * 50;
+
+
+
+
+
         /*
-         * don't use group labels for traces, since it makes it more confusing.
+         * Trace previous properties so
+         * we can compare to see if we need to
+         * adjust margins
+         */
+        $this->_trace_props_previous = $props;
+
+        /*
+         * Here, we are returning either the trace block,
+         * or the log entry, depending on what kind of log we are processing
+         * The {TRACE} is provided by the _getBacktrace() method which logs its output.
          */
 
-        if ($log_entry['type'] === 'trace') {
-            $group_label = '';
-        } else {
-            $group_label = $this->_getGroupLabel($props['class'], $props['method'], $props['file']);
-        }
-
-
-
-        if (($this->getOptions('simple_trace_enabled'))) {
-
-
-
-
-            $indent = $this->_getStackTraceIndent($props, $this->_trace_props_previous);
-
-
-            $margin = $indent * 50;
-            $color[0] = '#E7E7E7';
-            $color[1] = '#D8E4F1';
-            $color[2] = '#F1C68C';
-            $bgcolor = '';
-
-            if ($indent < 1) {
-                $bgcolor = $color[0];
-            } elseif ($indent > 1) {
-                $bgcolor = $color[2];
-            } else {
-                $bgcolor = $color[1];
-            }
-
-//
-//            $current_trace_class = ((isset($this->_trace_props_current['class'])) ? $this->_trace_props_current['class'] : null);
-//
-//            $current_trace_method = ((isset($this->_trace_props_current['method'])) ? $this->_trace_props_current['method'] : null);
-
-
-
-
-            /*
-             * Method Label
-             * create the method label
-             */
-            $method_label = '<div style="padding:0px;margin:0px"><div style="background-color:' . $bgcolor . ';displayblock;border: 1px solid grey;margin:5px 0 5px"> <div>' . $this->_getSimpleTraceString($props) . '</div> </div> </div>';
-
-//            /*
-//             *
-//             * if the method label is the same as previous, dont show it again
-//             */
-//            if ($method_label === $this->_last_method_label) {
-//                $method_label = '';
-//                //$margin = 0;
-//            } else {
-//                $this->_last_method_label = $method_label;
-//            }
-
-            /*
-             * Log Entry Content HTML
-             */
-            $content = '<div  style="background-color:#E7E7E7;display:block;border: 0px solid grey;margin:5px 0 5px;margin-left:' . $margin . 'px"><div>' . $method_label . $prefix . $log_entry['content'] . '</div>';
-
-            $this->_trace_props_previous = $props;
-
-            $template = '
-                            <div style="padding:0px;margin:0px">
-            <div style="background-color:{BACKGROUND_COLOR};display:inline-block;border: 1px solid grey;margin:5px 0 5px">
-                <div>{MARGIN}{TRACE_STRING}
-                </div>
-            </div>
-        </div>
-        <div  style="background-color:#E7E7E7;display:inline-block;border;border: 0px solid grey;margin:5px 0 5px;margin-left:{MARGIN}px">
-            {PREFIX}{CONTENT}
-        </div>';
-
-            $method_label_template = '<div style="background-color:{BACKGROUND_COLOR};display:inline-block;border: 1px solid grey;margin:5px 0 5px;margin-left:{MARGIN}px">
-                <div>{TRACE_STRING}</div><div>{CONTENT}</div>
+        $trace_block_template = '<div style="background-color:{BACKGROUND_COLOR};display:inline-block;border: 1px solid grey;margin:5px 0 5px;margin-left:{MARGIN}px">
+                <div>{METHOD_LABEL}</div><div>{TRACE}</div>
 
             </div>';
 
 
-            $log_content_template = '<div  style="background-color:#FFFBCE;display:inline-block;border;border: 1px solid grey;margin:5px 0 5px;margin-left:{MARGIN}px">
+        $log_content_template = '<div  style="padding:5px;background-color:{BACKGROUND_COLOR};display:inline-block;border;border: 1px solid grey;margin:5px 0 5px;margin-left:{MARGIN}px">
             {PREFIX}{CONTENT}
         </div>';
-            $template = '
-            <div style="background-color:{BACKGROUND_COLOR};display:inline-block;border: 1px solid grey;margin:5px 0 5px;margin-left:{MARGIN}px">
-                <div>{MARGIN}{TRACE_STRING}
-                </div>
-            </div>
 
-        <div  style="background-color:#E7E7E7;display:inline-block;border;border: 0px solid grey;margin:5px 0 5px;margin-left:{MARGIN}px">
-            {PREFIX}{CONTENT}
-        </div>';
-            $tags = array(
-                'BACKGROUND_COLOR' => $bgcolor,
-                'MARGIN' => $margin,
-                'PREFIX' => $prefix,
-                'CONTENT' => $log_entry['content'],
-                'TRACE_STRING' => $this->_getSimpleTraceString($props),
-            );
-
-            if ($log_entry['type'] === 'trace') {
-                $result = $this->getPlugin()->getTools()->crunchTpl($tags, $method_label_template);
-            } else {
-
-                $result = $this->getPlugin()->getTools()->crunchTpl($tags, $log_content_template);
-            }
-
-            return $result;
-
-
-            /*
-             * update indent tracking
-             */
-            $this->_trace_props_previous = $props;
-
-            return $content;
-        }
-
-
-        /*
-         * add the prefix
-         */
-        $log_entry['content'] = $prefix . $log_entry['content'];
-
-        static $last_group_label;
         $tags = array(
-            '{CONTENT}' => $log_entry['content'],
-            '{GROUP_LABEL}' => $group_label,
+            'BACKGROUND_COLOR' => $this->_getTraceColor($indent),
+            'MARGIN' => $margin,
+            'PREFIX' => $prefix,
+            'CONTENT' => $log_entry['content'],
+            'TRACE' => ($log_entry['type'] === 'trace') ? $log_entry['content'] : '',
+            'METHOD_LABEL' => $this->_getMethodLabel($props),
         );
 
-
-
-
-
-
-
-
-        if ($last_group_label == $group_label) { //dont repeat the group if exactly the same
-// if (false) { //dont repeat the group if exactly the same
-// echo '<div>' . '<pre style="margin:20px;background-color:#E7E7E7;">' . $content . '</pre></div>';
-            $template = '<div>
-            <div style="background-color:#E7E7E7;">
-                {CONTENT}
-            </div>
-
-        </div>';
+        if ($log_entry['type'] === 'trace') {
+            $result = $this->getPlugin()->getTools()->crunchTpl($tags, $trace_block_template);
         } else {
 
-
-            $template = '<div style="padding:5px;margin:5px 0px 5px 0px;background-color:#F1F1DA;">
-
-            <strong>{GROUP_LABEL}</strong>
-
-        </div>
-
-        <div>
-
-            <div style="background-color:#E7E7E7;">{CONTENT}</div>
-
-
-        </div>';
+            $result = $this->getPlugin()->getTools()->crunchTpl($tags, $log_content_template);
         }
-        $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
 
-        $content = str_ireplace(array_keys($tags), array_values($tags), $template);
-
-        //      echo htmlspecialchars($content);
-
-
-
-        $last_group_label = $group_label;
-
-        return $content;
+        return $result;
     }
 
     /**
@@ -2654,7 +2086,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          * if enabled, but not configured properly, return an error message
          */
 
-        $is_graphviz_enabled = $this->debug()->getOption('visual_trace_enabled');
+        $is_graphviz_enabled = $this->debug()->getOption('visual_backtrace_enabled');
 
         if ($is_graphviz_enabled) {
 
@@ -2961,236 +2393,480 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
         return $result;
     }
-
     /**
      * Get Default Option
      *
      * Provides a default option value if it wasnt set by the user
      *
-     * @param none
-     * @return void
+     * @param mixed $option_name
+     * @return mixed The default value of the option
      */
     private function _getDefaultOption($option_name) {
 
-        $default_options = array(
-            /*
-             * Trace Enabled
-             *
-             * Trace can produce a lot of output
-             * Disabling it might be nice if all you are intersested in is logs
-             */
-
-            'trace_enabled' => false,
-            /*
-             * Simple Trace Enabled
-             *
-             * Simple Trace forces the normal trace output to a single line which
-             * simply logs the class and method of the method in which the logTrace()
-             * call is placed.
-             * example output:
-              getAvailableModules/475 |-----TRACE-----|Simpli_Basev1c0_Plugin::getAvailableModules(["enabled"])
-
-
-             */
-            'simple_trace_enabled' => false,
-            /*
-             * Logging Enabled
-             *
-             * Enables /Disables logging. Will still allow traces.
-
-             */
-            'logging_enabled' => true,
-            /*
-             * simple trace template.
-             * Can use the following tags:
-             *
-             */
-            'simple_trace_template' => ' |-----TRACE-----|{CLASS}::{METHOD}([{ARGS}])',
-            /*
-             * Defined Variables Enabled
-             *
-             * Trace can produce a lot of output
-             * Disabling it might be nice if all you are intersested in is logs
-             */
-            'defined_vars_enabled' => false,
-            /*
-             * Filter Bypass
-             * True ignores all filters set by setMethodFilter()
-             */
-            'method_filters_enabled' => false,
-            /*
-             * Graphiviz Include Path
-             */
-            'graphviz_include_path' => 'Image/GraphViz.php',
-            /*
-             * Whether graphviz is enabled
-             * boolean
-             */
-            'visual_trace_enabled' => false,
-            /*
-             * Output To Inline
-             * Whether to echo debug output to the browser as it is logged
-             */
-            'output_to_inline' => false,
-            /*
-             * Output To Footer
-             * Whether to echo debug output to the browser's
-             *  footer at the script's shutdown
-             */
-            'output_to_footer' => false,
-            /*
-             * Output To File
-             * Whether to echo debug output to a file
-             */
-            'output_to_file' => false,
-            /*
-             * Log File Location
-             */
-            'log_file_path' => $this->getPlugin()->getDirectory() . '/debug.log.txt',
-            /*
-             * Output to Console
-             * Whether to echo debug output to the javascript console
-             */
-            'output_to_console' => false,
-            /*
-             * Memory and Execution Time Tweaks
-             *
-             * Show Arrays
-             * Show Objects
-             *
-             * Will allow logTrace and logVars to
-             * show arrays and objects. Setting to true
-             * is very memory and cpu intensive, and may
-             * drive execution time and memory past their limits.
-             * Recommend arrays to true and objects to false.
-             *
-             *
-             */
-            'show_arrays' => true,
-            'show_objects' => false,
-            /*
-             *
-             * Log All Actions - will output every hook action - generates a ton of output. do you really want to do this ?
-             * true/false
-             */
-            'log_all_actions' => false,
-            /*
-             *
-             * Excluded Functions
-             * Exclude these functions from traces
-             */
-            'function_exclusion_filter' =>
-            array(
-                'require',
-                'require_once',
-                'include',
-                'include_once',
-                'do_action',
-                'do_meta_boxes',
-                'do_shortcode',
-                'load_template',
-                'locate_template',
-                'preg_replace_callback',
-                'do_shortcode_tag',
-                'call_user_func',
-                'call_user_func_array',
-                'apply_filters',
-                'do_action_ref_array',
-                'main'
-            ),
-            /*
-             * Enable or disable the Excluded Functions Filter
-             */
-            'function_exclusion_filter_enabled' => true,
-            /*
-             * Action Exclusion Filter
-             * Excluded Actions
-             * Exclude these actions from log all actions
-             */
-            'action_exclusion_filter' => array(
-                'gettext',
-                'gettext_with_context',
-                'sanitize_key',
-                'attribute_escape',
-                'get_user_metadata',
-                'no_texturize_tags',
-                'no_texturize_shortcodes',
-                'user_has_cap',
-                'clean_url',
-                'wp_parse_str',
-                'sanitize_html_class',
-                'map_meta_cap',
-                'load_textdomain',
-                'load_textdomain_mofile',
-                'override_load_textdomain'
-
-
-            /*
-             *
-             * load-mint-forms_page_mint-forms-edit
-             * admin_print_styles-mint-forms_page_mint-forms-edit
-             * admin_print_scripts-mint-forms_page_mint-forms-edit
-             * admin_head-mint-forms_page_mint-forms-edit
-             * mint-forms_page_mint-forms-edit
-             * screen_settings
-             * screen_options_show_screen (WP_Screen Object)
-             * current_screen
-             */
-            ),
-            /*
-             * Enable or disable the Actions Exclusion Filter
-             */
-            'action_exclusion_filter_enabled' => true,
-            /*
-             * Action Inclusion Filter
-             * Log only those actions listed in the filter when enabled
-             * Default is empty
-             */
-            'action_inclusion_filter' => array(
-            ),
-            /*
-             * Enable or disable the Actions Inclusion Filter
-             */
-            'action_inclusion_filter_enabled' => false,
-            /*
-             * Prefix Template
-             * Available tags:
-             * {PLUGIN_SLUG}
-             * {TIME}
-             * {LINE}
-             * {CLASS}
-             * {METHOD}
-             * {FILE}
-             */
-            'browser_prefix_enabled' => true,
-            'console_prefix_enabled' => true,
-            'file_prefix_enabled' => true,
-            'browser_prefix_template' => '<em>{METHOD}/{LINE}</em>&nbsp;',
-            'console_prefix_template' => '{TIME} | {CLASS}->{METHOD}() | {PLUGIN_SLUG} : ',
-            'file_prefix_template' => '{TIME} {METHOD}/{LINE}',
-            'prefix_time_format' => 'Y-m-d H:i:s',
-        ); //end of default options array
-
-        /*
-         * end of default options array
-         */
-
-        if (isset($default_options[$option_name])) {
-            return($default_options[$option_name]);
-        } else {
+        if (is_null($this->_default_options)) {
+            $this->_setDefaultOptions();
+        }
+        if (!isset($this->_default_options[$option_name])) {
             return null;
         }
+return $this->_default_options[$option_name];
+
+
+    }
+    /**
+     * Set Default Option
+     *
+     * Sets a default option value
+     *
+     * @param string $option_name The name of the option
+     * @param string $option_value The value of the the option
+     * @return void
+     */
+    private function _setDefaultOption($option_name,$option_value) {
+$this->_default_options[$option_name]=$option_value;
     }
 
+    private $_default_options = null;
+
     /**
-     * Get Stack Trace Indent
+     * Set Default Options
      *
-     * Long Description
+     * Sets all the default options
      *
      * @param none
      * @return void
      */
-    private function _getStackTraceIndent($props, $props_previous) {
+    private function _setDefaultOptions() {
+
+
+
+
+        /*
+         * Trace Enabled
+         *
+         * Outputs information about each called method or function, including a link
+         * to view a backtrace and a visual backtrace.
+         * A method will show only if within the filter and if the $this->debug()->t() method is called.
+         * Because trace can produce a lot of output, you can disable it if all you
+         * are interested in is logs.
+         */
+        $this->_setDefaultOption('trace_enabled', true);
+
+        /*
+         * Trace Output Format
+         *
+         * Indicates which trace template to use
+         * options are 'normal'(default), 'text' and 'simple'
+         */
+
+        $this->_setDefaultOption('trace_output_format', 'normal');
+
+        /*
+         * Backtrace Enabled
+         * Whether to provide a backtrace within
+         * the trace html
+         */
+
+        $this->debug()->_setDefaultOption('backtrace_enabled', true);
+
+
+        /*
+         * Visual Backtrace Enabled
+         *
+         *  Graphiviz Visualization of the debug trace
+         * Requires both the PEAR Image_GraphViz module
+         * and graphviz binary to be installed using either
+         * a php extension or the windows installation package
+         */
+
+        $this->_setDefaultOption('visual_backtrace_enabled', false);
+
+        /*
+         * Logging Enabled
+         *
+         * Enabled Logging
+         */
+
+        $this->_setDefaultOption('logging_enabled', true);
+
+
+
+        /*
+         * Defined Variables Enabled
+         *
+         * Outputs the variables defined in a function for each method that has a logVars() call
+         */
+
+
+        $this->_setDefaultOption('defined_vars_enabled', true);
+
+
+
+        /*
+         *
+         * Log All Actions - will output every hook action - generates a ton of output.
+         * Can be filtered using the action_inclusion_filter and action_exclusion_filter
+         * true/false
+         */
+
+
+        $this->_setDefaultOption('log_all_actions', false);
+
+        /*
+         * Method Filters Enabled
+         * False ignores all setMethodFilter settings, allowing
+         * all debug statements to be sent to output
+         */
+
+        $this->_setDefaultOption('method_filters_enabled', true);
+
+
+        /*
+         * Output To Inline
+         * Whether to echo debug output to the browser as it is logged
+         */
+
+        $this->_setDefaultOption('output_to_inline', false);
+
+
+
+        /*
+         * Output To Footer
+         * Whether to echo debug output to the browser's
+         *  footer at the script's shutdown
+         */
+
+        $this->_setDefaultOption('output_to_footer', true);
+
+
+
+        /*
+         * Output To File
+         * Whether to echo debug output to a file
+         */
+
+        $this->_setDefaultOption('output_to_file', false);
+
+
+        /*
+         * Output to Console
+         * Whether to echo debug output to the javascript console
+         */
+
+        $this->_setDefaultOption('output_to_console', false);
+
+        /*
+         * Enable or disable the Excluded Functions Filter
+         */
+
+
+        $this->_setDefaultOption('function_exclusion_filter_enabled', true);
+
+        /*
+         *
+         * Excluded Functions
+         * Exclude these functions from traces
+         */
+
+
+        $this->_setDefaultOption('function_exclusion_filter', array(
+            'require',
+            'require_once',
+            'include',
+            'include_once',
+            'do_action',
+            'do_meta_boxes',
+            'do_shortcode',
+            'load_template',
+            'locate_template',
+            'preg_replace_callback',
+            'do_shortcode_tag',
+            'call_user_func',
+            'call_user_func_array',
+            'apply_filters',
+            'do_action_ref_array',
+            'main'
+        ));
+
+
+
+
+        /*
+         * Enable or disable the Actions Exclusion Filter
+         */
+
+        $this->_setDefaultOption('action_exclusion_filter_enabled', true);
+
+        /*
+         * Action Exclusion Filter
+         * Excluded Actions
+         * Exclude these actions from log all actions
+         */
+
+        $this->_setDefaultOption('action_exclusion_filter', array(
+            'gettext',
+            'gettext_with_context',
+            'sanitize_key',
+            'attribute_escape',
+            'get_user_metadata',
+            'no_texturize_tags',
+            'no_texturize_shortcodes',
+            'user_has_cap',
+            'clean_url',
+            'wp_parse_str',
+            'sanitize_html_class',
+            'map_meta_cap',
+            'load_textdomain',
+            'load_textdomain_mofile',
+            'override_load_textdomain'
+
+                /*
+                 *
+                 * load-mint-forms_page_mint-forms-edit
+                 * admin_print_styles-mint-forms_page_mint-forms-edit
+                 * admin_print_scripts-mint-forms_page_mint-forms-edit
+                 * admin_head-mint-forms_page_mint-forms-edit
+                 * mint-forms_page_mint-forms-edit
+                 * screen_settings
+                 * screen_options_show_screen (WP_Screen Object)
+                 * current_screen
+                 */
+                )
+        );
+
+
+        /*
+         * Enable or disable the Actions Inclusion Filter
+         */
+
+        $this->_setDefaultOption('action_inclusion_filter_enabled', false);
+
+        /*
+         * Action Inclusion Filter
+         * Log only those actions listed in the filter when enabled
+         * Default is empty
+         */
+
+
+        $this->_setDefaultOption('action_inclusion_filter', array(
+        ));
+
+
+
+
+
+
+        /*
+         * Log File Location
+         */
+
+
+        $this->_setDefaultOption('log_file_path', $this->getPlugin()->getDirectory() . '/debug.log.txt');
+
+
+
+
+        /*
+         * Memory and Execution Time Tweaks
+         *
+         * Show Arrays
+         * Show Objects
+         *
+         * Will allow logTrace and logVars to
+         * show arrays and objects. Setting to true
+         * is very memory and cpu intensive, and may
+         * drive execution time and memory past their limits.
+         * Recommend arrays to true and objects to false.
+         *
+         *
+         */
+
+
+        $this->_setDefaultOption('show_arrays', true);
+        $this->_setDefaultOption('show_objects', false);
+
+        /*
+         * Graphiviz Include Path
+         */
+
+        $this->_setDefaultOption('graphviz_include_path', 'Image/GraphViz.php');
+
+        /*
+         * Templates
+         */
+
+
+        /*
+         * Text Method Templates can use the following tags
+         *   {NATIVE} Whether a method is native to PHP
+          {FILE} //the file that contains the method
+          {LINE} //the line at which the method declaration appears
+          {CLASS} //the class that contains the method
+          {METHOD}//the method name
+          {COMMENT}//the method comment from source
+          {ARGS}/ //an array of the arguments. must contain values passed to the function. may or may not contain the argument names.
+          {CALLING_METHOD} //the method that preceeds this method in the call stack
+          {CALLING_CLASS} // the class of the calling method
+          {CALLING_FILE}  // the file of the calling method
+          {CALLING_LINE}  // the line at which the calling method called this function
+          {SIGNATURE}  // A string that includes the Method name, followed by parens which include the name *and* value pairs of each of the arguments, separated by a comma
+          {SIGNATURE_SIMPLE} // same as signature but doesnt include vales of the arguments
+         *
+         */
+        $this->_setDefaultOption('method_label_template_text', '{CLASS}::{METHOD}([{ARGS}])<div style="font-size:xx-small"><em>called from:{CALLING_CLASS}::{CALLING_METHOD}</em></div>');
+
+
+
+        /*
+         * Simple and Normal Templates Can use the following tags:
+         * {LOCATION}
+         * {CALLING_LOCATION}
+         * {LINE}
+         * {FILE}
+         * {CLASS}
+         * {METHOD_SIG}
+         * {METHOD_SIG_SIMPLE}
+         * {METHOD}
+         * {EXPANDED_ARGS}
+         * {COMMENT}
+         * {CALLING_LINE}
+         * {CALLING_FILE}
+         * {CALLING_CLASS}
+         * {CALLING_METHOD}
+         *
+         */
+
+        $this->_setDefaultOption('method_label_template_normal', '<div style="padding:5px;border:1px solid grey;display: inline-block;">
+                <strong>{CLASS}::{METHOD_SIG}</strong>
+<span><em style="font-size:x-small">called from: {CALLING_CLASS}::{CALLING_METHOD}</em><br/></span>
+
+                <a  class="simpli_debug_citem " href="#"><span>More</span><span style="visibility:hidden;display:none">Less</span></a>
+
+
+
+                <div  class="simpli_debug_toggle" style="display:none;visibility:hidden;padding:0px;margin:0px;"><!-- Collapsable -->
+
+                    <div style = "display:block;margin:10px 0px 10px 0px;"> <strong style = "font-size:x-large">Class </strong></div>
+                    <div style = "margin:10px 0px 10px 20px;"> <p style = "font-size:medium"><em>{CLASS}</em></p></div>
+                    <div style = "margin:10px 0px 10px 0px;"> <strong style = "font-size:x-large">Method</strong></div>
+
+<div style = "margin:10px 0px 10px 20px;"> <p style = "font-size:medium"><em>{METHOD_SIG_SIMPLE}</em></p></div>
+ <div style = "margin:10px 0px 10px 0px;"> <strong style = "font-size:x-large">Description</strong></div>
+                    <div style = "margin:10px 0px 10px 20px;"> <p style = "font-size:medium">{COMMENT}</p></div>
+ <div style = "margin:10px 0px 10px 0px;"> <strong style = "font-size:x-large">Location</strong></div>
+                  <div style = "margin:10px 0px 10px 20px;"> <p style = "font-size:medium">{LOCATION}</p></div>
+
+<div style = "margin:10px 0px 10px 0px;"> <strong style = "font-size:x-large">Called From</strong></div>
+<div style = "margin:10px 0px 10px 20px;"> <p style = "font-size:medium">{CALLING_LOCATION}</p></div>
+
+
+
+
+                </div>
+            </div>');
+
+
+        /*
+         * simple trace template.
+         * Can use the following tags:
+         *
+         */
+
+        $this->_setDefaultOption('method_label_template_simple', '<div style="padding:5px;border:1px solid grey;display: inline-block;">
+                <strong>{CLASS}::{METHOD_SIG}</strong>
+
+            </div>');
+
+
+
+        /*
+         * Trace Colors
+         * Colors used for each level of the trace. colors for levels above 9 will repeat from 0-9
+         * Ref:http://www.wingsnw.com/colorbb.html
+         */
+        $this->_setDefaultOption('trace_colors', array(
+            0 => '#D8E4F1',
+            1 => '#F1C68C',
+            2 => '#f1e7d0',
+            3 => '#eeffcc',
+            4 => '#88ffbb',
+            5 => '#00ffcc',
+            6 => '#ccbb66',
+            7 => '#eebb77',
+            8 => '#aa9900',
+            9 => '#ffaa00'
+                )
+        );
+
+        /*
+         * Prefix Templates
+         *
+         * available tags:
+         * {PLUGIN_SLUG}
+         * {TIME}
+         * {LINE}
+         * {CLASS}
+         * {METHOD}
+         * {FILE}
+         */
+        $this->_setDefaultOption('browser_prefix_enabled', true);
+        $this->_setDefaultOption('console_prefix_enabled', true);
+        $this->_setDefaultOption('file_prefix_enabled', true);
+        $this->_setDefaultOption('browser_prefix_template', '<em>{METHOD}/{LINE}</em>&nbsp;');
+        $this->_setDefaultOption('console_prefix_template', '{TIME} | {CLASS}->{METHOD}() | {PLUGIN_SLUG} : ');
+        $this->_setDefaultOption('file_prefix_template', '{TIME} {METHOD}/{LINE}');
+        $this->_setDefaultOption('prefix_time_format', 'Y-m-d H:i:s');
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+    /**
+     * Get Trace Color
+     *
+     * Returns the color associated with the current trace level
+     *
+     * @param int Level of trace, as returned by _getTraceLevel()
+     * @return string Hexadecimal color code
+     */
+    private function _getTraceColor($trace_level) {
+
+
+        $colors = $this->getOption('trace_colors');
+
+        /*
+         * Normalize to 0-9 if level is above 9
+         * this will use colors 0-9 in order,
+         * for each level 10 and above
+         */
+        if ($trace_level > 9) {
+
+            $trace_level = (int) substr($trace_level, -1, 1);
+        }
+
+        return $colors[$trace_level];
+    }
+
+    /**
+     * Get Stack Trace Level
+     *
+     * Returns the current trace level, starting from 0 and incrementing by 1
+     *
+     * @param string $props The current properties associated with the method as returned by getMethodProperties()
+     * @param string $props_previous The previous method's properties in the trace
+     *
+     * @return void
+     */
+    private function _getTraceLevel($props, $props_previous) {
 
 
         /*
@@ -3279,87 +2955,6 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $this->_trace_indents[$props['class']][$props['method']] = $indent;
         $props_previous = $props;
         return ($indent);
-    }
-
-    /**
-     * Hook Print Trace Stack to Footer
-     *
-     * Outputs a simnple Trace Stack to footer
-     *
-     * @param none
-     * @return void
-     */
-    public function hookPrintTraceStack() {
-
-
-        if (!$this->getOption('simple_trace_enabled') || (!$this->getOption('trace_enabled'))) {
-            return;
-        }
-
-        $props_previous = null;
-        $color[0] = '#E7E7E7';
-        $color[1] = '#D8E4F1';
-        $color[2] = '#F1C68C';
-        $bgcolor = '';
-        foreach ($this->_trace_stack as $props) {
-
-
-            $indent = $this->_getStackTraceIndent($props, $props_previous);
-
-
-            $margin = $indent * 50;
-
-            if ($indent < 1) {
-                $bgcolor = $color[0];
-            } elseif ($indent > 1) {
-                $bgcolor = $color[2];
-            } else {
-                $bgcolor = $color[1];
-            }
-            $defined_vars = '';
-            $defined_vars_block = '';
-            if (isset($this->_defined_vars_stack[$props['class']][$props['method']][0])) {
-                // $defined_vars=$this->_defined_vars_stack[$props['class']][$props['method']][0];
-                $defined_vars = array_shift($this->_defined_vars_stack[$props['class']][$props['method']]);
-                $defined_vars_block = '<div><div style="background-color:' . $bgcolor . ';display:inline-block;border: 1px solid grey;margin:5px 0 5px;margin-left:' . $margin . 'px"><div><em><strong>Variables</strong></em>' . $defined_vars . '</div></div>';
-            }
-
-
-            //<div style="display:inline-block;border: 1px solid grey">' . $margin . '</div>'
-            $content = '<div style="background-color:' . $bgcolor . ';display:inline-block;border: 1px solid grey;margin:5px 0 5px;margin-left:' . $margin . 'px"><div>' . $this->_getSimpleTraceString($props) . '</div></div>';
-
-            $content = $content . $defined_vars_block;
-
-            $this->_log($content, $props['line'], $props['file'], $props['class'], $props['method'], $use_prefix = false, $target = 'browser', $type = 'trace');
-            $props_previous = $props;
-            $indent_previous = $indent;
-        }
-
-
-
-
-
-//        if (!$this->getOption('output_to_footer')) {
-//            return;
-//        }
-//
-//
-//
-//        echo '<div style="background-color:#E7E7E7">';
-//        echo ' <div style="text-align:center;font-size:large;"><strong>Debug Log</strong></div>';
-//
-//
-//
-//        $metaDatas = stream_get_meta_data($this->_footer_log_handle);
-//
-//        $footer_log_file_name = $metaDatas['uri'];
-//
-//        include($footer_log_file_name);
-//
-//        fclose($this->_footer_log_handle);
-//
-//
-//        echo '</div>';
     }
 
     /**
@@ -3597,6 +3192,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
              <div style="color:green!important;border:thin grey solid;"> Arguments </div>
         {ARGUMENTS}
         </div>';
+
         $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
         $tags = array(
             '{HOOK_COUNT}' => $hook_count,
@@ -3614,7 +3210,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $content = str_ireplace(array_keys($tags), array_values($tags), $template);
 
 
-        $this->_log($content, $line = null, $file = null, $class = null, $method = current_filter(), $use_prefix = true, $target = 'browser', $type = 'info');
+        $this->_log($content, null, null, null, current_filter(), true, 'browser', 'info');
     }
 
     /**
@@ -3659,4 +3255,3 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
     }
 
 }
-

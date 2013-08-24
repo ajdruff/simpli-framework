@@ -61,7 +61,7 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
          *
          */
         if (is_admin()) {
-         /*
+            /*
              * Enqueue Inline and External Scripts
              */
             add_action('admin_enqueue_scripts', array($this, 'hookEnqueueScripts'), 0);
@@ -125,7 +125,7 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
      * @return void
      */
     public function config() {
-    $this->debug()->t();
+        $this->debug()->t();
 
         /*
          *  Load any libraries you need that may not be included with the default wordpress installation
@@ -186,8 +186,8 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
          * set disabled modules
          * e.g.:$this->setDisabledModule('Shortcodes');
          */
-       $this->setDisabledModule('ExampleModule');
-      // $this->setDisabledModule('Debug');
+        $this->setDisabledModule('ExampleModule');
+        // $this->setDisabledModule('Debug');
 
 
 
@@ -195,7 +195,7 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
          * Set disabled addons
          * e.g.: $this->setDisabledAddon('Simpli_Forms');
          */
-    //    $this->setDisabledAddon('Simpli_Forms');
+        //    $this->setDisabledAddon('Simpli_Forms');
     }
 
     /**
@@ -278,8 +278,6 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
         }
     }
 
-}
+   
 
-//todo: make sense of the above
-//todo: add similar deactivation routines
-//todo: add logging for deactivation if possible. use transients. consider dumping log to transient, and then accessing transient after activation.
+}

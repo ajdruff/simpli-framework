@@ -278,6 +278,6 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
         }
     }
 
-   
+
 
 }

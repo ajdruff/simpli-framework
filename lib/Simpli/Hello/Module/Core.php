@@ -41,6 +41,66 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
+     * Demo Debug
+     *
+     * Provides a few examples of how to use the functions in the debug module.
+     * To see this output, you must configure the debug module to setMethodFilter('_demoDebug') or setMethodFilter('Simpli_Hello_Module_Core');
+     *
+     * @param none
+     * @return void
+     */
+    private function _demoDebug() {
+
+         /*
+          * debug()->t() or $this->debug()->logTrace()
+          * Both methods are aliases for the same functionality. Their purpose is to provide information about the current method, and provide links to a backtrace (showing all methods within the current call stack, in the order that they were called) , and a visual backtrace (if enabled, requiring the graphviz Pear library), showing a visual representation of the call stack.
+          */
+        $this->debug()->t();
+
+         $this->debug()->log('<br><strong>$this->debug()->t() or $this->debug()->logTrace()</strong><br>  <p>Both methods are aliases for the same functionality. Their purpose is to provide information about the current method, and provide links to a backtrace (showing all methods within the current call stack, in the order that they were called) , and a visual backtrace (if enabled, requring the graphviz Pear library), showing a visual representation of the call stack.</p>');
+
+        $this->debug()->log('apple array: <pre>' . print_r(array('a'=>'apple','b'=>'bananna'),true) . '</pre>');
+        $my_array = array(
+            'apple' => 'red', 'orange' => 'orange'
+        );
+
+        $my_name = 'Jones';
+
+        /*
+         * Normally, we would just use logVar() for any variable we want to log
+         */
+        $this->debug()->log('<br><strong>logVar() Example</strong><br> Works with both single value variable and arrays:');
+        $this->debug()->logVar('$my_name=', $my_name); //works with single variables
+
+        $this->debug()->logVar('$my_array=', $my_array); //and with arrays
+
+
+
+        /*
+         * logVars()  - Log all Defined Variables
+         *
+         * logVars() shows all the variables
+         * that have been defined within the method (including arguments), up
+         * to the location where the get_defined_vars() statement is located
+         * It wraps its  output in a clickable div that you
+         *
+         */
+        $this->debug()->log('<br><strong>logVars() Example</strong><br> Shows all the variables that have been defined within the method (including arguments), upto the
+            location where the get_defined_vars() statement is located');
+        $this->debug()->logVars(get_defined_vars());
+
+
+        /*
+         * Use logExtract() if you want to see each of the elements of an array as its own separate variable
+         * This method is similar to the php function extract, but doesnt actually create variables
+         * but displays them as if they were
+         * e.g.: $apple='red'
+         */
+        $this->debug()->log('<br><strong>logExtract() Example</strong><br> Shows each element of an array as its own separate variable');
+        $this->debug()->logExtract($my_array);
+    }
+
+    /**
      * Add Hooks
      *
      * Adds WordPress Hooks, triggered during module initialization
@@ -51,8 +111,12 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
         $this->debug()->t();
 //
 
-
-$this->say_hello('saying hello from core addHooks');
+        /*
+         * a good place to demonstrate debug.
+         */
+        if ($this->debug()->isOn() && $this->debug()->getOption('demo_enabled')) {
+            $this->_demoDebug();
+        }
 
 
         /*
@@ -119,23 +183,23 @@ $this->say_hello('saying hello from core addHooks');
      * @uses is_single()
      */
     public function say_hello($content) {
+
+
+
         $this->debug()->t();
         global $post;
 
-$my_array=array(
-    'apple'=>'red','orange'=>'orange'
-);
-$this->debug()->logExtract($my_array);
-  $this->debug()->logVars($my_array);
-   $this->debug()->logVar('$my_array',$my_array);
 
 
-  /*
+
+        /*
          * If the global setting is configured for disabled, then dont
          * add the hello text
          */
         $enabled_globally = $this->getPlugin()->getSetting('hello_global_default_enabled');
-        if ($enabled_globally != 'enabled') {
+
+        if ($enabled_globally !== 'enabled') {
+
             return($content);
         }
 

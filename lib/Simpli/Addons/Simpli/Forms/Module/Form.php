@@ -219,46 +219,12 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
          * Use the name of the element id as the method
          *
          */
-        $this->sayHello('hello');
+
         $el_id = $properties['el_id'];
         $method = $el_id;
         unset($properties['el_id']); //remove the element id since we dont want it part of atts, and it served its only purpose
         $this->debug()->logVars(get_defined_vars());
         $this->getElementsModule()->$method($properties);
-    }
-    /**
-     * Short Description
-     *
-     * Long Description
-     *
-     * @param none
-     * @return void
-     */
-    public function sayHello($text) {
-         $this->debug()->t();
-        if ($text==='goodbye') {
-            return;
-        }
-
-        echo 'hello';
-$this->sayHello2('hello');
-
-$this->sayHello('goodbye');
-    }
-
-
-        /**
-     * Short Description
-     *
-     * Long Description
-     *
-     * @param none
-     * @return void
-     */
-    public function sayHello2($text) {
-        $this->debug()->t();
-        echo 'hello';
-
     }
 
 

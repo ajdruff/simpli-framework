@@ -67,17 +67,17 @@ $simpli_hello = Simpli_Framework::load('simpli_hello', __FILE__);
 
 $simpli_hello->setName('Simpli Hello'); // Name should match the value of 'Plugin Name' in the comments at the top of this file);
 $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include underscores and uniquely identifies the language domain for your plugin
-//(optional)
-//$simpli_hello->setDebug(
-//        array(
-//            'consolelog' => false  // true/false Turn on Logging to Javascript console for php logs
-//            , 'js' => false // true/false Turn on Logging to Javascript console for javascript logs
-//            , 'src' => false  // true/false Whether to use the full source for javascript or just the minimized versions
-//            , 'filelog' => false // true/false Turn on Logging to File for php logs
-//        )
-//);
 
-$simpli_hello->debug()->TurnOn();
+
+/*
+ * Debugging
+ *
+ * Debugging is handled by the Debug class.
+ * To configure, go to Debug.php in your plugin directory (NOT the Base directory), and add
+ * $this->turnOn();
+ * to the config() method.
+ * To turn it off, you can use turnOff() or simply rename Debug.php to _Debug.php . do not touch the base class which resides in the Simpli/BasevXcY directory.
+ */
 
 
 
@@ -88,7 +88,7 @@ $simpli_hello->debug()->TurnOn();
  */
 $simpli_hello->init();
 
-$simpli_hello->debug()->stop(true);
+
 
 
 /*

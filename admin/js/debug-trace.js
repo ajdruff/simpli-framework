@@ -35,7 +35,7 @@ function()
 
 
 
-   
+
     jQuery("a.simpli_debug_citem").click(function(e) {
         e.preventDefault();
 
@@ -82,3 +82,29 @@ function()
 
 
 simpli.hello.debug_bind_collapse_expand_events();
+
+
+/**
+ * Multiple Select
+ *
+ * Ref: http://www.senamion.com/blog/jmultiselect2side.html
+ * This works , but the click events do not, so I am no longer using the multi-select
+
+
+simpli.hello.multiselect2side =
+function()
+        {
+
+			jQuery('#first').multiselect2side({
+				optGroupSearch: "Group: ",
+				search: "<img src='/img/search.gif' />"
+			});
+        }
+
+
+// Create the multi select boxes for the debug module
+
+        simpli.hello.multiselect2side();
+
+
+         */

@@ -568,6 +568,58 @@ class Simpli_Basev1c0_Btools {
 //
 //        return $metaDatas['uri'];
 //    }
+
+    /**
+     * New Line to Break
+     *
+     * Returns string with '<br />' or '<br>' inserted after all newlines (\r\n, \n\r, \n and \r).
+     * A replacement for PHP's nl2br which doesnt seem to always work!
+     *
+     * @param string $string The input string
+     * @param boolean $is_xhtml Whether to use XHTML compatible line breaks or not ( <br/> )
+     * @return string The string with all new lines replaced with HTML equivilent of breaks
+     */
+    public function nl2br($string, $is_xhtml = true) {
+
+        $break = ($is_xhtml) ? '<br/>' : '<br>';
+        $result = str_replace(array("\r\n", "\r", "\n"), $break, $string);
+
+        return $result;
+    }
+
+    /**
+     * Html To Text
+     *
+     * A very crude attempt at changing html to text. Does not attempt to preserve formatting except for line breaks
+     * Just replaces all block elements with a new line character, and strips all other html tags.
+     * A decent reversal of nl2br since you can limit replacements to just br
+     *
+     * @param string $string The input string
+     * @param string $new_line The replacement you want for new line. In some cases, you might want to replace with something like {NEW_LINE} and then
+     * use a template replacement downstream to complete the transformation. This is especially useful for forwarding to javascript since its difficult
+     * to avoid syntax errors without resorting to a template replacement just before output.
+     * @param array $tags The array of tags you want replaced with new line. Do not surround with opening or closing brackets
+
+     * @return string The string with all new lines replaced with HTML equivilent of breaks
+     */
+    public function html2text($string, $new_line = "\n\r", $tags = array('br', 'div', 'p', 'li', 'ol', 'ul')) {
+
+
+        foreach ($tags as $tag) {
+            if ($tag === 'br') {
+                $pattern = '/\<[\s]*br[\s]*[\/]*[\s]*>/'; //handles <br/> <br>  and all variants
+            } else {
+                $pattern = '/\<[\s]*'.$tag.'[\s]*[\s]*>/';  //handles opening tags <p>,<div>, etc. assumes each is a block element.
+            }
+
+            $string = preg_replace($pattern, $new_line, $string);
+        }
+
+        $string = strip_tags($string);
+
+        return $string;
+    }
+
 }
 
 ?>

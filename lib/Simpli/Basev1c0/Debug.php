@@ -73,9 +73,13 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
         if (is_admin()) {
             add_action('admin_enqueue_scripts', array($this, 'hookEnqueueScripts'));
+            add_action('admin_enqueue_scripts', array($this, 'hookEnqueueStyles'));
         } else {
             add_action('wp_enqueue_scripts', array($this, 'hookEnqueueScripts'));
+            add_action('wp_enqueue_scripts', array($this, 'hookEnqueueStyles'));
         }
+
+
 
         if ($this->getOption('log_all_actions')) {
             add_action('all', array($this, 'hookLogAllActions'));
@@ -142,6 +146,51 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $external_deps = array('jquery');
         $footer = false; //must load in head in case there is a fatal error that prevents foot scripts from loading
         $this->getPlugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps, $footer);
+
+
+
+              /*
+         * add javascript for multiselect box
+               * ref:http://www.senamion.com/blog/jmultiselect2side.html
+               * Not used, but left here as an exaple
+
+                $handle = 'jquery.multiselect2side.js';
+        $src = $this->getPlugin()->getUrl() . '/js/jquery.multiselect2side.js';
+        $deps = array('jquery');
+        $ver = null;
+        $in_footer = false;
+       // wp_enqueue_script($handle, $src, $deps, $ver, $in_footer);
+
+*/
+
+
+
+
+
+    }
+/**
+     * Enqueue Styles
+     *
+     * Enqueues Styles needed for debugging
+     *
+     * @param none
+     * @return void
+     */
+    public function hookEnqueueStyles() {
+
+              /*
+         * add style for multiselect box
+               * ref:http://www.senamion.com/blog/jmultiselect2side.html
+               * Not used, but left here as an exaple
+
+
+                      $handle = 'jquery.multiselect2side.css';
+        $src = $this->getPlugin()->getUrl() . '/css/jquery.multiselect2side.css';
+        $deps = array();
+        $ver = null;
+        $media=null;
+     //   wp_enqueue_style($handle, $src, $deps, $ver,$media);
+   */
     }
 
     /**
@@ -861,11 +910,12 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             '{METHOD_SIG_SIMPLE}' => ( $props['signature_simple'] !== '') ? $props['signature_simple'] : $not_available_text,
             '{METHOD}' => ( $props['method'] !== '') ? $props['method'] : $not_available_text,
             '{EXPANDED_ARGS}' => ($current_expanded_args !== '') ? $current_expanded_args : $not_available_text,
-            '{COMMENT}' => ( $props['comment'] !== '') ? $props['comment'] : $not_available_text,
+            '{DESCRIPTION}' => ( $props['comment'] !== '') ? '<p>' . str_replace( "\n"  ,'<br/>',$props['comment']) . '</p>' : $not_available_text,
             '{CALLING_LINE}' => $props['calling_line'],
             '{CALLING_FILE}' => $props['calling_file'],
             '{CALLING_CLASS}' => $props['calling_class'],
             '{CALLING_METHOD}' => $props['calling_method'],
+            '{SOURCE}' => $this->_getSource($props['file'], $props['line'], $props['end_line'], $props['comment']),
         );
 
 
@@ -1301,9 +1351,9 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          */
         $defaults = array(
             'native' => null,
-            'defined_vars' => null, //the variables defined in the function up to the position where the debug statement was placed
             'file' => null, //the file that contains the method
             'line' => null, //the line at which the method declaration appears
+            'end_line' => null,
             'class' => null, //the class that contains the method
             'method' => null, //the method name
             'comment' => null, //the method comment from source
@@ -1327,6 +1377,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          */
         $props['native'] = $props_refl['native'];
         $props['file'] = $props_refl['file'];
+        $props['end_line'] = $props_refl['end_line'];
         $props['line'] = (string) $props_refl['line']; //casting necessary so trim works on string test
         $props['class'] = $props_refl['class'];
         $props['method'] = $props_refl['method'];
@@ -1387,6 +1438,11 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $arg_params = array();
         $arg_names = array();
 
+
+
+
+
+
         /*
          * Function Properties $file, $arg_names, $line
          */
@@ -1398,8 +1454,10 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             $file = null;
             try {
                 $reflFunc = new ReflectionFunction($method);
-                $line = $reflFunc->getStartLine();
+                $comment = $reflFunc->getDocComment();
+                $line = $reflFunc->getStartLine() - 1;
                 $file = $reflFunc->getFileName();
+                $end_line = $reflFunc->getEndLine();
             } catch (Exception $exc) {
                 /*
                  * need to catch fatal exceptions caused by language constructs that cant be found by php
@@ -1409,6 +1467,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
                 if (stripos($error_message, 'does not exist') !== false) {
 
                     $line = null;
+                    $end_line = null;
                     $file = null;
                     $native = true;
                 }
@@ -1421,17 +1480,20 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         if (!is_null($class)) {
 
 
-
             /*
              * Method $comment
              */
             $reflMethod = new ReflectionMethod($class, $method);
 
-            $comment = '<p>' . str_replace('*', '<br/>*', $reflMethod->getDocComment()) . '</p>';
+
+            $comment = $reflMethod->getDocComment();
             /*
-             * Method $line
+             * Method $line and $end_line
              */
-            $line = $reflMethod->getStartLine();
+            $line = $reflMethod->getStartLine() - 1;
+            $end_line = $reflMethod->getEndLine();
+
+
             /*
              * Method $file and $arg_names
              */
@@ -1450,7 +1512,8 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          */
         $defaults = array(
             'native' => null, //whether the function is a native or built-in function or language construct
-            'line' => null, //the line where the function is located
+            'line' => null, //the line number where the function is located
+            'end_line' => null, //the line number where the function ends
             'file' => null, //the file that contains the method
             'class' => null, //the class that contains the method
             'method' => null, //the method name
@@ -1466,6 +1529,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
         $props['native'] = $native;
         $props['line'] = (string) $line; //casting necessary so trim works on string test
+        $props['end_line'] = (string) $end_line; //casting necessary so trim works on string test
         $props['file'] = $file;
         $props['class'] = $class;
         $props['method'] = $method;
@@ -1654,14 +1718,23 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          * Print to Browser
          */
 
-
+/*
+ * format first
+ */
         if ($this->getOption('output_to_inline') || $this->getOption('output_to_footer')) {
             $browser_output = $this->_formatForBrowser($log_entry);
         }
-        if ($this->getOption('output_to_inline')) {
-            echo $browser_output;
-        }
 
+        /*
+         * Output Inline
+         */
+        if ($this->getOption('output_to_inline')) {
+            /* must wrap in div or layout will look like gargage  */
+           echo '<div>' . $browser_output . '</div>';
+        }
+/*
+ * Output to footer using a temporary file which saves memory by not having to save to an array
+ */
 
         if ($this->getOption('output_to_footer')) {
             /*
@@ -1711,6 +1784,19 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
                 $prefix = $this->_getPrefix($props['line'], $props['class'], $props['method'], $props['file'], 'console');
                 $log_entry['content'] = $prefix . $log_entry['content'];
             }
+/*
+ * First, convert any new lines introduced by the whitespaces in the source code to <br/> tags
+ */
+
+$log_entry['content']=$this->getPlugin()->getTools()->nl2br(($log_entry['content'])); //need to do this to protect against the source code introducing new lines to output strings, which breaks console.log
+
+
+/*
+ * Then Convert to text, preserve newlines as a tag {NEW_LINE} that will be replaced later when printed to console.
+ */
+$log_entry['content']=$this->getPlugin()->getTools()->html2text(($log_entry['content']),'{NEW_LINE}');
+
+
 
 
             $this->_console_log[] = $log_entry;
@@ -1761,9 +1847,16 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
                 $log_entry['content'] = $prefix . ' ' . $log_entry['content'];
             }
 
+/*
+ * Convert to text to strip out html tags but preserve new lines
+ */
+$log_entry['content']=$this->getPlugin()->getTools()->html2text(($log_entry['content']));
+
+
+
 
             /*
-             * write the string to it
+             * write the string to the file
              * Create a new file the first time this method is executed,
              *  as tracked by the static var $append
              */
@@ -2393,6 +2486,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
         return $result;
     }
+
     /**
      * Get Default Option
      *
@@ -2409,10 +2503,9 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         if (!isset($this->_default_options[$option_name])) {
             return null;
         }
-return $this->_default_options[$option_name];
-
-
+        return $this->_default_options[$option_name];
     }
+
     /**
      * Set Default Option
      *
@@ -2422,8 +2515,8 @@ return $this->_default_options[$option_name];
      * @param string $option_value The value of the the option
      * @return void
      */
-    private function _setDefaultOption($option_name,$option_value) {
-$this->_default_options[$option_name]=$option_value;
+    private function _setDefaultOption($option_name, $option_value) {
+        $this->_default_options[$option_name] = $option_value;
     }
 
     private $_default_options = null;
@@ -2663,7 +2756,10 @@ $this->_default_options[$option_name]=$option_value;
 
         $this->_setDefaultOption('log_file_path', $this->getPlugin()->getDirectory() . '/debug.log.txt');
 
-
+        /*
+         * Demo Enabled
+         */
+        $this->_setDefaultOption('demo_enabled', true);
 
 
         /*
@@ -2752,7 +2848,7 @@ $this->_default_options[$option_name]=$option_value;
 
 <div style = "margin:10px 0px 10px 20px;"> <p style = "font-size:medium"><em>{METHOD_SIG_SIMPLE}</em></p></div>
  <div style = "margin:10px 0px 10px 0px;"> <strong style = "font-size:x-large">Description</strong></div>
-                    <div style = "margin:10px 0px 10px 20px;"> <p style = "font-size:medium">{COMMENT}</p></div>
+                    <div style = "margin:10px 0px 10px 20px;"> <p style = "font-size:medium">{DESCRIPTION}</p></div>
  <div style = "margin:10px 0px 10px 0px;"> <strong style = "font-size:x-large">Location</strong></div>
                   <div style = "margin:10px 0px 10px 20px;"> <p style = "font-size:medium">{LOCATION}</p></div>
 
@@ -2763,7 +2859,28 @@ $this->_default_options[$option_name]=$option_value;
 
 
                 </div>
-            </div>');
+
+       <!-- Source Follows -->
+       <div style="padding:5px;display:inline;">
+
+
+                <a  class="simpli_debug_citem " href="#"><span>Show Source</span><span style="visibility:hidden;display:none">Hide Source</span></a>
+
+
+
+                <div  class="simpli_debug_toggle" style="background-color:#EFEBEF;display:none;visibility:hidden;padding:0px;margin:0px;"><!-- Collapsable -->
+
+                    {SOURCE}
+
+
+
+
+                </div>
+            </div>
+ </div>
+
+
+');
 
 
         /*
@@ -2816,19 +2933,7 @@ $this->_default_options[$option_name]=$option_value;
         $this->_setDefaultOption('console_prefix_template', '{TIME} | {CLASS}->{METHOD}() | {PLUGIN_SLUG} : ');
         $this->_setDefaultOption('file_prefix_template', '{TIME} {METHOD}/{LINE}');
         $this->_setDefaultOption('prefix_time_format', 'Y-m-d H:i:s');
-
-
-
-
-
-
-
-
-
-
     }
-
-
 
     /**
      * Get Trace Color
@@ -3024,6 +3129,8 @@ $this->_default_options[$option_name]=$option_value;
           if(!window.console){ window.console = {log: function(){} }; }
          * ref:http://stackoverflow.com/questions/4743730/what-is-console-log-and-how-do-i-use-it
          * http://blog.patspam.com/2009/the-curse-of-consolelog
+         *
+         *
          */
 
 
@@ -3062,9 +3169,15 @@ $this->_default_options[$option_name]=$option_value;
 }
     </script>
 ';
-
+/*
+ * New lines are tricky - most reliably, substitute at last minute, and only with single quotes, not double or yo will
+ * receive syntax errors. instead of using <br> or \n\r in strings since to _logToConsole, instead use {NEW_LINE} and
+ * this function will replace them with proper line breaks
+ */
         $tags = array(
             '{CONSOLE_LOG_STATEMENTS}' => $console_log_statements,
+     '{NEW_LINE}'=>'\n\r'
+
         );
 
         $script = str_ireplace(array_keys($tags), array_values($tags), $template);
@@ -3252,6 +3365,60 @@ $this->_default_options[$option_name]=$option_value;
         }
 
         return $this->_plugin;
+    }
+
+    /**
+     * Get Method Source
+     *
+     * Get a method's source code
+     *
+     * @param string $class_name The name of the class
+     * @param string $method_name The method or function name
+     * @return void
+     */
+    private function _getSource($file_name, $start_line, $end_line, $comment = '') {
+
+
+
+
+
+        $length = $end_line - $start_line;
+
+
+        $file_contents = file($file_name);
+
+/*
+ * Verify file_contents is an array, otherwise we'll get errors
+ */
+        if (!is_array($file_contents)) {
+            return '';
+        }
+
+/*
+ * create a template for the source code.
+ */
+        $template = '<?php {BREAK} {COMMENT} {BREAK} {METHOD} {BREAK} ?>';
+
+        /*
+         * first parse the template and populate the comment and source
+         */
+        $tags = array(
+            'COMMENT' => $comment,
+            'METHOD' => implode("", array_slice($file_contents, $start_line, $length))
+        );
+        $highlighted_source = highlight_string($this->getPlugin()->getTools()->crunchTpl($tags, $template), true);
+        /*
+         * then insert the breaks to separate the comment from the source and the php tags
+         */
+        $tags = array(
+            'BREAK' => '<br/>',
+        );
+        $highlighted_source = $this->getPlugin()->getTools()->crunchTpl($tags, $highlighted_source);
+
+        /*
+         * return the highlighted code
+         */
+        return $highlighted_source;
     }
 
 }

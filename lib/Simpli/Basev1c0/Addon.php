@@ -373,12 +373,13 @@ class Simpli_Basev1c0_Addon {
      */
     public function getModule($module_name) {
 
-
         $this->debug()->t();
      //   $this->debug()->logVar('Modules Loaded: ', $this->_modules);
-    
+
         if (!isset($this->_modules[$module_name]) || !is_object($this->_modules[$module_name])) {
-            $this->debug()->log('Module not found,returning null');
+            $this->debug()->logVar('$this->_modules = ', $this->_modules);
+            $this->debug()->log('Module  ' .$module_name.' not found,returning null');
+            $this->debug()->logVars(get_defined_vars());
             return null;
         }
         $this->debug()->log('Module found, returning module ' . $module_name);
@@ -391,10 +392,13 @@ class Simpli_Basev1c0_Addon {
 //                echo $exc->getMessage();
 //            }
 //        }
-        if (!is_object($this->_modules[$module_name])) {
-            $this->debug()->log('Module not found,returning null');
-            return null;
-        }
+//        if (!is_object($this->_modules[$module_name])) {
+//            $this->debug()->log('Module not found,returning null');
+//            $this->debug()->logVars(get_defined_vars());
+//
+//            return null;
+//        }
+        $this->debug()->logVars(get_defined_vars());
         return $this->_modules[$module_name];
     }
 
@@ -411,18 +415,7 @@ class Simpli_Basev1c0_Addon {
         return $this->_modules;
     }
 
-    /**
-     * Set Loaded Module
-     *
-     * @param object $module
-     * @return object $this
-     */
-    public function setModule($module_name, $module) {
 
-
-        $this->_modules[$module_name] = $module;
-        return $this;
-    }
 
     /**
      * Get Url
@@ -602,10 +595,39 @@ class Simpli_Basev1c0_Addon {
 
         $this->config();
 
+
+                /**
+         * Load Modules
+         */
+           $new_enabled_modules=$this->loadModules($this->getModuleDirectory());;
+
+//        foreach ($new_enabled_modules as $module_name => $module_path) {
+//
+//            $this->loadModule($module_name);
+//        }
+//        return $new_enabled_modules;
+//
+//
+//       $modules = $this->getAddOn()->getModules();
+
+        /*
+         *
+         * Initialize Addon modules
+         */
+        if (is_array($new_enabled_modules)) {
+
+
+            foreach ($new_enabled_modules as $module_name=>$module_path) {
+
+
+                $this->getModule($module_name)->init();
+                $this->debug()->log('Initialized Addon Module ' . $this->getSlug() . '/' .$this->getModule($module_name)->getName());
+            }
+        }
         /**
          * Load Modules
          */
-        $this->loadModules();
+    //    $this->loadModules($this->getModuleDirectory());
 
 
         /*
@@ -615,17 +637,17 @@ class Simpli_Basev1c0_Addon {
 
 
 
-        $modules = $this->getModules();
+      // $modules = $this->getModules();
 
-        if (is_array($modules)) {
-
-
-            foreach ($modules as $module) {
-
-                $module->init();
-                $this->debug()->log('Initialized Addon Module ' . $this->getSlug() . '/' . $module->getName());
-            }
-        }
+//        if (is_array($modules)) {
+//
+//
+//            foreach ($modules as $module) {
+//
+//                $module->init();
+//                $this->debug()->log('Initialized Addon Module ' . $this->getSlug() . '/' . $module->getName());
+//            }
+//        }
         if (isset($this->_slug)) {
             do_action($this->_slug . '_init');
         }
@@ -670,7 +692,7 @@ class Simpli_Basev1c0_Addon {
 
 
 
-        $available_modules = $this->getAvailableModules('enabled');
+        $enabled_modules = $this->getAvailableModules('enabled');
 
 
 
@@ -720,16 +742,22 @@ class Simpli_Basev1c0_Addon {
             try {
 
                 $object = new $class;
-                $this->setModule($module_name, $object);
+
+                $this->_modules[$module_name] = $object;
                 $this->getModule($module_name)->setPlugin($this->getPlugin()); //set the plugin dependency
                 $this->getModule($module_name)->setAddon($this); //set the addon dependency
-                if ($module_name === 'Theme') {
-                    $this->debug()->log('Theme Name is ' . $this->getModule($module_name)->getThemeName(), true);
-                }
-                $this->debug()->log('Loaded Addon Module ' . $this->getSlug() . '/' . $module_name, true);
+
+                $this->debug()->log('Loaded Addon Module ' . $this->getSlug() . '/' . $module_name);
+                $this->debug()->logVars(get_defined_vars());
             } catch (Exception $e) {
                 die('Unable to load Module: \'' . $module_name . '\'. ' . $e->getMessage());
+                $this->debug()->logVars(get_defined_vars());
             }
+        }else
+        {
+
+           $this->debug()->log('Addon Module  ' . $this->getSlug() . '/' . $module_name . ' already loaded');
+           $this->debug()->logVars(get_defined_vars());
         }
 
         return $this;
@@ -745,7 +773,7 @@ class Simpli_Basev1c0_Addon {
      * @return $this
      */
     public function loadModules() {
-
+        $this->debug()->t();
 
 
         $enabled_modules = $this->getAvailableModules('enabled');

@@ -47,7 +47,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return void
      */
     public function createForm($properties) {
-        $this->debug()->t(true,1);
+        $this->debug()->t();
 
 
         $defaults = array(
@@ -64,26 +64,31 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         }
         $this->_form = array(); //initialize, clearing the old form
 
+/*
+ * if a theme was provided, set it.
+ */
+        if (!is_null($properties['theme'])) {
+            $this->getTheme()->setTheme($properties['theme']);
+        }
 
 
-                  $this->getTheme()->setTheme($properties['theme']);
 
-             $this->getTheme()->getAddon()->loadModules($this->getTheme()->getThemeDirectory() . '/Module');
-
-        $this->getTheme()->loadTemplates();
-
-
+    if (!is_null($properties['filter'])) {
 
         $this->setFilter($properties['filter']);
+    }
 
-        $this->getAddon()->getModule('Theme')->setTheme($properties['theme']);
-
-
-
+/*
+ * reset the elements array for this new form
+ */
         $this->_form['elements'] = array();
 //        $this->_form['elements']['atts'] = array();
 //        $this->_form['elements']['att_defaults'] = array();
 //        $this->_form['elements']['tags'] = array();
+
+        /*
+         * reset the form properties
+         */
         $this->_form['form'] = $properties;
         $this->debug()->logVars(get_defined_vars());
     }
@@ -172,14 +177,14 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @param none
      * @return string
      */
-    public function getFilter() {
+public function getFilter() {
         $this->debug()->t();
 
 
 
         if (is_null($this->_form_filter)) {
 
-            $this->_form_filter = ''; //this results in the default filter Module name defined by $this->getAddon->MODULE_NAME_FILTERS
+            $this->_form_filter = ''; //this results in the default filter Module name defined by $this->getAddon->MODULE_NAME_FILTERS , e.g.: 'Filter'
         }
 
 
@@ -227,7 +232,6 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         $this->getElementsModule()->$method($properties);
     }
 
-
     /**
      * Get Form
      *
@@ -265,6 +269,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
          * Package Properties so we can hand off to filters
          */
         $tags = array();
+        $this->debug()->logVar('$scid = ', $scid);
         $properties = array(
             'scid' => $scid, //shortcode , represents the
             'atts' => $atts,
@@ -278,11 +283,22 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
          * is the 'Filter' module.
          */
 
-
+        $this->debug()->logVars(get_defined_vars());
+        /*
+         * get filter module name by combining the constant MODULE_NAME_FILTERs with the user set filter.
+         * If the user set 'filter' => 'Example' when creating the form, then the module name would be 'FilterExample'
+         */
         $filter_module_name = $this->getAddon()->MODULE_NAME_FILTERS . $this->getFilter(); // e.g.: 'FilterOptions'
-        $filter_hook_name = $this->getAddon()->getModule($filter_module_name)->getHookName(); //find the module corresponding to the filter and use its getHookName() method so we call its filters
-        $properties = apply_filters($filter_hook_name, $properties);
 
+
+
+        $this->debug()->logVar('$filter_module_name = ', $filter_module_name,true);
+        $this->debug()->logVars(get_defined_vars());
+/*
+ * apply the filter by calling the filter method from the filter module that was set  when the user
+ * set 'filte'=>'Example'
+ */
+$properties= $this->getAddon()->getModule($filter_module_name)->filter($properties);
         /*
          * Unpack Properties
          */
@@ -313,7 +329,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
 
 
         $theme = $this->getTheme();
-        $this->debug()->logVar('$theme = ', $theme);
+        $this->debug()->logVar('$theme = ', $theme->getThemeName());
 
         /*
          *
@@ -390,7 +406,10 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
 
 
         $result = $this->getAddon()->getModule('Theme');
+        $this->debug()->log('theme name in getTheme is : ' . $result->getThemeName());
         $this->debug()->logVar('$this->getAddon()->getModule(\'Theme\') ', $result);
+
+        $this->debug()->log( 'Theme object =<pre>', print_r($this->getAddon()->getModule('Theme'), true), '</pre>');
         return ($result);
     }
 

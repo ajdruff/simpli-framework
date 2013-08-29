@@ -1,4 +1,4 @@
-<div  style="display:block;border:solid 1px grey;"><span>Text Element - Using <em>Seattle</em> Theme <em>Text2</em> Template<br/></span>
+<div  style="display:block;border:solid 1px grey;"><span>Text Element - Using <em>Saratoga</em> Theme <em>Text2</em> Template<br/></span>
     <div>Name:{NAME}</div>
 <div>Value {value}</div>
 <div>Label {label}</div>

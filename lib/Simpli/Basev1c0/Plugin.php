@@ -303,12 +303,12 @@ class Simpli_Basev1c0_Plugin {
          */
         if (is_null($this->_debug)) {
             $class_namespace_parts = $this->getClassNamespaceParts();
-            if (!file_exists($this->getDirectory() . '/lib/' . $class_namespace_parts[0] . '/' . $class_namespace_parts[1] . '/Debug.php')) {
+            if (!file_exists($this->getDirectory() . '/lib/' . $class_namespace_parts[0] . '/' . $class_namespace_parts[1] . '/DebugConfig.php')) {
 
                 $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
             } else {
                 try {
-                    $debug_class=$this->getClassNamespace() . '_Debug';
+                    $debug_class=$this->getClassNamespace() . '_DebugConfig';
                     $this->_debug = new $debug_class();
                     $this->_debug->setPlugin($this);
                     $this->_debug->config();

@@ -13,8 +13,8 @@ $f = $this->getPlugin()->getAddon('Simpli_Forms')->getModule('Form');
  */
 $f->createForm(
         array(
-            'filter' => ''
-            , 'theme' => 'Seattle'
+            'filter' => 'Example'
+         //   , 'theme' => 'Seattle'
         )
 );
 

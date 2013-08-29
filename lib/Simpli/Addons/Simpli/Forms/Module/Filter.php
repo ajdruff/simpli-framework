@@ -22,31 +22,22 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
     public function addHooks() {
         $this->debug()->t();
 
-
-        /*
-         * Add a hook for our filters
-         */
-
-        add_filter($this->getHookName(), array($this, 'filter'), 10, 2);
-
-
-        return $this;
     }
 
-    /**
-     * Get Filter Tag - Read Only
-     *
-     * Provides a Unique Filter Name to be used for hooks
-     *
-     * @param none
-     * @return stringReadOnly
-     */
-    public function getHookName() {
-        $this->debug()->t();
-
-        $hook_name = $this->getAddon()->getSlug() . '_' . $this->getSlug(); //e.g.: simpli_addons_simpli_forms_filters
-        return $hook_name;
-    }
+//    /**
+//     * Get Filter Tag - Read Only
+//     *
+//     * Provides a Unique Filter Name to be used for hooks
+//     *
+//     * @param none
+//     * @return stringReadOnly
+//     */
+//    public function getHookName() {
+//        $this->debug()->t();
+//
+//        $hook_name = $this->getAddon()->getSlug() . '_' . $this->getSlug(); //e.g.: simpli_addons_simpli_forms_filters
+//        return $hook_name;
+//    }
 
     /**
      * Configure Module
@@ -68,8 +59,10 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
      */
     public function filter($properties) {
         $this->debug()->t();
-
-
+        $this->debug()->logVars(get_defined_vars());
+        if (!isset($properties['scid'])) {
+         $this->debug()->stop(true);
+        }
         $method = 'filter' . ucwords($properties['scid']);
         // die('exiting' . __METHOD__);
         $properties = $this->_commonFilter($properties);

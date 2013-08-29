@@ -13,7 +13,7 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Addons_Simpli_Forms_Module_FilterExample extends Simpli_Addons_Simpli_Forms_Module_Filter {
+class Simpli_Addons_Simpli_Forms_Themes_Saratoga_Module_FilterExample extends Simpli_Addons_Simpli_Forms_Module_Filter {
 
     /**
      * Common Filter
@@ -46,7 +46,7 @@ class Simpli_Addons_Simpli_Forms_Module_FilterExample extends Simpli_Addons_Simp
         extract($properties);
 
 
-        $atts['value'] = 'filtered by Example';
+        $atts['value'] = 'filtered by Saratoga Example';
 
 
         return (compact('atts', 'tags'));

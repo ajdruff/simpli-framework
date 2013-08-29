@@ -10,7 +10,7 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Addons_Simpli_Forms_Module_FilterSettings extends Simpli_Addons_Simpli_Forms_Module_Filter {
+class Simpli_Addons_Simpli_Forms_Themes_Saratoga_Module_FilterSettings extends Simpli_Addons_Simpli_Forms_Module_Filter {
 
     /**
      * Common Filter

@@ -25,7 +25,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
      * @param none
      * @return array $this->_templates
      */
-    public function getTemplates() {
+    public function getTemplatesOLD() {
         $this->debug()->t();
         if (is_null($this->_templates)) {
 
@@ -40,19 +40,16 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
     /**
      * Get Template
      *
-     * @param none
-     * @return string
+     * Returns the contents of the theme's template file. Wrapper around _getCachedTemplate()
+     * @param string $template_id The id of the template tag
+     * @return string The contents of the template file that matches the theme
      */
     public function getTemplate($template_id) {
         $this->debug()->t();
 
+        $result = $this->_getCachedTemplate($template_id);
 
 
-        if (!is_null($this->_templates[$template_id])) {
-            $result = $this->_templates[$template_id];
-        } else {
-            $result = NULL;
-        }
 
         $this->debug()->logVars(get_defined_vars());
         return $result;
@@ -64,7 +61,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
      * @param string $something
      * @return object $this
      */
-    public function setTemplate($template_name, $template) {
+    public function setTemplateOLD($template_name, $template) {
         $this->debug()->t();
 
 
@@ -73,6 +70,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
 
         return $this;
     }
+
     /**
      * Add Hooks
      *
@@ -109,14 +107,74 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
     public function config() {
         $this->debug()->t();
 
-
+/*
+ * set default template
+ */
         $this->setTheme('Saratoga');
 
-        $this->getAddon()->loadModules($this->getThemeDirectory() . '/Module');
 
-        $this->loadTemplates();
+        //  $addon_modules = $this->getAddon()->getModules();
+    }
 
-      //  $addon_modules = $this->getAddon()->getModules();
+    private $_cached_templates;
+
+    /**
+     * Get Cached Template
+     *
+     * Returns a template from the cache. If not set in cache, it loads it from disk using _setCachedTemplate()
+     *
+     * @param none
+     * @return void
+     */
+    private function _getCachedTemplate($template_id) {
+        $this->debug()->t();
+        if (!isset($this->_cached_templates[$template_id])) {
+            $this->_setCachedTemplate($template_id);
+        }
+        $result = $this->_cached_templates[$template_id];
+        $this->debug()->logVars(get_defined_vars());
+        return $result;
+    }
+
+    /**
+     * Short Description
+     *
+     * Long Description
+     *
+     * @param none
+     * @return void
+     */
+    private function _setCachedTemplate($template_id) {
+
+
+
+
+        $template_path = $this->_getThemeDirectory() . '/templates/' . $template_id . '.template.php';
+
+        if (!file_exists($template_path)) {
+
+            $this->debug()->log('No such template for ' . $template_id . ' , setting cache to null  ');
+            $this->_cached_templates[$template_id] = null;
+        } else {
+
+
+
+            ob_start();
+            /*
+             * @todo: consider adding a special file called 'common.functions.php' to be included with
+             * each template that would provide each with common functions
+             */
+
+            include($template_path);
+            $template = ob_get_clean();
+            $this->_cached_templates[$template_id] = $template;
+        }
+
+
+
+        $result = $this->_cached_templates[$template_id];
+        $this->debug()->logVars(get_defined_vars());
+        return $result;
     }
 
     /**
@@ -126,7 +184,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
      * @param string $content The shortcode content
      * @return string The parsed output of the form body tag
      */
-    function loadTemplates() {
+    function loadTemplatesOLD() {
         $this->debug()->t();
 
 
@@ -148,7 +206,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
 
             if (!file_exists($template_path)) {
 
-                   $this->debug()->logVar('Skipping file $template_path = ', $template_path);
+                $this->debug()->logVar('Skipping file $template_path = ', $template_path);
                 continue; //skip if no template
             }
 
@@ -167,11 +225,25 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
 //
 //
             $this->setTemplate($tag, $template);
-
-
         }
 
-           $this->debug()->logVar('Templates that were loaded: ', $this->getTemplates());
+        $this->debug()->logVar('Templates that were loaded: ', $this->getTemplates());
+    }
+
+    /**
+     * Set Theme Directory
+     *
+     * Sets the theme directory after normalizing the provided path
+     *
+     * @param string $theme_directory_path The full path to the theme directory
+     * @return void
+     */
+    private function _setThemeDirectory($theme_directory_path) {
+
+
+        $theme_directory_path_normalized = $this->getPlugin()->getTools()->normalizePath($theme_directory_path);
+        $this->_theme_directory = $theme_directory_path_normalized;
+        $this->debug()->log('Set Theme Template Directory to : ' . $this->_theme_directory);
     }
 
     /**
@@ -180,20 +252,15 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
      * @param none
      * @return string $_theme_directory
      */
-    public function getThemeDirectory() {
+    private function _getThemeDirectory() {
         $this->debug()->t();
-
-
+        //if theme directory wasnt set yet, set it now with whatever theme name exists
         if (is_null($this->_theme_directory)) {
-            $dir=$this->getAddon()->getDirectory() . '/' . $this->getAddon()->DIR_NAME_THEMES. '/' . $this->getThemeName();
-            $dir=$this->getPlugin()->getTools()->normalizePath($dir);
-            $this->_theme_directory=$dir;
-             $this->debug()->log('Set Theme Template Directory to : ' . $this->_theme_directory);
+            $this->_theme_directory=$this->getAddon()->getDirectory() . '/' . $this->getAddon()->DIR_NAME_THEMES . '/' . $this->getThemeName();
 
         }
 
-
-          return $this->_theme_directory;
+        return $this->_theme_directory;
     }
 
 //    /**
@@ -209,36 +276,98 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
 //    }
 
     /**
-     * Get Theme
+     * Set the theme
      *
-     * @param none
-     * @return string
-     */
-    public function getThemeName() {
-        if (is_null($this->_theme_name)) {
-            $this->debug()->t();
-
-            $this->setTheme(self::DEFAULT_THEME);
-        }
-        return $this->_theme_name;
-    }
-
-    /**
-     * Set Theme
+     * Initializes the theme, settings its name, directory, clearing the template cache,etc.
      *
-     * @param string $theme
-     * @return object $this
+     * @param string $theme_name The name of the theme to set
+     * @return void
      */
     public function setTheme($theme_name) {
         $this->debug()->t();
+        /*
+         * dont set theme if its null
+         */
+        if (is_null($theme_name)) {
+            return;
+        }
+ $this->debug()->log('Setting theme ...');
+/*
+ * set theme name
+ */
+        $this->_setThemeName($theme_name);
+        $this->debug()->log('Set theme name to ' . $theme_name);
+/*
+ * set theme directory
+ */
+        $this->_setThemeDirectory($this->getAddon()->getDirectory() . '/' . $this->getAddon()->DIR_NAME_THEMES . '/' . $this->getThemeName());
+$this->debug()->log('Set theme directory to ' . $this->_getThemeDirectory());
 
-        $theme = trim(ucwords($theme_name));
-        $this->_theme_name = $theme_name;
+        /*
+         * load theme modules
+         */
+
+        $new_enabled_modules=$this->getAddon()->loadModules($this->_getThemeDirectory() . '/Module');
+
+//        foreach ($new_enabled_modules as $module_name => $module_path) {
+//
+//            $this->loadModule($module_name);
+//        }
+//        return $new_enabled_modules;
+//
+//
+//       $modules = $this->getAddOn()->getModules();
+
+        if (is_array($new_enabled_modules)) {
+
+
+            foreach ($new_enabled_modules as $module_name=>$module) {
+
+
+                $this->getAddon()->getModule($module_name)->init();
+                $this->debug()->log('Initialized Addon Module ' . $this->getSlug() . '/' .$this->getAddon()->getModule($module_name)->getName());
+            }
+        }
 
 
 
-        $this->debug()->log('Set Simpli_Forms Theme to : ' . $this->getThemeName());
-        return $this;
+        /*
+         * clear template cache so each template will be forced to reload.
+         */
+
+        $this->_cached_templates = array();
+    }
+
+    /**
+     * Set Theme Name
+     *
+     * Sets the Theme's name
+     *
+     * @param string $theme_name The name of the theme
+     * @return void
+     */
+    private function _setThemeName($theme_name) {
+
+
+        $this->_theme_name = trim(ucwords($theme_name));
+    }
+
+    /**
+     * Get Theme Name
+     *
+     * @param none
+     * @return string The current theme's name. If no theme has been set, will return the default theme.
+     */
+    public function getThemeName() {
+        $this->debug()->t();
+        if (is_null($this->_theme_name)) {
+            $this->debug()->log('_theme_name is null, setting it to default');
+
+            $this->_setThemeName(self::DEFAULT_THEME);
+        }
+        $result = $this->_theme_name;
+        $this->debug()->logVars(get_defined_vars());
+        return $result;
     }
 
     /**

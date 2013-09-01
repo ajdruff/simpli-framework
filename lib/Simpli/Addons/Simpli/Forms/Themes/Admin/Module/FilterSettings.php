@@ -10,7 +10,7 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Addons_Simpli_Forms_Themes_Saratoga_Module_FilterSettings extends Simpli_Addons_Simpli_Forms_Module_Filter {
+class Simpli_Addons_Simpli_Forms_Themes_Admin_Module_FilterSettings extends Simpli_Addons_Simpli_Forms_Module_Filter {
 
     /**
      * Common Filter
@@ -19,9 +19,10 @@ class Simpli_Addons_Simpli_Forms_Themes_Saratoga_Module_FilterSettings extends S
      * @param string $content The shortcode content
      * @return string The parsed output of the form body tag
      */
-    protected function _commonFilter($atts) {
+    protected function _commonFilter($properties) {
         $this->debug()->t();
-
+        $properties = parent::_commonFilter($properties);
+        extract($properties);
 
         /*
          * Return error if required arguments are not found
@@ -34,31 +35,14 @@ class Simpli_Addons_Simpli_Forms_Themes_Saratoga_Module_FilterSettings extends S
         }
 
 
-        $atts['value'] = $this->getPlugin()->getModule('Post')->getPostOption($atts['name']);
-        $atts['name'] = $this->getPlugin()->getSlug() . '_' . $atts['name'];
+            $atts['selected'] = $this->getPlugin()->getSetting($atts['name']);
+
+
+            $atts['value'] = $this->getPlugin()->getSetting($atts['name']);
 
 
 
-
-
-
-        return($atts);
-    }
-
-    /**
-     * Filter Text
-     *
-     * Filters the Text Tag Attributers
-     * @param string $atts The attributes of the tag
-     * @return string $atts
-     */
-    protected function _filterText($atts) {
-        $this->debug()->t();
-
-
-        $atts['value'] = 'filtered by Settings';
-
-        return ($atts);
+        return (compact('scid','atts', 'tags'));
     }
 
 }

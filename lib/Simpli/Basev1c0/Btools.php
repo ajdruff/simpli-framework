@@ -429,6 +429,10 @@ class Simpli_Basev1c0_Btools {
          * add a bracket around each key
          */
         foreach ($tags as $key => $value) {
+            if (is_array($value)||is_object($value)) {
+                $value='<pre>' . print_r($value,true) . '</pre>';
+            }
+
             $tags['{' . $key . '}'] = $value;
             unset($tags[$key]);
         }

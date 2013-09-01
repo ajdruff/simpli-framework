@@ -1,19 +1,16 @@
 <?php
 
 /**
- * Form Filter Module - Example
+ * Options Filter
  *
  * Modifies Field Inputs from Form Templates
- * Usage: To use this Example template, copy and rename it to 'FiltersMyfiltername' and replace 'FiltersExample' in the class name with 'FiltersMyfiltername'
- * thats it! Now in your form template, simply use 'filter='myfiltername' to access its filters. Remember that it is an extension of the Filters class, which will
- * use its own filters if you dont define replacements.
  *
  * @author Andrew Druffner
  * @package SimpliFramework
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Addons_Simpli_Forms_Themes_Seattle_Module_FilterExample extends Simpli_Addons_Simpli_Forms_Module_Filter {
+class Simpli_Addons_Simpli_Forms_Themes_Admin_Module_FilterOptions extends Simpli_Addons_Simpli_Forms_Module_Filter {
 
     /**
      * Common Filter
@@ -30,6 +27,8 @@ class Simpli_Addons_Simpli_Forms_Themes_Seattle_Module_FilterExample extends Sim
         extract($properties);
 
 
+        $atts['value'] = $this->getPlugin()->getModule('Post')->getPostOption($atts['name']);
+
         return (compact('scid','atts', 'tags'));
     }
 
@@ -44,12 +43,9 @@ class Simpli_Addons_Simpli_Forms_Themes_Seattle_Module_FilterExample extends Sim
         $this->debug()->t();
 
         extract($properties);
-
-
-        $atts['value'] = 'filtered by Seattle Example';
-
-
-        return (compact('atts', 'tags'));
+       // $atts['value'] = 'filtered by options filter';
+        $tags['test_text'] = 'This is the test tag for a text template';
+        return (compact('scid','atts', 'tags'));
     }
 
 

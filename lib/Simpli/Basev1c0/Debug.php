@@ -334,7 +334,9 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $props = $this->_getMethodProperties();
 
 
-
+//        if ($props['method']==='filter') {
+//            echo '<br> class =|' . $props['class'].'|';
+//        }
         /*
          * check filters and debug state
          */
@@ -540,7 +542,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         } else {
 
             $same_line = true;
-            $content = $var_name . $var;
+            $content = $var_name . htmlspecialchars($var);
         }
 
         return $content;
@@ -2146,7 +2148,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          */
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
             /* special ajax here */
-            return;
+            return false;
         }
 
 

@@ -15,8 +15,9 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
     private $_form_theme;
     private $_field_prefix;
     private $_form_filter_suffix;
-    private $_form;
+    public $form;
     private $_forms;
+    public $form_counter = 0; // keeps track of how many forms were added to the page. used to make each form and id unique
 
     /**
      * Add Hooks
@@ -25,6 +26,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @param none
      * @return void
      */
+
     public function addHooks() {
         $this->debug()->t();
     }
@@ -40,56 +42,103 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
     }
 
     /**
-     * Create Form
+     * Start Form
      *
      * Creates a  form array for reference by each of the shortcodes
      * @param none
      * @return void
      */
-    public function createForm($properties) {
+    public function startFormOLD($properties) {
         $this->debug()->t();
 
 
+        /*
+         * initialize the properties
+         */
         $defaults = array(
             'filter' => null,
+            'name' => 'simpli_forms',
+            'template' => 'formStart', // the template to use for the form start
             'theme' => null,
             'is_shortcode' => false
         );
+
+
+                /*
+         * Apply Defaults
+         * Use the shortcode_atts function which will also remove
+         * any attributes not specified in the element defaults
+         */
         $properties = shortcode_atts($defaults, $properties);
 
 
 
+        /*
+         * increase the form counter
+         */
+        $this->_form_counter++;
+
         if (!is_array($properties)) {
             $properties = array();
         }
-        $this->_form = array(); //initialize, clearing the old form
+        $this->_form = array(); //initialize, clearing any previous form on the same page
 
-/*
- * if a theme was provided, set it.
- */
+
+
+
+
+
+        /*
+         * if a theme was provided, set it.
+         */
         if (!is_null($properties['theme'])) {
             $this->getTheme()->setTheme($properties['theme']);
         }
 
+        /*
+         * if a filter was provided, set it.
+         */
+
+        if (!is_null($properties['filter'])) {
 
 
-    if (!is_null($properties['filter'])) {
+            $this->setFilter($properties['filter']);
+        }
 
-        $this->setFilter($properties['filter']);
-    }
+        /*
+         * if a filter was provided, set it.
+         */
 
-/*
- * reset the elements array for this new form
- */
+        if (!is_null($properties['filter'])) {
+
+
+            $this->setFilter($properties['filter']);
+        }
+
+        /*
+         * reset the elements array for this new form
+         */
         $this->_form['elements'] = array();
-//        $this->_form['elements']['atts'] = array();
-//        $this->_form['elements']['att_defaults'] = array();
-//        $this->_form['elements']['tags'] = array();
+
 
         /*
          * reset the form properties
          */
         $this->_form['form'] = $properties;
+
+
+        /*
+         * finally, output the form's starting element
+         */
+
+
+        $this->el(array(
+            'el_id' => 'formStart'
+                )
+        );
+
+
+
         $this->debug()->logVars(get_defined_vars());
     }
 
@@ -177,7 +226,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @param none
      * @return string
      */
-public function getFilter() {
+    public function getFilter() {
         $this->debug()->t();
 
 
@@ -195,18 +244,23 @@ public function getFilter() {
      * Set  Filter
      *
      * Sets the Form Filter Suffix
-     * @param string getFormFilterTag
-     * @return object $this
+     * @param mixed filter_name or an array of filter names
+     * @returnvoid
      */
-    public function setFilter($form_filter) {
+    public function setFilter($filters) {
         $this->debug()->t();
 
 
         /*
          * set the form filter, capatilzing the first word.
          */
-
-        $this->_form_filter = ucwords($form_filter);
+        if (!is_array($filters)) {
+            $filters = array($filters);
+        }
+        foreach ($filters as $key => $filter) {
+            $filters[$key] = ucwords(trim($filter));
+        }
+        $this->_form_filter = $filters;
     }
 
     /**
@@ -227,9 +281,18 @@ public function getFilter() {
 
         $el_id = $properties['el_id'];
         $method = $el_id;
+
         unset($properties['el_id']); //remove the element id since we dont want it part of atts, and it served its only purpose
+
         $this->debug()->logVars(get_defined_vars());
-        $this->getElementsModule()->$method($properties);
+        if (method_exists($this->getElementsModule(), $method)) {
+            $this->getElementsModule()->$method($properties);
+        } else {
+            /*
+             * if no element defined, then display an error message
+             */
+            echo $this->getElementErrorMessages($el_id, array('Element ' . $el_id . ' is not defined in ' . get_class($this->getElementsModule())));
+        }
     }
 
     /**
@@ -256,7 +319,7 @@ public function getFilter() {
         $this->debug()->t();
 
 
-
+$this->debug()->logVars(get_defined_vars());
 
         /*
          * Apply Defaults
@@ -264,6 +327,8 @@ public function getFilter() {
          * any attributes not specified in the element defaults
          */
         $atts = shortcode_atts($defaults, $atts);
+
+
 
         /*
          * Package Properties so we can hand off to filters
@@ -276,6 +341,7 @@ public function getFilter() {
             'tags' => $tags
         );
 
+        $this->debug()->logVar('$properties = ', $properties);
         /*
          * Filter
          * Apply the filter set by the template.
@@ -288,17 +354,38 @@ public function getFilter() {
          * get filter module name by combining the constant MODULE_NAME_FILTERs with the user set filter.
          * If the user set 'filter' => 'Example' when creating the form, then the module name would be 'FilterExample'
          */
-        $filter_module_name = $this->getAddon()->MODULE_NAME_FILTERS . $this->getFilter(); // e.g.: 'FilterOptions'
+
+        /*
+         * apply the filters by calling the filter method from the filter module that was set  when the user
+         * set 'filter'=>'Example'
+         */
 
 
 
-        $this->debug()->logVar('$filter_module_name = ', $filter_module_name,true);
-        $this->debug()->logVars(get_defined_vars());
-/*
- * apply the filter by calling the filter method from the filter module that was set  when the user
- * set 'filte'=>'Example'
- */
-$properties= $this->getAddon()->getModule($filter_module_name)->filter($properties);
+        $filters = $this->getFilter();
+        if (!is_array($filters)) {
+            /*
+             * if not already an array, make it an array so we can iterate
+             */
+            $filters = array($filters);
+        }
+
+        foreach ($filters as $filter) {
+
+            $filter_module_name = $this->getAddon()->MODULE_NAME_FILTERS . $filter; // e.g.: 'FilterOptions'
+            if (method_exists($this->getAddon()->getModule($filter_module_name), 'filter')) {
+                $this->debug()->log('filtering using ' . $filter_module_name);
+                 $this->debug()->logVar('unfiltered properties are  = ', $properties);
+                 $this->debug()->log('Filtering with module ' . $filter_module_name);
+                $properties = $this->getAddon()->getModule($filter_module_name)->filter($properties);
+                $this->debug()->logVar('filtered properties are  = ', $properties);
+
+            }
+        }
+
+
+
+
         /*
          * Unpack Properties
          */
@@ -316,7 +403,7 @@ $properties= $this->getAddon()->getModule($filter_module_name)->filter($properti
          */
 
         if ((isset($atts['_error'])) && (!is_null($atts['_error']))) {
-            if ($this->_form['form']['is_shortcode'] === false) {
+            if ($this->form['form']['is_shortcode'] === false) {
                 echo $this->getElementErrorMessages($scid, $atts['_error']);
                 return;
             } else {
@@ -341,7 +428,7 @@ $properties= $this->getAddon()->getModule($filter_module_name)->filter($properti
 
         $template = $theme->getTemplate($atts['template_id']);
 
-
+        $this->debug()->logVar('$template for $template_id ' . $atts['template_id'] . '=<br>',  $template);
 
         $att_template_tags = $this->getTagPairs($atts); //convert to tag pairs
         $template_with_atts_replaced = str_ireplace($att_template_tags['names'], $att_template_tags['values'], $template);
@@ -366,7 +453,7 @@ $properties= $this->getAddon()->getModule($filter_module_name)->filter($properti
          * Only echo the result if function is being used outside of the shortcode
          * otherwise, let the shortcode handle output (best practice)
          */
-        if ($this->_form['form']['is_shortcode'] === false) {
+        if ($this->form['form']['is_shortcode'] === false) {
             echo $processed_template;
         }
 
@@ -409,7 +496,7 @@ $properties= $this->getAddon()->getModule($filter_module_name)->filter($properti
         $this->debug()->log('theme name in getTheme is : ' . $result->getThemeName());
         $this->debug()->logVar('$this->getAddon()->getModule(\'Theme\') ', $result);
 
-        $this->debug()->log( 'Theme object =<pre>', print_r($this->getAddon()->getModule('Theme'), true), '</pre>');
+        $this->debug()->log('Theme object =<pre>', print_r($this->getAddon()->getModule('Theme'), true), '</pre>');
         return ($result);
     }
 
@@ -533,6 +620,136 @@ $properties= $this->getAddon()->getModule($filter_module_name)->filter($properti
             return var_export($tag_value, true);
         }
         return $tag_value;
+    }
+
+    /**
+     * Form Start
+     *
+     * Creates a  form array for reference by each of the shortcodes
+     * @param none
+     * @return void
+     */
+    public function formStart($properties) {
+        $this->debug()->t();
+        $defaults = array(
+
+            'name' => 'simpli_forms',
+            'is_shortcode'=>false,
+            'theme' => 'Admin',
+            'action' => $_SERVER['REQUEST_URI'],
+            'method' => 'post',
+            'template_id' => __FUNCTION__,
+            'filter' => 'Settings',);
+
+
+                /*
+         * Apply Defaults
+         * Use the shortcode_atts function which will also remove
+         * any attributes not specified in the element defaults
+         */
+        $properties = shortcode_atts($defaults, $properties);
+
+
+
+        $this->debug()->logVar('$properties = ', $properties);
+
+        /*
+         * increase the form counter
+         */
+        $this->form_counter++;
+
+        if (!is_array($properties)) {
+            $properties = array();
+        }
+        $this->form = array(); //initialize, clearing any previous form on the same page
+
+
+
+
+
+
+
+
+
+        /*
+         * if a theme was provided, set it.
+         */
+        if (!is_null($properties['theme'])) {
+            $this->getTheme()->setTheme($properties['theme']);
+        }
+
+        /*
+         * if a filter was provided, set it.
+         */
+
+        if (!is_null($properties['filter'])) {
+
+
+            $this->setFilter($properties['filter']);
+        }
+
+
+
+        /*
+         * reset the elements array for this new form
+         */
+        $this->form['elements'] = array();
+
+
+        /*
+         * reset the form properties
+         */
+        $this->form['form'] = $properties;
+
+
+        /*
+         * output the html
+         */
+
+        $this->el(array(
+            'el_id' => 'formStart',
+            'is_shortcode' => $properties['is_shortcode'],
+            'name' => $properties['name'],
+            'action' => $properties['action'],
+            'method' => $properties['method'],
+            'template_id' => $properties['template_id'],
+                )
+        );
+    }
+    /**
+     * Form End
+     *
+     * Adds the form's end tag and any other controls required ( buttons,etc)
+     * @param none
+     * @return void
+     */
+    public function formEnd($properties=array()) {
+        $this->debug()->t();
+        $defaults = array(
+
+            'name' => null,
+            'is_shortcode'=>false,
+            'template_id' => __FUNCTION__,
+           );
+
+
+                /*
+         * Apply Defaults
+         * Use the shortcode_atts function which will also remove
+         * any attributes not specified in the element defaults
+         */
+        $properties = shortcode_atts($defaults, $properties);
+
+
+
+
+        $this->el(array(
+            'el_id' => 'formEnd',
+            'is_shortcode' => $properties['is_shortcode'],
+            'name' => 'formEnd',
+            'template_id' => $properties['template_id'],
+                )
+        );
     }
 
 }

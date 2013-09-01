@@ -29,7 +29,7 @@ class Simpli_Addons_Simpli_Forms_Themes_Saratoga_Module_FilterOptions extends Si
 
         $atts['value'] = $this->getPlugin()->getModule('Post')->getPostOption($atts['name']);
 
-        return(compact('atts', 'tags'));
+        return (compact('scid','atts', 'tags'));
     }
 
     /**

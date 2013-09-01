@@ -30,7 +30,7 @@ class Simpli_Addons_Simpli_Forms_Themes_Saratoga_Module_FilterExample extends Si
         extract($properties);
 
 
-        return(compact('atts', 'tags'));
+        return (compact('scid','atts', 'tags'));
     }
 
     /**

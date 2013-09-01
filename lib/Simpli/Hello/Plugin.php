@@ -157,7 +157,7 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
              * Defaults for Example Settings in 'Example Settings Metabox'
              *
              */
-            , 'checkbox_settings' =>
+            , 'checkbox_setting' =>
             array(
                 'yellow' => 'no'
                 , 'red' => 'yes'

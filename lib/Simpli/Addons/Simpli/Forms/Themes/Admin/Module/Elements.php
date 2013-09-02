@@ -26,6 +26,7 @@ class Simpli_Addons_Simpli_Forms_Themes_Admin_Module_Elements extends Simpli_Add
 
         $defaults = array(
             'name' => null  //the name of the form field.
+            ,'is_shortcode'=>false //whether this method is being called by a shortcode
             , 'value' => null //value of the field
             , 'heading' => null
             , 'label' => null
@@ -51,8 +52,11 @@ class Simpli_Addons_Simpli_Forms_Themes_Admin_Module_Elements extends Simpli_Add
 
 
 
+
+
         $defaults = array(
             'name' => null, //the name of the form field.
+                        'is_shortcode'=>false, //whether this method is being called by a shortcode
             'heading' => null  //the name of the form field.
             , 'value' => null //value of options that is selected
             , 'label' => null

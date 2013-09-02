@@ -23,6 +23,28 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
      */
     public function addHooks() {
         $this->debug()->t();
+
+
+
+
+
+
+
+        /**
+         *
+         *
+         *  add scripts
+         * example: add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+         *
+         */
+        /**
+         *
+         * Add custom ajax handlers
+         *  Map Ajax Handlers to Ajax Actions passed to php by the ajax request
+         * example: add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_my_action', array(&$this, 'my_function'));
+         * see http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
+         */
+
     }
 
     /**
@@ -62,6 +84,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
 
         $defaults = array(
             'name' => null  //the name of the form field.
+            ,'is_shortcode'=>false
             , 'value' => null //value of the field
             , 'label' => null
             , 'hint' => null
@@ -139,8 +162,9 @@ return($this->getAddon()->getModule('Form')->renderElement(__FUNCTION__, $atts, 
 
 
         $defaults = array(
-            'name' => null,  //the name of the form field.
-             'heading' => null  //the name of the form field.
+            'name' => null  //the name of the form field.
+                        ,'is_shortcode'=>false
+            , 'heading' => null  //the name of the form field.
             , 'value' => null //value of options that is selected
             , 'label' => null
             , 'hint' => null

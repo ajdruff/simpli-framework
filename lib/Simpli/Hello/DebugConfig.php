@@ -32,7 +32,7 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Debug {
          * $this->debug()->turnOff();
          * Off by default
          */
-        $this->debug()->turnOff();
+        $this->debug()->turnOn();
 
 //  $this->debug()->turnOff();
 
@@ -42,11 +42,12 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Debug {
 
         $this->setOption('method_filters_enabled', true); //set to false to ignore all filters and print all module debug output
         //dont forget you can also just use a method   $this->debug()->setMethodFilter('config', false);
-        $this->debug()->setMethodFilter('filterCheckbox', true);
-        $this->debug()->setMethodFilter('el', false);
-        $this->debug()->setMethodFilter('getTheme', false);
-        $this->debug()->setMethodFilter('renderElement', true);
-        $this->debug()->setMethodFilter('getModule', false);
+        $this->debug()->setMethodFilter('lines2array', true);
+        $this->debug()->setMethodFilter('el_sc', true);
+                $this->debug()->setMethodFilter('_sc', true);
+        $this->debug()->setMethodFilter('el_sc_options', true);
+        $this->debug()->setMethodFilter('renderElement', false);
+        $this->debug()->setMethodFilter('text', false);
         $this->debug()->setMethodFilter('_getThemeDirectory', false);
         $this->debug()->setMethodFilter('createForm', false);
         $this->debug()->setMethodFilter('loadModules', false);
@@ -92,12 +93,12 @@ $this->debug()->setMethodFilter('_setCachedTemplate', false);
 
 
         $this->setOption('logging_enabled', true);
-        $this->debug()->setOption('trace_enabled', false);
-        $this->debug()->setOption('defined_vars_enabled', false);
+        $this->debug()->setOption('trace_enabled', true);
+        $this->debug()->setOption('defined_vars_enabled', true);
         $this->debug()->setOption('backtrace_enabled', false);
         $this->debug()->setOption('visual_backtrace_enabled', false);
 
-        $this->setOption('trace_output_format', 'text');  //options are 'normal'(default), 'text' and 'simple'
+        $this->setOption('trace_output_format', 'normal');  //options are 'normal'(default), 'text' and 'simple'
         $this->setOption('log_all_actions', false);
 
         $this->debug()->setOption('show_arrays', true);

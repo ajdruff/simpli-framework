@@ -24,11 +24,11 @@ class Simpli_Hello_Module_Shortcodes extends Simpli_Basev1c0_Plugin_Module {
     public function addHooks() {
         $this->debug()->t();
 
+add_filter('widget_text', 'do_shortcode');
+add_filter('the_content', 'do_shortcode', 11); // From shortcodes.php
 
 
-
-
-        add_shortcode($this->getPlugin()->getSlug(), array(&$this, 'sayHello'), 10);
+        add_shortcode($this->getPlugin()->getSlug(), array($this, 'sayHello'), 10);
 
         /**
          *

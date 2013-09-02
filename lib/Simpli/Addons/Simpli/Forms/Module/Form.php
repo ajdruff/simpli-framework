@@ -29,6 +29,12 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
 
     public function addHooks() {
         $this->debug()->t();
+
+        /*
+         * Add Shortcodes
+         */
+        add_shortcode($this->getPlugin()->getSlug() . '_form', array($this, 'hookShortcodeElementWithoutContent'), 10);
+        add_shortcode($this->getPlugin()->getSlug() . '_form_options', array($this, 'hookShortcodeElementWithContent'), 10);
     }
 
     /**
@@ -64,7 +70,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         );
 
 
-                /*
+        /*
          * Apply Defaults
          * Use the shortcode_atts function which will also remove
          * any attributes not specified in the element defaults
@@ -81,7 +87,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         if (!is_array($properties)) {
             $properties = array();
         }
-        $this->_form = array(); //initialize, clearing any previous form on the same page
+        $this->form = array(); //initialize, clearing any previous form on the same page
 
 
 
@@ -133,7 +139,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
 
 
         $this->el(array(
-            'el_id' => 'formStart'
+            'el' => 'formStart'
                 )
         );
 
@@ -264,14 +270,126 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
     }
 
     /**
+     * Hook Function - Shortcode Element (shortcode , without closing tag)
+     *
+     * The form element shortcode callback function for a self closing shortcode
+     * tag (one that does not require a  trailing [/] tag.
+     * Mapped using the add_shortcode hook.
+     * It is a wrapper around _el(), which is shared code used by both the public el() and the shortcodes. The internal element method _el() handles the rendering of each of the form elements.
+     * @param $atts The attributes of the shortcode
+     * @return string The output of the shortcode
+     */
+    public function hookShortcodeElementWithoutContent($atts, $content, $tag) {
+        /*
+         * the add_shortcode will always pass $content and $tag to us.
+         * in the case of a non-enclosed shortcode, such as this, $content should be null,
+         * but for some reason , when used within a class method, $content will not evaluate to null
+         * unless we explicitly set it to null within the method, so we do that here:
+         */
+
+        $content = null;
+
+
+        /*
+         * if el_id is not specified as an attribute, then make the 0th attribute the el_id
+         * that allows you to do something like this [simpli_hello text] , note the space after
+         * the shortcode tag. or [simpli_hello el='text'
+         */
+        if (!isset($atts['el']) || is_null($atts['el'])) {
+            $atts['el'] = $atts[0];
+        }
+
+        return($this->_el($atts));
+    }
+
+    /**
+     * Hook Function - Shortcode Element Options (shortcode , with closing tag)
+     *
+     * The callback function for an element shortcode with closing tag
+     * Mapped using the add_shortcode hook.
+     * It is a wrapper around _el(), which is shared code used by both this function and the shortcodes. The internal element method _el() handles the rendering of each of the form elements.
+     *
+     * @param $properties The attributes of the shortcode
+     * @param $content The content contained between the opening and closing tag
+     * @param $tag The shortcode string that triggered the callback
+     * @return string The output of the shortcode
+     */
+    public function hookShortcodeElementWithContent($atts, $content, $tag) {
+        $this->debug()->t();
+
+
+        if (!isset($atts['el']) || is_null($atts['el'])) {
+            $atts['el'] = $atts[0];
+        }
+
+        /*
+         * Find the options string and change it to an array , assigning it to $atts['options']
+         * $options may be passed as an attribute in the format of a query string, or they may be passed
+         * within the content
+         *
+         * e.g.:
+         * [simpli_forms_options options="enable=Enabled&disable=Click for Disabled"][/simpli_forms_options]
+         *
+[simpli_forms_options]
+enable|Click for Enabled
+disable|Click for Enabled
+[/simpli_forms_options]
+         * if options arent provided in the 'options' attribute, use the contents as the options
+         */
+        if (!isset($atts['options']) || is_null($atts['options'])) {
+          //  $atts['options'] = $content;
+
+             $atts['options']=$this->getPlugin()->getTools()->lines2array($content);
+        }
+        else{
+
+           $atts['options']= $this->getPlugin()->getTools()->parse_str($atts['options']);
+        }
+
+                /*
+         * Convert any shortcode attributes to arrays where required
+         *
+         * Since shortcodes handle all attributes as strings,
+         * we convert those attributes we know should be arrays to arrays.
+         * the !is_array check is required since if you use more than one filter, the
+         * second filter will throw an array to string conversion error if !is_array check is not included. this will happen since the string
+         * has already been converted to a string
+         */
+
+
+
+        $this->debug()->logVars(get_defined_vars());
+        /*
+         * call the internal _el method which is the proxy method that branches to the target method for handling the element that was identified by el_id.
+         */
+        return($this->_el($atts));
+    }
+
+    /**
      * Element Wrapper
+     *
+     * The purpose of this method is to provide a public interface to the user as an alternative to using a shortcode for rendering an element. It is a wrapper around _el(), which is shared code used by both this function and the shortcodes. The internal element method _el() handles the rendering of each of the form elements.
+     *
+     * The difference between using this function and using the shortcode callback functions directly, is that this function echos its output. A previous implementation was less reliable as it attempted to distringish whether a shortcode was calling it, before deciding whether to echo out its contents. As a consequence, frequently, the output failed, since something would inevitably interfere with the paramaters that indiciated whether it was being called by a shortcode. Using a separate function is much more stable and does not require conditionals.
+     *
+     * @param string $properties The properties provided by the user
+     * @return string The output of the element method
+     */
+    public function el($properties) {
+        $this->debug()->t();
+
+        echo($this->_el($properties));
+    }
+
+    /**
+     * Element (Internal)
      *
      * Calls the appropriate element method to render the element
      *
      * @param string $properties The properties provided by the user
-     * @return void
+     * @return string The output of the element method
      */
-    public function el($properties) {
+    private function _el($properties) {
         $this->debug()->t();
 
         /*
@@ -279,14 +397,14 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
          *
          */
 
-        $el_id = $properties['el_id'];
-        $method = $el_id;
 
-        unset($properties['el_id']); //remove the element id since we dont want it part of atts, and it served its only purpose
+        $method = $properties['el'];
+
+        unset($properties['el']); //remove the element id since we dont want it part of atts, and it served its only purpose
 
         $this->debug()->logVars(get_defined_vars());
         if (method_exists($this->getElementsModule(), $method)) {
-            $this->getElementsModule()->$method($properties);
+            return($this->getElementsModule()->$method($properties));
         } else {
             /*
              * if no element defined, then display an error message
@@ -302,7 +420,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
      * @return string
      */
     public function getForm() {
-        return $this->_form;
+        return $this->form;
     }
 
     /**
@@ -319,7 +437,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         $this->debug()->t();
 
 
-$this->debug()->logVars(get_defined_vars());
+        $this->debug()->logVars(get_defined_vars());
 
         /*
          * Apply Defaults
@@ -375,11 +493,10 @@ $this->debug()->logVars(get_defined_vars());
             $filter_module_name = $this->getAddon()->MODULE_NAME_FILTERS . $filter; // e.g.: 'FilterOptions'
             if (method_exists($this->getAddon()->getModule($filter_module_name), 'filter')) {
                 $this->debug()->log('filtering using ' . $filter_module_name);
-                 $this->debug()->logVar('unfiltered properties are  = ', $properties);
-                 $this->debug()->log('Filtering with module ' . $filter_module_name);
+                $this->debug()->logVar('unfiltered properties are  = ', $properties);
+                $this->debug()->log('Filtering with module ' . $filter_module_name);
                 $properties = $this->getAddon()->getModule($filter_module_name)->filter($properties);
                 $this->debug()->logVar('filtered properties are  = ', $properties);
-
             }
         }
 
@@ -428,7 +545,7 @@ $this->debug()->logVars(get_defined_vars());
 
         $template = $theme->getTemplate($atts['template_id']);
 
-        $this->debug()->logVar('$template for $template_id ' . $atts['template_id'] . '=<br>',  $template);
+        $this->debug()->logVar('$template for $template_id ' . $atts['template_id'] . '=<br>', $template);
 
         $att_template_tags = $this->getTagPairs($atts); //convert to tag pairs
         $template_with_atts_replaced = str_ireplace($att_template_tags['names'], $att_template_tags['values'], $template);
@@ -453,11 +570,11 @@ $this->debug()->logVars(get_defined_vars());
          * Only echo the result if function is being used outside of the shortcode
          * otherwise, let the shortcode handle output (best practice)
          */
-        if ($this->form['form']['is_shortcode'] === false) {
-            echo $processed_template;
-        }
-
-
+        //     if ($this->form['form']['is_shortcode'] === false) {
+//        if ($atts['is_shortcode'] === false) {
+//            echo $processed_template;
+//        }
+// echo $processed_template;
         $this->debug()->logVars(get_defined_vars());
 
         return $processed_template;
@@ -632,9 +749,8 @@ $this->debug()->logVars(get_defined_vars());
     public function formStart($properties) {
         $this->debug()->t();
         $defaults = array(
-
             'name' => 'simpli_forms',
-            'is_shortcode'=>false,
+            'is_shortcode' => false,
             'theme' => 'Admin',
             'action' => $_SERVER['REQUEST_URI'],
             'method' => 'post',
@@ -642,7 +758,7 @@ $this->debug()->logVars(get_defined_vars());
             'filter' => 'Settings',);
 
 
-                /*
+        /*
          * Apply Defaults
          * Use the shortcode_atts function which will also remove
          * any attributes not specified in the element defaults
@@ -707,7 +823,7 @@ $this->debug()->logVars(get_defined_vars());
          */
 
         $this->el(array(
-            'el_id' => 'formStart',
+            'el' => 'formStart',
             'is_shortcode' => $properties['is_shortcode'],
             'name' => $properties['name'],
             'action' => $properties['action'],
@@ -716,6 +832,7 @@ $this->debug()->logVars(get_defined_vars());
                 )
         );
     }
+
     /**
      * Form End
      *
@@ -723,17 +840,16 @@ $this->debug()->logVars(get_defined_vars());
      * @param none
      * @return void
      */
-    public function formEnd($properties=array()) {
+    public function formEnd($properties = array()) {
         $this->debug()->t();
         $defaults = array(
-
             'name' => null,
-            'is_shortcode'=>false,
+            'is_shortcode' => false,
             'template_id' => __FUNCTION__,
-           );
+        );
 
 
-                /*
+        /*
          * Apply Defaults
          * Use the shortcode_atts function which will also remove
          * any attributes not specified in the element defaults
@@ -744,7 +860,7 @@ $this->debug()->logVars(get_defined_vars());
 
 
         $this->el(array(
-            'el_id' => 'formEnd',
+            'el' => 'formEnd',
             'is_shortcode' => $properties['is_shortcode'],
             'name' => 'formEnd',
             'template_id' => $properties['template_id'],

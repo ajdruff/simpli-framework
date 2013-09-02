@@ -120,7 +120,7 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
 
         $tags['form_counter'] = $this->getAddon()->getModule('Form')->form_counter;
         if (isset($this->getAddon()->getModule('Form')->form['form']['name'])) {
-            $tags['form_name']=$this->getAddon()->getModule('Form')->form['form']['name'];
+            $tags['form_name'] = $this->getAddon()->getModule('Form')->form['form']['name'];
         }
 
         $this->debug()->logVar('$this->getAddon()->getModule(\'Form\')->form = ', $this->getAddon()->getModule('Form')->form);
@@ -145,8 +145,7 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
         return (compact('scid', 'atts', 'tags'));
     }
 
-
-/**
+    /**
      * Filter Select
      *
      * Filters the Select Tag Attributes
@@ -173,8 +172,8 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
 
 
             $tokens['selected_html'] = (($atts['selected'] == $option_value) ? ' selected="selected"' : '');
-            $tokens['option_value']=$option_value;
-             $tokens['option_text']=$option_text;
+            $tokens['option_value'] = $option_value;
+            $tokens['option_text'] = $option_text;
             $option_template = '<option {selected_html} value="{option_value}">{option_text}</option>';
             $options_html.=$this->getPlugin()->getTools()->crunchTpl($tokens, $option_template);
         }
@@ -216,8 +215,8 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
 
 
             $tokens['checked_html'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked"' : '');
-            $tokens['option_value']=$option_value;
-             $tokens['option_text']=$option_text;
+            $tokens['option_value'] = $option_value;
+            $tokens['option_text'] = $option_text;
             $option_template = '                            <p>
                          <label style="padding: 18px 2px 5px;" for="checkbox_settings_{OPTION_VALUE}"><span style="padding-left:5px" >{OPTION_TEXT}</span>
                         <input type="checkbox" name="checkbox_settings[{OPTION_VALUE}]"  id="checkbox_settings_{OPTION_VALUE}"  value="yes" {CHECKED_HTML} >
@@ -233,16 +232,11 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
         $tags['options_html'] = $options_html;
 
 
-$properties=compact('scid', 'atts', 'tags');
-$this->debug()->logVar('$properties = ', $properties);
+        $properties = compact('scid', 'atts', 'tags');
+        $this->debug()->logVar('$properties = ', $properties);
 
         return ($properties);
     }
-
-
-
-
-
 
     /**
      * Filter Radio
@@ -255,6 +249,11 @@ $this->debug()->logVar('$properties = ', $properties);
         $this->debug()->t();
 
         extract($properties);
+
+
+
+
+
 
 
 
@@ -308,7 +307,7 @@ $this->debug()->logVar('$properties = ', $properties);
 
 
 
-        return (compact('scid','atts', 'tags'));
+        return (compact('scid', 'atts', 'tags'));
     }
 
     /**

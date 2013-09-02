@@ -7,52 +7,24 @@
 $f = $this->getPlugin()->getAddon('Simpli_Forms')->getModule('Form');
 
 
-/*
- * start the form , and optionally give it a theme and a filter. The filter allows you to modify the input
- * and output of any of the fields by modifying the attributes before they are processed in the template
- */
-$f->createForm(
-        array(
-            'filter' => 'options'
-            , 'theme' => 'Seattle'
-        )
-);
 
-//     $this->text('text', 'Text you want to insert', 'The text that will be inserted into the post', '') ;
+$f->getTheme()->setTheme('Admin');
+$f->setFilter(array('Admin','Options'));
 
-wp_nonce_field($this->getPlugin()->getSlug(), $this->getPlugin()->getSlug());
-?>
-
-<div class="misc-pub-section">
-
-
-<?php
-$f->addField(array(
-    'type' => 'text',
-    'name' => 'text',
-    //   , 'label' => 'Text you want to insert'
-   // 'hint' => 'The text that will be inserted into the post'
- 'value' => '22'
-        )
-);
-
-$f->addField(array(
-    'type' => 'text',
-    'name' => 'my_name',
-    'template_id' => 'text2',
-    //   , 'label' => 'Text you want to insert'
-    'hint' => 'The text that will be inserted into the post'
-    , 'value' => '22'
+$f->el(array(
+    'el' => 'text',
+    'name' => 'hello_global_default_text',
+    'label' => 'Text you want to insert',
+    'hint' => 'The text that will be inserted into the post',
+    'heading' => '',
         )
 );
 
 
-$f->endForm();
+
 ?>
 
 
-
-</div>
 
 <script type="text/javascript">
     jQuery(document).ready(function($) {

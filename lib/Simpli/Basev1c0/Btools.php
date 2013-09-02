@@ -429,8 +429,8 @@ class Simpli_Basev1c0_Btools {
          * add a bracket around each key
          */
         foreach ($tags as $key => $value) {
-            if (is_array($value)||is_object($value)) {
-                $value='<pre>' . print_r($value,true) . '</pre>';
+            if (is_array($value) || is_object($value)) {
+                $value = '<pre>' . print_r($value, true) . '</pre>';
             }
 
             $tags['{' . $key . '}'] = $value;
@@ -592,6 +592,58 @@ class Simpli_Basev1c0_Btools {
     }
 
     /**
+     * Lines to Array (or a more generic version of parse_str() )
+     *
+     * Creates an associative array of a string that contains name value pairs that are themselves separated by new lines ( or other characters). The result is an associative array where the indexes are the names.
+     * Usage:
+     * $string=
+     * apple | red
+     * grape | green
+     *
+     * $result=array('apple=>red','grape'=>'green')
+     *
+     * Note that this
+     *
+     * @param string $string The input string
+     * @param $line_delimiter The new line characters separating each line. These can be new lines, which must be surrounded by double quotes, or they can be any other character that you want to divide the name value pairs, such as an ampersand in the case of parsing a query string.
+     *
+     * @param string $name_delimiter The delimiter used to segregate name from value
+     * @return array The associative array
+     */
+    public function lines2array($string, $line_delimiter = array("\r\n", "\r", "\n"), $name_delimiter = '|') {
+
+
+        $normalized_lines = str_replace($line_delimiter, "\n", $string);
+
+        $array_lines = explode("\n", $normalized_lines); // now we have 'name|value'
+
+        $result_array = array();
+        foreach ($array_lines as $line) {
+            $temp_array = explode($name_delimiter, $line);
+            if (isset($temp_array[1])) {
+                $result_array[trim($temp_array[0])] = trim($temp_array[1]);
+            }
+        }
+
+        return $result_array;
+    }
+
+    /**
+     * Parse String
+     *
+     * A replacement for php's parse_str function, but allowing you to specify delimiters. Defaults will act just like parse_str, assuming the string is delimited similarly as a query string with ampersands separating name value pairs, and within each pair, the name is separated by an equal sign from its value.
+     * This is simply a wrapper around lines2array to account for the user's familiarity with the php builtin.
+     *
+     * @param string $string The input string
+     * @param $pair_delimiter The character separating each pair of name/values. In a query stirng, this is the ampersand, which is the default.     *
+     * @param string $name_delimiter The delimiter used to segregate name from value
+     * @return array The associative array
+     */
+    public function parse_str($string, $pair_delimiter = '&', $name_delimiter = '=') {
+        return($this->lines2array($string, $pair_delimiter, $name_delimiter));
+    }
+
+    /**
      * Html To Text
      *
      * A very crude attempt at changing html to text. Does not attempt to preserve formatting except for line breaks
@@ -613,7 +665,7 @@ class Simpli_Basev1c0_Btools {
             if ($tag === 'br') {
                 $pattern = '/\<[\s]*br[\s]*[\/]*[\s]*>/'; //handles <br/> <br>  and all variants
             } else {
-                $pattern = '/\<[\s]*'.$tag.'[\s]*[\s]*>/';  //handles opening tags <p>,<div>, etc. assumes each is a block element.
+                $pattern = '/\<[\s]*' . $tag . '[\s]*[\s]*>/';  //handles opening tags <p>,<div>, etc. assumes each is a block element.
             }
 
             $string = preg_replace($pattern, $new_line, $string);

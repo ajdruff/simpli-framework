@@ -105,19 +105,6 @@ class Simpli_Hello_Module_Menu20Settings extends Simpli_Basev1c0_Plugin_Menu {
 
 
 
-
-
-
-
-        add_meta_box(
-                $this->getSlug() . '_' . 'metabox_about'  //Meta Box DOM ID
-                , __('About Simpli Hello and the Simpli Framework', $this->getPlugin()->getTextDomain()) //title of the metabox.
-                , array($this, 'renderMetaBoxTemplate') //function that prints the html
-                , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
-                , 'normal' //normal advanced or side The part of the page where the metabox should show
-                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , array('path' => $this->getPlugin()->getDirectory() . '/admin/templates/metabox/menu10_settings_metabox_about.php') //$metabox['args'] in callback function
-        );
 ////
 ////
 //

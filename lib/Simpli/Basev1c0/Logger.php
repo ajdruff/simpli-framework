@@ -45,7 +45,7 @@ class Simpli_Basev1c0_Logger implements Simpli_Basev1c0_Logger_Interface {
     public function setLoggingOn($enabled = true) {
         if ($enabled === true) {
 
-            add_action('shutdown', array(&$this, 'print_log'));
+            add_action('shutdown', array($this, 'print_log'));
         }
 
         $this->_enabled = ($enabled === true) ? true : false;

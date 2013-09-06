@@ -16,6 +16,42 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     protected $_menu_slug;
     static private $_menus;
 
+
+
+        /**
+     * Get Top Level Menu Slug
+     *
+     * @param none
+     * @return string
+     */
+    public function getTopLevelMenuSlug() {
+       $menus=$this->getMenuTracker();
+       $result=key($menus);
+       $this->debug()->logVar('$result = ', $result);
+       return $result;
+    }
+
+    /**
+     * Get Menu Tracker
+     *
+     * Returns an array if the menus added, with the menu slug as the associate index
+     * @param none
+     * @return string
+     */
+    public function getMenuTracker() {
+        return self::$_menus;
+    }
+
+   /**
+     * Add Menu To Tracker
+     *
+     * @param none
+     * @return string
+     */
+    public function addMenuToTracker($menu_slug) {
+        self::$_menus[$menu_slug]=array();
+    }
+
     /**
      * Get Metabox States
      *
@@ -65,7 +101,6 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         }
 
 //            echo '<pre>';
-
 //            echo '</pre>';
 
 
@@ -96,7 +131,6 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         return $this;
     }
 
-
     /**
      * Add Hooks
      *
@@ -105,9 +139,11 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function addHooks() {
+        $this->debug()->t();
 
-
-        if(!is_admin()){return;}
+        if (!is_admin()) {
+            return;
+        }
 
 
 
@@ -164,10 +200,49 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        $this->addMenuHooks();
-
+       // $this->addMenuHooks();
     }
 
+
+    /**
+     * Config
+     *
+     * Configures the module. Must be called by child module or menus wont be loaded.
+     *
+     * @param none
+     * @return void
+     */
+    public function config() {
+                    /*
+         * We track whether this is a top_level menu or a sub menu by
+         * checking to see if this is the first menu added. This is strictly based
+         * on the order the modules are loaded, which is dictated by the alphabetical order
+         * of the names of your module files.
+         * If you want a menu to be top level,  you need to change the naming of your module class and
+         * the the module file name. A good convention is MenuXX<arbitrary_name> , where XX is a number which
+         * forces the correct sorting.
+         * The purpose of this architecture is to make it easier to rearrange the sorting by simply renaming modules, without
+         * having to make any code changes.
+         */
+        if (is_null($this->getMenuTracker())) {
+            $this->setMenuLevel('top_level');
+        } else {
+            $this->setMenuLevel('sub_menu');
+        }
+
+
+
+        /*
+         * Set the Menu Slug
+         *          *
+         */
+
+
+        $this->setMenuSlug($this->getPlugin()->getSlug() . '_' . $this->getSlug());
+
+        $this->addMenuToTracker($this->getMenuSlug());
+
+    }
     /**
      * Check if Current Page is Menu
      *
@@ -222,9 +297,46 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
             return;
         }
 
-        add_action('current_screen', array(&$this, 'add_meta_boxes')); //action must be 'current_screen' so screen object can be accessed by the add_meta_boxes function
+        add_action('current_screen', array($this, 'add_meta_boxes')); //action must be 'current_screen' so screen object can be accessed by the add_meta_boxes function
         // Add scripts
-        add_action('admin_enqueue_scripts', array(&$this, 'base_admin_enqueue_scripts'));
+        add_action('admin_enqueue_scripts', array($this, 'base_admin_enqueue_scripts'));
+    }
+
+    /**
+     * Removes a Menu Page
+     *
+     * Removes a menu page from the menu
+     *
+     * @param none
+     * @return void
+     */
+    public function removeMenuPage($menu_slug) {
+        reset(self::$_menus);
+        $parent_slug = key(self::$_menus);
+        remove_submenu_page($parent_slug, $menu_slug);
+    }
+
+    protected $_menu_level;
+    /**
+     * Set Menu Level
+     *
+     * @param $menu_level
+     * @return none
+     */
+    public function setMenuLevel($menu_level) {
+        $this->_menu_level = $menu_level;
+    }
+
+
+
+        /**
+     * Get Menu Level
+     *
+     * @param none
+     * @return string
+     */
+    public function getMenuLevel() {
+        return $this->_menu_level;
     }
 
     /**
@@ -236,15 +348,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      */
     public function addMenuPage($page_title, $menu_title, $capability, $icon_url = '', $position = null) {
 
-        /*
-         * We track whether this is a top_level menu or a sub menu by
-         * adding it to a static tracking array, self::$_menus.
-         */
-        if (is_null(self::$_menus)) {
-            $type = 'top_level';
-        } else {
-            $type = 'sub';
-        }
+
 
         /*
          * If $menu_title is an array, we use the 'menu' element as the menu title,
@@ -256,16 +360,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         } else {
             $sub_menu_title = null;
         }
-        /*
-         * Set the Menu Slug
-         * One of the reasons that the framework needs to provide
-         * its own add_menu_page wrapper is to ensure that the
-         * menu slugs are created consistently
-         *
-         */
 
-        $menu_slug = $this->getPlugin()->getSlug() . '_' . $this->getSlug();
-        $this->setMenuSlug($menu_slug);
 
         /*
          * Class Method to display the HTML for the menu
@@ -291,13 +386,13 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          * modules as 'Menu10..., Menu20..,etc;'
          */
 
-        if ($type === 'top_level') {
+        if ($this->getMenuLevel()==='top_level') {
             $this->setMenuPageHookName(
                     add_menu_page(
                             $page_title// page title
                             , $menu_title // menu title
                             , $capability // capability
-                            , $menu_slug  // menu slug .
+                            , $this->getMenuSlug()  // menu slug .
                             , $function //function to display the html
                             , $icon_url // icon url
                             , $position //position in the menu
@@ -307,11 +402,11 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
             //  add_action($this->getMenuPageHookName(), array($this, 'addPageActions'));
             if (!is_null($sub_menu_title)) {
                 add_submenu_page(
-                        $menu_slug  // parent slug
+                        $this->getTopLevelMenuSlug()  // parent slug
                         , $page_title // page title
                         , $sub_menu_title // Submenu title
                         , $capability  // capability
-                        , $menu_slug  // make sure this is the same slug as the main menu so it overwrites the main menus submenu title
+                        , $this->getMenuSlug()  // make sure this is the same slug as the main menu so it overwrites the main menus submenu title
                         , $function //function to display the html
                 );
             }
@@ -319,21 +414,21 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
             /*
              * Get the parent slug
-             * which is the key of the first element of the static _menus array
+             *
              */
-            reset(self::$_menus);
-            $parent_slug = key(self::$_menus);
+
+            //$parent_slug =$this->getTopLevelMenuSlug();
 
             /*
              * Add the submenu
              */
 
             add_submenu_page(
-                    $parent_slug // parent slug
+                    $this->getTopLevelMenuSlug()// parent slug
                     , $page_title // page title
                     , $menu_title // Submenu title
                     , $capability  // capability
-                    , $menu_slug  // make sure this is the same slug as the main menu so it overwrites the main menus submenu title
+                    , $this->getMenuSlug()  // make sure this is the same slug as the main menu so it overwrites the main menus submenu title
                     , $function //function to display the html
             );
         }
@@ -343,12 +438,103 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          * both determine the top level menu,as well
          * as access the key properties from other methods
          */
-        self::$_menus[$menu_slug] = array(
-            'capability' => $capability
-            , 'type' => $type
-        );
-        do_action($this->getPlugin()->getSlug() . '_menuPageAdded');
 
+        $this->updateMenuTracker($this->getMenuSlug() ,array('capability' => $capability
+            , 'level' => $this->getMenuLevel()));
+        do_action($this->getPlugin()->getSlug() . '_menuPageAdded');
+    }
+    /**
+     * Update Menu Tracker
+     *
+     * Updates Menu Tracker . The menu tracker is used to keep track of which menu is top level,
+     * which is sublevel, and other properties
+     *
+     * @param string $menu_slug
+     * @param array $properties Selected properties of the menu
+     * @return void
+     */
+    public function updateMenuTracker($menu_slug,$properties) {
+
+        self::$_menus[$menu_slug] = $properties;
+
+    }
+
+    /**
+     * Get Editor Top Level Menu Slug
+     *
+     * Returns null unless the we are on the page that is actually the editor.
+     * This method allows the editor to appear on the main menu only when actually editing.
+     * All other times it will be null, removing  the title from the menu.
+     *
+     * @param none
+     * @return void
+     */
+    public function getEditorTopLevelMenuSlug() {
+
+        if (isset($_GET['page']) && $_GET['page']===$this->getMenuSlug()) {
+            return $this->getTopLevelMenuSlug();
+        }
+        else
+        {
+            return null;
+        }
+    }
+    /**
+     * Add a Custom Post Editor Page
+     *
+     * This is very similar to addMenuPage but forces parent to be edit.php and hardcodes some other paramaters, as well
+     * as immediately removing the page from the menu. This allows you to use the page added as an editor by redirecting
+     * the edit action to it.
+     * the page can be accessed at : /wp-admin/edit.php?page=simpli_hello_post_editor
+     * you can look at $hookname to confirm the page slug.
+     *
+     * Wrapper around add_menu_page so we can capture the page hook and still provide a nice api interface
+     * @param string $content The shortcode content
+     * @return string The parsed output of the form body tag
+     */
+    public function addCustomPostEditor($page_title, $menu_title, $capability, $icon_url = '') {
+
+        $this->debug()->t();
+
+
+
+        /*
+         * Class Method to display the HTML for the menu
+         */
+
+        $function = array($this, 'renderMenuPage');
+
+
+        /*
+         * Add the submenu
+         * $hookname returns the page slug in the format post_page_<page_slug>
+         */
+
+        $hookname = add_submenu_page(
+               $this->getEditorTopLevelMenuSlug() // parent slug
+                , $page_title // page title
+                , 'Custom Post Editor' // Submenu title
+                , $capability  // capability
+                , $this->getMenuSlug()
+                , $function //function to display the html
+        );
+
+        $this->debug()->logVar('$hookname = ', $hookname);
+        /*
+         * immediately remove the submenu item we just added so
+         * we still have the mapping of the url, but dont keep the menu item visible
+         */
+       // remove_submenu_page($this->getTopLevelMenuSlug() , $this->getMenuSlug() );
+
+        /*
+         * Add an entry into the menus array so we can
+         * both determine the top level menu,as well
+         * as access the key properties from other methods
+         */
+
+        $this->updateMenuTracker($this->getMenuSlug() ,array('capability' => $capability
+            , 'level' => $this->getMenuLevel()));
+        do_action($this->getPlugin()->getSlug() . '_menuPageAdded');
 
 
     }
@@ -649,7 +835,6 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
              * Set new setting value equal to the post value only if the setting was actually submitted, otherwise, keep the setting value the same.
              *  Add extra code to scrub the values for specific settings if needed
              */
-
             $previous_setting_value = $setting_value;
             $setting_value = ((isset($_POST[$setting_name]) === true) ? $_POST[$setting_name] : $previous_setting_value);
 // validtion errors here
@@ -922,9 +1107,9 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         }
         ob_start();
         include($template_path);
-        $template=ob_get_clean();
+        $template = ob_get_clean();
 
-       echo do_shortcode($template); //using buffer and do_shortcode is required to allow shortcodes to work within an included file, otherwise they dont render.
+        echo do_shortcode($template); //using buffer and do_shortcode is required to allow shortcodes to work within an included file, otherwise they dont render.
     }
 
     /**

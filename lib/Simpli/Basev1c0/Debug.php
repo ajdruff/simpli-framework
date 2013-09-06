@@ -403,7 +403,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      * @param boolean $force_output True Overrides filter settings
      * @return void
      */
-    public function logVar($var_name, $var, $force_output = false) {
+    public function logVar($var_name, $var, $force_output = false, $show_arrays = true, $show_objects = true,$expandable=true) {
 
 
 
@@ -429,7 +429,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             $var_name = '<br/> ' . $var_name;
         }
 
-        $content = $this->_logVar($var_name, $var, $force_output, true, true);
+        $content = $this->_logVar($var_name, $var, $force_output, $show_arrays, $show_objects,$expandable);
 
         $this->_log($content, $props, $use_prefix = true, $target = 'browser', $type = 'info');
     }
@@ -444,10 +444,11 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      * @param boolean $force_output True Overrides filter settings
      * @param boolean $show_arrays Whether to iterate through arrays. Used to help reduce the amount of memory used. If not provided, it will take its value from the main settings.
      * @param boolean $show_objects Whether to iterate through objects. Used to help reduce the amount of memory used. If not provided, it will take its value from the main settings.
+     * @param boolean $expandable True will create a clickable div around content that initially hides the content, but then displays it on click. False will show the content without being surrounded by the hidden div
      *
      * @return void
      */
-    private function _logVar($var_name, $var, $force_output, $show_arrays = null, $show_objects = null) {
+    private function _logVar($var_name, $var, $force_output, $show_arrays = null, $show_objects = null,$expandable=true) {
 
         /*
          * If allow_arrays is not set explicitly, use the configured value
@@ -482,7 +483,15 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
              * Surround the element with a collapsible div, controlled by the debug-trace.js javascript
              * The javascript requires a specific format (see javascript comments), so be careful when editing.
              */
-            $template = '
+
+            /*
+             * hide arrays behind a 'more' link that when clicked, will expand to display the values
+             * if false, will show them without the link. this may be necessary since sometimes the more link
+             * breaks (depending if you use a stop() or die() statement or if fatal errors occur in the code you are
+             * troubleshooting)
+             */
+            if ($expandable===true) {
+                          $template = '
         <div style="display:inline-block;">
             {TYPE}&nbsp;<a class="simpli_debug_citem" href="#"><span>More</span><span style="visibility:hidden;display:none">Less</span></a>
             <div style="visibility:hidden;display:none;background-color:#E7DFB5;">
@@ -491,6 +500,18 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         </div>
 
 ';
+            }else{
+                            $template = '
+        <div style="display:block;">
+            {TYPE}&nbsp;
+            <div style="visibility:visible;display:block;background-color:#E7DFB5;">
+                [{KEY_NAME}]=> {VALUE}
+            </div>
+        </div>
+
+';
+            }
+
             $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
 
 
@@ -541,7 +562,13 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             $content = $var_name . '<pre>' . print_r($arr_result, true) . '</pre>';
         } else {
 
-            $same_line = true;
+            /*
+             * spell out 'true' or 'false' if
+             * variable value is a boolean, so we can differentiate from an empty string
+             */
+            if (is_bool($var)) {
+                $var=($var)? $var . '(true)': $var .'(false)';
+            }
             $content = $var_name . htmlspecialchars($var);
         }
 
@@ -1029,26 +1056,13 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
 
+        if ($this->getOption('expand_on_click')) {
+                 $template=$this->getOption('backtrace_template_expand_on_click');
+        }else{
 
+        $template=$this->getOption('backtrace_template_show_without_click') ;
+        }
 
-
-        $template = '<div style="padding:5px;text-align:left;display: inline-block;">
- <strong style = "font-size:medium"></strong> <em "font-size:small"></em>
-<a class="simpli_debug_citem" href="#"><span><em>{EXPAND_TEXT}</em></span><span style="visibility:hidden;display:none"><em>{COLLAPSE_TEXT}</em></span></a>
-
-
-
-                <div  class="simpli_debug_toggle" style="display:none;visibility:hidden;padding:0px;margin:0px;"><!-- Collapsable -->
-
-
-
-
-                    <p > {TRACE}</p>
-
-
-</div>
-</div>
-';
         if ($this->getOption('backtrace_enabled')) {
             /*
              * Build Non-Visual Trace Html
@@ -2142,13 +2156,17 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             return false;
         }
 
+
+
         /*
          * Do not do any logging if ajax request
          * AJAX check
          */
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+
+            if(!$this->getOption('debug_ajax_enabled')){return false;};
             /* special ajax here */
-            return false;
+
         }
 
 
@@ -2680,7 +2698,19 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         /*
          * Enable or disable the Excluded Functions Filter
          */
-
+        /*
+         * Expand On Click
+         *
+         * When enabled, hides certain debug output in an attempt to make the output easier to read.
+         * The outout is hidden behind links , that when clicked, will show it.
+         * Typical debug output thatis hidden are: arrays, backtraces, visual traces, and objects.
+         * Occassionally, you may be troubleshooting code that breaks javascript or breaks before
+         * the javascript is loaded. IN this case, the expansion wont work, and you'll need to set
+         * this paramater to false while you troubleshoot. With it set to false, all output is shown on
+         * initial display, without requiring a click.
+         *
+         */
+        $this->_setDefaultOption('expand_on_click', true);
 
         $this->_setDefaultOption('function_exclusion_filter_enabled', true);
 
@@ -2784,6 +2814,14 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
         $this->_setDefaultOption('log_file_path', $this->getPlugin()->getDirectory() . '/debug.log.txt');
+
+
+        /* Ajax Debugging
+         * whether to allow for debugging during an ajax call
+         * normally,we dont want this since the output would interfere with javascript
+         */
+$this->_setDefaultOption('debug_ajax_enabled',false);
+
 
         /*
          * Demo Enabled
@@ -2924,6 +2962,51 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             </div>');
 
 
+/*
+ * Backtrace Template
+ */
+
+$template=$this->_setDefaultOption('backtrace_template_expand_on_click',
+        '<div style="padding:5px;text-align:left;display: inline-block;">
+ <strong style = "font-size:medium"></strong> <em "font-size:small"></em>
+<a class="simpli_debug_citem" href="#"><span><em>{EXPAND_TEXT}</em></span><span style="visibility:hidden;display:none"><em>{COLLAPSE_TEXT}</em></span></a>
+
+
+
+                <div  class="simpli_debug_toggle" style="display:none;visibility:hidden;padding:0px;margin:0px;"><!-- Collapsable -->
+
+
+
+
+                    <p > {TRACE}</p>
+
+
+</div>
+</div>
+'
+
+
+
+        );
+$template=$this->_setDefaultOption('backtrace_template_show_without_click',
+        '<div style="padding:5px;text-align:left;display: inline-block;">
+ <strong style = "font-size:medium"></strong> <em "font-size:small"></em>
+
+
+
+                <div  class="simpli_debug_toggle" style="padding:0px;margin:0px;">
+
+
+
+
+                    <p > {TRACE}</p>
+
+
+</div>
+</div>'
+
+
+        );
 
         /*
          * Trace Colors
@@ -3228,7 +3311,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      *
      */
     public function hookLogAllActions() {
-
+ $props = $this->_getMethodProperties();
         static $hook_count;
         $hook_count++;
 
@@ -3351,7 +3434,9 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $content = str_ireplace(array_keys($tags), array_values($tags), $template);
 
 
-        $this->_log($content, null, null, null, current_filter(), true, 'browser', 'info');
+
+      //  $this->_log($content, null, null, null, current_filter(), true, 'browser', 'info');
+        $this->_log($content, $props, $use_prefix = true, $target = 'browser', $type = 'info') ;
     }
 
     /**

@@ -42,42 +42,51 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Debug {
 
         $this->setOption('method_filters_enabled', true); //set to false to ignore all filters and print all module debug output
         //dont forget you can also just use a method   $this->debug()->setMethodFilter('config', false);
-        $this->debug()->setMethodFilter('lines2array', true);
-        $this->debug()->setMethodFilter('el_sc', true);
-                $this->debug()->setMethodFilter('_sc', true);
-        $this->debug()->setMethodFilter('el_sc_options', true);
-        $this->debug()->setMethodFilter('renderElement', false);
-        $this->debug()->setMethodFilter('text', false);
-        $this->debug()->setMethodFilter('_getThemeDirectory', false);
-        $this->debug()->setMethodFilter('createForm', false);
-        $this->debug()->setMethodFilter('loadModules', false);
-        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Addon::loadModule', false);
-        $this->debug()->setMethodFilter('setTheme', false);
-$this->debug()->setMethodFilter('_setCachedTemplate', false);
+        //
 
+//        $this->debug()->setMethodFilter('isScreen', true);
+$this->debug()->setMethodFilter('redirectAdd', false);
+$this->debug()->setMethodFilter('redirectEdit', false);
+//
+//$this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin_Menu', true);
 
-        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Addon', false);
-        $this->debug()->setMethodFilter('Simpli_Basev1c0_Addon', false);
-
-        $this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin', false);
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Admin', false);
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Core', false);
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Debug', false);
-
-
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_ExampleModule', false);
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Menu10Settings', false);
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Menu20Settings', false);
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Menu30Test', false);
-
-
-        $this->debug()->setMethodFilter('Simpli_Hello_Module_Post', false);
-        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Themes_Admin_Module_FilterSettings', false);
-        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Filter', false);
-        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Themes_Admin_Module_FilterAdmin', false);
-        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Form', false);
-        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Elements', false);
-        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Theme', false);
+        //addPostEditor
+//        $this->debug()->setMethodFilter('lines2array', false);
+//        $this->debug()->setMethodFilter('el_sc', false);
+//                $this->debug()->setMethodFilter('_sc', false);
+//        $this->debug()->setMethodFilter('el_sc_options', false);
+//        $this->debug()->setMethodFilter('renderElement', false);
+//        $this->debug()->setMethodFilter('hookShortcodeElementWithContent', true);
+//        $this->debug()->setMethodFilter('_getThemeDirectory', false);
+//        $this->debug()->setMethodFilter('createForm', false);
+//        $this->debug()->setMethodFilter('_filterOptions', false);
+//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Addon::loadModule', false);
+//        $this->debug()->setMethodFilter('setTheme', false);
+//$this->debug()->setMethodFilter('_setCachedTemplate', false);
+//
+//
+//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Addon', false);
+//        $this->debug()->setMethodFilter('hookAdminMenu', false);
+//
+//        $this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin', false);
+//        $this->debug()->setMethodFilter('Simpli_Hello_Module_Admin', false);
+//        $this->debug()->setMethodFilter('Simpli_Hello_Module_Core', false);
+//        $this->debug()->setMethodFilter('Simpli_Hello_Module_Debug', false);
+//
+//
+//        $this->debug()->setMethodFilter('Simpli_Hello_Module_Post', true);
+//        $this->debug()->setMethodFilter('Simpli_Hello_Module_Menu10Settings', false);
+//        $this->debug()->setMethodFilter('Simpli_Hello_Module_Menu20Settings', false);
+//        $this->debug()->setMethodFilter('Simpli_Hello_Module_Menu30Test', false);
+//
+//
+//
+//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Themes_Admin_Module_FilterSettings', false);
+//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Filter', false);
+//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Themes_Admin_Module_FilterAdmin', false);
+//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Form', false);
+//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Elements', false);
+//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Theme', false);
 
 
         /*
@@ -86,24 +95,30 @@ $this->debug()->setMethodFilter('_setCachedTemplate', false);
         /*
          * Templates
          */
-        $this->debug()->setMethodFilter('renderElement', false);
-        $this->debug()->setMethodFilter('_setCachedTemplate', false);
-        $this->debug()->setMethodFilter('_getCachedTemplate', false);
+
+    //    $this->debug()->setMethodFilter('renderElement', false);
+     //   $this->debug()->setMethodFilter('_setCachedTemplate', false);
+    //    $this->debug()->setMethodFilter('_getCachedTemplate', false);
 
 
 
         $this->setOption('logging_enabled', true);
-        $this->debug()->setOption('trace_enabled', true);
+        $this->debug()->setOption('trace_enabled', false);
         $this->debug()->setOption('defined_vars_enabled', true);
-        $this->debug()->setOption('backtrace_enabled', false);
+        $this->debug()->setOption('backtrace_enabled', true);
         $this->debug()->setOption('visual_backtrace_enabled', false);
 
-        $this->setOption('trace_output_format', 'normal');  //options are 'normal'(default), 'text' and 'simple'
+        $this->setOption('trace_output_format', 'simple');  //options are 'normal'(default), 'text' and 'simple'
+
+
         $this->setOption('log_all_actions', false);
 
         $this->debug()->setOption('show_arrays', true);
         $this->debug()->setOption('show_objects', false);
 
+$this->setOption('debug_ajax_enabled',true);
+
+ $this->setOption('expand_on_click', true);
 
         /*
          * Debug Output
@@ -165,7 +180,15 @@ $this->debug()->setMethodFilter('_setCachedTemplate', false);
 
         $this->setOption('action_inclusion_filter_enabled', true);
         $this->setOption('action_inclusion_filter', array_merge(
-                        $this->getOption('action_inclusion_filter'), array('simpli_addons_simpli_forms_init')
+                        $this->getOption('action_inclusion_filter'), array('simpli_addons_simpli_forms_init'
+                            ,'pre_get_posts',
+                            'parse_query'
+                            ,'send_headers'
+                            ,'wp_headers'
+                            ,'parse_request'
+                            ,'query_vars'
+                            ,'query'
+                            ,'current_screen')
                 )
         );
 

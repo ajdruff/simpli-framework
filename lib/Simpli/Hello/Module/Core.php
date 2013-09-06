@@ -123,14 +123,14 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
          * add scripts
          *  */
 //something
-        add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
 
         //__START_EXAMPLE_CODE__
         /*
          * Add filter for content
          */
 
-        add_filter('the_content', array(&$this, 'say_hello'), 10);
+        add_filter('the_content', array($this, 'say_hello'), 10);
         //__END_EXAMPLE_CODE__
 
 
@@ -142,7 +142,7 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
          *
          */
 //this is where you map any form actions with the php function that handles the ajax request
-//  add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array(&$this, 'save'));
+//  add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array($this, 'save'));
 // Add any other hooks you need to support this module
     }
 
@@ -211,10 +211,10 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
          *
          *  */
 
-        $enabled = $this->getPlugin()->getModule('Post')->getPostOption('enabled');
-        $placement = $this->getPlugin()->getModule('Post')->getPostOption('placement');
-        $text = $this->getPlugin()->getModule('Post')->getPostOption('text');
-        $use_global_text = $this->getPlugin()->getModule('Post')->getPostOption('use_global_text');
+        $enabled = $this->getPlugin()->getModule('Post')->getUserSetting('enabled');
+        $placement = $this->getPlugin()->getModule('Post')->getUserSetting('placement');
+        $text = $this->getPlugin()->getModule('Post')->getUserSetting('text');
+        $use_global_text = $this->getPlugin()->getModule('Post')->getUserSetting('use_global_text');
         /*
          * if the post is configured to use the defaults, then use the defaults from the global settings
          */

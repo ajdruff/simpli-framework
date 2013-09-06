@@ -34,14 +34,14 @@ add_filter('the_content', 'do_shortcode', 11); // From shortcodes.php
          *
          *
          *  add scripts
-         * example: add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+         * example: add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
          *
          */
         /**
          *
          * Add custom ajax handlers
          *  Map Ajax Handlers to Ajax Actions passed to php by the ajax request
-         * example: add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_my_action', array(&$this, 'my_function'));
+         * example: add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_my_action', array($this, 'my_function'));
          * see http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
          */
 

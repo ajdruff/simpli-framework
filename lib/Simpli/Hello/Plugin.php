@@ -10,23 +10,6 @@
  */
 class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
 
-    public $_setting_defaults = array();
-
-    /**
-     * Set Default Settings
-     *
-     * Add the settings and their defaults here. The plugin will use the
-     * default values when first activating the plugin and when using the reset
-     * buttons.
-     *
-     * @author Andrew Druffner
-     * @param array $default_settings
-     * @return string The parsed output of the form body tag
-     */
-    public function setDefaultSettings($default_settings) {
-
-        $this->_setting_defaults = $default_settings;
-    }
 
     /**
      * Add Hooks
@@ -134,47 +117,107 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
         if (!class_exists('WP_Http'))
             include_once( ABSPATH . WPINC . '/class-http.php' );
 
-
         /*
          *
-         * Set Default Settings
+         * Start Default Admin Settings
          *
          */
 
-        $this->setDefaultSettings(array(
-            /*
-             *
-             * Defaults for Hello World Default Settings
-             *
-             */
+        /*
+         *
+         * Hello World Settings
+         *
+         */
 
-            'hello_global_default_text' => 'Global Hello World!'
-            , 'hello_global_default_placement' => 'after'
-            , 'hello_global_default_enabled' => 'enabled'
+        /*
+         * Hello World Text
+         * The text to insert into the post
+         */
+        $this->setDefaultSetting(
+                'hello_global_default_text', 'Global Hello World!'
+        );
+        /*
+         * Text Placement - 'before' or 'after'
+         */
+        $this->setDefaultSetting(
+                'hello_global_default_placement', 'after'
+        );
 
-            /*
-             *
-             * Defaults for Example Settings in 'Example Settings Metabox'
-             *
-             */
-            , 'checkbox_setting' =>
-            array(
-                'yellow' => 'no'
-                , 'red' => 'yes'
-                , 'orange' => 'yes'
-                , 'blue' => 'yes'
-            )
-            , 'dropdown_setting' => 'orange'
-            , 'text_setting' => 'Joe Smith'
-            , 'radio_setting' => 'yes'
+        /*
+         * Global Enable - 'enabled' or 'disabled'
+         */
+        $this->setDefaultSetting(
+                'hello_global_default_enabled', 'enabled'
+        );
+        /*
+         *
+         * Defaults for Example Settings in 'Example Settings Metabox'
+         *
+         */
 
-            /*
-             *
-             * Advanced Settings
-             *
-             */
-            , 'plugin_enabled' => 'enabled'    //'enabled' or 'disabled' Controls whether the plugins modules are loaded. Disabled still loads the admin pages
-        ));
+        /*
+         * Radio Button Setting Example
+         * 'yes' or 'no'
+         */
+        $this->setDefaultSetting(
+                'radio_setting', 'yes'
+        );
+
+        /*
+         * Text Setting Example
+         * any string
+         */
+        $this->setDefaultSetting(
+                'text_setting', 'Joe Smith'
+        );
+
+        /*
+         * Dropdown Setting Example
+         * Set equal to the value that you want selected
+         */
+        $this->setDefaultSetting(
+                'dropdown_setting', 'red'
+        );
+
+
+        /*
+         * Checkbox Setting Example
+         * The index is the value of the checkbox,
+         * the value is either 'yes' or 'no' , indicating whether you want it checked or not
+         */
+        $this->setDefaultSetting(
+                'checkbox_setting', array(
+            'yellow' => 'yes'
+            , 'red' => 'no'
+            , 'orange' => 'yes'
+            , 'blue' => 'yes'
+                )
+        );
+
+
+
+        /*
+         *
+         * Advanced Settings
+         *
+         */
+
+        /*
+         * Plugin Enabled Setting
+         * 'enabled' or 'disabled' Controls whether the plugins modules are loaded. Disabled still loads the admin pages
+         */
+        $this->setDefaultSetting(
+                'plugin_enabled', 'enabled'
+        );
+
+
+        /*
+         *
+         * End Default Admin Settings
+         *
+         */
+
+
 
 
         /**
@@ -187,6 +230,7 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
          * e.g.:$this->setDisabledModule('Shortcodes');
          */
         $this->setDisabledModule('ExampleModule');
+     //   $this->setDisabledModule('PostEditor');
         // $this->setDisabledModule('Debug');
 
 
@@ -277,7 +321,5 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
             <?php
         }
     }
-
-
 
 }

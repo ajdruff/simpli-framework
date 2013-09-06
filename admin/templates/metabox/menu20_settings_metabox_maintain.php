@@ -33,7 +33,7 @@ $f->formStart(array(
 
 
 
-    $f->formEnd(array('template_id'=>'formEndMaintenance'));
+    $f->formEnd(array('template'=>'formEndMaintenance'));
 
     ?>
 

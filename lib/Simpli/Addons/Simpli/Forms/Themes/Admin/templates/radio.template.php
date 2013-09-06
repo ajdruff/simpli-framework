@@ -10,14 +10,14 @@
                 </th>
                 <td>
                     <fieldset>
-                        <label>
+
  {options_html}
 
 
 
                             <span class="description" style="padding-left:10px;">
 {HINT}</span>
-                        </label>
+
                     </fieldset>
                 </td>
             </tr>

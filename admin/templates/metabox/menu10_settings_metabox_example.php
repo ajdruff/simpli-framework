@@ -39,7 +39,7 @@ $f->formStart(array(
     );
 
     $f->el(array(
-        'el' => 'select',
+        'el' => 'dropdown',
         'options' => array(
             'yellow' => '&nbsp;Yellow ',
             'orange' => '&nbsp;&nbsp;Orange&nbsp;&nbsp;',

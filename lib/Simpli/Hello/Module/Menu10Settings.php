@@ -12,16 +12,16 @@
 class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
 
     /**
-     * Add Menu Hooks
+     * Add Hooks
      *
-     * Called by the Plugin_Menu base class after the menu base has completed addHooks for the module
+     * Adds WordPress Hooks, triggered during module initialization
      * @param none
      * @return void
      */
-    public function addMenuHooks() {
+    public function addHooks() {
         $this->debug()->t();
 
-
+        parent::addHooks();
 
 
 
@@ -32,7 +32,7 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
           see http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
 
           Example ( this is included in base class so no need to add it here
-          //add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array(&$this, 'save'));
+          //add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array($this, 'save'));
          *
          *
          *
@@ -49,7 +49,7 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
          * Add an admin notice if disabled
          *
          */
-        add_action('admin_notices', array(&$this, 'showDisabledMessage'));
+        add_action('admin_notices', array($this, 'showDisabledMessage'));
     }
 
     /**
@@ -61,6 +61,14 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
      */
     public function config() {
         $this->debug()->t();
+
+        /*
+         * call parent configuration first
+         * this is required or menus wont load
+         */
+        parent::config();
+
+
 
         /*
          * Set default metabox states - must place this after parent::init to get access to the module's slug
@@ -191,8 +199,6 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                 , array('url' => 'http://www.simpliwp.com/simpli-framework/metabox-donate-example/') //$metabox['args'] in callback function
         );
-
-        
     }
 
     /**

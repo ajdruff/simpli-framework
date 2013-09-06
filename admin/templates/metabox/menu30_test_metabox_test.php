@@ -68,7 +68,7 @@
 //
 //
 //
-//    $f->formEnd(array('template_id'=>'formEndMaintenance'));
+//    $f->formEnd(array('template'=>'formEndMaintenance'));
 //
 
 $f = $this->getPlugin()->getAddon('Simpli_Forms')->getModule('Form');
@@ -77,7 +77,7 @@ $f = $this->getPlugin()->getAddon('Simpli_Forms')->getModule('Form');
 
 $f->getTheme()->setTheme('Admin');
 
-//$f->setFilter(array('Admin','Options'));
+$f->setFilter(array('Admin','Settings'));
 //$f->el(array(
 //    'el' => 'text',
 //    'name' => 'hello_global_default_text',
@@ -86,33 +86,58 @@ $f->getTheme()->setTheme('Admin');
 //    'heading' => '',
 //        )
 //);
+//
 
-$this->debug()->logVar('$f->getForm() = ', $f->getForm());
+$f->el(array(
+    'el' => 'checkbox',
+    'options'=>array('enabled'=>'Enabled','disabled'=>'Click for Disabled'),
+   // 'selected'=>array('disabled'=>'yes','enabled'=>'no'),
+ 'selected'=>'disabled',
+
+    'name' => 'hello_global_default_enabled',
+    'label' => 'Radio produced by method call',
+    'hint' => 'Global ENable',
+    'heading' => '',
+        )
+);
+$f->el(array(
+    'el' => 'radio',
+    'options'=>array('orange'=>'Orange','red'=>'Red','yellow'=>'Yellow','blue'=>'Blue'),
+  //  'selected'=>array('orange'=>'yes','red'=>'no'),
+      'selected'=>'yellow',
+    'name' => 'dropdown_setting',
+    'label' => 'Method Call Radio/Checkbox/Dropdown',
+    'hint' => 'Example colors',
+    'heading' => '',
+        )
+);
+
+/*
+ * to indicate selected,  you may use either an array or singleton
+ * either for checkboxes, radio, or dropdown.
+ * for radio, you can either do this :
+ * selected='enabled' or this : selected=array('disabled'=>'yes');
+ * the second form is what the checkbox expects, the first form is what the radio expects, but both should work
+ */
 ?>
-[simpli_hello_form text  name='my_goodness' label='test1' options="enable=Enabled&disable=Click for Disabled"]
 
-[simpli_hello_form_options  radio  name='test2' label='My Label' options="enable=Enabled&disable=Click for Disabled" ]
-
-enable|Click for Enabled
-disable|Click for Enabled
-
-
-[/simpli_hello_form_options]
-
-
-
-[simpli_hello_form_options  select  selected='disable' name='test3' label='My Label' options="enable=Click for Enabled&disable=Click for Disabled"/]
-
-
-[simpli_hello_form_options  radio  name='test3' label='My Label']
+[simpli_hello_form_options  radio  selected="disable," name='hello_global_default_placement'  label="shortcode test for radio"]
 enable | Enabled
 disable | Click for Disabled
 
 
 [/simpli_hello_form_options]
 
+[simpli_hello_form_options  dropdown  selected="red,orange" name='dropdown_setting'  label="shortcode test for checkbox"]
+orange | Orange
+red | Red
+yellow | Yellow
 
-<?php $this->debug()->stop(); ?>
+
+
+[/simpli_hello_form_options]
+
+<?php $this->debug()->stop(false); ?>
 </div>
 
 <script type="text/javascript">

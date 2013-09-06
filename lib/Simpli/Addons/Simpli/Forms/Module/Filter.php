@@ -106,7 +106,10 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
         /*
          * Add a unique prefix to the name so we dont conflict with other plugins that might be on the same form
          */
-        $atts['name'] = $this->getFieldPrefix() . $atts['name'];
+
+        if ((isset($atts['name']))) {
+            $atts['name'] = $this->getFieldPrefix() . $atts['name'];
+        }
 
 
 
@@ -114,7 +117,7 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
          * Add a default label if one wasnt provided
          */
 
-        if (isset($atts['label']) && is_null($atts['label'])) {
+        if (!isset($atts['label']) || is_null($atts['label'])) {
             $atts['label'] = $this->getDefaultFieldLabel($atts['name']);
         }
 
@@ -146,13 +149,24 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
     }
 
     /**
-     * Filter Select
+     * Filter Dropdown
      *
-     * Filters the Select Tag Attributes
+     * Filters the Dropdown Attributes
      * @param string $atts The attributes of the tag
      * @return string $atts
      */
-    protected function filterSelect($properties) {
+    protected function filterDropdown($properties) {
+        $this->debug()->t();
+
+        extract($properties);
+
+        /*
+         * use the shared code for radio,dropdown, and checkbox elements
+         */
+        return($this->_filterOptions($properties));
+    }
+
+    protected function filterDropdownOld($properties) {
         $this->debug()->t();
 
         extract($properties);
@@ -194,8 +208,28 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
      * Filters the Checkbox Attributes
      * @param string $properties The properties of the checkbox
      * @return string $atts
+     *
+     *
+     */
+
+    /**
+     * Filter Checkbox
+     *
+     * @param string $atts The attributes of the tag
+     * @return string $atts
      */
     protected function filterCheckbox($properties) {
+        $this->debug()->t();
+
+        extract($properties);
+
+        /*
+         * use the shared code for radio,dropdown, and checkbox elements
+         */
+        return($this->_filterOptions($properties));
+    }
+
+    protected function filterCheckboxOld($properties) {
         $this->debug()->t();
 
         extract($properties);
@@ -214,7 +248,7 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
         foreach ($atts['options'] as $option_value => $option_text) {
 
 
-            $tokens['checked_html'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked"' : '');
+            $tokens['checked_html'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked"  selected="selected" ' : '');
             $tokens['option_value'] = $option_value;
             $tokens['option_text'] = $option_text;
             $option_template = '                            <p>
@@ -239,6 +273,99 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
     }
 
     /**
+     * Filter Options (Internal, shared code for radio,checkbox,dropdown)
+     *
+     * Provides shared code for the rendering of an 'options' control , which include radio, checkbox, and dropdown(select), or potentially any other control that requires selection from a group of options. Uses 2 templates, one that provides the surrounding html of the options collection, and one that contains the option html itself, which will be used within a loop to create an 'options_html' tag rendered within the larger template.
+     *
+     * @param $properties The element's properties (shortcode attributes)
+     * @return The html to be rendered
+     */
+    private function _filterOptions($properties) {
+
+        $this->debug()->t();
+
+        extract($properties);
+//dropdown
+        //$tokens['selected_html'] = (($atts['selected'] == $option_value) ? ' selected="selected"' : '');
+        //checkbox
+        //$tokens['checked_html'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked"  selected="selected" ' : '');
+
+
+        /*
+         * Create the options_html
+         *
+         */
+        $options_html = '';
+        $tokens = $atts;
+        foreach ($atts['options'] as $option_value => $option_text) {
+            $tokens = $atts; //need to reset to original atts for each iteration, since we change the value of the tokens during the loop.
+            //  $tokens['checked'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked"' : '');
+            //  $tokens['selected'] = (($atts['selected'][$option_value] == $option_value) ? ' selected="selected" ' : '');
+            //radio and checkbox
+            //        $tokens['checked'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked" ' : '');
+            //$tokens['checked'] = (($atts['selected'][$option_value] == $option_value) ? ' checked="checked" ' : '');
+            //
+ //
+            //radio - works but only if not filtered
+//$tokens['checked'] = (($atts['selected'] == $option_value) ? ' checked="checked"' : '');
+
+            /*
+             * works for radio and checkbox
+             */
+            if (is_array($atts['selected'])) {
+                if (isset($atts['selected'][$option_value])) {
+
+
+                    $tokens['checked'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked"' : '');
+                }else{
+                    $tokens['checked'] ='';
+                }
+            } else {
+
+                $tokens['checked'] = (($atts['selected'] == $option_value) ? ' checked="checked"' : '');
+            }
+
+/*
+ * dropdown
+ */
+            if (is_array($atts['selected'])) {
+                if (isset($atts['selected'][$option_value])) {
+                    $tokens['selected'] = (($atts['selected'][$option_value] == 'yes') ? ' selected="selected" ' : '');
+                    $this->debug()->logVar('$option_value = ', $option_value);
+                    $this->debug()->logVar('$selected[$option_value] = ', $atts['selected'][$option_value]);
+                    $this->debug()->logVar('$tokens[selected] = ', $tokens['selected']);
+                }else{
+                    $tokens['selected'] ='';
+                }
+            } else {
+
+                $tokens['selected'] = (($atts['selected'] == $option_value) ? ' selected="selected" ' : '');
+
+            }
+
+            //dropdown - works
+            //     $tokens['selected'] = (($atts['selected'] == $option_value) ? ' selected="selected" ' : '');
+
+            $tokens['option_value'] = $option_value;
+            $tokens['option_text'] = $option_text;
+            $option_template = $this->getAddon()->getModule('Form')->getTheme()->getTemplate($atts['template_option']);
+
+            $options_html.=$this->getPlugin()->getTools()->crunchTpl($tokens, $option_template);
+            $this->debug()->logVar('$tokens = ', $tokens);
+        }
+
+        $this->debug()->logVar('$options_html = ', $options_html);
+
+        $tags['options_html'] = $options_html;
+
+
+
+
+
+        return (compact('scid', 'atts', 'tags'));
+    }
+
+    /**
      * Filter Radio
      *
      * Filters the Text Tag Attributers
@@ -250,35 +377,10 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
 
         extract($properties);
 
-
-
-
-
-
-
-
         /*
-         * Create the options_html
-         *
+         * use the shared code for radio,dropdown, and checkbox elements
          */
-        $options_html = '';
-        $tokens = $atts;
-        foreach ($atts['options'] as $option_value => $display_text) {
-
-
-            $tokens['checked'] = (($atts['selected'] == $option_value) ? ' checked="checked"' : '');
-            $option_template = '<label> <input type="radio" name="{NAME}" value="' . $option_value . '"  {CHECKED} /> <span>' . $display_text . '</span></label>';
-            $options_html.=$this->getPlugin()->getTools()->crunchTpl($tokens, $option_template);
-        }
-
-
-        $tags['options_html'] = $options_html;
-
-
-
-
-
-        return (compact('scid', 'atts', 'tags'));
+        return($this->_filterOptions($properties));
     }
 
     /**

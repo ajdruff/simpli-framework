@@ -135,6 +135,22 @@ class Simpli_Basev1c0_Btools {
     }
 
     /**
+     * Url to Dir
+     *
+     * Converts a local url to an absolute directory path. Very useful to determine WordPress locations
+     * Usage:
+     * to find wordpress admin directory:
+     *  $admin_dir= $this->getPlugin()->getTools()->url2dir(admin_url());
+     * @param string $url The absolute url to the local file
+     * @return string The absolute directory path to the Directory
+     */
+    public function url2dir($url) {
+
+        $url_parts = parse_url($url);
+        return($this->normalizePath($_SERVER['DOCUMENT_ROOT'] . $url_parts['path']));
+    }
+
+    /**
      * Rebuild Url
      *
      * Returns the current or provided url, adding new or, replacing existing, $_GET url paramaters

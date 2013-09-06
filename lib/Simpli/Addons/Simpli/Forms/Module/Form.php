@@ -66,7 +66,6 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
             'name' => 'simpli_forms',
             'template' => 'formStart', // the template to use for the form start
             'theme' => null,
-            'is_shortcode' => false
         );
 
 
@@ -330,23 +329,39 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
          * e.g.:
          * [simpli_forms_options options="enable=Enabled&disable=Click for Disabled"][/simpli_forms_options]
          *
-[simpli_forms_options]
-enable|Click for Enabled
-disable|Click for Enabled
-[/simpli_forms_options]
+          [simpli_forms_options]
+          enable|Click for Enabled
+          disable|Click for Enabled
+          [/simpli_forms_options]
          * if options arent provided in the 'options' attribute, use the contents as the options
          */
         if (!isset($atts['options']) || is_null($atts['options'])) {
-          //  $atts['options'] = $content;
+            //  $atts['options'] = $content;
 
-             $atts['options']=$this->getPlugin()->getTools()->lines2array($content);
+            $atts['options'] = $this->getPlugin()->getTools()->lines2array($content);
+        } else {
+
+            $atts['options'] = $this->getPlugin()->getTools()->parse_str($atts['options']);
         }
-        else{
 
-           $atts['options']= $this->getPlugin()->getTools()->parse_str($atts['options']);
+
+        /*
+         * Parse the 'selected' attribute into an array
+         * if the selected attribute is provided, turn it into an array with the values as keys, and
+         * the values as 'yes' .
+         */
+        if (isset($atts['selected'])) {
+
+            $atts_selected = explode(',', $atts['selected']); //makes an array of the values
+            $atts_selected = array_filter($atts_selected); //removese empty elements
+
+            $atts_selected = array_flip($atts_selected); //values are now keys
+
+            $atts['selected'] = array_combine(array_keys($atts_selected), array_fill(0, count($atts_selected), 'yes')); //assigns 'yes' to all elements
         }
 
-                /*
+
+        /*
          * Convert any shortcode attributes to arrays where required
          *
          * Since shortcodes handle all attributes as strings,
@@ -520,12 +535,9 @@ disable|Click for Enabled
          */
 
         if ((isset($atts['_error'])) && (!is_null($atts['_error']))) {
-            if ($this->form['form']['is_shortcode'] === false) {
-                echo $this->getElementErrorMessages($scid, $atts['_error']);
-                return;
-            } else {
-                return ($this->getElementErrorMessages($scid, $atts['_error']));
-            }
+
+
+            return ($this->getElementErrorMessages($scid, $atts['_error']));
         }
 
 
@@ -543,9 +555,9 @@ disable|Click for Enabled
 
 
 
-        $template = $theme->getTemplate($atts['template_id']);
+        $template = $theme->getTemplate($atts['template']);
 
-        $this->debug()->logVar('$template for $template_id ' . $atts['template_id'] . '=<br>', $template);
+        $this->debug()->logVar('$template for $template_id ' . $atts['template'] . '=<br>', $template);
 
         $att_template_tags = $this->getTagPairs($atts); //convert to tag pairs
         $template_with_atts_replaced = str_ireplace($att_template_tags['names'], $att_template_tags['values'], $template);
@@ -566,15 +578,7 @@ disable|Click for Enabled
          * This is so other element filters can have access to their properties if needed
          */
         $this->setElement($element_name, $properties);
-        /*
-         * Only echo the result if function is being used outside of the shortcode
-         * otherwise, let the shortcode handle output (best practice)
-         */
-        //     if ($this->form['form']['is_shortcode'] === false) {
-//        if ($atts['is_shortcode'] === false) {
-//            echo $processed_template;
-//        }
-// echo $processed_template;
+
         $this->debug()->logVars(get_defined_vars());
 
         return $processed_template;
@@ -750,11 +754,10 @@ disable|Click for Enabled
         $this->debug()->t();
         $defaults = array(
             'name' => 'simpli_forms',
-            'is_shortcode' => false,
             'theme' => 'Admin',
             'action' => $_SERVER['REQUEST_URI'],
             'method' => 'post',
-            'template_id' => __FUNCTION__,
+            'template' => __FUNCTION__,
             'filter' => 'Settings',);
 
 
@@ -824,11 +827,10 @@ disable|Click for Enabled
 
         $this->el(array(
             'el' => 'formStart',
-            'is_shortcode' => $properties['is_shortcode'],
             'name' => $properties['name'],
             'action' => $properties['action'],
             'method' => $properties['method'],
-            'template_id' => $properties['template_id'],
+            'template' => $properties['template'],
                 )
         );
     }
@@ -844,8 +846,7 @@ disable|Click for Enabled
         $this->debug()->t();
         $defaults = array(
             'name' => null,
-            'is_shortcode' => false,
-            'template_id' => __FUNCTION__,
+            'template' => __FUNCTION__,
         );
 
 
@@ -861,9 +862,8 @@ disable|Click for Enabled
 
         $this->el(array(
             'el' => 'formEnd',
-            'is_shortcode' => $properties['is_shortcode'],
             'name' => 'formEnd',
-            'template_id' => $properties['template_id'],
+            'template' => $properties['template'],
                 )
         );
     }

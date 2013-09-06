@@ -85,13 +85,13 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
 
             $plugin = plugin_basename($this->getPlugin()->getFilePath());
 
-            add_filter('plugin_action_links_' . $plugin, array(&$this, 'plugin_action_links'), 10, 2);
+            add_filter('plugin_action_links_' . $plugin, array($this, 'plugin_action_links'), 10, 2);
 
-            add_filter('plugin_row_meta', array(&$this, 'plugin_links'), 10, 2);
+            add_filter('plugin_row_meta', array($this, 'plugin_links'), 10, 2);
         }
 
         // Add global admin scripts
-        add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
+        add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
     }
 

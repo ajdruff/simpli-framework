@@ -285,7 +285,7 @@ class Simpli_Basev1c0_Plugin {
      */
     protected $_debug = null;
 
-     /**
+    /**
      * Debug
      *
      * Returns a debug object. Required to override base plugin method so the correct config() method is used.
@@ -308,7 +308,7 @@ class Simpli_Basev1c0_Plugin {
                 $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
             } else {
                 try {
-                    $debug_class=$this->getClassNamespace() . '_DebugConfig';
+                    $debug_class = $this->getClassNamespace() . '_DebugConfig';
                     $this->_debug = new $debug_class();
                     $this->_debug->setPlugin($this);
                     $this->_debug->config();
@@ -322,6 +322,7 @@ class Simpli_Basev1c0_Plugin {
 
         return $this->_debug;
     }
+
     /**
      * Get Directory - Read Only
      *
@@ -1553,7 +1554,7 @@ class Simpli_Basev1c0_Plugin {
      * In this way , we are able to cycle through the actions
      * Usage:
      * To add an action
-     *  $this->getPlugin()->addActivateAction(array(&$this, 'flush_rewrite_rules'));
+     *  $this->getPlugin()->addActivateAction(array($this, 'flush_rewrite_rules'));
      * see the Plugin::install method for an example of how to cycle through all the activate actions.
      *
      *
@@ -1724,7 +1725,7 @@ class Simpli_Basev1c0_Plugin {
             if ($ext_dependencies_met) {
 
                 if (file_exists($script['path'])) { //include the path to the script. if not found, output an error to the javascript console.
-  $this->debug()->log('start load inline script: ' . $handle);
+                    $this->debug()->log('start load inline script: ' . $handle);
 
                     /*
                      * get the script source
@@ -1867,14 +1868,31 @@ class Simpli_Basev1c0_Plugin {
 
         $vars = json_encode($this->getLocalVars());
         ?>
-                <script type='text/javascript'>
+        <script type='text/javascript'>
 
-                            var <?php echo $this->getSlug(); ?> = <?php echo $vars; ?>
+            var <?php echo $this->getSlug(); ?> = <?php echo $vars; ?>
 
-                        </script>
+        </script>
 
-                <?php
-            }
+        <?php
+    }
 
-        }
+    /**
+     * Set Default Setting
+     *
+     * Sets a default value for settings that have not yet been saved to the database.
+     * If you want a setting to have a value before any configuration by the user occurs,
+     * you must set it here.
+     *
+     * @param string $setting_name The name of the setting. Must be unique for the plugin
+     * @param mixed $setting_value The value of the setting.
+     * @return void
+     */
+
+    protected function setDefaultSetting($setting_name, $setting_value) {
+
+        $this->_setting_defaults[$setting_name] = $setting_value;
+    }
+
+}
 

@@ -81,12 +81,12 @@ $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include u
 
 
 
-
 /*
  * Initialize Plugin
  * (Loads modules and settings)
  */
 $simpli_hello->init();
+
 
 
 

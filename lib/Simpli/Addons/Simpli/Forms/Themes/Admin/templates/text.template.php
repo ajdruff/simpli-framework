@@ -13,7 +13,7 @@
                         <label>
                             <label>
 
-                                                        <input name="{NAME}" type="text" id="{ID}" class="regular-text code" value="{VALUE}" />
+                                                        <input name="{NAME}" type="text" id="{ID}" class="{CLASS}" value="{VALUE}" />
 
                             </label>
 

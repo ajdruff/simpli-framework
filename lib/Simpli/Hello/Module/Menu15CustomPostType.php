@@ -7,7 +7,7 @@
  * @author Andrew Druffner
  * @package SimpliFramework
  * @subpackage SimpliHello
- *
+ *@property boolean $CUSTOM_POST_EDITOR_ENABLED Whether you want to redirect to a custom post editor
  */
 class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Menu {
 
@@ -41,14 +41,16 @@ class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Me
         add_action('init', array($this, 'createPostTypes'));
         //add_action($this->getPlugin()->getSlug() . '_menuPageAdded', array($this, 'createPostTypes'));
 
-/*
- * Redirect to custom editor if adding or editing
- */
+        /*
+         * Redirect to custom editor if adding or editing
+         */
 
-        add_action('current_screen', array($this, 'redirectEdit'));
+        if ($this->CUSTOM_POST_EDITOR_ENABLED) {
 
-        add_action('current_screen', array($this, 'redirectAdd')); //pre_get_posts doesnt fire when adding a post, but current screen does
+            add_action('current_screen', array($this, 'redirectEdit'));
 
+            add_action('current_screen', array($this, 'redirectAdd')); //pre_get_posts doesnt fire when adding a post, but current screen does
+        }
         /*
          *  Add Custom Ajax Handlers
          *
@@ -93,13 +95,16 @@ class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Me
          */
         parent::config();
 
+        /*
+         * Enable/Disable Custom Post Editor
+         *
+         * Configure a custom Post Editor to use for your post type
+         * You need to build it by editing the menu15_custom_post_type template
+         * Activated  whenever the edit or add screen is displayed.
+         * If false, you'll get the regular editor.
+         */
 
-
-
-
-
-
-
+        $this->setConfig('CUSTOM_POST_EDITOR_ENABLED', false);
 
 
 
@@ -156,7 +161,7 @@ class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Me
             , 'show_in_menu' => $parent_slug //Where to show the post type in the admin menu. show_ui must be true. false, does not show. true , top level, string -parent menu slug
             , 'show_in_admin_bar' => true //make same as show_in_menu
             , 'menu_position' => null //
-            , 'menu_icon' => null //The url to the icon to be used for this menu.
+            , 'menu_icon' => $this->getPlugin()->getUrl() . '/admin/images/menu.png' //The url to the icon to be used for this menu.
             , 'capability_type' => null //The string to use to build the read, edit, and delete capabilities.
             , 'capabilities' => null //An array of the capabilities for this post type.
             , 'map_meta_cap' => false //Whether to use the internal default meta capability handling.
@@ -232,12 +237,19 @@ class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Me
         );
 
 
-//$arg_defaults=array_filter($arg_defaults);
+        /*
+         * Screen defaults, which only allows elements that are in the $arg_defaults array
+         * and provides defaults for those elements that are not supplied.
+         */
 
         $args = $this->getPlugin()->getTools()->screenDefaults($arg_defaults, $args);
+
+        /*
+         * Use array_filter to remove null values so that the wordpress builtin function supplies defaults
+         */
+
         $args['labels'] = array_filter($args['labels']);
         $args = array_filter($args);
-//echo '<pre>', print_r($args, true), '</pre>';
 
 
         register_post_type($post_type, $args);
@@ -293,9 +305,12 @@ class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Me
     public function add_meta_boxes() {
         $this->debug()->t();
 
+/*
+ * add the custom post editor metabox only if we
+ * it is enabled
+ */
 
-
-
+ if ($this->CUSTOM_POST_EDITOR_ENABLED){
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_test'  //Meta Box DOM ID
                 , __('Your Custom Post Editor', $this->getPlugin()->getTextDomain()) //title of the metabox.
@@ -305,32 +320,12 @@ class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Me
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                 , null //$metabox['args'] in callback function
         );
+ }
 
-        $this->debug()->logVar('$this->getSlug() = ', $this->getSlug());
 //
     }
 
-    public $_post_type = null;
 
-    /**
-     * Set Post Type
-     *
-     * @param array $post_type
-     * @return none
-     */
-    public function setPostType($post_type) {
-        $this->_post_type = $post_type;
-    }
-
-    /**
-     * Get Post Type
-     *
-     * @param none
-     * @return string
-     */
-    public function getPostType() {
-        return $this->_post_type;
-    }
 
     /**
      * Redirect Add Page
@@ -355,10 +350,10 @@ class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Me
 
 
 
-      //  $settings_page_slug = $this->getPlugin()->getSlug() . '_' . $this->getSlug(); //$this->getMenuSlug(); still empty
+        //  $settings_page_slug = $this->getPlugin()->getSlug() . '_' . $this->getSlug(); //$this->getMenuSlug(); still empty
 
 
-  $isScreenAdd = ($this->getPlugin()->getModule('Tools')->isScreen('add', $this->getPostType()));
+        $isScreenAdd = ($this->getPlugin()->getTools()->isScreen('add', $this->getPostType()));
         /*
          * Return if not the edit screen
          */
@@ -372,7 +367,7 @@ class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Me
 
         wp_redirect(admin_url() . 'admin.php?page=' . $this->getMenuSlug());
 
-die();
+        die();
     }
 
     /**
@@ -404,13 +399,13 @@ die();
             if (isset($_GET['post'])) {
                 $post = get_post($_GET['post']);
 
-                $this->debug()->log('Used $_GET Paramater \'post\' to create post object of type \''. $post->post_type  .'\'');
+                $this->debug()->log('Used $_GET Paramater \'post\' to create post object of type \'' . $post->post_type . '\'');
                 $this->debug()->logVar('$post = ', $post);
             } else {
                 $post = null;
-                            $this->debug()->log('Returning from ' . __FUNCTION__ . ' since no post object set');
-            $this->debug()->logVars(get_defined_vars());
-            return;
+                $this->debug()->log('Returning from ' . __FUNCTION__ . ' since no post object set');
+                $this->debug()->logVars(get_defined_vars());
+                return;
             }
         }
 
@@ -423,16 +418,16 @@ die();
         /*
          * Return if not the right post type
          */
-            if ($post->post_type !== $this->getPostType()) {
+        if ($post->post_type !== $this->getPostType()) {
             $this->debug()->log('Returning from ' . __FUNCTION__ . ' since not the right post type');
             $this->debug()->logVars(get_defined_vars());
             return;
         }
 
 
-     //   $settings_page_slug = $this->getPlugin()->getSlug() . '_' . $this->getSlug(); //$this->getMenuSlug(); still empty
+        //   $settings_page_slug = $this->getPlugin()->getSlug() . '_' . $this->getSlug(); //$this->getMenuSlug(); still empty
 
-        $isScreenEdit = $this->getPlugin()->getModule('Tools')->isScreen('edit-add', $this->getPostType());
+        $isScreenEdit = $this->getPlugin()->getTools()->isScreen('edit-add', $this->getPostType());
 
         /*
          * Return if not the edit screen
@@ -444,11 +439,10 @@ die();
         $this->debug()->logVar('Redirecting to page= ', $this->getMenuSlug());
 
 
- wp_redirect(admin_url() . 'admin.php?post=' . $post->ID . '&page=' . $this->getMenuSlug());
+        wp_redirect(admin_url() . 'admin.php?post=' . $post->ID . '&page=' . $this->getMenuSlug());
 
-die();
+        die();
         return;
-
     }
 
     /**
@@ -459,16 +453,14 @@ die();
      */
     public function showDisabledMessage() {
         $this->debug()->t();
-
-
-
-        //dont show if you are not on the main menu ( general settings )
-        if (isset($_GET['page']) && $_GET['page'] !== $this->getPlugin()->getSlug() . '_' . $this->getSlug()) {
+        if (!$this->pageCheck()) {
             return;
         }
 
+
+
 //dont show if the plugin is enabled
-        if (($this->getPlugin()->getSetting('plugin_enabled') == 'enabled')) {
+        if (($this->getPlugin()->getUserOption('plugin_enabled') == 'enabled')) {
             return;
         }
         ?>
@@ -480,6 +472,31 @@ die();
         </div>
 
         <?php
+    }
+
+    /**
+     * Set Module Config Defaults
+     *
+     * Sets all the default configs . By adding a configuration here, you are defining it, but also allowing
+     * later calls to setModuleConfig() to override these values.
+     *
+     * @param none
+     * @return void
+     */
+    protected function setConfigDefaults() {
+        /*
+         * Custom Post Editor for your post type
+         *
+         * If you want to build a custom post editor, you can direct all edits and adds
+         * to your post type by toggling 'custom_post_editor_enabled' to true.
+         * You'll then need to build your own form  and add it to
+         * the menu15_custom_post_type_metabox_editor.
+         * This of course, means that you are responsible for managing metaboxes and
+         * adding publish/preview,etc functions to your form.
+         */
+        $this->setConfigDefault('CUSTOM_POST_EDITOR_ENABLED', false);
+
+
     }
 
 }

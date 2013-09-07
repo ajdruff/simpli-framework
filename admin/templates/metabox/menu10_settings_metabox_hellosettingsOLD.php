@@ -18,10 +18,10 @@
                     <fieldset>
                         <label>
                             <label>
-                                <input type="radio" name="hello_global_default_placement" value="before"  <?php echo (($this->getPlugin()->getSetting('hello_global_default_placement') == 'before') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Before the content',$this->getPlugin()->getTextDomain()); ?></span></label>
+                                <input type="radio" name="hello_global_default_placement" value="before"  <?php echo (($this->getPlugin()->getUserOption('hello_global_default_placement') == 'before') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Before the content',$this->getPlugin()->getTextDomain()); ?></span></label>
 
                             <label>
-                                <input type="radio" name="hello_global_default_placement" value="after" <?php echo (($this->getPlugin()->getSetting('hello_global_default_placement') == 'after') ? ' checked="checked"' : ''); ?> /> <span><?php _e('After the content',$this->getPlugin()->getTextDomain()); ?></span>
+                                <input type="radio" name="hello_global_default_placement" value="after" <?php echo (($this->getPlugin()->getUserOption('hello_global_default_placement') == 'after') ? ' checked="checked"' : ''); ?> /> <span><?php _e('After the content',$this->getPlugin()->getTextDomain()); ?></span>
                             </label>
 
 
@@ -56,10 +56,10 @@ printf(
                     <fieldset>
                         <label>
                             <label>
-                                <input type="radio" name="hello_global_default_enabled" value="enabled"  <?php echo (($this->getPlugin()->getSetting('hello_global_default_enabled') == 'enabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Enabled',$this->getPlugin()->getTextDomain()); ?></span></label>
+                                <input type="radio" name="hello_global_default_enabled" value="enabled"  <?php echo (($this->getPlugin()->getUserOption('hello_global_default_enabled') == 'enabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Enabled',$this->getPlugin()->getTextDomain()); ?></span></label>
 
                             <label>
-                                <input type="radio" name="hello_global_default_enabled" value="disabled" <?php echo (($this->getPlugin()->getSetting('hello_global_default_enabled') == 'disabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Disabled',$this->getPlugin()->getTextDomain()); ?></span>
+                                <input type="radio" name="hello_global_default_enabled" value="disabled" <?php echo (($this->getPlugin()->getUserOption('hello_global_default_enabled') == 'disabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Disabled',$this->getPlugin()->getTextDomain()); ?></span>
                             </label>
 
 
@@ -97,7 +97,7 @@ printf(
                         <label>
                             <label>
 
-                                                        <input name="hello_global_default_text" type="text" id="hello_global_default_text" class="regular-text code" value="<?php echo $this->getPlugin()->getSetting('hello_global_default_text'); ?>" />
+                                                        <input name="hello_global_default_text" type="text" id="hello_global_default_text" class="regular-text code" value="<?php echo $this->getPlugin()->getUserOption('hello_global_default_text'); ?>" />
 
                             </label>
 

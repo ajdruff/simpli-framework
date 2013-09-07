@@ -21,23 +21,6 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
     public function config() {
         $this->debug()->t(); //trace provides a information about the method and arguments, and provides a backtrace in an expandable box. A visual trace is also provided if graphiviz is enabled.
 
-        $this->debug()->log('loga gets logged to browser, javascript console, and file');
-        $this->debug()->logb('logb gets logged only to the browser');
-        $this->debug()->logc('logc gets logged only to the javascript console');
-        $this->debug()->logf('logf to the log file');
-        $this->debug()->logcError('logcError logs an error in red to the javascript console');
-
-        $my_array = array(
-            'element1' => 1,
-            'element2' => 2,
-            'element3' => 3,
-        );
-
-
-        $this->debug()->logExtract($my_array); //logExtract logs each element of an array as its own variable and value pair. Output is to the browser
-
-        $this->debug()->logVar('$my_array = ', $my_array); //logVar logs variables or arrays to the browser. Variables are nicely formatted in a vertical format
-        $this->debug()->logVars(get_defined_vars()); //logVars is designed to format the output of get_defined_vars
     }
 
     /**
@@ -196,7 +179,7 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
          * If the global setting is configured for disabled, then dont
          * add the hello text
          */
-        $enabled_globally = $this->getPlugin()->getSetting('hello_global_default_enabled');
+        $enabled_globally = $this->getPlugin()->getUserOption('hello_global_default_enabled');
 
         if ($enabled_globally !== 'enabled') {
 
@@ -211,19 +194,19 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
          *
          *  */
 
-        $enabled = $this->getPlugin()->getModule('Post')->getUserSetting('enabled');
-        $placement = $this->getPlugin()->getModule('Post')->getUserSetting('placement');
-        $text = $this->getPlugin()->getModule('Post')->getUserSetting('text');
-        $use_global_text = $this->getPlugin()->getModule('Post')->getUserSetting('use_global_text');
+        $enabled = $this->getPlugin()->getModule('Post')->getUserOption('enabled');
+        $placement = $this->getPlugin()->getModule('Post')->getUserOption('placement');
+        $text = $this->getPlugin()->getModule('Post')->getUserOption('text');
+        $use_global_text = $this->getPlugin()->getModule('Post')->getUserOption('use_global_text');
         /*
          * if the post is configured to use the defaults, then use the defaults from the global settings
          */
 
         if ($placement == 'default') {
-            $placement = $this->getPlugin()->getSetting('hello_global_default_placement');
+            $placement = $this->getPlugin()->getUserOption('hello_global_default_placement');
         }
         if ($use_global_text == 'true') {
-            $text = $this->getPlugin()->getSetting('hello_global_default_text');
+            $text = $this->getPlugin()->getUserOption('hello_global_default_text');
         }
 
 

@@ -6,15 +6,13 @@
  * @author Andrew Druffner
  * @package SimpliFramework
  * @subpackage SimpliHello
- *
  */
 class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
-
 
     /**
      * Add Hooks
      *
-     * Adds WordPress Hooks. Function is called during plugin initialization
+     * Adds WordPress Hooks.
      * @param none
      * @return void
      */
@@ -102,12 +100,14 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
     /**
      * Configure
      *
-     * Configures Plugin after initialization
+     * Configures Plugin
      *
-     * @param none
+     *@param none
      * @return void
      */
     public function config() {
+
+
         $this->debug()->t();
 
         /*
@@ -118,128 +118,53 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
             include_once( ABSPATH . WPINC . '/class-http.php' );
 
         /*
+         * Set the Default User Options
          *
-         * Start Default Admin Settings
+         * Edit the _setUserOptionDefaults() method to change
+         * individual default values. An option must have a default
+         * before being recognized by the save/load methods
+         */
+        $this->_setUserOptionDefaults();
+
+
+        /*
+         * Disabled Modules
          *
+         * Disable any modules that you don't want loaded
+         * Usage Example:
+          $this->setConfig(
+          'DISABLED_MODULES'
+          , array('QueryVars', 'Shortcodes')
+          );
          */
-
-        /*
-         *
-         * Hello World Settings
-         *
-         */
-
-        /*
-         * Hello World Text
-         * The text to insert into the post
-         */
-        $this->setDefaultSetting(
-                'hello_global_default_text', 'Global Hello World!'
-        );
-        /*
-         * Text Placement - 'before' or 'after'
-         */
-        $this->setDefaultSetting(
-                'hello_global_default_placement', 'after'
-        );
-
-        /*
-         * Global Enable - 'enabled' or 'disabled'
-         */
-        $this->setDefaultSetting(
-                'hello_global_default_enabled', 'enabled'
-        );
-        /*
-         *
-         * Defaults for Example Settings in 'Example Settings Metabox'
-         *
-         */
-
-        /*
-         * Radio Button Setting Example
-         * 'yes' or 'no'
-         */
-        $this->setDefaultSetting(
-                'radio_setting', 'yes'
-        );
-
-        /*
-         * Text Setting Example
-         * any string
-         */
-        $this->setDefaultSetting(
-                'text_setting', 'Joe Smith'
-        );
-
-        /*
-         * Dropdown Setting Example
-         * Set equal to the value that you want selected
-         */
-        $this->setDefaultSetting(
-                'dropdown_setting', 'red'
-        );
-
-
-        /*
-         * Checkbox Setting Example
-         * The index is the value of the checkbox,
-         * the value is either 'yes' or 'no' , indicating whether you want it checked or not
-         */
-        $this->setDefaultSetting(
-                'checkbox_setting', array(
-            'yellow' => 'yes'
-            , 'red' => 'no'
-            , 'orange' => 'yes'
-            , 'blue' => 'yes'
-                )
+        $this->setConfig(
+                'DISABLED_MODULES'
+                , array('QueryVars', 'Shortcodes', 'ExampleModule','Menu15CustomPostType')
         );
 
 
 
         /*
+         * Set Always Regex Enabled Pattern
          *
-         * Advanced Settings
-         *
+         * sets the regex pattern that allows matching modules to remain loaded even after the user selects 'disabled' from the plugin options. This allows the user to continue to acccess the admin options to re-enable the plugin. Must be set prior to the call to loadModules or it will be igored.
          */
-
-        /*
-         * Plugin Enabled Setting
-         * 'enabled' or 'disabled' Controls whether the plugins modules are loaded. Disabled still loads the admin pages
-         */
-        $this->setDefaultSetting(
-                'plugin_enabled', 'enabled'
+        $this->setConfig(
+                'ALWAYS_ENABLED_REGEX_PATTERN'
+                , '/menu|admin/s'
         );
 
 
+
         /*
+         * Disabled Addons
          *
-         * End Default Admin Settings
-         *
+         * Disable any Addons that you don't want loaded.
          */
-
-
-
-
-        /**
-         * Set the enabled regex pattern ( must be set prior to the call to loadModules or it will be ignored.
-         */
-        $this->setAlwaysEnabledRegex('/menu|admin/s'); //sets the regex pattern that allows matching modules to remain loaded even after the user selects 'disabled' from the plugin options. This allows the user to continue to acccess the admin options to re-enable the plugin.
-
-        /*
-         * set disabled modules
-         * e.g.:$this->setDisabledModule('Shortcodes');
-         */
-        $this->setDisabledModule('ExampleModule');
-     //   $this->setDisabledModule('PostEditor');
-        // $this->setDisabledModule('Debug');
-
-
-
-        /*
-         * Set disabled addons
-         * e.g.: $this->setDisabledAddon('Simpli_Forms');
-         */
-        //    $this->setDisabledAddon('Simpli_Forms');
+        $this->setConfig(
+                'DISABLED_ADDONS'
+                , array()
+        );
     }
 
     /**
@@ -320,6 +245,117 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
             </div>
             <?php
         }
+    }
+
+    /**
+     * Set User Option Defaults
+     *
+     * Sets the default values for the user options that are
+     * configured from within the admin panels
+     *
+     * @param none
+     * @return void
+     */
+    private function _setUserOptionDefaults() {
+        /*
+         *
+         * Start Default Admin Settings
+         *
+         */
+
+        /*
+         *
+         * Hello World Settings
+         *
+         */
+
+        /*
+         * Hello World Text
+         * The text to insert into the post
+         */
+        $this->setUserOptionDefault(
+                'hello_global_default_text', 'Global Hello World!'
+        );
+        /*
+         * Text Placement - 'before' or 'after'
+         */
+        $this->setUserOptionDefault(
+                'hello_global_default_placement', 'after'
+        );
+
+        /*
+         * Global Enable - 'enabled' or 'disabled'
+         */
+        $this->setUserOptionDefault(
+                'hello_global_default_enabled', 'enabled'
+        );
+        /*
+         *
+         * Defaults for Example Settings in 'Example Settings Metabox'
+         *
+         */
+
+        /*
+         * Radio Button Setting Example
+         * 'yes' or 'no'
+         */
+        $this->setUserOptionDefault(
+                'radio_setting', 'yes'
+        );
+
+        /*
+         * Text Setting Example
+         * any string
+         */
+        $this->setUserOptionDefault(
+                'text_setting', 'Joe Smith'
+        );
+
+        /*
+         * Dropdown Setting Example
+         * Set equal to the value that you want selected
+         */
+        $this->setUserOptionDefault(
+                'dropdown_setting', 'red'
+        );
+
+
+        /*
+         * Checkbox Setting Example
+         * The index is the value of the checkbox,
+         * the value is either 'yes' or 'no' , indicating whether you want it checked or not
+         */
+        $this->setUserOptionDefault(
+                'checkbox_setting', array(
+            'yellow' => 'yes'
+            , 'red' => 'no'
+            , 'orange' => 'yes'
+            , 'blue' => 'yes'
+                )
+        );
+
+
+
+        /*
+         *
+         * Advanced Settings
+         *
+         */
+
+        /*
+         * Plugin Enabled Setting
+         * 'enabled' or 'disabled' Controls whether the plugins modules are loaded. Disabled still loads the admin pages
+         */
+        $this->setUserOptionDefault(
+                'plugin_enabled', 'enabled'
+        );
+
+
+        /*
+         *
+         * End Default Admin Settings
+         *
+         */
     }
 
 }

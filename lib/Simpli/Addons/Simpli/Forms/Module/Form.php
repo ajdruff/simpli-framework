@@ -198,8 +198,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
             $element_name = '__name_undefined__' . $fieldCounter;
         }
 
-        $this->_form['elements'][$element_name] = $properties;
-        return $this->_form;
+        $this->form['elements'][$element_name] = $properties;
+        return $this->form;
     }
 
     /**

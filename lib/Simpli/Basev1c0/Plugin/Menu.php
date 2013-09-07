@@ -16,19 +16,17 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     protected $_menu_slug;
     static private $_menus;
 
-
-
-        /**
+    /**
      * Get Top Level Menu Slug
      *
      * @param none
      * @return string
      */
     public function getTopLevelMenuSlug() {
-       $menus=$this->getMenuTracker();
-       $result=key($menus);
-       $this->debug()->logVar('$result = ', $result);
-       return $result;
+        $menus = $this->getMenuTracker();
+        $result = key($menus);
+        $this->debug()->logVar('$result = ', $result);
+        return $result;
     }
 
     /**
@@ -42,14 +40,14 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         return self::$_menus;
     }
 
-   /**
+    /**
      * Add Menu To Tracker
      *
      * @param none
      * @return string
      */
     public function addMenuToTracker($menu_slug) {
-        self::$_menus[$menu_slug]=array();
+        self::$_menus[$menu_slug] = array();
     }
 
     /**
@@ -200,9 +198,8 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-       // $this->addMenuHooks();
+        // $this->addMenuHooks();
     }
-
 
     /**
      * Config
@@ -213,7 +210,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function config() {
-                    /*
+        /*
          * We track whether this is a top_level menu or a sub menu by
          * checking to see if this is the first menu added. This is strictly based
          * on the order the modules are loaded, which is dictated by the alphabetical order
@@ -241,40 +238,72 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         $this->setMenuSlug($this->getPlugin()->getSlug() . '_' . $this->getSlug());
 
         $this->addMenuToTracker($this->getMenuSlug());
-
     }
+
+    protected $_page_check_cache = null;
+
     /**
-     * Check if Current Page is Menu
+     * Page Check
      *
-     * Does a simple check of the $_GET['page'] variable to see if it contains this menu's slug.
-     * Use it to make sure you dont take any action for pages that this module doesnt apply to
-     * @param string $content The shortcode content
-     * @return string The parsed output of the form body tag
+     * Use for hook functions. Checks to see if we are on the right page before we add any hook actions.
+     * For optimization, cache the result the first time,so subsequent checks on the same page dont have to rebuild the result.
+     * Usage:
+     * if ($this->pageCheck(get_query_var('page'),$this->getMenuSlug)
+     * @param none
+     * @return boolean
      */
-    public function pageIsMenu() {
-        $result = false;
-        if (isset($_GET['page']) && strpos($_GET['page'], $this->getMenuSlug()) !== false) {
-            $result = true;
+    protected function pageCheck() {
+
+        /*
+         * if either the page or the post_type matches, return true to verify the page check
+         */
+
+        if (is_null($this->_page_check_cache)) {
+
+
+            $postCheck = (isset($_GET['post_type']) && $_GET['post_type'] === $this->getPostType()); //does post type in query match?
+            $pageQueryVarCheck = (isset($_GET['page']) && $_GET['page'] === $this->getMenuSlug()); //does page match our page?
+
+
+            $result = ($postCheck || $pageQueryVarCheck);
+            /*
+             * if the previous checks fail, then check the post object's post type
+             */
+            if (!$result) {
+                $post = $this->getPlugin()->getTools()->getPost(); //get the post object
+                $this->debug()->logVar('$post = ', $post);
+                if (is_object($post)) {
+                    $result = ($post->post_type === $this->getPostType()); //check the post object type against what we want
+                } else {
+                    $result = false;
+                }
+            }
+            $this->_page_check_cache = $result; //save the result to 'cache'
+            $this->debug()->logVar('$result = ', $result);
         }
-        return ($result);
+
+
+
+        return ($this->_page_check_cache);
     }
 
     /**
-     * Short Description
+     * Hook Current Screen
      *
-     * Long Description
+     * Hook Function on Current Screen
      * @param string $content The shortcode content
      * @return string The parsed output of the form body tag
      */
     function hookCurrentScreen() {
 
 
-        if (!$this->pageIsMenu()) {
+        if (!$this->pageCheck()) {
             return;
         }
 
         /*
-         * Set some metaboxes as closed
+         * Set some metaboxes as closed.
+         * Must hook into current screen so we dont hook in too early
          */
         add_action('get_user_option_closedpostboxes_' . $this->getScreenId(), array($this, 'hookCloseMetaboxes'));
     }
@@ -289,11 +318,11 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     function hookMenuPageAdded() {
         /*
          *
-         * Add metaboxes whenever the page matches the menu slug
+         * Add metaboxes and scripts only when we are on the page we want
          *
          */
 
-        if (!$this->pageIsMenu()) {
+        if (!$this->pageCheck()) {
             return;
         }
 
@@ -317,6 +346,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     }
 
     protected $_menu_level;
+
     /**
      * Set Menu Level
      *
@@ -327,9 +357,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         $this->_menu_level = $menu_level;
     }
 
-
-
-        /**
+    /**
      * Get Menu Level
      *
      * @param none
@@ -386,7 +414,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          * modules as 'Menu10..., Menu20..,etc;'
          */
 
-        if ($this->getMenuLevel()==='top_level') {
+        if ($this->getMenuLevel() === 'top_level') {
             $this->setMenuPageHookName(
                     add_menu_page(
                             $page_title// page title
@@ -439,10 +467,11 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          * as access the key properties from other methods
          */
 
-        $this->updateMenuTracker($this->getMenuSlug() ,array('capability' => $capability
+        $this->updateMenuTracker($this->getMenuSlug(), array('capability' => $capability
             , 'level' => $this->getMenuLevel()));
         do_action($this->getPlugin()->getSlug() . '_menuPageAdded');
     }
+
     /**
      * Update Menu Tracker
      *
@@ -453,10 +482,9 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @param array $properties Selected properties of the menu
      * @return void
      */
-    public function updateMenuTracker($menu_slug,$properties) {
+    public function updateMenuTracker($menu_slug, $properties) {
 
         self::$_menus[$menu_slug] = $properties;
-
     }
 
     /**
@@ -471,14 +499,13 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      */
     public function getEditorTopLevelMenuSlug() {
 
-        if (isset($_GET['page']) && $_GET['page']===$this->getMenuSlug()) {
+        if (isset($_GET['page']) && $_GET['page'] === $this->getMenuSlug()) {
             return $this->getTopLevelMenuSlug();
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
+
     /**
      * Add a Custom Post Editor Page
      *
@@ -511,7 +538,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          */
 
         $hookname = add_submenu_page(
-               $this->getEditorTopLevelMenuSlug() // parent slug
+                $this->getEditorTopLevelMenuSlug() // parent slug
                 , $page_title // page title
                 , 'Custom Post Editor' // Submenu title
                 , $capability  // capability
@@ -524,7 +551,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          * immediately remove the submenu item we just added so
          * we still have the mapping of the url, but dont keep the menu item visible
          */
-       // remove_submenu_page($this->getTopLevelMenuSlug() , $this->getMenuSlug() );
+        // remove_submenu_page($this->getTopLevelMenuSlug() , $this->getMenuSlug() );
 
         /*
          * Add an entry into the menus array so we can
@@ -532,11 +559,9 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          * as access the key properties from other methods
          */
 
-        $this->updateMenuTracker($this->getMenuSlug() ,array('capability' => $capability
+        $this->updateMenuTracker($this->getMenuSlug(), array('capability' => $capability
             , 'level' => $this->getMenuLevel()));
         do_action($this->getPlugin()->getSlug() . '_menuPageAdded');
-
-
     }
 
     /**
@@ -548,7 +573,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      */
     public function hookAdminMenu() {
 
-        if (!$this->pageIsMenu()) {
+        if (!$this->pageCheck()) {
             return;
         }
         throw new Exception('You are missing a required hookAdminMenu method in  ' . get_class($this));
@@ -561,7 +586,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function hookAddMetaBoxes() {
-        if (!$this->pageIsMenu()) {
+        if (!$this->pageCheck()) {
             return;
         }
     }
@@ -574,7 +599,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      */
     public function _AjaxMetabox($cache_timeout = 0) {
 
-        //skip the pageIsMenu check since this is an ajax request and wont contain the $_GET page variable
+        //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
         // Disable errors
         error_reporting(0);
 
@@ -623,7 +648,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function hookAjaxMetaboxCache() {
-        //skip the pageIsMenu check since this is an ajax request and wont contain the $_GET page variable
+        //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
         $this->_AjaxMetabox(30);
     }
 
@@ -634,7 +659,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function hookAjaxMetabox() {
-        //skip the pageIsMenu check since this is an ajax request and wont contain the $_GET page variable
+        //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
         $this->_AjaxMetabox(0);
     }
 
@@ -745,7 +770,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      */
     public function hookAjaxReset() {
 
-        //skip the pageIsMenu check since this is an ajax request and wont contain the $_GET page variable
+        //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
 
 
         if (!wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug())) {
@@ -756,24 +781,26 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         $errors = array();
         $reload = true;
         $logout = false; //whether you want to logout after settings are saved
-
-        foreach ($this->getPlugin()->getSettings() as $setting_name => $setting_value) {
+$user_option_defaults=$this->getPlugin()->getUserOptionDefaults();
+        foreach ($this->getPlugin()->getUserOptions() as $setting_name => $setting_value) {
             /**
              * Set new setting value equal to the post value only if the setting was actually submitted, otherwise, keep the setting value the same.
              *  Add extra code to scrub the values for specific settings if needed
              */
-            $setting_value = ((isset($_POST[$setting_name]) === true) ? $this->getPlugin()->_setting_defaults[$setting_name] : $setting_value);
+            $setting_value = ((isset($_POST[$setting_name]) === true) ? $user_option_defaults[$setting_name] : $setting_value);
 
-            $this->getPlugin()->setSetting($setting_name, $setting_value);
+            $this->getPlugin()->setUserOption($setting_name, $setting_value);
         }
 
 
-        $this->getPlugin()->saveSettings();
+        $this->getPlugin()->saveUserOptions();
 
         if ($logout) {
             wp_logout();
         }
         require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
+
+        die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
     }
 
     /**
@@ -784,7 +811,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      */
     public function hookAjaxSave() {
 
-        //skip the pageIsMenu check since this is an ajax request and wont contain the $_GET page variable
+        //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
 
 
         $this->_save(false);
@@ -797,7 +824,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function hookAjaxSaveWithReload() {
-        //skip the pageIsMenu check since this is an ajax request and wont contain the $_GET page variable
+        //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
 
         $this->_save(true);
     }
@@ -830,7 +857,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          *          */
 
 
-        foreach ($this->getPlugin()->getSettings() as $setting_name => $setting_value) {
+        foreach ($this->getPlugin()->getUserOptions() as $setting_name => $setting_value) {
             /**
              * Set new setting value equal to the post value only if the setting was actually submitted, otherwise, keep the setting value the same.
              *  Add extra code to scrub the values for specific settings if needed
@@ -865,17 +892,21 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-            $this->getPlugin()->setSetting($setting_name, $setting_value);
+            $this->getPlugin()->setUserOption($setting_name, $setting_value);
         }
 
 
-        $this->getPlugin()->saveSettings();
+        $this->getPlugin()->saveUserOptions();
 
         if ($logout) {
             wp_logout();
         }
         //return a success message on submission
         require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
+
+         die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
+
+
     }
 
     /**
@@ -889,7 +920,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      */
     public function hookAjaxUpdateAll() {
 
-        //skip the pageIsMenu check since this is an ajax request and wont contain the $_GET page variable
+        //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
 
 
         if (!wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug())) {
@@ -911,29 +942,27 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
 
         $wp_option_name = $this->getPlugin()->getSlug() . '_options';
-        $existing_options = $this->getPlugin()->getSettings();
-        $option_defaults = $this->getPlugin()->getSettingDefaults();
+        $existing_options = $this->getPlugin()->getUserOptions();
+        $option_defaults = $this->getPlugin()->getUserOptionDefaults();
         $options = array_merge($option_defaults, $existing_options);
 
 
         /*
-         * Save back to the database ( do not use the $this->getPlugin()->saveSettings() method since that
+         * Save back to the database ( do not use the $this->getPlugin()->saveUserOptions() method since that
          * will only use existing settings)
          *
          */
 
-        if ($blog_id > 0) {
-            update_blog_option($blog_id, $wp_option_name, $options);
-        } else {
-            update_option($wp_option_name, $options);
-        }
-
+        $this->getPlugin()->saveUserOptions($options);
 
 
         if ($logout) {
             wp_logout();
         }
         require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
+
+              die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
+
     }
 
     /**
@@ -944,7 +973,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      */
     public function hookAjaxResetAll() {
 
-        //skip the pageIsMenu check since this is an ajax request and wont contain the $_GET page variable
+        //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
 
 
         if (!wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug())) {
@@ -968,12 +997,14 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
             $message = 'Setting reset failed due to database error.';
         }
 
-        $this->getPlugin()->saveSettings();
+        $this->getPlugin()->saveUserOptions();
 
         if ($logout) {
             wp_logout();
         }
         require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
+              die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
+
     }
 
     /**
@@ -1018,7 +1049,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      *
      */
     public function hookCloseMetaboxes($closed_metaboxes) {
-        if (!$this->pageIsMenu()) {
+        if (!$this->pageCheck()) {
             return($closed_metaboxes);
         }
 
@@ -1123,6 +1154,28 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
 
         include($this->getPlugin()->getDirectory() . '/admin/templates/metabox/ajax.php');
+    }
+
+    public $_post_type = null;
+
+    /**
+     * Set Post Type
+     *
+     * @param array $post_type
+     * @return none
+     */
+    public function setPostType($post_type) {
+        $this->_post_type = $post_type;
+    }
+
+    /**
+     * Get Post Type
+     *
+     * @param none
+     * @return string
+     */
+    public function getPostType() {
+        return $this->_post_type;
     }
 
 }

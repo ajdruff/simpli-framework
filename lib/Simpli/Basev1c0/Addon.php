@@ -7,6 +7,7 @@
  * @author Andrew Druffner
  * @package SimpliFramework
  * @subpackage SimpliBase
+  * @property string $DISABLED_MODULES An array of Module Names of the Addon that you don't want to have loaded
  */
 class Simpli_Basev1c0_Addon {
 
@@ -97,36 +98,7 @@ class Simpli_Basev1c0_Addon {
      * @var array
      */
     protected $_available_modules = null;
-    private $_ro_properties = null;
 
-    /**
-     * Get Read Only Properties
-     *
-     * Use setProperty to define an array that can be used to retrieve read only properties
-     * Useful hardcoding strings without needing to search and replace when they change
-     * Usage: echo $this->propertyName
-     * To Set a property : $this->setProperty('PROPERTY_NAME',property_value);
-     * Returns read-only properties using a magic method __get
-     * ref: http://stackoverflow.com/questions/2343790/how-to-implement-a-read-only-member-variable-in-php
-     * @param none
-     * @return void
-     */
-    public function __get($name) {
-
-
-
-
-        if (is_null($this->_ro_properties)) {
-
-            return null;
-        }
-
-        if (isset($this->_ro_properties[$name])) {
-            return $this->_ro_properties[$name];
-        } else {
-            return null;
-        }
-    }
 
     /**
      * Set Read Only Property
@@ -266,39 +238,6 @@ class Simpli_Basev1c0_Addon {
         return $this->_module_directory;
     }
 
-    /**
-     * Get Disabled Modules
-     *
-     * Returns and array of module names that were manually disabledwith the setDisabledModule method
-     *
-     * @param none
-     * @return void
-     */
-    public function getDisabledModules() {
-
-
-
-        if (is_null($this->_disabled_modules)) {
-            $this->_disabled_modules = array();
-        }
-
-        return $this->_disabled_modules;
-    }
-
-    /**
-     * Set Disabled Module
-     *
-     * Adds the name of a module to the $_disabled_modules array
-     *
-     * @param none
-     * @return void
-     */
-    public function setDisabledModule($module_name) {
-
-
-
-        $this->_disabled_modules[] = $module_name;
-    }
 
     /**
      * Get Available Modules ( Read Only )
@@ -348,7 +287,7 @@ class Simpli_Basev1c0_Addon {
                  * settings can be accessed even though the rest of the plugin
                  * is disabled
                  */
-                If (in_array($module_name, $this->getDisabledModules())) {
+                If (in_array($module_name, $this->DISABLED_MODULES)) {
 
                     $available_modules['disabled'][$module_name] = $module_file_path;
                 } else {
@@ -790,6 +729,137 @@ class Simpli_Basev1c0_Addon {
             $this->loadModule($module_name);
         }
     }
+
+
+
+
+     protected $_config_properties = null;
+
+    /**
+     * Get Configuration (Magic Method)
+     *
+     * Return 'read only' properties using the $this->Property format.
+     * You *can* add or edit these values by using the protected method $this->setConfig().
+     * Returns read-only properties using a magic method __get
+     * ref: http://stackoverflow.com/questions/2343790/how-to-implement-a-read-only-member-variable-in-php
+     * @param none
+     * @return void
+     */
+    public function __get($property_name) {
+
+
+        $properties = $this->_getProperties();
+
+        if (isset($properties[$property_name])) {
+            $config_value = $properties[$property_name];
+        } else {
+
+            $config_value = $this->_getConfigDefault($property_name);
+        }
+
+        return $config_value;
+    }
+
+
+
+
+    /**
+     * Set Config
+     *
+     * @param string $property_name
+     * @param string $config_value
+     *
+     * @return object $this
+     */
+    protected function setConfig($property_name, $config_value) {
+
+        $this->_config_properties[$property_name] = $config_value;
+
+        return $this->_config_properties;
+    }
+
+    /**
+     * Get Properties
+     *
+     * Returns the properties array
+     * @param none
+     * @return array
+     */
+    private function _getProperties() {
+
+        if (is_null($this->_config_properties)) {
+            $this->_config_properties = array();
+        }
+        return $this->_config_properties;
+    }
+
+    /**
+     * Get Config Default
+     *
+     * Provides a default config value if it wasnt set by the user
+     *
+     * @param mixed $property_name
+     * @return mixed The default value of the config
+     */
+    private function _getConfigDefault($property_name) {
+
+        if (is_null($this->_property_defaults)) {
+            $this->setConfigDefaults();
+        }
+        if (!isset($this->_property_defaults[$property_name])) {
+
+
+            throw new Exception('No such configuration property for  \'' . $property_name . '\' in  ' . get_class($this));
+        }
+        return $this->_property_defaults[$property_name];
+    }
+
+    /**
+     * Set Config Default
+     *
+     * Sets a default config value
+     *
+     * @param string $property_name The name of the config
+     * @param string $config_value The value of the the config
+     * @return void
+     */
+    protected function setConfigDefault($property_name, $config_value) {
+        $this->_property_defaults[$property_name] = $config_value;
+    }
+
+    protected $_property_defaults = null;
+
+    /**
+     * Set Config Defaults
+     *
+     * Sets all the default configs.
+     * All configurations must have defaults, or errors will result since the
+     * code will look for an option's value, and if not set, will throw an
+     * undefined error.
+     * Defaults should be set in the base class. There should be no need
+     * to set defaults in children, since you can use the protected method setConfig()
+     *
+     * @param none
+     * @return void
+     */
+
+    public function setConfigDefaults() {
+
+
+
+        /*
+         * DISABLED_MODULES
+         *
+         * An array of Module Names of the Addon that you don't want to have loaded
+         */
+        $this->setConfigDefault(
+                'DISABLED_MODULES'
+                , array(
+                )
+        );
+
+    }
+
 
 }
 

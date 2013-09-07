@@ -27,7 +27,7 @@ class Simpli_Addons_Simpli_Forms_Themes_Seattle_Module_FilterOptions extends Sim
         extract($properties);
 
 
-        $atts['value'] = $this->getPlugin()->getModule('Post')->getUserSetting($atts['name']);
+        $atts['value'] = $this->getPlugin()->getModule('Post')->getUserOption($atts['name']);
 
         return (compact('scid','atts', 'tags'));
     }

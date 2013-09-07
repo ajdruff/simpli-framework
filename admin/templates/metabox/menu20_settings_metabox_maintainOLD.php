@@ -18,11 +18,11 @@
                     <label for="plugin_enabled" class="label-radio">
 
                         <label class="label-radio">
-                            <input type="radio" name="plugin_enabled" value="enabled" <?php echo (($this->getPlugin()->getSetting('plugin_enabled') == 'enabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Yes', $this->getPlugin()->getTextDomain()); ?></span>
+                            <input type="radio" name="plugin_enabled" value="enabled" <?php echo (($this->getPlugin()->getUserOption('plugin_enabled') == 'enabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Yes', $this->getPlugin()->getTextDomain()); ?></span>
                         </label>
 
                         <label class="label-radio">
-                            <input type="radio" name="plugin_enabled" value="disabled"  <?php echo (($this->getPlugin()->getSetting('plugin_enabled') == 'disabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('No', $this->getPlugin()->getTextDomain()); ?></span></label>
+                            <input type="radio" name="plugin_enabled" value="disabled"  <?php echo (($this->getPlugin()->getUserOption('plugin_enabled') == 'disabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('No', $this->getPlugin()->getTextDomain()); ?></span></label>
 
 
 

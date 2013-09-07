@@ -46,7 +46,7 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Debug {
 
 //        $this->debug()->setMethodFilter('isScreen', true);
 $this->debug()->setMethodFilter('redirectAdd', false);
-$this->debug()->setMethodFilter('redirectEdit', false);
+$this->debug()->setMethodFilter('_demoDebug', true);
 //
 //$this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin_Menu', true);
 

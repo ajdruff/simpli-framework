@@ -5,13 +5,35 @@
  *
 
  * @author Andrew Druffner
- * @author Mike Ems
  * @package SimpliFramework
  * @subpackage SimpliBase
+ * @property string $ADDON_NAMESPACE The class namespace used for the Addons, e.g.: 'Simpli_Addons'
+ * @property string $FILE_NAME_ADDON The file name for the addon , e.g.: 'Addon'
+ * @property string $DIR_NAME_MODULES The directory name containing modules , e.g.: 'Module'
+ * @property string $DIR_NAME_LIBS The directory name containing libraries, e.g.: 'lib'
+ * @property string $FILE_NAME_PLUGIN The file name for plugin , e.g.: 'plugin.php'
+ * @property string $DISABLED_MODULES An array of Module Names that you don't want loaded
+ * @property string $DISABLED_ADDONS An array of Addon Names that you don't want loaded
+ * @property string $ALWAYS_ENABLED_REGEX_PATTERN Modules matching this pattern will always be loaded regardless if the plugin is disabled from the Admin menu.
+ *
+ *
+ *
+ *
  */
 class Simpli_Basev1c0_Plugin {
-
-    private $_ro_properties = null;
+    //   private $_ro_properties = null;
+//    /**
+//     * Set Plugin Configuration
+//     *
+//     * Sets a Plugin Property
+//     *
+//     * @param none
+//     * @return void
+//     */
+//    protected function setConfig($name, $value) {
+//
+//        $this->_ro_properties[$name] = $value;
+//    }
 
     /**
      * Get Read Only Properties
@@ -23,7 +45,8 @@ class Simpli_Basev1c0_Plugin {
      * @param none
      * @return void
      */
-    public function __get($name) {
+    public function __getOLD($name) {
+
 
 
         if (is_null($this->_ro_properties)) {
@@ -84,7 +107,7 @@ class Simpli_Basev1c0_Plugin {
      *
      * @var array
      */
-    protected $_setting_defaults = null;
+    protected $_option_defaults = null;
 
     /**
      * Plugin Settings
@@ -181,7 +204,7 @@ class Simpli_Basev1c0_Plugin {
      *
      * @var array
      */
-    protected $_disabled_modules = null;
+    protected $_disabled_modulesOLD = null;
 
     /**
      * Available Modules
@@ -209,7 +232,7 @@ class Simpli_Basev1c0_Plugin {
      *
      * @var array
      */
-    protected $_disabled_addons = null;
+    protected $_disabled_addonsOLD = null;
 
     /**
      * Version
@@ -369,88 +392,15 @@ class Simpli_Basev1c0_Plugin {
         return $this->_module_directory;
     }
 
-    /**
-     * Get Always Enabled Regex
-     *
-     * Returns the regex pattern that was set by setAlwaysEnabledRegex
-     *
-     * @param none
-     * @return void
-     */
-    public function getModuleAlwaysEnabledRegex() {
 
-        return $this->_module_always_enabled_regex;
-    }
 
-    /**
-     * Set Always Enabled Regex
-     *
-     * Sets the regex that determines which modules remain enabled even after the user has diabled the plugin
-     *
-     * @param string $regex Regex Pattern of modules that should remain enabled
-     * @return void
-     */
-    public function setAlwaysEnabledRegex($regex) {
 
-        $this->_module_always_enabled_regex = $regex;
-    }
 
-    /**
-     * Get Disabled Addons
-     *
-     * Returns and array of addon names that were manually disabled with the setDisabledAddon method
-     *
-     * @param none
-     * @return void
-     */
-    public function getDisabledAddons() {
-        if (is_null($this->_disabled_addons)) {
-            $this->_disabled_addons = array();
-        }
-        return $this->_disabled_addons;
-    }
 
-    /**
-     * Set Disabled Addon
-     *
-     * Adds the name of an Adon to the $_disabled_addons array
-     *
-     * @param none
-     * @return void
-     */
-    public function setDisabledAddon($addon_name) {
 
-        $this->_disabled_addons[] = $addon_name;
-    }
 
-    /**
-     * Get Disabled Modules
-     *
-     * Returns and array of module names that were manually disabledwith the setDisabledModule method
-     *
-     * @param none
-     * @return void
-     */
-    public function getDisabledModules() {
-        //  $this->debug()->t();
-        if (is_null($this->_disabled_modules)) {
-            $this->_disabled_modules = array();
-        }
-        return $this->_disabled_modules;
-    }
 
-    /**
-     * Set Disabled Module
-     *
-     * Adds the name of a module to the $_disabled_modules array
-     *
-     * @param none
-     * @return void
-     */
-    public function setDisabledModule($module_name) {
 
-        $this->_disabled_modules[] = $module_name;
-    }
 
     /**
      * Get Available Modules ( Read Only )
@@ -503,10 +453,10 @@ class Simpli_Basev1c0_Plugin {
                 //   echo 'Disabled Modules<pre>', print_r($this->getDisabledModules(), true), '</pre>';
 
 
-                if ($this->getSetting('plugin_enabled') == 'disabled') {
+                if ($this->getUserOption('plugin_enabled') == 'disabled') {
                     $haystack = strtolower($module_name);
 // if module doesnt match the always enabled regex, add it to 'disabled'
-                    if (preg_match($this->getModuleAlwaysEnabledRegex(), $haystack)) {
+                    if (preg_match($this->ALWAYS_ENABLED_REGEX_PATTERN, $haystack)) {
 
                         $available_modules['always_enabled'][$module_name] = $module_file_path;
                         $available_modules['enabled'][$module_name] = $module_file_path;
@@ -515,7 +465,7 @@ class Simpli_Basev1c0_Plugin {
                         $this->debug()->log('Module ' . $module_name . ' not loaded because user has disabled the plugin');
                         $available_modules['disabled'][$module_name] = $module_file_path;
                     }
-                } elseif (in_array($module_name, $this->getDisabledModules())) {
+                } elseif (in_array($module_name, $this->DISABLED_MODULES)) {
 
                     $this->debug()->log('Module ' . $module_name . ' not loaded because it has been disabled');
 
@@ -547,6 +497,8 @@ class Simpli_Basev1c0_Plugin {
             return $this->_addons[$addon_name];
         } else {
 
+
+$this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not found');
             $this->debug()->logcError('getAddon Failed, Addon \'' . $addon_name . '\' was not found');
             return (false);
         }
@@ -626,66 +578,78 @@ class Simpli_Basev1c0_Plugin {
     }
 
     /**
-     * Get Plugin Setting
+     * Get User Option
      *
-     * @param string $setting
+     * Get a user option for the plugin. These come from the options
+     * saved in the admin panel.
+     *
+     * @param string $user_option
      * @return mixed
      */
-    public function getSetting($setting) {
+    public function getUserOption($user_option) {
 
-        if (isset($this->_settings[$setting])) {
+        if (isset($this->_user_options[$user_option])) {
 
-            return($this->_settings[$setting]);
+            return($this->_user_options[$user_option]);
         }
     }
 
     /**
-     * Get Plugin Setting Defaults
+     * Get User Option Defaults
+     *
+     * Gets the user option defaults, which are the user options
+     * that you set in the config() method and are not saved to
+     * the database until the options panel is saved for the first time.
      *
      * @param none
      * @return array
      */
-    public function getSettingDefaults() {
-        return $this->_setting_defaults;
+    public function getUserOptionDefaults() {
+        return $this->_option_defaults;
     }
 
     /**
-     * Get Plugin Settings
+     * Get User Options
+     *
+     * Gets all the user optionsf or the plugin as configured
+     * in the admin panels
      *
      * @param none
      * @return array
      */
-    public function getSettings() {
+    public function getUserOptions() {
 
 //            if (empty($this->settings)) {
-//                return($this->loadSettings());
+//                return($this->loadUserOptions());
 //            }
 
-        return $this->_settings;
+        return $this->_user_options;
     }
 
     /**
-     * Set Plugin Setting
+     * Set User Option
      *
-     * @param string $setting
+     * Sets a user option for the plugin
+     *
+     * @param string $option
      * @param mixed $value
      * @param int $blog_id
      * @return $this
      */
-    public function setSetting($setting, $value, $blog_id = 0) {
+    public function setUserOption($option_name, $option_value, $blog_id = 0) {
 
         /*
          * Update settings array with new value but only if the setting
          * key already exists in the array
          * you set the allowed keys in your plugin's $_settings declaration
          */
-        if (in_array(trim($setting), array_keys($this->getSettings()))) {
+        if (in_array(trim($option_name), array_keys($this->getUserOptions()))) {
 
 
-            if (is_string($value)) {
-                $value = trim($value);
+            if (is_string($option_value)) {
+                $option_value = trim($option_value);
             }
-            $this->_settings[$setting] = $value;
+            $this->_user_options[$option_name] = $option_value;
         }
 
 
@@ -694,15 +658,20 @@ class Simpli_Basev1c0_Plugin {
     }
 
     /**
-     * Save Plugin Settings to WordPress Database
-     * Takes settings array and saves it to wp_options table
+     * Save User Options to the WordPress Database
+     *
+     * Takes the user options array and saves it to the wp_options table
+     * @param $options The options array to be saved
      * @param int $blog_id
      * @return $this
      */
-    public function saveSettings($blog_id = 0) {
+    public function saveUserOptions($options = null, $blog_id = 0) {
 
         $wp_option_name = $this->getSlug() . '_options';
-        $options = $this->getSettings();
+        if (is_null($options)) {
+            $options = $this->getUserOptions();
+        }
+
 
 
         if ($blog_id > 0) {
@@ -717,16 +686,18 @@ class Simpli_Basev1c0_Plugin {
     }
 
     /**
-     * Load Plugin Settings from database
-     * Load settings as a single array
+     * Load User Options
+     *
+     * Loads the options from the database or if not in the database, from the
+     * defaults
      * @param int $blog_id
      * @return $this
      */
-    public function loadSettings($blog_id = 0) {
+    public function loadUserOptions($blog_id = 0) {
 
         $wp_option_name = $this->getSlug() . '_options';
 
-        $option_defaults = $this->_setting_defaults;
+        $option_defaults = $this->_option_defaults;
 
 
 
@@ -739,13 +710,13 @@ class Simpli_Basev1c0_Plugin {
 
 
 
-        $this->_settings = $options;
+        $this->_user_options = $options;
 //           echo '<br/> options = <pre>' ;
 //        echo '</pre>';
 
 
 
-        return $this->_settings;
+        return $this->_user_options;
     }
 
     /**
@@ -1013,100 +984,7 @@ class Simpli_Basev1c0_Plugin {
         return $this;
     }
 
-    /**
-     * Get Debug
-     *
-     * Returns the debug property array or an element of the debug property array
-     * @param $key (optional) . If provided, returns the element identified by the key instead of the entire array
-     * @return string
-     */
-    public function getDebugDEPRECATED($key = null) {
 
-#if debug has not  yet been set, call the set method to set defaults
-        if (is_null($this->_debug_options)) {
-            $this->setDebug(array());
-        }
-
-
-
-        if (!is_null($key)) { //if key provided, return only a single element
-            $result = $this->_debug_options[$key];
-        } else {
-            $result = $this->_debug_options;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Set Debug
-     *
-     * @param array $debug
-     * @return object $this
-     */
-    public function setDebugDEPRECATED($debug) {
-
-
-        if (is_null($this->_debug_options)) {
-            $debug_defaults = array(
-                'js' => false
-                , 'consolelog' => false
-                , 'src' => false
-                , 'filelog' => false
-            );
-
-            $this->_debug_options = $debug_defaults;
-        }
-
-        /*
-         * return if no $debug arguments have been passed
-         * this will happen when the defaults are set by calling
-         * get before debug is set, or by a call to get without arguments
-         */
-        if (!is_array($debug) || is_null($debug) || empty($debug)) {
-            return;
-        }
-
-        $valid_options = array('js', 'consolelog', 'filelog', 'src');
-
-        /* Check for Validity
-         * Use the validateArrayKeys utility to check that all the keys
-         * passed to setDebug are allowed, as defined by $valid_options.
-         */
-        $validity_check = $this->getTools()->validateArrayKeys($debug, $valid_options);
-
-
-        if ($validity_check !== true) {
-
-            echo ('(<strong>Error/simpli-framework: Bad Debug Options</strong>, only the following options are accepted and they must be set to true or false: \'' . implode('\',\'', $valid_options) . '\')' );
-            return;
-        }
-
-        /*
-         * Merge what was provided with existing, so existing can provide defaults or previously set options
-         */
-        $debug = array_merge($this->_debug_options, $debug);
-
-        if (($debug['consolelog']) || $debug['filelog']) {
-
-            $this->getLogger()->setLoggingOn(true);
-        }
-
-
-
-
-
-
-        if (isset($debug['src'])) {
-
-            if (!defined('SCRIPT_DEBUG')) {
-                define('SCRIPT_DEBUG', $debug['src']);
-            }
-        }
-
-        $this->_debug_options = $debug;
-        return $this;
-    }
 
     /**
      * Tools
@@ -1119,7 +997,7 @@ class Simpli_Basev1c0_Plugin {
 
         if (is_null($this->_tools)) {
 
-            $this->_tools = new Simpli_Basev1c0_Btools();
+            $this->_tools = new Simpli_Basev1c0_Btools($this);
         }
 
 
@@ -1190,7 +1068,7 @@ class Simpli_Basev1c0_Plugin {
         /**
          * Load Settings
          */
-        $this->loadSettings();
+        $this->loadUserOptions();
         $this->debug()->log('Loaded Plugin User Settings ');
 
         /**
@@ -1367,11 +1245,12 @@ class Simpli_Basev1c0_Plugin {
 
 
             //   die('stopping to check disbled addons' . __LINE__ . __FILE__);
-            if (in_array($addon_name, $this->getDisabledAddons())) {
+            if (in_array($addon_name, $this->DISABLED_ADDONS)) {
                 $this->debug()->log('Addon ' . $addon_name . ' not loaded because it is has been disabled.');
                 continue;
             }
             $this->loadAddon($addon_name);
+             $this->debug()->log('Addon ' . $addon_name . ' loaded.');
         }
     }
 
@@ -1878,20 +1757,227 @@ class Simpli_Basev1c0_Plugin {
     }
 
     /**
-     * Set Default Setting
+     * Set User Option Default
      *
      * Sets a default value for settings that have not yet been saved to the database.
      * If you want a setting to have a value before any configuration by the user occurs,
      * you must set it here.
      *
      * @param string $setting_name The name of the setting. Must be unique for the plugin
-     * @param mixed $setting_value The value of the setting.
+     * @param mixed $option_value The value of the setting.
      * @return void
      */
+    protected function setUserOptionDefault($option_name, $option_value) {
 
-    protected function setDefaultSetting($setting_name, $setting_value) {
+        $this->_option_defaults[$option_name] = $option_value;
+    }
 
-        $this->_setting_defaults[$setting_name] = $setting_value;
+
+     protected $_config_properties = null;
+
+    /**
+     * Get Configuration (Magic Method)
+     *
+     * Return 'read only' properties using the $this->Property format.
+     * You *can* add or edit these values by using the protected method $this->setConfig().
+     * Returns read-only properties using a magic method __get
+     * ref: http://stackoverflow.com/questions/2343790/how-to-implement-a-read-only-member-variable-in-php
+     * @param none
+     * @return void
+     */
+    public function __get($property_name) {
+
+
+        $properties = $this->_getProperties();
+
+        if (isset($properties[$property_name])) {
+            $config_value = $properties[$property_name];
+        } else {
+
+            $config_value = $this->_getConfigDefault($property_name);
+        }
+
+        return $config_value;
+    }
+
+
+
+
+    /**
+     * Set Config
+     *
+     * @param string $property_name
+     * @param string $config_value
+     *
+     * @return object $this
+     */
+    protected function setConfig($property_name, $config_value) {
+
+        $this->_config_properties[$property_name] = $config_value;
+
+        return $this->_config_properties;
+    }
+
+    /**
+     * Get Configs
+     *
+     * Returns the properties array
+     * @param none
+     * @return array
+     */
+    private function _getProperties() {
+
+        if (is_null($this->_config_properties)) {
+            $this->_config_properties = array();
+        }
+        return $this->_config_properties;
+    }
+
+    /**
+     * Get Module Config Default
+     *
+     * Provides a default config value if it wasnt set by the user
+     *
+     * @param mixed $property_name
+     * @return mixed The default value of the config
+     */
+    private function _getConfigDefault($property_name) {
+
+        if (is_null($this->_property_defaults)) {
+            $this->_setConfigDefaults();
+        }
+        if (!isset($this->_property_defaults[$property_name])) {
+
+
+            throw new Exception('No such configuration property for  \'' . $property_name . '\' in  ' . get_class($this));
+        }
+        return $this->_property_defaults[$property_name];
+    }
+
+    /**
+     * Set Module Config Default
+     *
+     * Sets a default config value
+     *
+     * @param string $property_name The name of the config
+     * @param string $config_value The value of the the config
+     * @return void
+     */
+    protected function setConfigDefault($property_name, $config_value) {
+        $this->_property_defaults[$property_name] = $config_value;
+    }
+
+    protected $_property_defaults = null;
+
+    /**
+     * Set Module Config Defaults
+     *
+     * Sets all the default configs.
+     * All configurations must have defaults, or errors will result since the
+     * code will look for an option's value, and if not set, will throw an
+     * undefined error.
+     * Defaults should be set in the base class. There should be no need
+     * to set defaults in children, since you can use the protected method setConfig()
+     *
+     * @param none
+     * @return void
+     */
+    private function _setConfigDefaults() {
+
+
+        /* ADDON_NAMESPACE
+         *
+         *
+         */
+        $this->setConfigDefault(
+                'ADDON_NAMESPACE'
+                , 'Simpli_Addons'
+        );
+
+        /*
+         * FILE_NAME_ADDON
+         *
+         * Long Description
+         */
+        $this->setConfigDefault(
+                'FILE_NAME_ADDON'
+                , 'Addon'
+        );
+
+        /*
+         * FILE_NAME_ADDON
+         *
+         * Long Description
+         */
+        $this->setConfigDefault(
+                'FILE_NAME_ADDON'
+                , 'Addon'
+        );
+
+        /*
+         * DIR_NAME_MODULES
+         *
+         * Name of the Directory containing the modules
+         */
+        $this->setConfigDefault(
+                'DIR_NAME_MODULES'
+                , 'Module'
+        );
+
+        /*
+         * DIR_NAME_LIBS
+         *
+         * Name of the library that contains the plugins libraries
+         */
+        $this->setConfigDefault(
+                'DIR_NAME_LIBS'
+                , 'lib'
+        );
+
+        /*
+         * FILE_NAME_PLUGIN
+         *
+         * The base file name of the plugin file. e.g.:plugin.php
+         */
+        $this->setConfigDefault(
+                'FILE_NAME_PLUGIN'
+                , 'plugin.php'
+        );
+
+        /* Disabled Modules
+         *
+         * Modules that should not be loaded
+         * Usage Example:
+         * $this->setConfig('disabled_modules',
+          array('QueryVars','Shortcodes')
+          );
+         */
+        $this->setConfigDefault(
+                'DISABLED_MODULES'
+                , array()
+        );
+
+
+        /* Always Enabled Regex Pattern
+         *
+         * Sets the regex pattern that allows matching modules to remain loaded even after the user selects 'disabled' from the plugin options. This allows the user to continue to acccess the admin options to re-enable the plugin.
+         */
+        $this->setConfigDefault(
+                'ALWAYS_ENABLED_REGEX_PATTERN'
+                , '/menu|admin/s'
+        );
+
+
+        /*
+         * Disabled Addons
+         *
+         * An array of addon names that you dont want loaded
+         */
+        $this->setConfigDefault(
+                'DISABLED_ADDONS'
+                , array(
+                )
+        );
     }
 
 }

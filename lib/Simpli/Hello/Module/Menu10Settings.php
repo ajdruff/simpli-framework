@@ -210,15 +210,14 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
     public function showDisabledMessage() {
         $this->debug()->t();
 
-
-
-        //dont show if you are not on the main menu ( general settings )
-        if (isset($_GET['page']) && $_GET['page'] !== $this->getPlugin()->getSlug() . '_' . $this->getSlug()) {
+        if (!$this->pageCheck()) {
             return;
         }
 
+
+
 //dont show if the plugin is enabled
-        if (($this->getPlugin()->getSetting('plugin_enabled') == 'enabled')) {
+        if (($this->getPlugin()->getUserOption('plugin_enabled') == 'enabled')) {
             return;
         }
         ?>

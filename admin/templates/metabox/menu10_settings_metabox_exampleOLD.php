@@ -1,5 +1,5 @@
 <?php
-$checkbox_settings=$this->getPlugin()->getSetting('checkbox_settings');
+$checkbox_settings=$this->getPlugin()->getUserOption('checkbox_settings');
 
 ?>
 <form name="<?php echo $this->getPlugin()->getSlug(); ?><?php echo '_' . $metabox['id']; ?>" id="<?php echo $this->getPlugin()->getSlug() . $metabox['id']; ?>" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
@@ -22,10 +22,10 @@ $checkbox_settings=$this->getPlugin()->getSetting('checkbox_settings');
                     <fieldset>
                         <label>
                             <label>
-                                <input type="radio" name="radio_setting" value="yes"  <?php echo (($this->getPlugin()->getSetting('radio_setting') == 'yes') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Yes',$this->getPlugin()->getTextDomain()); ?></span></label>
+                                <input type="radio" name="radio_setting" value="yes"  <?php echo (($this->getPlugin()->getUserOption('radio_setting') == 'yes') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Yes',$this->getPlugin()->getTextDomain()); ?></span></label>
 
                             <label>
-                                <input type="radio" name="radio_setting" value="no" <?php echo (($this->getPlugin()->getSetting('radio_setting') == 'no') ? ' checked="checked"' : ''); ?> /> <span><?php _e('No',$this->getPlugin()->getTextDomain()); ?></span>
+                                <input type="radio" name="radio_setting" value="no" <?php echo (($this->getPlugin()->getUserOption('radio_setting') == 'no') ? ' checked="checked"' : ''); ?> /> <span><?php _e('No',$this->getPlugin()->getTextDomain()); ?></span>
                             </label>
 
 
@@ -61,7 +61,7 @@ printf(
                         <label>
                             <label>
 
-                                                        <input name="text_setting" type="text" id="first_name" class="regular-text code" value="<?php echo $this->getPlugin()->getSetting('text_setting'); ?>" />
+                                                        <input name="text_setting" type="text" id="first_name" class="regular-text code" value="<?php echo $this->getPlugin()->getUserOption('text_setting'); ?>" />
 
                             </label>
 
@@ -100,10 +100,10 @@ printf(
   <label>
                         <select name="dropdown_setting" id="dropdown_setting">
 
-                            <option value="blue" <?php echo (($this->getPlugin()->getSetting('dropdown_setting') == 'blue') ? ' selected="selected"' : ''); ?>>Blue</option>
-                             <option value="orange" <?php echo (($this->getPlugin()->getSetting('dropdown_setting') == 'orange') ? ' selected="selected"' : ''); ?>>Orange</option>
-                              <option value="red" <?php echo (($this->getPlugin()->getSetting('dropdown_setting') == 'red') ? ' selected="selected"' : ''); ?>>Red</option>
-                               <option value="yellow" <?php echo (($this->getPlugin()->getSetting('dropdown_setting') == 'yellow') ? ' selected="selected"' : ''); ?>>Yellow</option>
+                            <option value="blue" <?php echo (($this->getPlugin()->getUserOption('dropdown_setting') == 'blue') ? ' selected="selected"' : ''); ?>>Blue</option>
+                             <option value="orange" <?php echo (($this->getPlugin()->getUserOption('dropdown_setting') == 'orange') ? ' selected="selected"' : ''); ?>>Orange</option>
+                              <option value="red" <?php echo (($this->getPlugin()->getUserOption('dropdown_setting') == 'red') ? ' selected="selected"' : ''); ?>>Red</option>
+                               <option value="yellow" <?php echo (($this->getPlugin()->getUserOption('dropdown_setting') == 'yellow') ? ' selected="selected"' : ''); ?>>Yellow</option>
                         </select>
 
                             </label>

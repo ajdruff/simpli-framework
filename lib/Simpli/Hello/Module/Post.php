@@ -3,7 +3,7 @@
 /**
  * Post Module
  *
- * Adds settings to the edit post screen.
+ * Adds options to the edit post screen.
  *
  * @author Andrew Druffner
  * @package SimpliFramework
@@ -13,18 +13,18 @@
 class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 
     /**
-     * Post Setting Defaults
+     * Post option Defaults
      *
      * @var array
      */
-    protected $_setting_defaults = null;
+    protected $_option_defaults = null;
 
     /**
-     * Post Settings
+     * Post options
      *
      * @var array
      */
-    protected $_settings = null;
+    protected $_options = null;
 
     /**
      * Add Hooks
@@ -42,7 +42,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
          */
 
 
-        add_action('the_post', array($this, 'hookLoadUserSettings')); //archive pages will call multiple posts, and with each new post, the options have to be reloaded or you'll carry forward the topmost post's options to the ones below it
+        add_action('the_post', array($this, 'hookLoadUserOptions')); //archive pages will call multiple posts, and with each new post, the options have to be reloaded or you'll carry forward the topmost post's options to the ones below it
 
         /*
          * Admin Hooks Follow
@@ -63,12 +63,12 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
          */
         add_action('add_meta_boxes', array($this, 'hookAddMetaBoxToPost')); //use action add_meta_boxes
 
-        //  add_action ('wp',array($this,'hookLoadUserSettings')); //wp is first reliable hook where $post object is available
+        //  add_action ('wp',array($this,'hookLoadUserOptions')); //wp is first reliable hook where $post object is available
 
         /*
          * Load Post options when in Admin
          */
-        add_action('current_screen', array($this, 'hookLoadUserSettings')); //wp hook is not reliable on edit post page. admin_init cannot be used since a call to get_current_screen will return null see usage restrictions: http://codex.wordpress.org/Function_Reference/get_current_screen
+        add_action('current_screen', array($this, 'hookLoadUserOptions')); //wp hook is not reliable on edit post page. admin_init cannot be used since a call to get_current_screen will return null see usage restrictions: http://codex.wordpress.org/Function_Reference/get_current_screen
 
 
         /*
@@ -89,9 +89,9 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 
         /*
          * Set the Post Option defaults
-         * About settings: You must prefix each setting with the plugin slug in the form 'mycompany_myplugin_<setting_name>
+         * About options: You must prefix each option with the plugin slug in the form 'mycompany_myplugin_<option_name>
          * When creating post option forms, the field name must exactly equal the associative index of each element below
-         * You can access a setting with or without the prefix. as in $text=getUserSetting('text') or $text=getUserSetting('simpli_hello_text')
+         * You can access a option with or without the prefix. as in $text=getUserOption('text') or $text=getUserOption('simpli_hello_text')
          * Both will retrieve the same value
          */
 
@@ -100,7 +100,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
          * enabled or disabled. Whether you want the Hello World feature to be enabled for this post
          *
          */
-        $this->setDefaultUserSetting(
+        $this->setUserOptionDefault(
                 'enabled', 'enabled'
         );
 
@@ -110,7 +110,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
          * The text that you want inserted after each post
          *
          */
-        $this->setDefaultUserSetting(
+        $this->setUserOptionDefault(
                 'text', 'Hello World!'
         );
         /*
@@ -118,7 +118,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
          * true or false. Use global text instead of this post's text
          *
          */
-        $this->setDefaultUserSetting(
+        $this->setUserOptionDefault(
                 'use_global_text', 'false'
         );
 
@@ -129,11 +129,11 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
          * 'before' , 'after' or 'default'.
          *
          * Where you'd like to place the post text in relation to the post's content
-         * 'default' will use the value provided by the global setting
+         * 'default' will use the value provided by the global option
          *
          *
          */
-        $this->setDefaultUserSetting(
+        $this->setUserOptionDefault(
                 'placement', 'default'
         );
 
@@ -142,11 +142,11 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
          * 'before' , 'after' or 'default'.
          *
          * Where you'd like to place the post text in relation to the post's content
-         * 'default' will use the value provided by the global setting
+         * 'default' will use the value provided by the global option
          *
          *
          */
-        $this->setDefaultUserSetting(
+        $this->setUserOptionDefault(
                 'my_checkbox', array('red' => 'yes')
         );
     }
@@ -157,10 +157,10 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return string
      */
-    public function getUserSettingDefaults() {
+    public function getUserOptionDefaults() {
         $this->debug()->t();
 
-        return $this->_setting_defaults;
+        return $this->_option_defaults;
     }
 
 //    /**
@@ -178,8 +178,8 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //        $this->debug()->t();
 //
 //
-//        $field_name = $this->getUserSettingName($option_id);
-//        $value = $this->getUserSetting($option_id);
+//        $field_name = $this->getUseroptionName($option_id);
+//        $value = $this->getUserOption($option_id);
 //
 //        echo $this->getPlugin()->getModule('Form')->text($field_name, $value, $label, $hint, $help, $template_id);
 //    }
@@ -187,54 +187,54 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //    /**
 //     * Template Tag - Post Option
 //     *
-//     * Echos out the result of getUserSetting()
+//     * Echos out the result of getUserOption()
 //     * @param string $content The shortcode content
 //     * @return string The parsed output of the form body tag
 //     */
 //    function postOptionOld($name) {
 //        $this->debug()->t();
 //
-//        echo $this->getUserSetting($name);
+//        echo $this->getUserOption($name);
 //    }
 
 //    /**
 //     * Get Post Option
 //     *
-//     * You can access a setting with or without the prefix. as in $text=getUserSetting('text') or $text=getUserSetting('simpli_hello_text')
+//     * You can access a option with or without the prefix. as in $text=getUserOption('text') or $text=getUserOption('simpli_hello_text')
 //     * Its a bit faster without the prefix :)
 //     * @param string $option_name
 //     * @return mixed
 //     */
-//    public function getUserSettingOld($name) {
+//    public function getUseroptionOld($name) {
 //        $this->debug()->t();
 //
 //
-//        $post_user_settings = $this->getUserSettings();
+//        $post_user_options = $this->getUserOptions();
 //        $name_with_added_prefix = $this->getPlugin()->getSlug() . '_' . $name;
 //
-////echo '<br/> getUserSettings()=';
+////echo '<br/> getUserOptions()=';
 ////        echo '<pre>';
 ////echo '</pre>';
 ////echo  '<br/> Name with added prefix=' .$name_with_added_prefix;
 //        /* assume access is by short version, so tack on prefix */
-//        if (isset($post_user_settings[$name_with_added_prefix])) {
+//        if (isset($post_user_options[$name_with_added_prefix])) {
 //
-//            return($post_user_settings[$name_with_added_prefix]);
-//        } elseif (isset($post_user_settings[$name])) { //then try it unmodified
-//            return($post_user_settings[$name]);
+//            return($post_user_options[$name_with_added_prefix]);
+//        } elseif (isset($post_user_options[$name])) { //then try it unmodified
+//            return($post_user_options[$name]);
 //        } else {
 //            return null;
 //        }
 //    }
 
-    public function getUserSetting($name) {
+    public function getUserOption($name) {
         $this->debug()->t();
 
 
-        $post_user_settings = $this->getUserSettings();
+        $post_user_options = $this->getUserOptions();
 
-        if (isset($post_user_settings[$name])) {
-            return($post_user_settings[$name]);
+        if (isset($post_user_options[$name])) {
+            return($post_user_options[$name]);
         } else {
             return null;
         }
@@ -252,7 +252,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //        $this->debug()->t();
 //
 //
-//        echo $this->getUserSettingName($accessor_name);
+//        echo $this->getUseroptionName($accessor_name);
 //    }
 //
 //    /**
@@ -266,7 +266,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //        $this->debug()->t();
 //
 //
-//        return $this->getUserSettingName($accessor_name);
+//        return $this->getUseroptionName($accessor_name);
 //    }
 
 //    /**
@@ -311,7 +311,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //
 ////stub
 //        echo '__HELP_TEXT__'; // replace with lookup of the option's help
-//        //echo getUserSettingsName($accessor_name);
+//        //echo getUseroptionsName($accessor_name);
 //    }
 
 //    /**
@@ -326,19 +326,19 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //
 ////stub
 //        return '__HELP_TEXT__'; // replace with lookup of the option's help
-//        //echo getUserSettingsName($accessor_name);
+//        //echo getUseroptionsName($accessor_name);
 //    }
 
 //    /**
 //     * Get Post Option Name
 //     *
-//     * Helper function that saves time when creating field names for forms, and in allowing the getUserSetting function to
+//     * Helper function that saves time when creating field names for forms, and in allowing the getUserOption function to
 //     * be used to access an option using only its shortname
 //     * Simply returns the plugin slug prepended to the argument.
 //     * @param string $option_name
 //     * @return mixed
 //     */
-//    public function getUserSettingNameOld($name) {
+//    public function getUseroptionNameOld($name) {
 //        $this->debug()->t();
 //
 //
@@ -358,44 +358,44 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //    }
 
     /**
-     * Get User Settings
+     * Get User options
      *
-     * Returns the current array of user settings for the post
+     * Returns the current array of user options for the post
      * @param none
      * @return array
      */
-    public function getUserSettings() {
+    public function getUserOptions() {
         $this->debug()->t();
 
 
-        return $this->_settings;
+        return $this->_options;
     }
 
     /**
-     * Set User Setting
+     * Set User option
      *
-     * Sets a user setting
+     * Sets a user option
      *
-     * @param string $setting
+     * @param string $option
      * @param mixed $value
      * @param int $blog_id
      * @return $this
      */
-    public function setUserSetting($option_name, $option_value) {
+    public function setUserOption($option_name, $option_value) {
         $this->debug()->t();
 
 
         /*
-         * Update settings array with new value but only if the setting
+         * Update options array with new value but only if the option
          * key already exists in the array
-         * you set the allowed keys in your plugin's $_settings declaration
+         * you set the allowed keys in your plugin's $_options declaration
          */
-        if (in_array(trim($option_name), array_keys($this->getUserSettings()))) {
-            //if (in_array(trim($option_name), array_keys($this->getUserSettingDefaults()))) {
+        if (in_array(trim($option_name), array_keys($this->getUserOptions()))) {
+            //if (in_array(trim($option_name), array_keys($this->getUserOptionDefaults()))) {
             if (is_string($option_value)) {
                 $option_value = trim($option_value);
             }
-            $this->_settings[$option_name] = $option_value;
+            $this->_options[$option_name] = $option_value;
         }
 
 
@@ -404,19 +404,19 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
-     * Save Post Options to WordPress Database
+     * Save User Options for the Post object to the WordPress Database
      * Takes post_options array and saves it to wp_options table
      * @param int $blog_id
      * @return $this
      */
-    public function saveUserSettings($post_id) {
+    public function saveUserOptions($post_id) {
         $this->debug()->t();
 
 
         $this->debug()->log('Saving Post Options');
 
         $wp_option_name = $this->getPlugin()->getSlug() . '_options';
-        $options = $this->getUserSettings();
+        $options = $this->getUserOptions();
         $this->debug()->logVar('$options = ', $options);
         update_post_meta($post_id, $wp_option_name, $options);
 
@@ -431,7 +431,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
      * @param int $post_id
      * @return $this
      */
-    public function hookLoadUserSettings() {
+    public function hookLoadUserOptions() {
         $this->debug()->t();
 
 
@@ -443,7 +443,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        $default_options = $this->getUserSettingDefaults();
+        $default_options = $this->getUserOptionDefaults();
         $post_meta_options = array();
 
         $wp_option_name = $this->getPlugin()->getSlug() . '_options';
@@ -454,11 +454,11 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
         $post = (empty($post) && !empty($_POST['post_ID'])) ? get_post($_POST['post_ID']) : $post;
         // if (!empty($post)&& !empty($_POST['post_ID'])) {
         if (!empty($post)) {
-            // $this->hookLoadUserSettings($post->ID);
+            // $this->hookLoadUserOptions($post->ID);
             $post_id = $post->ID;
             $post_meta_options = get_post_meta($post_id, $wp_option_name, true);
         } else {
-            $default_options = $this->getUserSettingDefaults();
+            $default_options = $this->getUserOptionDefaults();
             // echo '<br> loading defaults' ;
         }
 
@@ -485,14 +485,14 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 
         if (empty($options)) {
 //              echo '<br> loading defaults' ;
-            $options = $this->getUserSettingDefaults();
+            $options = $this->getUserOptionDefaults();
         }
 
-        $this->_settings = $options;
+        $this->_options = $options;
 
 
 
-        return $this->_settings;
+        return $this->_options;
     }
 
     /**
@@ -528,7 +528,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 
 
             add_meta_box(
-                    $this->getSlug() . '_' . 'metabox_settings'  //Meta Box DOM ID
+                    $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
                     , __($this->getPlugin()->getName(), $this->getPlugin()->getTextDomain()) //title of the metabox.
                     , array($this, 'renderMetaBoxTemplate')//function that prints the html
                     , $post_type// post_type when you embed meta boxes into post edit pages
@@ -566,14 +566,14 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
         if (is_admin()) {
             if (!array_key_exists($this->getPlugin()->getSlug(), $_POST)) {
                 $this->debug()->logVar('$_POST = ', $_POST);
-                $this->debug()->log('Exiting Post Save since $_POST doesnt include our settings');
+                $this->debug()->log('Exiting Post Save since $_POST doesnt include our options');
                 return $post_id;
             }
             //   $this->debug()->log('Exiting save ajax call');
             $this->debug()->logVar('$_POST = ', $_POST, false, true, false, false); //automatically show arrays without needing to click
             // if nonce fails , return
             if (!wp_verify_nonce($_POST[$this->getPlugin()->getSlug() . '_nonce'], 'save_post')) {
-                $this->debug()->log('Nonce Failed while trying to save settings');
+                $this->debug()->log('Nonce Failed while trying to save options');
                 return $post_id;
             }
 
@@ -584,35 +584,35 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //check permissions
             if (@$_POST['post_type'] == 'page') {
                 if (!current_user_can('edit_page', $post_id)) {
-                    $this->debug()->log('Cant save settings - user is not authorized');
+                    $this->debug()->log('Cant save options - user is not authorized');
                     return $post_id;
                 }
             } else {
                 if (!current_user_can('edit_post', $post_id)) {
-                    $this->debug()->log('Cant save settings - user is not authorized');
+                    $this->debug()->log('Cant save options - user is not authorized');
                     return $post_id;
                 }
             }
         }
 
 
-        $this->debug()->logVar('$this->getUserSettings() ', $this->getUserSettings(), false, true, false, false);
+        $this->debug()->logVar('$this->getUserOptions() ', $this->getUserOptions(), false, true, false, false);
 
 
 
-        foreach ($this->getUserSettings() as $option_name => $option_value) {
+        foreach ($this->getUserOptions() as $option_name => $option_value) {
 
 
 
             /**
-             * Set new option value equal to the submitted value only if the setting was actually submitted, otherwise, keep the setting value the same.
-             *  Add extra code to scrub the values for specific settings if needed
+             * Set new option value equal to the submitted value only if the option was actually submitted, otherwise, keep the option value the same.
+             *  Add extra code to scrub the values for specific options if needed
              */
             $option_value = (isset($_POST[$this->getPlugin()->getSlug()][$option_name])) ? $_POST[$this->getPlugin()->getSlug()][$option_name] : $option_value;
 
-            $this->setUserSetting($option_name, $option_value);
+            $this->setUserOption($option_name, $option_value);
         }
-        $this->saveUserSettings($post_id);
+        $this->saveUserOptions($post_id);
 
 
         return $post_id;
@@ -680,7 +680,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
         static $pageCheck;
 
         if (is_null($pageCheck)) {
-            $pageCheck = $this->getPlugin()->getModule('Tools')->isScreen('edit-add', null, false);
+            $pageCheck = $this->getPlugin()->getTools()->isScreen('edit-add', null, false);
         }
 
 
@@ -693,19 +693,19 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
-     * Set Default Setting
+     * Set Default option
      *
-     * Sets a default value for settings that have not yet been saved to the database.
-     * If you want a setting to have a value before any configuration by the user occurs,
+     * Sets a default value for options that have not yet been saved to the database.
+     * If you want a option to have a value before any configuration by the user occurs,
      * you must set it here.
      *
-     * @param string $setting_name The name of the setting. Must be unique for the plugin
-     * @param mixed $setting_value The value of the setting.
+     * @param string $option_name The name of the option. Must be unique for the plugin
+     * @param mixed $option_value The value of the option.
      * @return void
      */
-    protected function setDefaultUserSetting($setting_name, $setting_value) {
+    protected function setUserOptionDefault($option_name, $option_value) {
 
-        $this->_setting_defaults[$setting_name] = $setting_value;
+        $this->_option_defaults[$option_name] = $option_value;
     }
 
 }

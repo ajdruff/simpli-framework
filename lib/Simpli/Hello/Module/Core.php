@@ -20,29 +20,28 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
      */
     public function config() {
         $this->debug()->t(); //trace provides a information about the method and arguments, and provides a backtrace in an expandable box. A visual trace is also provided if graphiviz is enabled.
-
     }
 
     /**
      * Demo Debug
      *
      * Provides a few examples of how to use the functions in the debug module.
-     * To see this output, you must configure the debug module to setMethodFilter('_demoDebug') or setMethodFilter('Simpli_Hello_Module_Core');
+     * To see this output, you must call this method somewhere in your code (place it in config())  and configure the debug module to setMethodFilter('_demoDebug') or setMethodFilter('Simpli_Hello_Module_Core');
      *
      * @param none
      * @return void
      */
     private function _demoDebug() {
 
-         /*
-          * debug()->t() or $this->debug()->logTrace()
-          * Both methods are aliases for the same functionality. Their purpose is to provide information about the current method, and provide links to a backtrace (showing all methods within the current call stack, in the order that they were called) , and a visual backtrace (if enabled, requiring the graphviz Pear library), showing a visual representation of the call stack.
-          */
+        /*
+         * debug()->t() or $this->debug()->logTrace()
+         * Both methods are aliases for the same functionality. Their purpose is to provide information about the current method, and provide links to a backtrace (showing all methods within the current call stack, in the order that they were called) , and a visual backtrace (if enabled, requiring the graphviz Pear library), showing a visual representation of the call stack.
+         */
         $this->debug()->t();
 
-         $this->debug()->log('<br><strong>$this->debug()->t() or $this->debug()->logTrace()</strong><br>  <p>Both methods are aliases for the same functionality. Their purpose is to provide information about the current method, and provide links to a backtrace (showing all methods within the current call stack, in the order that they were called) , and a visual backtrace (if enabled, requring the graphviz Pear library), showing a visual representation of the call stack.</p>');
+        $this->debug()->log('<br><strong>$this->debug()->t() or $this->debug()->logTrace()</strong><br>  <p>Both methods are aliases for the same functionality. Their purpose is to provide information about the current method, and provide links to a backtrace (showing all methods within the current call stack, in the order that they were called) , and a visual backtrace (if enabled, requring the graphviz Pear library), showing a visual representation of the call stack.</p>');
 
-        $this->debug()->log('apple array: <pre>' . print_r(array('a'=>'apple','b'=>'bananna'),true) . '</pre>');
+        $this->debug()->log('apple array: <pre>' . print_r(array('a' => 'apple', 'b' => 'bananna'), true) . '</pre>');
         $my_array = array(
             'apple' => 'red', 'orange' => 'orange'
         );
@@ -113,7 +112,7 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
          * Add filter for content
          */
 
-        add_filter('the_content', array($this, 'say_hello'), 10);
+        add_filter('the_content', array($this, 'addTextToPost'), 10);
         //__END_EXAMPLE_CODE__
 
 
@@ -165,52 +164,76 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
      *
      * @uses is_single()
      */
-    public function say_hello($content) {
+    public function addTextToPost($content) {
 
 
 
         $this->debug()->t();
-        global $post;
+        //   global $post;
 
+        $post = $this->getPlugin()->getModule('Post');
+        $plugin = $this->getPlugin();
+        $post_user_options = $post->getUserOptions();
+        $plugin_user_options = $plugin->getUserOptions();
 
-
-
+        $this->debug()->logVar('$plugin_user_options = ', $plugin_user_options);
+        $this->debug()->logVar('$post_user_options = ', $post_user_options);
         /*
          * If the global setting is configured for disabled, then dont
          * add the hello text
          */
-        $enabled_globally = $this->getPlugin()->getUserOption('hello_global_default_enabled');
 
-        if ($enabled_globally !== 'enabled') {
 
+        if ($plugin->getUserOption('hello_global_default_enabled') !== 'enabled') {
+            $this->debug()->logVars(get_defined_vars());
+            $this->debug()->log('Did not modify content because global enable option is set to disabled');
             return($content);
         }
 
 
-
+        if ($post->getUserOption('enabled') !== 'enabled') {
+            $this->debug()->log('Did not modify content because post option was not enabled');
+            $this->debug()->logVars(get_defined_vars());
+            return($content);
+        }
 
         /*
-         *  Get the Post Settings
+         * Text
+         * check if user wants to use the custom
+         * text specified in the post option,
+         * or wants to use the text from the global option
          *
-         *  */
-
-        $enabled = $this->getPlugin()->getModule('Post')->getUserOption('enabled');
-        $placement = $this->getPlugin()->getModule('Post')->getUserOption('placement');
-        $text = $this->getPlugin()->getModule('Post')->getUserOption('text');
-        $use_global_text = $this->getPlugin()->getModule('Post')->getUserOption('use_global_text');
-        /*
-         * if the post is configured to use the defaults, then use the defaults from the global settings
          */
+$text='';
+        if ($post->getUserOption('use_global_text') === 'true') {
 
-        if ($placement == 'default') {
-            $placement = $this->getPlugin()->getUserOption('hello_global_default_placement');
+            $text = $plugin->getUserOption('hello_global_default_text');
+        } elseif ($post->getUserOption('use_global_text') === 'false') {
+            $text = $post->getUserOption('text');
+        }elseif ($post->getUserOption('use_global_text') === 'snippet') {
+            $snippet_object= get_post($post->getUserOption('snippet'));
+            $text = $snippet_object->post_content;
         }
-        if ($use_global_text == 'true') {
-            $text = $this->getPlugin()->getUserOption('hello_global_default_text');
+
+
+        /*
+         * Placement
+         *
+         *
+         */
+          if ($post->getUserOption('placement') === 'default') {
+
+            $placement = $plugin->getUserOption('hello_global_default_placement');
+        } else {
+            $placement = $post->getUserOption('placement');
         }
 
 
-        if (is_single() && ($enabled == 'true'))
+
+
+
+        if (is_single() ) {
+            $this->debug()->log('Modifying Content of Single Post...');
         // welcome message
 //        $content .= sprintf(
 //            '<img class="post-icon" src="%s/images/post_icon.png" alt="Post icon" title=""/>%s',
@@ -223,8 +246,9 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 
                 $content = $content . $text;
             }
-
+        }
         // Returns the content.
+        $this->debug()->logVars(get_defined_vars());
         return $content;
     }
 

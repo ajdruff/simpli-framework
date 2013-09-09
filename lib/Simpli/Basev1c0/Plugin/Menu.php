@@ -14,7 +14,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     protected $_metabox_default_states;
     protected $_menu_page_hook_name;
     protected $_menu_slug;
-    static private $_menus;
+    static private $_menus = null;
 
     /**
      * Get Top Level Menu Slug
@@ -23,9 +23,24 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @return string
      */
     public function getTopLevelMenuSlug() {
+        $this->debug()->t();
         $menus = $this->getMenuTracker();
+        $this->debug()->logVar('$menus = ', $menus);
         $result = key($menus);
+        $result = $menus[$result]['top_level_slug'];
+        /*
+         * if there is only one menu item, then
+         * the item must be this one, so use this slug.
+         * this allows custom post types to change the top level menu
+         * to their own slug in the event they are made the top level menu
+         */
+        $this->debug()->logVars(get_defined_vars());
+
         $this->debug()->logVar('$result = ', $result);
+
+
+
+
         return $result;
     }
 
@@ -37,6 +52,10 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @return string
      */
     public function getMenuTracker() {
+        $this->debug()->t();
+        if (is_null(self::$_menus)) {
+            self::$_menus = array();
+        }
         return self::$_menus;
     }
 
@@ -210,6 +229,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function config() {
+        $this->debug()->t();
         /*
          * We track whether this is a top_level menu or a sub menu by
          * checking to see if this is the first menu added. This is strictly based
@@ -221,13 +241,16 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          * The purpose of this architecture is to make it easier to rearrange the sorting by simply renaming modules, without
          * having to make any code changes.
          */
-        if (is_null($this->getMenuTracker())) {
+        $menus = $this->getMenuTracker();
+        $this->debug()->logVar('$menus = ', $menus);
+
+        if (is_null($menus) || (empty($menus) === true)) {
+            $this->debug()->log('Setting Menu Level to Top Level');
             $this->setMenuLevel('top_level');
         } else {
+            $this->debug()->log('Setting Menu Level to Sub Menu');
             $this->setMenuLevel('sub_menu');
         }
-
-
 
         /*
          * Set the Menu Slug
@@ -236,8 +259,9 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
 
         $this->setMenuSlug($this->getPlugin()->getSlug() . '_' . $this->getSlug());
+        //$this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug'=>'edit.php?post_type=simpli_hello_snippet'));
 
-        $this->addMenuToTracker($this->getMenuSlug());
+        $this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug' => $this->getMenuSlug()));
     }
 
     protected $_page_check_cache = null;
@@ -332,6 +356,23 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
+     * is Top Level
+     *
+     * Whether the current menu is the top level menu.
+     *
+     * @param none
+     * @return boolean
+     */
+    public function isTopLevel() {
+        $menus = $this->getMenuTracker();
+        if (key($menus) === $this->getMenuSlug()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Removes a Menu Page
      *
      * Removes a menu page from the menu
@@ -354,6 +395,8 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @return none
      */
     public function setMenuLevel($menu_level) {
+        $this->debug()->t();
+        $this->debug()->log('Set Menu Level for ' . $this->getSlug() . ' to ' . $menu_level);
         $this->_menu_level = $menu_level;
     }
 
@@ -374,18 +417,24 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @param string $content The shortcode content
      * @return string The parsed output of the form body tag
      */
-    public function addMenuPage($page_title, $menu_title, $capability, $icon_url = '', $position = null) {
+    public function addMenuPage($page_title, $menu_titles, $capability, $icon_url = '', $position = null) {
 
-
+        $this->debug()->logVars(get_defined_vars());
 
         /*
          * If $menu_title is an array, we use the 'menu' element as the menu title,
          * and the 'sub_menu' element as the sub menu title that can be seen when hovering over the main menu name.
          */
-        if (is_array($menu_title)) {
-            $sub_menu_title = $menu_title['sub_menu'];
-            $menu_title = $menu_title['menu'];
+        if (is_array($menu_titles)) {
+
+            if ($this->isTopLevel()) {
+                $menu_title = $menu_titles['menu'];
+                $sub_menu_title = $menu_titles['sub_menu'];
+            } else {
+                $menu_title = $menu_titles['sub_menu'];
+            }
         } else {
+            $menu_title = $menu_titles;
             $sub_menu_title = null;
         }
 
@@ -415,6 +464,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          */
 
         if ($this->getMenuLevel() === 'top_level') {
+            $this->debug()->log('Adding menu ' . $menu_title . '  as top level');
             $this->setMenuPageHookName(
                     add_menu_page(
                             $page_title// page title
@@ -450,7 +500,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
             /*
              * Add the submenu
              */
-
+            $this->debug()->log('Adding menu ' . $menu_title . '  as sub menu');
             add_submenu_page(
                     $this->getTopLevelMenuSlug()// parent slug
                     , $page_title // page title
@@ -468,7 +518,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          */
 
         $this->updateMenuTracker($this->getMenuSlug(), array('capability' => $capability
-            , 'level' => $this->getMenuLevel()));
+            , 'level' => $this->getMenuLevel(), 'top_level_slug' => $this->getMenuSlug()));
         do_action($this->getPlugin()->getSlug() . '_menuPageAdded');
     }
 
@@ -483,8 +533,23 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function updateMenuTracker($menu_slug, $properties) {
+        $this->debug()->t();
+        $this->debug()->logVar('$menu_slug = ', $menu_slug);
+        $this->debug()->logVar('$properties = ', $properties);
+        $menus = $this->getMenuTracker();
+        $this->debug()->logVar('$menus = ', $menus);
+
+        /*
+         * if there are already properties associated with the menu tracker for
+         * this element, then merge them, otherwise, just add the properties that
+         * were passed
+         */
+        if (isset($menus[$menu_slug]) and is_array($menus[$menu_slug])) {
+            $properties = array_merge($menus[$menu_slug], $properties);
+        }
 
         self::$_menus[$menu_slug] = $properties;
+        $this->debug()->logVar('self:$_menus = ', self::$_menus);
     }
 
     /**
@@ -523,7 +588,9 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
         $this->debug()->t();
 
-
+        if (!$this->CUSTOM_POST_EDITOR_ENABLED) {
+            return;
+        }
 
         /*
          * Class Method to display the HTML for the menu
@@ -781,7 +848,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         $errors = array();
         $reload = true;
         $logout = false; //whether you want to logout after settings are saved
-$user_option_defaults=$this->getPlugin()->getUserOptionDefaults();
+        $user_option_defaults = $this->getPlugin()->getUserOptionDefaults();
         foreach ($this->getPlugin()->getUserOptions() as $setting_name => $setting_value) {
             /**
              * Set new setting value equal to the post value only if the setting was actually submitted, otherwise, keep the setting value the same.
@@ -904,9 +971,7 @@ $user_option_defaults=$this->getPlugin()->getUserOptionDefaults();
         //return a success message on submission
         require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
 
-         die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
-
-
+        die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
     }
 
     /**
@@ -961,8 +1026,7 @@ $user_option_defaults=$this->getPlugin()->getUserOptionDefaults();
         }
         require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
 
-              die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
-
+        die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
     }
 
     /**
@@ -1003,8 +1067,7 @@ $user_option_defaults=$this->getPlugin()->getUserOptionDefaults();
             wp_logout();
         }
         require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
-              die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
-
+        die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
     }
 
     /**

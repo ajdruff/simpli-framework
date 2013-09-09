@@ -9,21 +9,9 @@
  * @subpackage SimpliHello
  *@property boolean $CUSTOM_POST_EDITOR_ENABLED Whether you want to redirect to a custom post editor
  */
-class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Menu {
+class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Menu {
 
-    /**
-     * a simple stop so we can examine actions
-     *
-     * Long Description
-     *
-     * @param none
-     * @return void
-     */
-    public function test_action() {
-        $this->debug()->logVar('$_POST = ', $_POST);
-        $this->debug()->logVar('$_GET = ', $_GET);
-        $this->debug()->stop();
-    }
+
 
     /**
      * Add Hooks
@@ -37,9 +25,11 @@ class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Me
 
         parent::addHooks();
 
+/*
+ * add the post type
+ */
+        add_action('init', array($this, 'hookRegisterPostTypes'));
 
-        add_action('init', array($this, 'createPostTypes'));
-        //add_action($this->getPlugin()->getSlug() . '_menuPageAdded', array($this, 'createPostTypes'));
 
         /*
          * Redirect to custom editor if adding or editing
@@ -95,6 +85,13 @@ class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Me
          */
         parent::config();
 
+
+
+       $this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug'=>'edit.php?post_type=simpli_hello_snippet'));
+
+
+
+
         /*
          * Enable/Disable Custom Post Editor
          *
@@ -120,39 +117,48 @@ class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Me
     }
 
     /**
-     * Create Post Types
+     * Hook to Register Post Types
      *
-     * Long Description
+     * Called by 'init' to register any post types
      *
      * @param none
      * @return void
      */
-    public function createPostTypes() {
+    public function hookRegisterPostTypes() {
+
+//$result='edit.php?post_type=simpli_hello_snippet';
+
 
 
         /*
          * Register Simpli Hello Forms
          */
 
-        $parent_slug = $this->getTopLevelMenuSlug();
 
+
+        if ($this->isTopLevel()) {
+         $parent_slug=true;
+        }else{
+             $parent_slug = $this->getTopLevelMenuSlug();
+        }
+ $this->debug()->logVar('$parent_slug = ', $parent_slug);
         $args = array(
-            'label' => 'Simpli Hello Forms' //A plural descriptive name for the post type marked for translation.
+            'label' => 'Simpli Hello Snippets' //A plural descriptive name for the post type marked for translation.
             , 'labels' => array(
                 'name' => null // general name for the post type, usually plural. The same as, and overridden by $post_type_object->label
-                , 'singular_name' => 'Simpli Hello Form' // name for one object of this post type. Defaults to value of name
-                , 'menu_name' => 'Simpli Hello Forms' // the menu name text. This string is the name to give menu items. Defaults to value of name
-                , 'all_items' => null //the all items text used in the menu. Default is the Name label
-                , 'add_new' => null // the add new text. The default is Add New for both hierarchical and non-hierarchical types. When internationalizing this string, please use a gettext context matching your post type. Example: _x('Add New', 'product');
-                , 'add_new_item' => null // the add new item text. Default is Add New Post/Add New Page
-                , 'new_item' => null // the new item text. Default is New Post/New Page
-                , 'view_item' => null // the view item text. Default is View Post/View Page
-                , 'search_items' => null // the search items text. Default is Search Posts/Search Pages
-                , 'not_found' => null //the not found text. Default is No posts found/No pages found
-                , 'not_found_in_trash' => null // the not found in trash text. Default is No posts found in Trash/No pages found in Trash
+                , 'singular_name' => 'Simpli Hello Snippet' // name for one object of this post type. Defaults to value of name
+                , 'menu_name' => 'Simpli Hello' // the menu name text. This string is the name to give menu items. Defaults to value of name
+                , 'all_items' => 'Snippets' //the all items text used in the menu. Default is the Name label
+                , 'add_new' => 'Add New Snippet' // 'Add New' text used in the menu title, and the button in the post editor. The default is Add New for both hierarchical and non-hierarchical types. When internationalizing this string, please use a gettext context matching your post type. Example: _x('Add New', 'product');
+                , 'add_new_item' => 'Add New Snippet' // the add new item text displayed on the menu page itself (not the menu text). Default is Add New Post/Add New Page
+                , 'new_item' => 'New Item' // the new item text. Default is New Post/New Page
+                , 'view_item' => 'View Snippet' // the view item text. This appears on the normally labeled 'View Item' button in the post editor page. Default is View Post/View Page
+                , 'search_items' => 'Search snippets' // the search items text. Default is Search Posts/Search Pages
+                , 'not_found' => 'No snippets Found' //the not found text. Default is No posts found/No pages found
+                , 'not_found_in_trash' => 'No snippets found in trash' // the not found in trash text. Default is No posts found in Trash/No pages found in Trash
                 , 'parent_item_colon' => null // the parent text. This string isn't used on non-hierarchical types. In hierarchical ones the default is
             ) //
-            , 'description' => null // A short descriptive summary of what the post type is
+            , 'description' => 'A snippet of text or html that can be inserted into any post using the Simpli Hello option' // A short descriptive summary of what the post type is
             , 'public' => true //Whether a post type is intended to be used publicly either via the admin interface or by front-end users.
             , 'exclude_from_search' => false //Whether to exclude posts with this post type from front end search results.
             , 'publicly_queryable' => true //If you set this to FALSE, you will find that you cannot preview/see your custom post (return 404)
@@ -160,7 +166,7 @@ class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Me
             , 'show_in_nav_menus' => true //
             , 'show_in_menu' => $parent_slug //Where to show the post type in the admin menu. show_ui must be true. false, does not show. true , top level, string -parent menu slug
             , 'show_in_admin_bar' => true //make same as show_in_menu
-            , 'menu_position' => null //
+            , 'menu_position' => $this->getPlugin()->getModule('Admin')->getMenuPosition() // The position in the menu order the post type should appear. show_in_menu must be true.
             , 'menu_icon' => $this->getPlugin()->getUrl() . '/admin/images/menu.png' //The url to the icon to be used for this menu.
             , 'capability_type' => null //The string to use to build the read, edit, and delete capabilities.
             , 'capabilities' => null //An array of the capabilities for this post type.
@@ -176,20 +182,20 @@ class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Me
             , 'can_export' => true //Can this post_type be exported.
         );
 
-        $this->register_post_type($this->getPlugin()->getSlug() . '_form', $args);
+        $this->_register_post_type($this->getPlugin()->getSlug() . '_snippet', $args);
     }
 
     /**
      * Register Post Type (Wrapper for wordpress method of the same name)
      *
-     * Creates a custom post type
+     * Creates a custom post type. This method should only be called from hookRegisterPostTypes()
      * Ref:http://codex.wordpress.org/Function_Reference/register_post_type
      *
      * @param string $post_type Post type. (max. 20 characters, can not contain capital letters or spaces
      * @param array An array of arguments as described below
      * @return void
      */
-    function register_post_type($post_type, $args) {
+   private function _register_post_type($post_type, $args) {
 
 
         $arg_defaults = array(
@@ -216,7 +222,7 @@ class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Me
             , 'show_in_nav_menus' => true //
             , 'show_in_menu' => true //Where to show the post type in the admin menu. show_ui must be true. false, does not show. true , top level, string -parent menu slug
             , 'show_in_admin_bar' => true //make same as show_in_menu
-            , 'menu_position' => null //
+            , 'menu_position' => null //The position in the menu order the post type should appear. show_in_menu must be true.
             , 'menu_icon' => null //The url to the icon to be used for this menu.
             , 'capability_type' => null //The string to use to build the read, edit, and delete capabilities.
             , 'capabilities' => null //An array of the capabilities for this post type.
@@ -276,7 +282,9 @@ class Simpli_Hello_Module_Menu15CustomPostType extends Simpli_Basev1c0_Plugin_Me
     public function hookAdminMenu() {
         $this->debug()->t();
 
-
+        if (!$this->CUSTOM_POST_EDITOR_ENABLED) {
+            return;
+        }
         /*
          * add the post editor
          */

@@ -15,6 +15,7 @@
  * @property string $DISABLED_MODULES An array of Module Names that you don't want loaded
  * @property string $DISABLED_ADDONS An array of Addon Names that you don't want loaded
  * @property string $ALWAYS_ENABLED_REGEX_PATTERN Modules matching this pattern will always be loaded regardless if the plugin is disabled from the Admin menu.
+ * @property boolean $DEBUG Whether to enable debug by loading the debug module. You will still need to ensure that the DebugConfig.php file has $this->turnOn() in the configuration.
  *
  *
  *
@@ -324,6 +325,10 @@ class Simpli_Basev1c0_Plugin {
          * For Debug to work, it must always be located under the /lib/Simpli/Hello folder or its equivilent and must be named Debug.php
          *
          */
+
+        if (!$this->DEBUG) {
+            return (new Simpli_Basev1c0_Phantom()); //return a phantom object which will silently ignore each call to the debug class. To optimize further, you should comment out all calls to the $this->debug() object using a regex search and replace  in your final released code.
+        }
         if (is_null($this->_debug)) {
             $class_namespace_parts = $this->getClassNamespaceParts();
             if (!file_exists($this->getDirectory() . '/lib/' . $class_namespace_parts[0] . '/' . $class_namespace_parts[1] . '/DebugConfig.php')) {
@@ -587,7 +592,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
      * @return mixed
      */
     public function getUserOption($user_option) {
-
+        $this->debug()->t();
         if (isset($this->_user_options[$user_option])) {
 
             return($this->_user_options[$user_option]);
@@ -1290,7 +1295,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
          * check to see if the module_name is enabled; if not, return.
          */
         if (!is_array($available_modules) || !isset($available_modules[$module_name])) {
-            $this->debug()->log('Will not attempt to load module \'' . $module_name . '\' , since it is has been manually disabled');
+            $this->debug()->log('Will not attempt to load module \'' . $module_name . '\' , since it is not available. Either there was a problem with loading it or it has been manually disabled');
             return false;
         }
 
@@ -1376,9 +1381,16 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
      * @return object $module
      */
     public function getModule($module_name) {
+        $this->debug()->t();
         if (!isset($this->_modules[$module_name])) {
             //attempt to load module
-            return($this->loadModule($module_name));
+            $loaded_result=$this->loadModule($module_name);
+            if ($loaded_result===false) {
+                $this->debug()->logError('Could not find Module  \'' . $module_name . '\' in  ' . get_class($this));
+            }
+
+
+            return($loaded_result);
         }
         return $this->_modules[$module_name];
     }
@@ -1978,6 +1990,18 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
                 , array(
                 )
         );
+
+
+        /*
+         * DEBUG
+         *
+         * An array of addon names that you dont want loaded
+         */
+        $this->setConfigDefault(
+                'DEBUG'
+                , false
+        );
+
     }
 
 }

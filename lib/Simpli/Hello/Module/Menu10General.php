@@ -9,7 +9,7 @@
  * @subpackage SimpliHello
  *
  */
-class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
+class Simpli_Hello_Module_Menu10General extends Simpli_Basev1c0_Plugin_Menu {
 
     /**
      * Add Hooks
@@ -101,7 +101,17 @@ class Simpli_Hello_Module_Menu10Settings extends Simpli_Basev1c0_Plugin_Menu {
          */
 
         $page_title = $this->getPlugin()->getName() . ' - General Settings';
-        $menu_title = array('menu' => $this->getPlugin()->getName(), 'sub_menu' => 'General Settings');
+
+        /*
+         * If this menu is a top level item, pass an array, with elements 'menu' and 'sub_menu'. We want
+         * an array so we can indicate the name of the main heading of the menu title, as well as the submenu name that you see
+         * when hovering over the main menu or after you click on it.
+         */
+
+
+ $menu_title = array('menu' => $this->getPlugin()->getName(), 'sub_menu' => 'General Settings');
+
+
         $capability = 'manage_options';
         $icon_url = $this->getPlugin()->getUrl() . '/admin/images/menu.png';
 

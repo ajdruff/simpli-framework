@@ -10,7 +10,7 @@
  * @subpackage SimpliHello
  *
  */
-class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module {
 
     /**
      * Post option Defaults
@@ -62,7 +62,6 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
          * Add our metabox
          */
         add_action('add_meta_boxes', array($this, 'hookAddMetaBoxToPost')); //use action add_meta_boxes
-
         //  add_action ('wp',array($this,'hookLoadUserOptions')); //wp is first reliable hook where $post object is available
 
         /*
@@ -119,7 +118,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
          *
          */
         $this->setUserOptionDefault(
-                'use_global_text', 'false'
+                'use_global_text', false
         );
 
 
@@ -136,6 +135,19 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
         $this->setUserOptionDefault(
                 'placement', 'default'
         );
+
+
+          /*
+         * Snippet
+           * The post->ID of the snippet to be used
+         *
+         *
+         */
+        $this->setUserOptionDefault(
+                'snippet', '0'
+        );
+
+
 
         /*
          * Test Checkbox
@@ -183,7 +195,6 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //
 //        echo $this->getPlugin()->getModule('Form')->text($field_name, $value, $label, $hint, $help, $template_id);
 //    }
-
 //    /**
 //     * Template Tag - Post Option
 //     *
@@ -196,7 +207,6 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //
 //        echo $this->getUserOption($name);
 //    }
-
 //    /**
 //     * Get Post Option
 //     *
@@ -233,12 +243,18 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 
         $post_user_options = $this->getUserOptions();
 
+
         if (isset($post_user_options[$name])) {
-            return($post_user_options[$name]);
+            $result = ($post_user_options[$name]);
         } else {
-            return null;
+            $result = null;
         }
+
+
+        $this->debug()->logVar('$post->getUserOption(' . $name . ') = ', $result);
+        return $result;
     }
+
 //
 //    /**
 //     * Template Tag Field Name
@@ -268,7 +284,6 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //
 //        return $this->getUseroptionName($accessor_name);
 //    }
-
 //    /**
 //     * Template Tag Field Label
 //     *
@@ -283,7 +298,6 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //
 //        echo '__NEW_LABEL__'; // replace with lookup of the option's label
 //    }
-
 //    /**
 //     * Get Field Label
 //     *
@@ -297,7 +311,6 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //
 //        return '__NEW_LABEL__'; // replace with lookup of the option's label
 //    }
-
 //    /**
 //     * Template Tag Field Help
 //     *
@@ -313,7 +326,6 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //        echo '__HELP_TEXT__'; // replace with lookup of the option's help
 //        //echo getUseroptionsName($accessor_name);
 //    }
-
 //    /**
 //     * Get Field Help
 //     *
@@ -328,7 +340,6 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
 //        return '__HELP_TEXT__'; // replace with lookup of the option's help
 //        //echo getUseroptionsName($accessor_name);
 //    }
-
 //    /**
 //     * Get Post Option Name
 //     *
@@ -367,7 +378,7 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
     public function getUserOptions() {
         $this->debug()->t();
 
-
+        $this->debug()->logVar('$this->_options = ', $this->_options);
         return $this->_options;
     }
 
@@ -516,37 +527,39 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
             'public' => true,
         );
         $post_types = get_post_types($args);
-        foreach ($post_types as $post_type) {
+        global $post;
+
+    //    foreach ($post_types as $post_type) {
+
+            /*
+             * Avoid recursion by not adding a snippet meta box
+             * on the snippet post type
+             */
+            if (!$post->post_type!=='simpli_hello_snippet') {
 
 
-/*
- * note if you want to reposition the metaboxes, chang ethe context from 'side' to 'normal' or vice versa
- * if the change didn't work, then you need to delete the 'meta-box-order_post' meta data in the wp_usermeta table
- * and try again.
- * if you just need to change the location temporarily to make more room for troubleshooting messages, you can just select 'Number of columns' to 1 from the screen options on the post editor page.
- */
+
+            /*
+             * note if you want to reposition the metaboxes, chang ethe context from 'side' to 'normal' or vice versa
+             * if the change didn't work, then you need to delete the 'meta-box-order_post' meta data in the wp_usermeta table
+             * and try again.
+             * if you just need to change the location temporarily to make more room for troubleshooting messages, you can just select 'Number of columns' to 1 from the screen options on the post editor page.
+             */
 
 
             add_meta_box(
                     $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
                     , __($this->getPlugin()->getName(), $this->getPlugin()->getTextDomain()) //title of the metabox.
                     , array($this, 'renderMetaBoxTemplate')//function that prints the html
-                    , $post_type// post_type when you embed meta boxes into post edit pages
+                    , $post->post_type// post_type when you embed meta boxes into post edit pages
                     , 'advanced' //normal advanced or side The part of the page where the metabox should show
                     , 'high' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                     , null //$metabox['args'] in callback function
                     //,  array('path' => $this->getPlugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
             );
-
-
-        }
-
-
+                 }
+      //  }
     }
-
-
-
-
 
     /**
      * Save  option to post or page
@@ -669,10 +682,11 @@ class Simpli_Hello_Module_Post extends Simpli_Basev1c0_Plugin_Module {
     private function pageCheck() {
         $this->debug()->t();
 
-
+        //Always return true when  not in admin since there is only one hook is used in front end, and it will only be fired when we need it ('the_post') .
         if (!is_admin()) {
-            return;
-        } //no page check necessary if not in admin since there is only one hook is used in front end, and it will only be fired when we need it ('the_post') .
+            $this->debug()->log('Not admin, so forcing pageCheck to true');
+            return true;
+        }
 
         /*
          * use static variable so we dont need to call the method each time.

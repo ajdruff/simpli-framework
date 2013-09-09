@@ -159,7 +159,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
 
         $links[1] = 'Simpli Framework ' . $this->getPlugin()->getFrameworkVersion() . ' / ' . $this->getPlugin()->getBaseClassVersion();
 
-        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->getPlugin()->getSlug() . '_' . $this->getPlugin()->getModule('Menu10Settings')->getSlug() . '" title="' . $this->getPlugin()->getName() . ' Settings">Settings</a>';
+        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->getPlugin()->getSlug() . '_' . $this->getPlugin()->getModule('Menu10General')->getSlug() . '" title="' . $this->getPlugin()->getName() . ' Settings">Settings</a>';
         $links[] = '<a href="http://wordpress.org/extend/plugins/' . $this->getPlugin()->getSlug() . '/faq/" title="Frequently Asked Questions">FAQ</a>';
         $links[] = '<a href="http://wordpress.org/tags/' . $this->getPlugin()->getSlug() . '#postform" title="Support">Support</a>';
         $links[] = '<a href="your paypal url here" title="Support this plugin\'s development with a donation!">Donate</a>';
@@ -181,7 +181,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
         $this->debug()->t();
 
 
-        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->getPlugin()->getSlug() . '_' . $this->getPlugin()->getModule('Menu10Settings')->getSlug() . '">Settings</a>';
+        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->getPlugin()->getSlug() . '_' . $this->getPlugin()->getModule('Menu10General')->getSlug() . '">Settings</a>';
         return $links;
     }
 

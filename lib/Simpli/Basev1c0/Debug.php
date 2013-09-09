@@ -205,12 +205,12 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $line = $props['line'];
         $file = $props['file'];
         $ds_line = $props['ds_line'];
-        if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
+        if (!$this->_inFilters($props, $type = 'info', $force_output)) {
             return;
         }
         $template = ' <div style="color:red">Debug Stop - to continue script, remove the $this->debug()->stop() call on line {DS_LINE} in file {BASENAME_FILE} <br/><span style="color:black;">( {FILE} )</span></div>';
         $basename_file = basename($file);
-        $tags = (compact('ds_line','line', 'file', 'basename_file'));
+        $tags = (compact('ds_line', 'line', 'file', 'basename_file'));
         $stop_message = $this->getPlugin()->getTools()->crunchTpl($tags, $template);
 
         $this->_log($stop_message, $props, false, 'all', 'info');
@@ -235,7 +235,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         /*
          * check filters and debug state
          */
-        if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
+        if (!$this->_inFilters($props, $type = 'info', $force_output)) {
             return;
         }
         $this->_log($content, $props, $use_prefix = true, $target = 'browser');
@@ -259,7 +259,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         /*
          * check filters and debug state
          */
-        if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
+        if (!$this->_inFilters($props, $type = 'info', $force_output)) {
             return;
         }
         $this->_log($content, $props, $use_prefix = true, $target = 'console', $type = 'info');
@@ -283,7 +283,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         /*
          * check filters and debug state
          */
-        if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
+        if (!$this->_inFilters($props, $type = 'error', $force_output)) {
             return;
         }
         $this->_log($content, $props, $use_prefix = true, $target = 'console', $type = 'error');
@@ -310,7 +310,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         /*
          * check filters and debug state
          */
-        if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
+        if (!$this->_inFilters($props, $type = 'info', $force_output)) {
             return;
         }
         $this->_log($content, $props, $use_prefix = true, $target = 'file', $type = 'info');
@@ -340,12 +340,43 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         /*
          * check filters and debug state
          */
-        if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
+        if (!$this->_inFilters($props, $type = 'info', $force_output)) {
             return;
         }
 
 
         $this->_log($content, $props, $use_prefix = true, $target = 'all', $type = 'info');
+    }
+
+    /**
+     * Log
+     *
+     * Log content to all targets
+     *
+     * @param string $content The html or plain text to be logged
+     * @param boolean $force_output True to override any blocking filters so as to force output to the log.
+     * @return void
+     */
+    public function logError($content, $force_output = false) {
+
+
+
+
+
+        $props = $this->_getMethodProperties();
+
+
+//        if ($props['method']==='filter') {
+//            echo '<br> class =|' . $props['class'].'|';
+//        }
+        /*
+         * check filters and debug state
+         */
+        if (!$this->_inFilters($props, $type = 'error', $force_output)) {
+            return;
+        }
+
+        $this->_log($content, $props, $use_prefix = true, $target = array('browser', 'file', 'console'), $type = 'error');
     }
 
     /**
@@ -374,7 +405,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         /*
          * check filters and debug state
          */
-        if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
+        if (!$this->_inFilters($props, $type = 'info', $force_output)) {
             return;
         }
 
@@ -403,7 +434,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      * @param boolean $force_output True Overrides filter settings
      * @return void
      */
-    public function logVar($var_name, $var, $force_output = false, $show_arrays = true, $show_objects = true,$expandable=true) {
+    public function logVar($var_name, $var, $force_output = false, $show_arrays = true, $show_objects = true, $expandable = true) {
 
 
 
@@ -414,7 +445,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         /*
          * check filters and debug state
          */
-        if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
+        if (!$this->_inFilters($props, $type = 'info', $force_output)) {
             return;
         }
 
@@ -429,7 +460,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             $var_name = '<br/> ' . $var_name;
         }
 
-        $content = $this->_logVar($var_name, $var, $force_output, $show_arrays, $show_objects,$expandable);
+        $content = $this->_logVar($var_name, $var, $force_output, $show_arrays, $show_objects, $expandable);
 
         $this->_log($content, $props, $use_prefix = true, $target = 'browser', $type = 'info');
     }
@@ -448,7 +479,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      *
      * @return void
      */
-    private function _logVar($var_name, $var, $force_output, $show_arrays = null, $show_objects = null,$expandable=true) {
+    private function _logVar($var_name, $var, $force_output, $show_arrays = null, $show_objects = null, $expandable = true) {
 
         /*
          * If allow_arrays is not set explicitly, use the configured value
@@ -490,8 +521,8 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
              * breaks (depending if you use a stop() or die() statement or if fatal errors occur in the code you are
              * troubleshooting)
              */
-            if ($expandable===true) {
-                          $template = '
+            if ($expandable === true) {
+                $template = '
         <div style="display:inline-block;">
             {TYPE}&nbsp;<a class="simpli_debug_citem" href="#"><span>More</span><span style="visibility:hidden;display:none">Less</span></a>
             <div style="visibility:hidden;display:none;background-color:#E7DFB5;">
@@ -500,8 +531,8 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         </div>
 
 ';
-            }else{
-                            $template = '
+            } else {
+                $template = '
         <div style="display:block;">
             {TYPE}&nbsp;
             <div style="visibility:visible;display:block;background-color:#E7DFB5;">
@@ -567,7 +598,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
              * variable value is a boolean, so we can differentiate from an empty string
              */
             if (is_bool($var)) {
-                $var=($var)? $var . '(true)': $var .'(false)';
+                $var = ($var) ? $var . '(true)' : $var . '(false)';
             }
             $content = $var_name . htmlspecialchars($var);
         }
@@ -698,7 +729,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         /*
          * check if in filters
          */
-        if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
+        if (!$this->_inFilters($props, $type = 'info', $force_output)) {
 
             return;
         }
@@ -818,7 +849,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $this->_defined_vars_stack[$props['class']][$props['method']][] = $string_defined_vars;
 
 
-        if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
+        if (!$this->_inFilters($props, $type = 'info', $force_output)) {
             return;
         }
 
@@ -982,7 +1013,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
+        if (!$this->_inFilters($props, $type = 'trace', $force_output)) {
             return;
         }
 
@@ -1020,7 +1051,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        if (!$this->_inFilters($props['class'], $props['method'], $force_output)) {
+        if (!$this->_inFilters($props, $type = 'trace', $force_output)) {
             return;
         }
 
@@ -1057,10 +1088,10 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
         if ($this->getOption('expand_on_click')) {
-                 $template=$this->getOption('backtrace_template_expand_on_click');
-        }else{
+            $template = $this->getOption('backtrace_template_expand_on_click');
+        } else {
 
-        $template=$this->getOption('backtrace_template_show_without_click') ;
+            $template = $this->getOption('backtrace_template_show_without_click');
         }
 
         if ($this->getOption('backtrace_enabled')) {
@@ -1713,24 +1744,20 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return void
      */
-    private function _getPrefix($line, $class, $method, $file, $target) {
+    private function _getPrefix($props, $target) {
 
         $prefix = '';
 
 
 
+
         if ($this->getOption($target . '_prefix_enabled')) {
             $template = $this->getOption($target . '_prefix_template');
-            $tags = array(
-                '{PLUGIN_SLUG}' => $this->getPlugin()->getSlug(),
-                '{TIME}' => date($this->getOption('prefix_time_format')),
-                '{LINE}' => $line,
-                '{CLASS}' => $class,
-                '{METHOD}' => $method,
-                '{FILE}' => $file,
-            );
+            $tags = $props;
+            $tags['time'] = date($this->getOption('prefix_time_format'));
+            $tags['plugin_slug'] = $this->getPlugin()->getSlug();
 
-            $prefix = str_ireplace(array_keys($tags), array_values($tags), $template);
+            $prefix = $this->getPlugin()->getTools()->crunchTpl($tags, $template); //str_ireplace(array_keys($tags), array_values($tags), $template);
         }
 
         return $prefix;
@@ -1763,7 +1790,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          * Output Inline
          */
         if ($this->getOption('output_to_inline')) {
-            /* must wrap in div or layout will look like gargage  */
+            /* must wrap in div or layout will look like garbage  */
             echo '<div>' . $browser_output . '</div>';
         }
         /*
@@ -1815,9 +1842,22 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
                  * add prefix
                  */
 
-                $prefix = $this->_getPrefix($props['ds_line'], $props['class'], $props['method'], $props['file'], 'console');
+                $prefix = $this->_getPrefix($props, 'console');
                 $log_entry['content'] = $prefix . $log_entry['content'];
             }
+
+
+
+            if ($log_entry['type'] === 'error') {
+
+                $error_template = $this->getOption('error_template');
+
+                $tags['PLUGIN_SLUG'] = $this->getPlugin()->getSlug();
+                $tags['ERROR_MESSAGE'] = $log_entry['content'];
+                $tags = array_merge($tags, $props);
+                $log_entry['content'] = $this->getPlugin()->getTools()->crunchTPL($tags, $error_template);
+            }
+
             /*
              * First, convert any new lines introduced by the whitespaces in the source code to <br/> tags
              */
@@ -1877,9 +1917,19 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
                  * add prefix
                  */
 
-                $prefix = $this->_getPrefix($props['ds_line'], $props['class'], $props['method'], $props['file'], 'file');
+                $prefix = $this->_getPrefix($props, 'file');
                 $log_entry['content'] = $prefix . ' ' . $log_entry['content'];
             }
+            if ($log_entry['type'] === 'error') {
+
+                $error_template = $this->getOption('error_template');
+
+                $tags['PLUGIN_SLUG'] = $this->getPlugin()->getSlug();
+                $tags['ERROR_MESSAGE'] = $log_entry['content'];
+                $tags = array_merge($tags, $props);
+                $log_entry['content'] = $this->getPlugin()->getTools()->crunchTPL($tags, $error_template);
+            }
+
 
             /*
              * Convert to text to strip out html tags but preserve new lines
@@ -1918,50 +1968,65 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      */
     protected function _log($content, $props, $use_prefix = true, $target = 'browser', $type = 'info') {
 
+
+
+
+
         /*
-         * allows only trace through. all other logs are not printed.
+         * If logging disabled, then let only errors and traces through
          */
         if (!$this->getOption('logging_enabled')) {
-            if ($type !== 'trace') {
+            if ($type !== 'trace' || 'error' !== $type) {
                 return;
             }
         }
 
+
         $log_entry = compact('props', 'content', 'use_prefix', 'target', 'type');
 
+        /*
+         * turn the target into an array if not already
+         */
+        if (!is_array($log_entry['target'])) {
+            $log_entry['target'] = array($log_entry['target']);
+        }
 
-        switch ($log_entry['target']) {
+        foreach ($log_entry['target'] as $target) {
 
-            case 'browser':
 
-                if ($this->getOption('output_to_inline') || $this->getOption('output_to_footer')) {
-                    $this->_printToBrowser($log_entry);
-                }
-                break;
-            case 'file':
-                if ($this->getOption('output_to_file')) {
-                    $this->_printToFile($log_entry);
-                }
-                break;
-            case 'console':
-                if ($this->getOption('output_to_console')) {
+            switch ($target) {
 
-                    $this->_printToConsole($log_entry);
-                }
-                break;
+                case 'browser':
 
-            case 'all':
-                if ($this->getOption('output_to_inline') || $this->getOption('output_to_footer')) {
-                    $this->_printToBrowser($log_entry);
-                }
-                if ($this->getOption('output_to_file')) {
-                    $this->_printToFile($log_entry);
-                }
-                if ($this->getOption('output_to_console')) {
+                    if ($this->getOption('output_to_inline') || $this->getOption('output_to_footer')) {
+                        $this->_printToBrowser($log_entry);
+                    }
+                    break;
+                case 'file':
+                    if ($this->getOption('output_to_file')) {
+                        $this->_printToFile($log_entry);
+                    }
+                    break;
+                case 'console':
+                    if ($this->getOption('output_to_console')) {
 
-                    $this->_printToConsole($log_entry);
-                }
-                break;
+                        $this->_printToConsole($log_entry);
+                    }
+                    break;
+
+                case 'all':
+                    if ($this->getOption('output_to_inline') || $this->getOption('output_to_footer')) {
+                        $this->_printToBrowser($log_entry);
+                    }
+                    if ($this->getOption('output_to_file')) {
+                        $this->_printToFile($log_entry);
+                    }
+                    if ($this->getOption('output_to_console')) {
+
+                        $this->_printToConsole($log_entry);
+                    }
+                    break;
+            }
         }
     }
 
@@ -1998,10 +2063,19 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         if ($log_entry['use_prefix'] === true) {
 
 
-            $prefix = $this->_getPrefix($props['ds_line'], $props['class'], $props['method'], $props['file'], 'browser');
+            $prefix = $this->_getPrefix($props, 'browser');
         }
 
 
+        if ($log_entry['type'] === 'error') {
+
+            $error_template = $this->getOption('error_template');
+
+            $tags['PLUGIN_SLUG'] = $this->getPlugin()->getSlug();
+            $tags['ERROR_MESSAGE'] = $log_entry['content'];
+            $tags = array_merge($tags, $props);
+            $log_entry['content'] = $this->getPlugin()->getTools()->crunchTPL($tags, $error_template);
+        }
 
 
 
@@ -2138,14 +2212,14 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return boolean
      */
-    protected function _inFilters($class, $method, $force_output) {
+    protected function _inFilters($props, $log_type, $force_output) {
 
 //$args = func_get_args();
         #init
         /*
          * combine class and method so we can search on the combined namespace
          */
-        $class_method = "$class::$method";
+        $class_method = $props['class'] . '::' . $props['method'];
 
         /*
          * dont debug if debugging is off
@@ -2158,18 +2232,26 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
 
+
         /*
          * Do not do any logging if ajax request
          * AJAX check
          */
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 
-            if(!$this->getOption('debug_ajax_enabled')){return false;};
+            if (!$this->getOption('debug_ajax_enabled')) {
+                return false;
+            };
             /* special ajax here */
-
         }
-
-
+        /*
+         * Always Show Errors
+         */
+        if ($this->getOption('always_show_errors')) {
+            if ($log_type === 'error') {
+                return true;
+            }
+        }
 
         /*
          * If Method Filters are disabled,
@@ -2193,11 +2275,11 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          */
         $filters = $this->getFilters();
 
-        if (in_array($class, array_keys($filters['enabled']))) {
+        if (in_array($props['class'], array_keys($filters['enabled']))) {
             return(true);
         }
 
-        if (in_array($method, array_keys($filters['enabled']))) {
+        if (in_array($props['method'], array_keys($filters['enabled']))) {
             return(true);
         }
 
@@ -2206,6 +2288,28 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             return(true);
         }
 
+
+        /*
+         * Regex Filter Check
+         *
+         * Because we allo regex patterns, we'll
+         * do a final search to see if any of the filters represents a
+         * regex that matches either the class or the method.
+         *
+         *
+         */
+        //  echo '<pre>', print_r($filters, true), '</pre>';
+        foreach (array_keys($filters['enabled']) as $filter_regex_pattern) {
+
+
+            if (preg_match("/" . $filter_regex_pattern . "/", $props['class']) === 1) {
+                return true;
+            }
+
+            if (preg_match("/" . $filter_regex_pattern . "/", $props['method']) === 1) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -2669,6 +2773,22 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $this->_setDefaultOption('output_to_inline', false);
 
 
+        /*
+         * Always Show LogErrors
+         *  regardless of filtering
+         */
+
+        $this->_setDefaultOption('always_show_errors', true);
+
+        /*
+         * Error Template
+         *
+         */
+
+        $this->_setDefaultOption('error_template', '<div ><em style="color:red;"> Error ( Plugin {PLUGIN_SLUG} ) </em> {ERROR_MESSAGE}  <p>Calling method : {CALLING_CLASS}::{CALLING_METHOD}() </p>on Line {CALLING_LINE} in file {CALLING_FILE}</div>');
+
+
+
 
         /*
          * Output To Footer
@@ -2820,7 +2940,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          * whether to allow for debugging during an ajax call
          * normally,we dont want this since the output would interfere with javascript
          */
-$this->_setDefaultOption('debug_ajax_enabled',false);
+        $this->_setDefaultOption('debug_ajax_enabled', false);
 
 
         /*
@@ -2962,12 +3082,11 @@ $this->_setDefaultOption('debug_ajax_enabled',false);
             </div>');
 
 
-/*
- * Backtrace Template
- */
+        /*
+         * Backtrace Template
+         */
 
-$template=$this->_setDefaultOption('backtrace_template_expand_on_click',
-        '<div style="padding:5px;text-align:left;display: inline-block;">
+        $template = $this->_setDefaultOption('backtrace_template_expand_on_click', '<div style="padding:5px;text-align:left;display: inline-block;">
  <strong style = "font-size:medium"></strong> <em "font-size:small"></em>
 <a class="simpli_debug_citem" href="#"><span><em>{EXPAND_TEXT}</em></span><span style="visibility:hidden;display:none"><em>{COLLAPSE_TEXT}</em></span></a>
 
@@ -2984,12 +3103,8 @@ $template=$this->_setDefaultOption('backtrace_template_expand_on_click',
 </div>
 </div>
 '
-
-
-
         );
-$template=$this->_setDefaultOption('backtrace_template_show_without_click',
-        '<div style="padding:5px;text-align:left;display: inline-block;">
+        $template = $this->_setDefaultOption('backtrace_template_show_without_click', '<div style="padding:5px;text-align:left;display: inline-block;">
  <strong style = "font-size:medium"></strong> <em "font-size:small"></em>
 
 
@@ -3004,8 +3119,6 @@ $template=$this->_setDefaultOption('backtrace_template_show_without_click',
 
 </div>
 </div>'
-
-
         );
 
         /*
@@ -3033,15 +3146,13 @@ $template=$this->_setDefaultOption('backtrace_template_show_without_click',
          * available tags:
          * {PLUGIN_SLUG}
          * {TIME}
-         * {LINE}
-         * {CLASS}
-         * {METHOD}
-         * {FILE}
+         * any item in the $props array
+
          */
         $this->_setDefaultOption('browser_prefix_enabled', true);
         $this->_setDefaultOption('console_prefix_enabled', true);
         $this->_setDefaultOption('file_prefix_enabled', true);
-        $this->_setDefaultOption('browser_prefix_template', '<div style="font-size:x-small"<em>{CLASS}::{METHOD}()/{LINE}</em>&nbsp;     </div>');
+        $this->_setDefaultOption('browser_prefix_template', '<div style="font-size:small">{CLASS}::{METHOD}()/{DS_LINE}&nbsp;     </div><div style="font-size:x-small"><em>(called from : {CALLING_CLASS}::{CALLING_METHOD}(), line {CALLING_LINE}</em>)</div><br/>');
         $this->_setDefaultOption('console_prefix_template', '{TIME} | {CLASS}->{METHOD}() | {PLUGIN_SLUG} : ');
         $this->_setDefaultOption('file_prefix_template', '{TIME} {METHOD}/{LINE}');
         $this->_setDefaultOption('prefix_time_format', 'Y-m-d H:i:s');
@@ -3311,7 +3422,7 @@ $template=$this->_setDefaultOption('backtrace_template_show_without_click',
      *
      */
     public function hookLogAllActions() {
- $props = $this->_getMethodProperties();
+        $props = $this->_getMethodProperties();
         static $hook_count;
         $hook_count++;
 
@@ -3435,8 +3546,8 @@ $template=$this->_setDefaultOption('backtrace_template_show_without_click',
 
 
 
-      //  $this->_log($content, null, null, null, current_filter(), true, 'browser', 'info');
-        $this->_log($content, $props, $use_prefix = true, $target = 'browser', $type = 'info') ;
+        //  $this->_log($content, null, null, null, current_filter(), true, 'browser', 'info');
+        $this->_log($content, $props, $use_prefix = true, $target = 'browser', $type = 'info');
     }
 
     /**

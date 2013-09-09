@@ -45,8 +45,12 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Debug {
         //
 
 //        $this->debug()->setMethodFilter('isScreen', true);
-$this->debug()->setMethodFilter('redirectAdd', false);
-$this->debug()->setMethodFilter('_demoDebug', true);
+$this->debug()->setMethodFilter('.*Menu.*', false);
+$this->debug()->setMethodFilter('addMenuPage', false);
+
+$this->debug()->setMethodFilter('setMenuLevel', false);
+$this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin_Menu::config', false);
+
 //
 //$this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin_Menu', true);
 
@@ -103,12 +107,17 @@ $this->debug()->setMethodFilter('_demoDebug', true);
 
 
         $this->setOption('logging_enabled', true);
+        $this->setOption('always_show_errors',true); /* always show errors, regardless of filtering */
+
+        $this->setOption('error_template','<div ><em style="color:red;"> Error ( Plugin {PLUGIN_SLUG} ) </em> {ERROR_MESSAGE}  <p>Calling method : {CALLING_CLASS}::{CALLING_METHOD}() </p>on Line {CALLING_LINE} in file {CALLING_FILE}</div>');
+
+
         $this->debug()->setOption('trace_enabled', false);
         $this->debug()->setOption('defined_vars_enabled', true);
         $this->debug()->setOption('backtrace_enabled', true);
         $this->debug()->setOption('visual_backtrace_enabled', false);
 
-        $this->setOption('trace_output_format', 'simple');  //options are 'normal'(default), 'text' and 'simple'
+        $this->setOption('trace_output_format', 'normal');  //options are 'normal'(default), 'text' and 'simple'
 
 
         $this->setOption('log_all_actions', false);
@@ -116,7 +125,7 @@ $this->debug()->setMethodFilter('_demoDebug', true);
         $this->debug()->setOption('show_arrays', true);
         $this->debug()->setOption('show_objects', false);
 
-$this->setOption('debug_ajax_enabled',true);
+$this->setOption('debug_ajax_enabled',false);
 
  $this->setOption('expand_on_click', true);
 
@@ -133,7 +142,7 @@ $this->setOption('debug_ajax_enabled',true);
         /*
          * Demo Enabled
          */
-        $this->setOption('demo_enabled', false);
+        $this->setOption('demo_enabled', true);
 
         /*
          * Excluded Functions Filter Enabled

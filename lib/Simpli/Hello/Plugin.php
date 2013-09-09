@@ -128,7 +128,7 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
 
 
         /*
-         * Disabled Modules
+         * DISABLED_MODULES
          *
          * Disable any modules that you don't want loaded
          * Usage Example:
@@ -139,13 +139,13 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
          */
         $this->setConfig(
                 'DISABLED_MODULES'
-                , array('QueryVars', 'Shortcodes', 'ExampleModule','Menu15CustomPostType')
+                , array('QueryVars', 'Shortcodes', 'ExampleModule')
         );
 
 
 
         /*
-         * Set Always Regex Enabled Pattern
+         * ALWAYS_ENABLED_REGEX_PATTERN
          *
          * sets the regex pattern that allows matching modules to remain loaded even after the user selects 'disabled' from the plugin options. This allows the user to continue to acccess the admin options to re-enable the plugin. Must be set prior to the call to loadModules or it will be igored.
          */
@@ -157,7 +157,7 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
 
 
         /*
-         * Disabled Addons
+         * DISABLED_ADDONS
          *
          * Disable any Addons that you don't want loaded.
          */
@@ -165,6 +165,14 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
                 'DISABLED_ADDONS'
                 , array()
         );
+
+
+                $this->setConfig(
+                'DEBUG'
+                , true
+        );
+
+
     }
 
     /**

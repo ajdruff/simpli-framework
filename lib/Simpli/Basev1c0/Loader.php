@@ -269,7 +269,22 @@ class Simpli_Basev1c0_Loader {
 // do not use the slower 'require_once' since autoload tracks loading.
             $file = dirname($this->getPluginFilePath()) . '/lib/' . $subdirectory_path . '/' . $filename;
             $file = $path = str_replace('\\', '/', $file); //quick and dirty normalize path
-            require $file; // do not use file_exists for performance reasons
+
+            $require_result=require $file; // do not use file_exists for performance reasons
+
+            if(!class_exists($class) && (stripos($class,'Interface')===false)){
+
+
+                echo '<div ><em style="color:red;">Class File and Class Name Mismatch. </em> Check to make sure that the file name for '. basename($file) .' is included in its class\'s declared name .</div>';
+;}
+
+
+
+
+
+
+
+          //  $this->debug()->logVar('$require_result = ', $require_result,true);
 //            if (file_exists($file)) {
 //                echo '<br> Including class ' . $class . ' file  = ' . $file;
 //                require $file;

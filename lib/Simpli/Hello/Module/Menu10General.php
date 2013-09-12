@@ -119,12 +119,13 @@ class Simpli_Hello_Module_Menu10General extends Simpli_Basev1c0_Plugin_Menu {
     }
 
     /**
-     * Add meta boxes
+     * Hook Add Meta Boxes
      *
+     * Hook Function to add meta boxes to the current post
      * @param none
      * @return void
      */
-    public function add_meta_boxes() {
+    public function hookAddMetaBoxes() {
         $this->debug()->t();
 
 

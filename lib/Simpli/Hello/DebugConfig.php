@@ -46,14 +46,14 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Debug {
 
 //        $this->debug()->setMethodFilter('isScreen', true);
 $this->debug()->setMethodFilter('.*Menu.*', false);
-$this->debug()->setMethodFilter('addMenuPage', false);
+$this->debug()->setMethodFilter('.*PostUserOptions.*', false);
 
-$this->debug()->setMethodFilter('setMenuLevel', false);
-$this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin_Menu::config', false);
+$this->debug()->setMethodFilter('Simpli_Hello_Module_PostUserOptions::pageCheck', false);
+$this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Themes_Admin_Module_FilterOptions::_commonFilter', false);
 
 //
-//$this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin_Menu', true);
-
+$this->debug()->setMethodFilter('isScreen', false);
+$this->debug()->setMethodFilter('hook*', false);
         //addPostEditor
 //        $this->debug()->setMethodFilter('lines2array', false);
 //        $this->debug()->setMethodFilter('el_sc', false);
@@ -113,8 +113,8 @@ $this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin_Menu::config', false);
 
 
         $this->debug()->setOption('trace_enabled', false);
-        $this->debug()->setOption('defined_vars_enabled', true);
-        $this->debug()->setOption('backtrace_enabled', true);
+        $this->debug()->setOption('defined_vars_enabled', false);
+        $this->debug()->setOption('backtrace_enabled', false);
         $this->debug()->setOption('visual_backtrace_enabled', false);
 
         $this->setOption('trace_output_format', 'normal');  //options are 'normal'(default), 'text' and 'simple'
@@ -125,9 +125,9 @@ $this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin_Menu::config', false);
         $this->debug()->setOption('show_arrays', true);
         $this->debug()->setOption('show_objects', false);
 
-$this->setOption('debug_ajax_enabled',false);
+$this->setOption('debug_ajax_enabled',true);
 
- $this->setOption('expand_on_click', true);
+ $this->setOption('expand_on_click', false);
 
         /*
          * Debug Output
@@ -142,7 +142,7 @@ $this->setOption('debug_ajax_enabled',false);
         /*
          * Demo Enabled
          */
-        $this->setOption('demo_enabled', true);
+        $this->setOption('demo_enabled', false);
 
         /*
          * Excluded Functions Filter Enabled
@@ -189,19 +189,39 @@ $this->setOption('debug_ajax_enabled',false);
 
         $this->setOption('action_inclusion_filter_enabled', true);
         $this->setOption('action_inclusion_filter', array_merge(
-                        $this->getOption('action_inclusion_filter'), array('simpli_addons_simpli_forms_init'
-                            ,'pre_get_posts',
+                        $this->getOption('action_inclusion_filter'),
+
+                array(
+                              'pre_get_posts',
+                            'parse_query'
+                            ,'send_headers'
+                            ,'wp_headers'
+                            ,'parse_request'
+                            ,'query_vars'
+                            ,'current_screen'
+
+                    )
+                )
+        );
+/* inclusion filter set/query variables
+ *                             ,'pre_get_posts',
                             'parse_query'
                             ,'send_headers'
                             ,'wp_headers'
                             ,'parse_request'
                             ,'query_vars'
                             ,'query'
-                            ,'current_screen')
-                )
-        );
+                            ,'current_screen'
+ */
+
+  /*
+   * Inclusion Filter Set ( current_screen / metaboxes)
+                            ,'add_meta_boxes'
+                    ,'current_screen'
+   */
 
 
+        /*
         /*
          * Javascript Source Code
          * Set to True to use the WordPress source versions

@@ -434,7 +434,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      * @param boolean $force_output True Overrides filter settings
      * @return void
      */
-    public function logVar($var_name, $var, $force_output = false, $show_arrays = true, $show_objects = true, $expandable = true) {
+    public function logVar($var_name, $var, $force_output = false, $show_arrays = true, $show_objects = true, $expandable = null) {
 
 
 
@@ -479,7 +479,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
      *
      * @return void
      */
-    private function _logVar($var_name, $var, $force_output, $show_arrays = null, $show_objects = null, $expandable = true) {
+    private function _logVar($var_name, $var, $force_output, $show_arrays = null, $show_objects = null, $expandable = null) {
 
         /*
          * If allow_arrays is not set explicitly, use the configured value
@@ -494,7 +494,10 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             $show_objects = $this->getOption('show_objects');
         }
 
-
+        if (is_null($expandable)) {
+            $expandable=$this->getOption('expand_on_click');
+      
+        }
 #init
 
 
@@ -581,6 +584,21 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
                     $arr_result[$key] = str_replace(array_keys($tags), array_values($tags), $template);
                 } else {
+                    if (is_bool($value)) {
+                        $value = ($value) ? $value . '(true)' : $value . '(false)';
+                    }
+
+                    /*
+                     * spell out 'null' if the string is null,
+                     * otherwise
+                     */
+
+                    if (is_null($value)) {
+                        $value =  '(null)';
+                    }
+                    if ($value === '') {
+                        $value = '(empty string)';
+                    }
                     $arr_result[$key] = htmlspecialchars($value);
                 }
             }
@@ -599,6 +617,18 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
              */
             if (is_bool($var)) {
                 $var = ($var) ? $var . '(true)' : $var . '(false)';
+            }
+
+            /*
+             * spell out 'null' if the string is null,
+             * otherwise
+             */
+
+            if (is_null($var)) {
+                $var = (string) '(null)';
+            }
+            if ($var === '') {
+                $var = (string) '(empty string)';
             }
             $content = $var_name . htmlspecialchars($var);
         }

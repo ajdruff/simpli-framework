@@ -42,13 +42,18 @@ $setting_name=$atts['name'];//capture the name before it gets converted to an ar
          */
         $atts['name']=$this->getPlugin()->getSlug() . '[' . $atts['name'] .']';
 
-            $atts['selected'] =  $this->getPlugin()->getModule('Post')->getUserOption($setting_name);
+            $atts['selected'] =  $this->getPlugin()->getModule('PostUserOptions')->getUserOption($setting_name);
 
 
-            $atts['value'] =  $this->getPlugin()->getModule('Post')->getUserOption($setting_name);
+            $atts['value'] =  $this->getPlugin()->getModule('PostUserOptions')->getUserOption($setting_name);
 
-            $this->debug()->logVar('$atts = ', $atts);
 
+
+
+            if ($atts['name']==='simpli_hello[text]') {
+                   $this->debug()->logVar('$setting_name = ', $setting_name);
+                $this->debug()->logVar('$atts = ', $atts);
+            }
         return (compact('scid','atts', 'tags'));
     }
 

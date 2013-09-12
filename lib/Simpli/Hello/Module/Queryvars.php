@@ -38,7 +38,7 @@
 
 
 
-class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Hello_Module_QueryVars extends Simpli_Basev1c0_Plugin_Module {
 
     private $_query_var_prefix;
     private $_query_var_suffixes = array();
@@ -87,17 +87,17 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
          *
          *
          *
-         * Several Examples Follow, but you'll need to add your own
+         * Several Examples Follow (need to uncomment to use), but you'll need to add your own
          * Format:
          * add_action($this->_query_var . '_action' . '<ActionValuePassedInQuery>', array($this, '<Method>'));
-         */
+
 
         add_action($this->_query_var_prefix . '_action' . '_sayHello', array($this, 'sayHello')); // Example 1: ?simpli_hello_action=sayHello
         add_action($this->_query_var_prefix . '_action' . '_sayGoodbye', array($this, 'sayGoodbye')); //Example 2: ?simpli_hello_action=sayGoodbye
         add_action($this->_query_var_prefix . '_action' . '_phpInfo', array($this, 'phpInfo')); // Example 3: ?simpli_hello_action=phpInfo
         add_action($this->_query_var_prefix . '_action' . '_test', array($this, 'test')); // Example 3: ?simpli_hello_action=phpInfo
 
-
+   */
         /*
          *
          * Add Pretty Url Hook
@@ -131,7 +131,7 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
          *
          */
 
-        $this->_query_var_prefix = $this->getPlugin()->getSlug();
+        $this->_query_var_prefix = $this->getPlugin()->QUERY_VAR;
         $this->_query_var_suffixes = array('action', 'page');
 
         /*
@@ -255,11 +255,16 @@ echo $this->getPlugin()->getTools()->url2dir(admin_url());
     function registerQueryVar($query_vars) {
         $this->debug()->t();
 
+/*
+ * register the Plugin's Query Var
+ */
+        array_push($query_vars, $this->_query_var_prefix );
 
         /*
          * Register query variables in the form:
          * Example: simpli_hello_action  , simpli_hello_page
          */
+
 
         foreach ($this->_query_var_suffixes as $suffix) {
             array_push($query_vars, $this->_query_var_prefix . '_' . $suffix);

@@ -171,7 +171,7 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
         $this->debug()->t();
         //   global $post;
 
-        $post = $this->getPlugin()->getModule('Post');
+        $post = $this->getPlugin()->getModule('PostUserOptions');
         $plugin = $this->getPlugin();
         $post_user_options = $post->getUserOptions();
         $plugin_user_options = $plugin->getUserOptions();

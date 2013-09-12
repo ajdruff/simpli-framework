@@ -7,11 +7,9 @@
  * @author Andrew Druffner
  * @package SimpliFramework
  * @subpackage SimpliHello
- *@property boolean $CUSTOM_POST_EDITOR_ENABLED Whether you want to redirect to a custom post editor
+ * @property boolean $CUSTOM_POST_EDITOR_ENABLED Whether you want to redirect to a custom post editor
  */
 class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Menu {
-
-
 
     /**
      * Add Hooks
@@ -25,9 +23,9 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
 
         parent::addHooks();
 
-/*
- * add the post type
- */
+        /*
+         * Add the Custom Post Type
+         */
         add_action('init', array($this, 'hookRegisterPostTypes'));
 
 
@@ -37,9 +35,18 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
 
         if ($this->CUSTOM_POST_EDITOR_ENABLED) {
 
-            add_action('current_screen', array($this, 'redirectEdit'));
-
-            add_action('current_screen', array($this, 'redirectAdd')); //pre_get_posts doesnt fire when adding a post, but current screen does
+            /*
+             * Add an Edit Redirect if we are using a custom editor
+             */
+            add_action('current_screen', array($this, 'hookRedirectEdit'));
+            /*
+             * Add an Add Redirect if we are using a custom editor
+             */
+            add_action('current_screen', array($this, 'hookRedirectAdd'));
+            /*
+             * Create a new post object for the custom editor when adding a new post
+             */
+            add_action('current_screen', array($this, 'hookCreateNewPost')); //Checks to see if user wants to create a new post, and creates it.
         }
         /*
          *  Add Custom Ajax Handlers
@@ -87,21 +94,20 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
 
 
 
-       $this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug'=>'edit.php?post_type=simpli_hello_snippet'));
-
-
-
 
         /*
          * Enable/Disable Custom Post Editor
          *
          * Configure a custom Post Editor to use for your post type
-         * You need to build it by editing the menu15_custom_post_type template
+         * This can be a completly custom editor without relying on any
+         * core WordPress code. If you use the postEditor element from the Simpli_Forms
+         * plugin, you can even add WordPress's editor easily but reposition it anywhere in your form.
+         * You need to build it by editing the menu01_custom_post_type template
          * Activated  whenever the edit or add screen is displayed.
          * If false, you'll get the regular editor.
          */
 
-        $this->setConfig('CUSTOM_POST_EDITOR_ENABLED', false);
+        $this->setConfig('CUSTOM_POST_EDITOR_ENABLED', true);
 
 
 
@@ -120,13 +126,13 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
      * Hook to Register Post Types
      *
      * Called by 'init' to register any post types
-     *
+     * Ref:http://codex.wordpress.org/Function_Reference/register_post_type
      * @param none
      * @return void
      */
     public function hookRegisterPostTypes() {
 
-//$result='edit.php?post_type=simpli_hello_snippet';
+
 
 
 
@@ -137,11 +143,11 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
 
 
         if ($this->isTopLevel()) {
-         $parent_slug=true;
-        }else{
-             $parent_slug = $this->getTopLevelMenuSlug();
+            $parent_slug = true;
+        } else {
+            $parent_slug = $this->getTopLevelMenuSlug();
         }
- $this->debug()->logVar('$parent_slug = ', $parent_slug);
+        $this->debug()->logVar('$parent_slug = ', $parent_slug);
         $args = array(
             'label' => 'Simpli Hello Snippets' //A plural descriptive name for the post type marked for translation.
             , 'labels' => array(
@@ -183,6 +189,10 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
         );
 
         $this->_register_post_type($this->getPlugin()->getSlug() . '_snippet', $args);
+
+
+
+        //add_post_type_support( $this->getPlugin()->getSlug() . '_snippet', array('title', 'editor') );
     }
 
     /**
@@ -195,7 +205,7 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
      * @param array An array of arguments as described below
      * @return void
      */
-   private function _register_post_type($post_type, $args) {
+    private function _register_post_type($post_type, $args) {
 
 
         $arg_defaults = array(
@@ -265,6 +275,11 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
          */
         $this->setPostType($post_type);
 
+        /*
+         * update the menu tracker
+         */
+        $this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug' => 'edit.php?post_type=' . $post_type));
+
 
 
 //die(__FILE__);
@@ -285,6 +300,7 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
         if (!$this->CUSTOM_POST_EDITOR_ENABLED) {
             return;
         }
+
         /*
          * add the post editor
          */
@@ -305,38 +321,69 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
     }
 
     /**
-     * Add meta boxes
+     * Hook Add Meta Boxes
      *
+     * Hook Function to add meta boxes to the current post
      * @param none
      * @return void
      */
-    public function add_meta_boxes() {
+    public function hookAddMetaBoxes() {
         $this->debug()->t();
 
-/*
- * add the custom post editor metabox only if we
- * it is enabled
- */
+        /*
+         * add the custom post editor metabox only if we
+         * it is enabled
+         */
 
- if ($this->CUSTOM_POST_EDITOR_ENABLED){
-        add_meta_box(
-                $this->getSlug() . '_' . 'metabox_test'  //Meta Box DOM ID
-                , __('Your Custom Post Editor', $this->getPlugin()->getTextDomain()) //title of the metabox.
-                , array($this, 'renderMetaBoxTemplate') //function that prints the html
-                , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
-                , 'normal' //normal advanced or side The part of the page where the metabox should show
-                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , null //$metabox['args'] in callback function
-        );
- }
+        if ($this->CUSTOM_POST_EDITOR_ENABLED) {
+
+
+            if (!$this->pageCheck()) {
+                return;
+            }
+
+//        /*
+//         * if it passes the page check, you still want to check if the page matches, since
+//         * admin menus will
+//         */
+//        $pageQueryVarCheck = (isset($_GET['page']) && $_GET['page'] === $this->getMenuSlug()); //does page match our page?
+//
+//        if (!$pageQueryVarCheck) {
+//            return;
+//        }
+
+            add_meta_box(
+                    $this->getSlug() . '_' . 'metabox_test'  //Meta Box DOM ID
+                    , __('Custom Editor Metabox added from within ' . $this->getName(), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                    , array($this, 'renderMetaBoxTemplate') //function that prints the html
+                    , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
+                    , 'normal' //normal advanced or side The part of the page where the metabox should show
+                    , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                    , null //$metabox['args'] in callback function
+            );
+        } else {
+            if (!$this->pageCheck()) {
+                return;
+            }
+
+            add_meta_box(
+                    $this->getSlug() . '_' . 'metabox_test'  //Meta Box DOM ID
+                    , __('Regular Editor Metabox added by ' . $this->getName(), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                    , array($this, 'renderMetaBoxTemplate') //function that prints the html
+                    , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
+                    , 'normal' //normal advanced or side The part of the page where the metabox should show
+                    , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                    , null //$metabox['args'] in callback function
+            );
+        }
+
+
 
 //
     }
 
-
-
     /**
-     * Redirect Add Page
+     * Hook - Redirect Add Page
      *
      * Checks to see if the current query is requesting an add action for
      * the configured post type. If it is, then it redirects to the post editor
@@ -344,7 +391,7 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
      * @param none
      * @return void
      */
-    public function redirectAdd() {
+    public function hookRedirectAdd() {
 
         $this->debug()->t();
         /*
@@ -352,7 +399,7 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
          */
         if (!is_admin()) {
 
-            $this->debug()->logVars(get_defined_vars());
+
             return;
         }
 
@@ -373,13 +420,48 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
         $this->debug()->logVar('Redirecting to page= ', $this->getMenuSlug());
 
 
-        wp_redirect(admin_url() . 'admin.php?page=' . $this->getMenuSlug());
 
-        die();
+
+        /*
+         * Use a different redirect url depending on whether a custom post type is the top level menu.
+         *
+         */
+
+        $menu_tracker = $this->getMenuTracker();
+        $top_menu = key($menu_tracker);
+        if (stripos($menu_tracker[$top_menu]['top_level_slug'], 'edit.php') !== false) {
+            /*
+             * if the custom post type is a top level menu page, redirect using its top level slug, which includes the post type
+             */
+
+            $redirect_url = admin_url() . $menu_tracker[$top_menu]['top_level_slug'] . '&' . $this->getPlugin()->QUERY_VAR . '=' . $this->getPlugin()->QV_ADD_POST . '&page=' . $this->getMenuSlug();
+
+            //works too:         $redirect_url=(admin_url() . 'edit.php?' . $this->getPlugin()->QUERY_VAR . '=' . $this->getPlugin()->QV_ADD_POST . '&post_type='.$this->getPostType().'&page=' . $this->getMenuSlug());
+
+
+            $this->debug()->logVar('$redirect_url = ', $redirect_url);
+
+            wp_redirect($redirect_url);
+        } else {
+
+            /*
+             * Otherwise, redirect using admin.php and the known post type previously set when we registered it.
+             */
+
+
+            $redirect_url = admin_url() . 'admin.php?' . $this->getPlugin()->QUERY_VAR . '=' . $this->getPlugin()->QV_ADD_POST . '&post_type=' . $this->getPlugin()->getTools()->getPostTypeQueryVar($this->getPostType()) . '&page=' . $this->getMenuSlug();
+
+
+            $this->debug()->logVar('$redirect_url = ', $redirect_url);
+            wp_redirect($redirect_url);
+        }
+
+
+        die(); // to help wp_redirect exit cleanly
     }
 
     /**
-     * Redirect to Custom Editor
+     * Hook  - Redirect Edit
      *
      * Checks to see if the current query is requesting an edit action for
      * the configured post type. If it is, then it redirects to the post editor
@@ -387,7 +469,7 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
      * @param none
      * @return void
      */
-    public function redirectEdit() {
+    public function hookRedirectEdit() {
 
         $this->debug()->t();
         /*
@@ -444,10 +526,30 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
             $this->debug()->log('Returning, not the edit screen');
             return;
         }
+
+
         $this->debug()->logVar('Redirecting to page= ', $this->getMenuSlug());
+        $this->debug()->logVar('$this->getMenuTracker() = ', $this->getMenuTracker());
+
+        $menu_tracker = $this->getMenuTracker();
+        $top_menu = key($menu_tracker);
+        if (stripos($menu_tracker[$top_menu]['top_level_slug'], 'edit.php') !== false) { //if a custom post type is the top level menu
+            $redirect_url = admin_url() . $menu_tracker[$top_menu]['top_level_slug'] . '&' . $this->getPlugin()->QUERY_VAR . '=' . $this->getPlugin()->QV_EDIT_POST . '&post=' . $post->ID . '&page=' . $this->getMenuSlug();
+            $this->debug()->logVar('$redirect_url = ', $redirect_url);
+
+            wp_redirect($redirect_url);
+            die();
+        } else {
+            $redirect_url = admin_url() . 'admin.php?' . $this->getPlugin()->QUERY_VAR . '=' . $this->getPlugin()->QV_EDIT_POST . '&post=' . $post->ID . '&page=' . $this->getMenuSlug();
+            $this->debug()->logVar('$redirect_url = ', $redirect_url);
+
+            wp_redirect($redirect_url);
+              die();
+        }
 
 
-        wp_redirect(admin_url() . 'admin.php?post=' . $post->ID . '&page=' . $this->getMenuSlug());
+//'admin.php?'.$this->getPlugin()->QUERY_VAR.'='. $this->getPlugin()->QV_ADD_POST.'&
+        // wp_redirect(admin_url() . 'admin.php?'.$this->getPlugin()->QUERY_VAR.'='. $this->getPlugin()->QV_EDIT_POST .'&post=' . $post->ID . '&page=' . $this->getMenuSlug());
 
         die();
         return;
@@ -503,9 +605,53 @@ class Simpli_Hello_Module_Menu01CustomPostType extends Simpli_Basev1c0_Plugin_Me
          * adding publish/preview,etc functions to your form.
          */
         $this->setConfigDefault('CUSTOM_POST_EDITOR_ENABLED', false);
-
-
     }
+
+    /**
+     * Hook - Create New Post
+     *
+     * Creates a new post if the GET query variable has 'add_post' . This will occur when the 'add_new' link is clicked when there is a custom post type editor configured.
+     *
+     * @param none
+     * @return void
+     */
+    public function hookCreateNewPost() {
+
+        $tools = $this->getPlugin()->getTools();
+
+        /*
+         * Check if our query variable is set to 'add_post'. if it is, we are on the 'add_post' page and
+         * we create an auto-draft of a post.
+         */
+
+        if (($tools->getQueryVar($this->getPlugin()->QUERY_VAR) === $this->getPlugin()->QV_ADD_POST)) {
+            // Create post object
+            /*
+             * get post type,
+             * We use the getPostTypeQueryVar() because it will be able to retrieve
+             * the post_type even if its been obfuscated due to using a custom post editor.
+             * post_type value will be obfuscated so WordPress doesnt recognize it as a valid registered post type.
+             * if it did, it would throw an error (cannot load page) since it doesnt recognize it as a valid edit page.
+             */
+
+            $post_type = $this->getPlugin()->getTools()->getPostTypeQueryVar();
+
+            global $post;
+            $new_post_values = array(
+                'post_status' => 'auto-draft',
+                'post_author' => 1,
+                'post_type' => $post_type
+            );
+
+// Insert the post into the database
+            $id = wp_insert_post($new_post_values);
+            $this->debug()->log('Created New Post with id = ' . $id);
+            $post = get_post($id);
+            $this->debug()->logVar('$post = ', $post);
+        }
+    }
+
+
 
 }
 ?>

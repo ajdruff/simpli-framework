@@ -302,6 +302,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
                     $result = false;
                 }
             }
+            $result = ($pageQueryVarCheck); //remove this after testing
             $this->_page_check_cache = $result; //save the result to 'cache'
             $this->debug()->logVar('$result = ', $result);
         }
@@ -350,9 +351,16 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
             return;
         }
 
-        add_action('current_screen', array($this, 'add_meta_boxes')); //action must be 'current_screen' so screen object can be accessed by the add_meta_boxes function
+        /*
+         * Add our meta boxes
+         * Hook into 'current_screen' .
+         * We dont use the 'add_meta_boxes' action since it will not work when used
+         * with a custom post editor.
+         */
+
+        add_action('current_screen', array($this, 'hookAddMetaBoxes')); //action must be 'current_screen' so screen object can be accessed by the add_meta_boxes function
         // Add scripts
-        add_action('admin_enqueue_scripts', array($this, 'base_admin_enqueue_scripts'));
+        add_action('admin_enqueue_scripts', array($this, 'hookEnqueueBaseClassScripts'));
     }
 
     /**
@@ -731,13 +739,15 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
+     * Enqueue Base Class Scripts ( Hook Function )
+     *
      * Adds javascript and stylesheets to settings page in the admin panel.
-     * WordPress Hook - enqueue_scripts
+     * WordPress Hook - admin_enqueue_scripts
      *
      * @param none
      * @return void
      */
-    public function base_admin_enqueue_scripts() {
+    public function hookEnqueueBaseClassScripts() {
         wp_enqueue_style($this->getPlugin()->getSlug() . '-admin-page', $this->getPlugin()->getUrl() . '/admin/css/settings.css', array(), $this->getPlugin()->getVersion());
         wp_enqueue_script('jquery');
         wp_enqueue_script('post');
@@ -826,7 +836,12 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
             $template_path = $this->getPlugin()->getDirectory() . '/admin/templates/menu_settings_default.php';
         }
 
-        require_once($template_path);
+        ob_start();
+        require($template_path);
+        $output = ob_get_clean();
+
+        echo do_shortcode($output);
+
     }
 
     /**

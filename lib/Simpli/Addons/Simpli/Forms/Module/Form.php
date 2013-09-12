@@ -452,8 +452,6 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         $this->debug()->t();
 
 
-        $this->debug()->logVars(get_defined_vars());
-
         /*
          * Apply Defaults
          * Use the shortcode_atts function which will also remove
@@ -522,6 +520,20 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
          * Unpack Properties
          */
         extract($properties); //unpacks to: $scid , $atts, $tags
+
+
+
+                /*
+         * Return content from content_override if set
+         */
+        if (isset($atts['content_override']) &&
+                !is_null($atts['content_override'])
+        ) {
+
+            return $atts['content_override'];
+        }
+
+
 
         /*
          * Define convienance variables
@@ -824,7 +836,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         /*
          * output the html
          */
-
+        $this->debug()->logVars(get_defined_vars());
         $this->el(array(
             'el' => 'formStart',
             'name' => $properties['name'],

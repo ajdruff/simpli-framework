@@ -10,11 +10,53 @@
  */
 class Simpli_Basev1c0_Btools {
 
-    protected $_plugin;
+    protected $_plugin=null;
 
-    function __construct($plugin) {
+//    /**
+//     * Get Plugin
+//     *
+//     * Returns a reference to our plugin
+//     *
+//     * @param none
+//     * @return Simpli_Hello_Plugin object
+//     */
+//    public function getPlugin() {
+//        $this->debug()->logVar('$this->_plugin = ', $this->_plugin,true);
+
+//
+//return  $this->_plugin;
+//
+//    }
+    /**
+     * Set Plugin
+     *
+     * @param $plugin
+     * @return none
+     */
+    public function setPlugin($plugin) {
         $this->_plugin = $plugin;
     }
+
+
+
+        /**
+     * Get Plugin
+     *
+     * @param none
+     * @return string
+     */
+    public function getPlugin() {
+        return $this->_plugin;
+    }
+
+
+
+//    function __construct($plugin) {
+//        if (is_null($this->_plugin)) {
+//            $this->_plugin = $plugin;
+//        }
+//
+//    }
 
     /**
      * Sort Dependent List
@@ -739,6 +781,10 @@ class Simpli_Basev1c0_Btools {
 
 
 
+
+
+        $this->debug()->logVar('$current_screen = ', $current_screen);
+
         /*
          * if post type paramater is null, just set it to the same as the screen.
          * that way, our checks will still work for all post types
@@ -748,17 +794,40 @@ class Simpli_Basev1c0_Btools {
             $isPostType = true; //if post type is null, then thats really saying this check is for all post types.
             $debug_message_post_types = ' any post type ';
         } else {
+/*
+ * if our post type paramater is not null, we check the current_screen post type to see if it matches
+ *
+ * If the current_screen is not defined (as in the event of a custom editor) , check to see if there is a post type within the url by using get{pstTypeQueryVar
+ */
 
-            $isPostType = $current_screen->post_type === $post_type;
+            if (is_null($current_screen->post_type)) {
+
+                $isPostType = $this->getPostTypeQueryVar() === $post_type;
+            } else {
+                $isPostType = $current_screen->post_type === $post_type;
+            }
+
+
             $debug_message_post_types = ' the ' . $post_type . ' post type ';
         }
 
         $isList = (($current_screen->base === 'edit') && ($current_screen->id === 'edit-' . $post_type) && ($current_screen->action === ''));
 
+        /*
+         * Check for a Custom Editor by checking for the 'edit_post' value in our query variable
+         */
+        $isCustomEditScreen = $this->getQueryVar($this->getPlugin()->QUERY_VAR) === $this->getPlugin()->QV_EDIT_POST;
 
-        $isEdit = ($current_screen->base === 'post' && $current_screen->action === ''); //base will always be post regardless of post type. action will always be an empty string.
-        $isAdd = ($current_screen->base === 'post' && $current_screen->action === 'add');
 
+        $isEditScreen = ($current_screen->base === 'post' && $current_screen->action === ''); //base will always be post regardless of post type. action will always be an empty string.
+
+
+        $isAddScreen = ($current_screen->base === 'post' && $current_screen->action === 'add');
+
+        /*
+         * Check for a Custom Add Page by checking for the 'add_post' value in our query variable
+         */
+        $isCustomAddScreen = $this->getQueryVar($this->getPlugin()->QUERY_VAR) === $this->getPlugin()->QV_ADD_POST;
 
 
 
@@ -772,22 +841,50 @@ class Simpli_Basev1c0_Btools {
 
             case 'add': // the 'add new' page for the post type provided
 
-                $result = ($isAdd && $isPostType) ? true : false;
+                $result = ($isAddScreen && $isPostType) ? true : false;
 
                 $debug_message = 'Add Screen';
                 break;
             case 'edit-add': //will return true if on either the 'edit' or 'add' page for the post type provided
 
-                $result = (($isEdit && $isPostType) || ($isAdd && $isPostType)) ? true : false;
+                $result = (($isEditScreen && $isPostType) || ($isAddScreen && $isPostType)) ? true : false;
                 $debug_message = 'Edit or Add Screen';
 
                 break;
 
             case 'edit': // the post editor page for the post type provided
 
-                $result = ($isEdit && $isPostType) ? true : false;
+                $result = ($isEditScreen && $isPostType) ? true : false;
                 $debug_message = 'Edit Screen';
                 break;
+
+
+
+                  case 'CustomAdd': // the 'add new' page for the post type provided
+
+                $result = ($isCustomAddScreen && $isPostType) ? true : false;
+
+                $debug_message = 'Custom Add Screen';
+                break;
+            case 'CustomEdit-CustomAdd': //will return true if on either the 'edit' or 'add' page for the post type provided
+
+                $result = (($isCustomEditScreen && $isPostType) || ($isCustomAddScreen && $isPostType)) ? true : false;
+                $debug_message = 'Custom Edit or Custom Add Screen';
+
+                break;
+
+            case 'CustomEdit': // the post editor page for the post type provided
+
+                $result = ($isCustomEditScreen && $isPostType) ? true : false;
+                $debug_message = 'Custom Edit Screen';
+                break;
+
+
+
+
+
+
+
             case 'plugins-list': //the plugins listing page
                 $result = ($current_screen->base === 'plugins');
                 $debug_message = 'Plugin Listing Screen';
@@ -824,7 +921,6 @@ class Simpli_Basev1c0_Btools {
      * when the post is only available by create the object from the post id, passed
      * as a $_GET variable.
      *
-     * Long Description
      *
      * @param none
      * @return void
@@ -838,11 +934,60 @@ class Simpli_Basev1c0_Btools {
 
         if (!is_null($post_id_query_var)) {
             return get_post($post_id_query_var);
-        }else
-        {
+        } else {
             return null;
         }
+    }
 
+    /**
+     * Get Query Var
+     *
+     * Returns the value of the query variable if it is in the url, if it isnt, returns null. Similar to WordPress get_query_var but works in admin and with non-white listed query variables. Main advantage is that it saves you from checking whether its set first, allowing you to a direct comparison.
+     *
+     * @param string $query_var
+     * @return string
+     */
+    public function getQueryVar($query_var) {
+
+        if (isset($_GET[$query_var])) {
+            return $_GET[$query_var];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get Post Type Query Variable
+     *
+     * When called with no argument, it will return the post_type query variable that is in $_GET, but removes a preceeding obfuscation string if one exists. This obfuscation is sometimes added to prevent wordpress from erroring out in the event we are using a custom edit page. WordPress will not load a custom edit page  if it sees that the post_type is a query variable and its value is a registered post type.
+     *
+     * Usage:
+     * assume we are on a page with url : ?post_type=___my_post_type&simpli_hello=edit_post
+     * $post_type=getPostTypeQueryVar() // returns 'my_post_type'
+     *
+     * Now assume we need to build a url that will redirect to a custom edit page, and we need to pass the post type
+     * $url='http://example.com?post_type='.getPostTypeQueryVar('my_post_type').'&simpli_hello=edit_post // will result in $url = http://example.com?post_type=___my_post_type&simpli_hello=edit_post
+     *
+     *
+     *
+     *
+     * When called with an argument, it will return the input string but 'obfuscated' , so it can then be used in the query string.
+     *
+     * @param string $post_type The post type value that needs to be obfuscated e.g.: 'my_custom_post_type'
+     * @return string The obfuscated string if a $post_type paramater was passed, otherwise, the value of the $_GET['post_type'] without the obfuscation if it has it.
+     */
+    public function getPostTypeQueryVar($post_type = null) {
+
+        $obfuscation = '___';
+        if (!is_null($post_type)) {
+            return $obfuscation . $post_type;
+        }
+        $post_type = $this->getQueryVar('post_type');
+
+        if (substr($post_type, 0, strlen($obfuscation)) === $obfuscation) {
+            $post_type = str_replace($obfuscation, '', $post_type);
+        }
+        return $post_type;
     }
 
 }

@@ -99,12 +99,13 @@ parent::addHooks();
     }
 
     /**
-     * Add meta boxes
+     * Hook Add Meta Boxes
      *
+     * Hook Function to add meta boxes to the current post
      * @param none
      * @return void
      */
-    public function add_meta_boxes() {
+    public function hookAddMetaBoxes() {
         $this->debug()->t();
 
 

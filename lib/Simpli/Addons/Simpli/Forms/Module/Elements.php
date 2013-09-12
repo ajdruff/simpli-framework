@@ -83,7 +83,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
 
         $defaults = array(
             'name' => null  //the name of the form field.
-            ,'class'=>null
+            , 'class' => null
             , 'value' => null //value of the field
             , 'heading' => null
             , 'label' => null
@@ -175,6 +175,31 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
             , 'selected' => null //string indiciating the value that should be selected on default
             , 'template' => __FUNCTION__
             , 'template_option' => __FUNCTION__ . '_option'
+        );
+
+
+        return($this->getAddon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
+    }
+
+    /**
+     * Post Editor
+     *
+     * Adds the Builtin WordPress post editor widget
+     * This will create the same html as what is found in wp-admin/edit-form-advanced.php
+     *
+     * @param none
+     * @return void
+     */
+    public function postEditor($atts) {
+        $this->debug()->t();
+        $defaults = array(
+            'name' => 'postdivrich' //required, because its required for everything else, but ignored
+            ,'id'=>'postdivrich'
+            , 'label' => null
+            , 'hint' => null
+            , 'help' => null
+            , 'content_override' => null /* allows the filter to override the template */
+            , 'template' => __FUNCTION__
         );
 
 

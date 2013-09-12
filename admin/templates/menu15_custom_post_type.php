@@ -21,7 +21,7 @@ require_once('includes/template.php'); // WordPress Dashboard Functions
 
 
 $post = $this->getPlugin()->getTools()->getPost();
-$this->debug()->logVar('$post = ', $post);
+$this->debug()->logVar('$post = ', $post,true);
 /*
  * If the user accesses this page using a link to this menu page (instead of via a redirect after they clicked the edit link, there wont be any post object, and errors will result.
  * Instead, simply tell the user to hit the back button to continue editing (although previous changes will be likely lost).

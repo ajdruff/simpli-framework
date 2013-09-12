@@ -60,20 +60,30 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 
         /*
          * Add our metabox
+         * Hook into 'current_screen' .
+         * We dont use the 'add_meta_boxes' action since it will not work when used
+         * with a custom post editor.
          */
-        add_action('add_meta_boxes', array($this, 'hookAddMetaBoxToPost')); //use action add_meta_boxes
-        //  add_action ('wp',array($this,'hookLoadUserOptions')); //wp is first reliable hook where $post object is available
 
+        add_action('current_screen', array($this, 'hookAddMetaBoxes'));
         /*
          * Load Post options when in Admin
          */
         add_action('current_screen', array($this, 'hookLoadUserOptions')); //wp hook is not reliable on edit post page. admin_init cannot be used since a call to get_current_screen will return null see usage restrictions: http://codex.wordpress.org/Function_Reference/get_current_screen
 
+        /* save using ajax */
+        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array($this, 'hookAjaxSave'));
 
-        /*
+
+        /* DEPRECATED
          * Hook into the form class so we can provide the value of forms with an option lookup
-         */
+
         add_action('simpli_hello_forms_pre_parse', array($this, 'forms_pre_parse'));
+  */
+
+
+        // Add scripts
+        add_action('admin_enqueue_scripts', array($this, 'hookEnqueueScripts'));
     }
 
     /**
@@ -84,6 +94,9 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
      */
     public function config() {
         $this->debug()->t();
+
+
+
 
 
         /*
@@ -137,9 +150,9 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         );
 
 
-          /*
+        /*
          * Snippet
-           * The post->ID of the snippet to be used
+         * The post->ID of the snippet to be used
          *
          *
          */
@@ -449,9 +462,11 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 
 
         if (!$this->pageCheck()) {
+            $this->debug()->log('pageCheck failed, returning');
+
             return;
         }
-
+$this->debug()->log('pageCheck passed');
 
 
         $default_options = $this->getUserOptionDefaults();
@@ -501,25 +516,36 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 
         $this->_options = $options;
 
-
+        $this->debug()->logVar('$this->_options = ', $this->_options);
 
         return $this->_options;
     }
 
     /**
-     * Adds  meta box to post edit screen.
-     * WordPress Hook - add_meta_boxes
+     * Hook Add Meta Boxes
      *
+     * Hook Function to add meta boxes to the current post
      * @param none
      * @return void
      */
-    public function hookAddMetaBoxToPost() {
+    public function hookAddMetaBoxes() {
         $this->debug()->t();
 
+/*
+ * On top of the normal pageCheck, check to make sure that we arent on a custom post editor page. If we are, then add the metaboxes.
+ */
+        if (!$this->pageCheck()) {
 
-//        if (!$this->pageCheck()) {
-//            return;
-//        }
+            $custom_edit_page = ((isset($_GET[$this->getPlugin()->QUERY_VAR]) && ($_GET[$this->getPlugin()->QUERY_VAR] === $this->getPlugin()->QV_EDIT_POST)) ? true : false);
+            $custom_add_page = ((isset($_GET[$this->getPlugin()->QUERY_VAR]) && ($_GET[$this->getPlugin()->QUERY_VAR] === $this->getPlugin()->QV_ADD_POST)) ? true : false);
+            /*
+             * Check if on Custom Editor
+             * If not on either the custom edit page or the custom add page, return
+             */
+            if (!$custom_edit_page && !$custom_add_page) {
+                return;
+            }
+        }
 
 
 
@@ -528,15 +554,37 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         );
         $post_types = get_post_types($args);
         global $post;
+        $this->debug()->logVar('$post = ', $post);
+        //    foreach ($post_types as $post_type) {
 
-    //    foreach ($post_types as $post_type) {
+        /*
+         * Add the options metabox, but only if the post type is not
+         * our custom post type This avoids possible recursion.
+         */
+        add_meta_box(
+                $this->getSlug() . '_' . 'metabox_options1'  //Meta Box DOM ID
+                , __('Box 1 - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , array($this, 'renderMetaBoxTemplate')//function that prints the html
+                , $screen_id = null// post_type when you embed meta boxes into post edit pages
+                , 'normal' //normal advanced or side The part of the page where the metabox should show
+                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                , null //$metabox['args'] in callback function
+                //,  array('path' => $this->getPlugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
+        );
 
-            /*
-             * Avoid recursion by not adding a snippet meta box
-             * on the snippet post type
-             */
-            if (!$post->post_type!=='simpli_hello_snippet') {
+        add_meta_box(
+                $this->getSlug() . '_' . 'metabox_test'  //Meta Box DOM ID
+                , __('Box 2 - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , array($this, 'renderMetaBoxTemplate') //function that prints the html
+                , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
+                , 'normal' //normal advanced or side The part of the page where the metabox should show
+                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                , null //$metabox['args'] in callback function
+        );
 
+
+        //  if ($post->post_type!=='simpli_hello_snippet') {
+        if (true) {
 
 
             /*
@@ -548,17 +596,53 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 
 
             add_meta_box(
-                    $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
-                    , __($this->getPlugin()->getName(), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                    $this->getSlug() . '_' . 'metabox_options2'  //Meta Box DOM ID
+                    , __('Box 3  - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
                     , array($this, 'renderMetaBoxTemplate')//function that prints the html
-                    , $post->post_type// post_type when you embed meta boxes into post edit pages
-                    , 'advanced' //normal advanced or side The part of the page where the metabox should show
+                    , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
+                    , 'normal' //normal advanced or side The part of the page where the metabox should show
                     , 'high' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                     , null //$metabox['args'] in callback function
                     //,  array('path' => $this->getPlugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
             );
-                 }
-      //  }
+
+
+            add_meta_box(
+                    $this->getSlug() . '_' . 'metabox_ajax_options'  //Meta Box DOM ID
+                    , __('Box 4  - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                    , array($this, 'renderMetaBoxTemplate')//function that prints the html
+                    , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
+                    , 'side' //normal advanced or side The part of the page where the metabox should show
+                    , 'high' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                    , null //$metabox['args'] in callback function
+                    //,  array('path' => $this->getPlugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
+            );
+        }
+
+
+
+
+        //  }
+    }
+
+    /**
+     * Hook Enqueue Scripts
+     *
+     * Enqueue javascript and styles
+     *
+     * @param none
+     * @return void
+     */
+    public function hookEnqueueScripts() {
+        /*
+         * Add javascript for form submission
+         *
+         */
+        $handle = $this->getPlugin()->getSlug() . '_metabox-form-post.js';
+        $path = $this->getPlugin()->getDirectory() . '/admin/js/metabox-form-post.js';
+        $inline_deps = array();
+        $external_deps = array('jquery');
+        $this->getPlugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
     }
 
     /**
@@ -632,6 +716,29 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
     }
 
     /**
+     * Hook - Ajax Save
+     *
+     * Save the post options using ajax
+     *
+     * @param none
+     * @return void
+     */
+    public function hookAjaxSave() {
+
+//        if (!wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug())) {
+//            return false;
+//        }
+        //do something here.
+
+        $message = __("Post Options Saved.", $this->getPlugin()->getTextDomain());
+        $errors = array(); // initialize the error array , add any validation errors when you scrub the form_field values
+        //return a success message on submission
+        require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
+
+        die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
+    }
+
+    /**
      * Renders a meta box
      *
      * @param string $module
@@ -694,14 +801,24 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         static $pageCheck;
 
         if (is_null($pageCheck)) {
+             $this->debug()->log('pageCheck not cached yet, so executing isScreen()');
             $pageCheck = $this->getPlugin()->getTools()->isScreen('edit-add', null, false);
-        }
+            if (!$pageCheck) {
+                /*
+                 * if pageCheck failed, check to see if we are on a custom edit or add screen
+                 */
+                $this->debug()->log('Not a standard edit or add page, checking to see if its a CustomEdit or CustomAdd screen');
+                $pageCheck = $this->getPlugin()->getTools()->isScreen('CustomEdit-CustomAdd', null, false);
 
+
+            }
+        }
 
 
 
         /*
          * check to see if we are either on the edit or add screen
+         *
          */
         return ($pageCheck);
     }

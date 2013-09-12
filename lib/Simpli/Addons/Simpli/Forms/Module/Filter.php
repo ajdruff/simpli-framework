@@ -317,30 +317,29 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
 
 
                     $tokens['checked'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked"' : '');
-                }else{
-                    $tokens['checked'] ='';
+                } else {
+                    $tokens['checked'] = '';
                 }
             } else {
 
                 $tokens['checked'] = (($atts['selected'] == $option_value) ? ' checked="checked"' : '');
             }
 
-/*
- * dropdown
- */
+            /*
+             * dropdown
+             */
             if (is_array($atts['selected'])) {
                 if (isset($atts['selected'][$option_value])) {
                     $tokens['selected'] = (($atts['selected'][$option_value] == 'yes') ? ' selected="selected" ' : '');
                     $this->debug()->logVar('$option_value = ', $option_value);
                     $this->debug()->logVar('$selected[$option_value] = ', $atts['selected'][$option_value]);
                     $this->debug()->logVar('$tokens[selected] = ', $tokens['selected']);
-                }else{
-                    $tokens['selected'] ='';
+                } else {
+                    $tokens['selected'] = '';
                 }
             } else {
 
                 $tokens['selected'] = (($atts['selected'] == $option_value) ? ' selected="selected" ' : '');
-
             }
 
             //dropdown - works
@@ -383,6 +382,71 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
         return($this->_filterOptions($properties));
     }
 
+
+    /**
+     * Post Editor Filter
+     *
+     * Provides the php required for the post editor to work. The code is taken directly from wp-admin/edit-form-advanced.php , just search for 'postdivrich' or 'wp_editor'
+     *
+     * @param none
+     * @return void
+     */
+    public function filterPostEditor($properties) {
+        $this->debug()->t();
+
+        extract($properties);
+        $post = $this->getPlugin()->getTools()->getPost();
+        $post_type = $post->post_type;
+
+        $post_ID = $post->ID;
+
+        if (post_type_supports($post_type, 'editor')) {
+            /*
+             * capture the output of wp_editor so
+             * we can assign it to a tag
+             */
+ob_start();
+wp_editor($post->post_content, 'content', array('dfw' => true, 'tabindex' => 1));
+$tags['wp_editor']=ob_get_clean();
+
+
+            $tags['word_count'] = sprintf(__('Word count: %s'), '<span class="word-count">0</span>');
+            $tags['last_edit'] = '';
+            if ('auto-draft' != $post->post_status) {
+                $this->debug()->log('not an auto draft');
+                $this->debug()->log('adding last edit');
+                $tags['last_edit'].= '<span id="last-edit">';
+                if ($last_id = get_post_meta($post_ID, '_edit_last', true)) {
+                    $last_user = get_userdata($last_id);
+                    $tags['last_edit'].=sprintf(__('Last edited by %1$s on %2$s at %3$s'), esc_html($last_user->display_name), mysql2date(get_option('date_format'), $post->post_modified), mysql2date(get_option('time_format'), $post->post_modified));
+                } else {
+                    $this->debug()->log('auto draft');
+                    $this->debug()->log('adding last edit');
+                    $tags['last_edit'].=sprintf(__('Last edited on %1$s at %2$s'), mysql2date(get_option('date_format'), $post->post_modified), mysql2date(get_option('time_format'), $post->post_modified));
+                }
+                $tags['last_edit'].= '</span>';
+            }
+        } else {
+            /*
+             * If Editor Not supported
+             * Output nothing
+             */
+            $atts['content_override'] = '';
+        }
+/*
+ * Ensure default editor id.
+ * if id is duplicate, the editor wont display
+ */
+if (is_null($atts['id'])) {
+   $atts['id']='postdivrich';
+}
+
+
+        $properties = compact('scid', 'atts', 'tags');
+
+        return ($properties);
+    }
+
     /**
      * Form Start
      *
@@ -395,14 +459,14 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
 
         extract($properties);
 
-        if (isset($atts['name']) || is_null($atts['name'])) {
+        if (!isset($atts['name']) || is_null($atts['name'])) {
             $atts['name'] = 'simpli_forms';
         }
-        if (isset($atts['action']) || is_null($atts['action'])) {
+        if (!isset($atts['action']) || is_null($atts['action'])) {
             $atts['action'] = $_SERVER['REQUEST_URI'];
         }
 
-        if (isset($atts['method']) || is_null($atts['method'])) {
+        if (!isset($atts['method']) || is_null($atts['method'])) {
             $atts['method'] = 'post';
         }
 

@@ -16,6 +16,11 @@
  * @property string $DISABLED_ADDONS An array of Addon Names that you don't want loaded
  * @property string $ALWAYS_ENABLED_REGEX_PATTERN Modules matching this pattern will always be loaded regardless if the plugin is disabled from the Admin menu.
  * @property boolean $DEBUG Whether to enable debug by loading the debug module. You will still need to ensure that the DebugConfig.php file has $this->turnOn() in the configuration.
+ * @property string $QUERY_VAR The name of the plugin's query variable
+ * @property string $QV_ACTION_EDIT_POST The query variable's value that indicates the editing of a post by a custom post editor
+ * @property string $QV_ACTION_ADD_POST The query variable's value that indicates the adding of a post by a custom post editor
+ *
+ *
  *
  *
  *
@@ -1002,7 +1007,8 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
 
         if (is_null($this->_tools)) {
 
-            $this->_tools = new Simpli_Basev1c0_Btools($this);
+            $this->_tools = new Simpli_Basev1c0_Btools();
+             $this->_tools->setPlugin($this);
         }
 
 
@@ -2001,6 +2007,32 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
                 'DEBUG'
                 , false
         );
+
+               /*
+         * Query Variable that is white listed for use by the plugin
+         */
+        $this->setConfigDefault(
+                'QUERY_VAR'
+                , $this->getSlug()
+        );
+        /*
+         * Query Variable value indicating the admin screen that provides
+         * a custom editor for adding a new post
+         */
+        $this->setConfigDefault(
+                'QV_ADD_POST'
+                , 'add_post'
+        );
+
+        /*
+         * Query Variable value indicating the admin screen that provides
+         * a custom editor for editing a new post
+         */
+         $this->setConfigDefault(
+                'QV_EDIT_POST'
+                , 'edit_post'
+        );
+
 
     }
 

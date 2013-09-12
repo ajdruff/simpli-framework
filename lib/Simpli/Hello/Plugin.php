@@ -139,7 +139,8 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
          */
         $this->setConfig(
                 'DISABLED_MODULES'
-                , array('QueryVars', 'Shortcodes', 'ExampleModule')
+               // , array('Menu01CustomPostType','Shortcodes', 'ExampleModule')
+                 , array('Shortcodes', 'ExampleModule')
         );
 
 

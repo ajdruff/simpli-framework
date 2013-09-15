@@ -42,15 +42,59 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
          */
 
 
-        add_action('the_post', array($this, 'hookLoadUserOptions')); //archive pages will call multiple posts, and with each new post, the options have to be reloaded or you'll carry forward the topmost post's options to the ones below it
+        add_action('the_post', array($this, 'hookPost')); //archive pages will call multiple posts, and with each new post, the options have to be reloaded or you'll carry forward the topmost post's options to the ones below it
 
         /*
-         * Admin Hooks Follow
+         * add hooks that are dependent on knowing which screen we are on.
          */
 
-        if (!is_admin()) {
+        add_action('current_screen', array($this, 'hookEditingScreen'));
+    }
+
+    /**
+     * Hook - Post
+     *
+     * Hooks into the current post.
+     * Add method calls that should
+     * occur when the post is displayed to the front end user.
+     *
+     *
+     * @param none
+     * @return void
+     */
+    public function hookPost() {
+        /*
+         * Dont continue if we are in admin
+         */
+        if (is_admin()) {
             return;
         }
+        /*
+         * Load the User Options so they can be used for content filters
+         */
+
+        $this->loadUserOptions();
+    }
+
+    /**
+     * Hook - Editing Screen
+     *
+     * Hooks into the Editing Screen
+     * Add method calls that should occur when the Editing or 'add new' screen
+     * is displayed to someone logged into admin.
+     * This is a good place to call addMetaBoxes, and to add any scripts or styles that
+     * should only appear on the editor.
+     * Checks the current screen object, and then builds the layout of the screen , adding metaboxes, scripts etc
+     *
+     * @param none
+     * @return void
+     */
+    public function hookEditingScreen() {
+        $this->debug()->t();
+        if (!$this->pageCheckEditor()) {
+            return;
+        }
+
 
         /*
          * Hook our save method into the post's save action
@@ -58,28 +102,33 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 
         add_action('save_post', array($this, 'hookPostSave'));
 
+
+        /*
+         * Load Post options when in Admin
+         */
+        $this->loadUserOptions();
+        //      add_action('current_screen', array($this, 'loadUserOptions')); //wp hook is not reliable on edit post page. admin_init cannot be used since a call to get_current_screen will return null see usage restrictions: http://codex.wordpress.org/Function_Reference/get_current_screen
+
+
         /*
          * Add our metabox
          * Hook into 'current_screen' .
          * We dont use the 'add_meta_boxes' action since it will not work when used
          * with a custom post editor.
          */
+        $this->metabox()->addMetaBoxes();
+        //     add_action('current_screen', array($this, 'addMetaBoxes'));
 
-        add_action('current_screen', array($this, 'hookAddMetaBoxes'));
-        /*
-         * Load Post options when in Admin
-         */
-        add_action('current_screen', array($this, 'hookLoadUserOptions')); //wp hook is not reliable on edit post page. admin_init cannot be used since a call to get_current_screen will return null see usage restrictions: http://codex.wordpress.org/Function_Reference/get_current_screen
 
         /* save using ajax */
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array($this, 'hookAjaxSave'));
+        //  add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array($this, 'hookAjaxSave'));
 
 
         /* DEPRECATED
          * Hook into the form class so we can provide the value of forms with an option lookup
 
-        add_action('simpli_hello_forms_pre_parse', array($this, 'forms_pre_parse'));
-  */
+          add_action('simpli_hello_forms_pre_parse', array($this, 'forms_pre_parse'));
+         */
 
 
         // Add scripts
@@ -97,6 +146,50 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 
 
 
+
+
+
+
+
+
+
+        /*
+         * Configure the metabox object
+         * Pass the optional pageCheck callback method to
+         * ensure no hooks fire on pages other than our Menu page
+         */
+        $this->metabox()->config(array($this, 'pageCheckEditor'));
+
+/*
+ * add the metaboxes
+ */
+
+        $this->metabox()->addMetaBox(
+                $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
+                , __('Box 1 - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
+                , $screen_id = null// post_type when you embed meta boxes into post edit pages
+                , 'normal' //normal advanced or side The part of the page where the metabox should show
+                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                , null //$metabox['args'] in callback function
+                //,  array('path' => $this->getPlugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
+        );
+//
+       $this->metabox()->addMetaBox(
+                $this->getSlug() . '_' . 'metabox_test'  //Meta Box DOM ID
+                , __('Box 2 - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
+                , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
+                , 'normal' //normal advanced or side The part of the page where the metabox should show
+                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                , null //$metabox['args'] in callback function
+        );
+
+
+        /*
+         * set the metabox initial open/closes states
+         */
+        $this->metabox()->setMetaboxOpenState($this->getSlug() . '_metabox_ajax_options', true, false);
 
 
         /*
@@ -455,18 +548,30 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
      * @param int $post_id
      * @return $this
      */
-    public function hookLoadUserOptions() {
+    public function loadUserOptions() {
         $this->debug()->t();
 
 
 
 
-        if (!$this->pageCheck()) {
-            $this->debug()->log('pageCheck failed, returning');
+        if (!$this->pageCheckEditor()) {
 
-            return;
+            /*
+             * even though its not
+             * and editing page, if its not admin, do *not* return,
+             * since we need to load options for the 'the_post' action
+             * which occurs on the frontend (the non-admin pages)
+             *
+             */
+            if (is_admin()) {
+
+
+                $this->debug()->log('pageCheck failed, returning');
+
+                return;
+            }
         }
-$this->debug()->log('pageCheck passed');
+        $this->debug()->log('pageCheck passed');
 
 
         $default_options = $this->getUserOptionDefaults();
@@ -480,7 +585,7 @@ $this->debug()->log('pageCheck passed');
         $post = (empty($post) && !empty($_POST['post_ID'])) ? get_post($_POST['post_ID']) : $post;
         // if (!empty($post)&& !empty($_POST['post_ID'])) {
         if (!empty($post)) {
-            // $this->hookLoadUserOptions($post->ID);
+            // $this->loadUserOptions($post->ID);
             $post_id = $post->ID;
             $post_meta_options = get_post_meta($post_id, $wp_option_name, true);
         } else {
@@ -522,30 +627,30 @@ $this->debug()->log('pageCheck passed');
     }
 
     /**
-     * Hook Add Meta Boxes
+     * Add Meta Boxes
      *
-     * Hook Function to add meta boxes to the current post
+     * Add any calls to add_meta_boxes here. This method will be called from within hookEditingScreen to add metaboxes for the editing screen. The hookEditingScreen does a pageCheckEditor() to ensure that its the correct editor before calling this method.
      * @param none
      * @return void
      */
-    public function hookAddMetaBoxes() {
+    public function addMetaBoxesOLD() {
         $this->debug()->t();
 
-/*
- * On top of the normal pageCheck, check to make sure that we arent on a custom post editor page. If we are, then add the metaboxes.
- */
-        if (!$this->pageCheck()) {
-
-            $custom_edit_page = ((isset($_GET[$this->getPlugin()->QUERY_VAR]) && ($_GET[$this->getPlugin()->QUERY_VAR] === $this->getPlugin()->QV_EDIT_POST)) ? true : false);
-            $custom_add_page = ((isset($_GET[$this->getPlugin()->QUERY_VAR]) && ($_GET[$this->getPlugin()->QUERY_VAR] === $this->getPlugin()->QV_ADD_POST)) ? true : false);
-            /*
-             * Check if on Custom Editor
-             * If not on either the custom edit page or the custom add page, return
-             */
-            if (!$custom_edit_page && !$custom_add_page) {
-                return;
-            }
-        }
+//        /*
+//         * On top of the normal pageCheck, check to make sure that we arent on a custom post editor page. If we are, then add the metaboxes.
+//         */
+//        if (!$this->pageCheck()) {
+//
+//            $custom_edit_page = ((isset($_GET[$this->getPlugin()->QUERY_VAR]) && ($_GET[$this->getPlugin()->QUERY_VAR] === $this->getPlugin()->QV_EDIT_POST)) ? true : false);
+//            $custom_add_page = ((isset($_GET[$this->getPlugin()->QUERY_VAR]) && ($_GET[$this->getPlugin()->QUERY_VAR] === $this->getPlugin()->QV_ADD_POST)) ? true : false);
+//            /*
+//             * Check if on Custom Editor
+//             * If not on either the custom edit page or the custom add page, return
+//             */
+//            if (!$custom_edit_page && !$custom_add_page) {
+//                return;
+//            }
+//        }
 
 
 
@@ -562,9 +667,9 @@ $this->debug()->log('pageCheck passed');
          * our custom post type This avoids possible recursion.
          */
         add_meta_box(
-                $this->getSlug() . '_' . 'metabox_options1'  //Meta Box DOM ID
+                $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
                 , __('Box 1 - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
-                , array($this, 'renderMetaBoxTemplate')//function that prints the html
+                , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
                 , $screen_id = null// post_type when you embed meta boxes into post edit pages
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
@@ -575,7 +680,7 @@ $this->debug()->log('pageCheck passed');
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_test'  //Meta Box DOM ID
                 , __('Box 2 - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
-                , array($this, 'renderMetaBoxTemplate') //function that prints the html
+                , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
@@ -598,7 +703,7 @@ $this->debug()->log('pageCheck passed');
             add_meta_box(
                     $this->getSlug() . '_' . 'metabox_options2'  //Meta Box DOM ID
                     , __('Box 3  - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
-                    , array($this, 'renderMetaBoxTemplate')//function that prints the html
+                    , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
                     , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                     , 'normal' //normal advanced or side The part of the page where the metabox should show
                     , 'high' // 'high' , 'core','default', 'low' The priority within the context where the box should show
@@ -610,7 +715,7 @@ $this->debug()->log('pageCheck passed');
             add_meta_box(
                     $this->getSlug() . '_' . 'metabox_ajax_options'  //Meta Box DOM ID
                     , __('Box 4  - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
-                    , array($this, 'renderMetaBoxTemplate')//function that prints the html
+                    , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
                     , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                     , 'side' //normal advanced or side The part of the page where the metabox should show
                     , 'high' // 'high' , 'core','default', 'low' The priority within the context where the box should show
@@ -634,6 +739,8 @@ $this->debug()->log('pageCheck passed');
      * @return void
      */
     public function hookEnqueueScripts() {
+
+
         /*
          * Add javascript for form submission
          *
@@ -643,6 +750,17 @@ $this->debug()->log('pageCheck passed');
         $inline_deps = array();
         $external_deps = array('jquery');
         $this->getPlugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+
+
+        /* You could also load it as an external file
+         * Example of loading using the wp_enqueue_script method
+         */
+        //                  $handle = $this->getPlugin()->getSlug() . '_metabox-form-post.js';
+        //        $src = $this->getPlugin()->getUrl() . '/admin/js/metabox-form-post.js';
+        //        $deps = array('jquery');
+        //        $ver = '1.0';
+        //        $in_footer = false;
+        //        wp_enqueue_script($handle, $src, $deps, $ver, $in_footer);
     }
 
     /**
@@ -655,7 +773,7 @@ $this->debug()->log('pageCheck passed');
         $this->debug()->t();
 
 
-        if (!$this->pageCheck()) {
+        if (!$this->pageCheckEditor()) {
             return;
         }
 
@@ -745,7 +863,7 @@ $this->debug()->log('pageCheck passed');
      * @param array $metabox
      * @return void
      */
-    public function renderMetaBoxTemplate($module, $metabox) {
+    public function renderMetaBoxTemplateOLD($module, $metabox) {
         $this->debug()->t();
 
 
@@ -771,7 +889,7 @@ $this->debug()->log('pageCheck passed');
      * @param array $metabox
      * @return void
      */
-    public function renderMetaBoxAjax($module, $metabox) {
+    public function renderMetaBoxAjaxOLD($module, $metabox) {
         $this->debug()->t();
 
 
@@ -779,38 +897,44 @@ $this->debug()->log('pageCheck passed');
         include($this->getPlugin()->getDirectory() . '/admin/templates/metabox/ajax.php');
     }
 
-    /**
-     * Page Check
+    /*
+     * Page Check Editor
      *
-     * Use for hook functions. Checks to see if we are on the right page before we add any hook actions.
+     * Indicates whether the current page is
+     * an editor of any post type
+     *
+     * @var $_page_check_editor boolean
+     *
+     */
+
+    private $_page_check_editor = null;
+
+    /**
+     * Page Check Editor
+     *
+     * Use for hook functions. Checks to see if we are on an Edit page before we take any hook actions.
      * @param none
      * @return boolean
      */
-    private function pageCheck() {
+    public function pageCheckEditor() {
         $this->debug()->t();
 
-        //Always return true when  not in admin since there is only one hook is used in front end, and it will only be fired when we need it ('the_post') .
-        if (!is_admin()) {
-            $this->debug()->log('Not admin, so forcing pageCheck to true');
-            return true;
-        }
-
-        /*
-         * use static variable so we dont need to call the method each time.
-         */
-        static $pageCheck;
-
-        if (is_null($pageCheck)) {
-             $this->debug()->log('pageCheck not cached yet, so executing isScreen()');
-            $pageCheck = $this->getPlugin()->getTools()->isScreen('edit-add', null, false);
-            if (!$pageCheck) {
-                /*
-                 * if pageCheck failed, check to see if we are on a custom edit or add screen
-                 */
-                $this->debug()->log('Not a standard edit or add page, checking to see if its a CustomEdit or CustomAdd screen');
-                $pageCheck = $this->getPlugin()->getTools()->isScreen('CustomEdit-CustomAdd', null, false);
 
 
+        if (is_null($this->_page_check_editor)) {
+
+            if (!is_admin()) {
+                $this->_page_check_editor = false;
+            } else {
+
+                $this->_page_check_editor = $this->getPlugin()->tools()->isScreen(array('edit', 'add'), null, false);
+                if (!$this->_page_check_editor) {
+                    /*
+                     * if pageCheck failed, check to see if we are on a custom edit or add screen
+                     */
+                    $this->debug()->log('Not a standard edit or add page, checking to see if its a CustomEdit or CustomAdd screen');
+                    $this->_page_check_editor = $this->getPlugin()->tools()->isScreen(array('custom_edit', 'custom_add'), null, false);
+                }
             }
         }
 
@@ -820,7 +944,12 @@ $this->debug()->log('pageCheck passed');
          * check to see if we are either on the edit or add screen
          *
          */
-        return ($pageCheck);
+
+
+
+        $this->debug()->logVar('$this->_page_check_editor  = ', $this->_page_check_editor);
+
+        return ($this->_page_check_editor);
     }
 
     /**
@@ -837,6 +966,68 @@ $this->debug()->log('pageCheck passed');
     protected function setUserOptionDefault($option_name, $option_value) {
 
         $this->_option_defaults[$option_name] = $option_value;
+    }
+
+    /**
+     * Get Metabox States
+     *
+     * @param none
+     * @return array $this->$_meta_box_open_states;
+     */
+    public function getMetaboxOpenStatesOLD() {
+        return $this->_meta_box_open_states;
+    }
+
+    /**
+     *
+     * @var array Meta Box Initial Open Closed States
+     */
+    protected $_meta_box_open_statesOLD = null;
+
+    /**
+     * Set Meta Box Open State
+     *
+     * Sets the intial open or closed state of a meta box. If persistance is set to 'true' ,
+     * the meta box will retain that state regardless of whether the user changes it.
+     * With this method you can :
+     * initially set the metabox to closed on first visit:
+     * force metabox to always be closed when the page is visited:
+     * force metabox to always be open when the page is visited:
+     *
+     * @param string $id The id of the meta box used in the add_meta_box method. Must be unique to the meta box.
+     * @param boolean $open  True for open, False for closed
+     * @param boolean $persist True will cause the meta box to keep the state indicated by the $open paramater value
+     * at next visit to the page, even if the user changed it (i.e.: it ignores saved changes)
+     * @return void
+     */
+    public function setMetaboxOpenStateOLD($id, $open = true, $persist = false) {
+
+        /*
+         * Apply defaults to array if not all the settings were provided
+         * This also ensures that if an element wasnt provided, it wont
+         * break while the array is accessed
+         */
+
+
+        $this->_meta_box_open_states[$id] = array('open' => $open, 'persist' => $persist);
+    }
+
+    protected $_meta_box_object=null;
+
+    /**
+     * Metabox
+     *
+     * Provides the Metabox States utility object that manages the metabox open/closed state.
+     *
+     * @param none
+     * @return object
+     */
+    public function metabox() {
+
+        if (is_null($this->_meta_box_object)) {
+            $this->_meta_box_object = new Simpli_Basev1c0_Metabox($this);
+        }
+        return $this->_meta_box_object;
     }
 
 }

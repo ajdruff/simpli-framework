@@ -112,7 +112,7 @@ class Simpli_Addons_Simpli_Forms_Addon extends Simpli_Basev1c0_Addon {
          * Name of the Directory that contains the themes
          */
         $this->setConfigDefault(
-                'DIR)NAME_THEMES'
+                'DIR_NAME_THEMES'
                 , 'Themes'
         );
 
@@ -248,7 +248,7 @@ class Simpli_Addons_Simpli_Forms_Addon extends Simpli_Basev1c0_Addon {
 
 
 
-        $tools = $this->getPlugin()->getTools();
+        $tools = $this->getPlugin()->tools();
 
         /*
          * Find all the Module files in the module directory
@@ -339,7 +339,7 @@ class Simpli_Addons_Simpli_Forms_Addon extends Simpli_Basev1c0_Addon {
         }
 
 
-        $tools = $this->getPlugin()->getTools();
+        $tools = $this->getPlugin()->tools();
 
         /*
          * Find all the Module files in the module directory
@@ -436,7 +436,7 @@ class Simpli_Addons_Simpli_Forms_Addon extends Simpli_Basev1c0_Addon {
          */
 
 
-        $relative_path = $this->getPlugin()->getTools()->makePathRelative($this->getPlugin()->getAddonsDirectory(), $module_file_path);
+        $relative_path = $this->getPlugin()->tools()->makePathRelative($this->getPlugin()->getAddonsDirectory(), $module_file_path);
         $module_namespace = str_replace('/', '_', dirname($relative_path));
 
 
@@ -522,7 +522,7 @@ class Simpli_Addons_Simpli_Forms_Addon extends Simpli_Basev1c0_Addon {
          */
 
 
-        $relative_path = $this->getPlugin()->getTools()->makePathRelative($this->getPlugin()->getAddonsDirectory(), $module_file_path);
+        $relative_path = $this->getPlugin()->tools()->makePathRelative($this->getPlugin()->getAddonsDirectory(), $module_file_path);
         $module_namespace = str_replace('/', '_', dirname($relative_path));
 
 

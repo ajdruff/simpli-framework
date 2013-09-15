@@ -1,7 +1,7 @@
 /**
  * Metabox Form Save and Reset for the Post Editor
  *
- *
+ * metabox-form-post.js
  * @package SimpliFramework
  * @subpackage SimpliHello
  */

@@ -44,7 +44,10 @@ To add a metabox, you must add the do_metaboxes line as in the examples below, a
 
 
 		<div class="postbox-container column-primary">
-<?php do_meta_boxes($this->getScreenId(), 'normal', $this); ?>
+<?php
+
+$this->debug()->log('Adding Template for ' . $this->getScreenId());
+do_meta_boxes($this->getScreenId(), 'normal', $this); ?>
 		</div>
 
 

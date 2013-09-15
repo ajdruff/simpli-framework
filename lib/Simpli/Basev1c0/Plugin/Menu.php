@@ -1,8 +1,10 @@
 <?php
 
 /**
- * Admin Menu
+ * Admin Menu (Class extension of Module)
  *
+ * Manages the creation and ordering of menu pages with the ability to
+ * save, load and manage options.
  *
  * @author Andrew Druffner
  * @package SimpliFramework
@@ -11,9 +13,18 @@
  */
 class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
-    protected $_metabox_default_states;
     protected $_menu_page_hook_name;
+
+    /**
+     *
+     * @var string A unique identifier for the menu. Used by getMenuSlug
+     */
     protected $_menu_slug;
+
+    /**
+     *
+     * @var array A tracking array that tracks the menus as they are added. Used by getMenuTracker()
+     */
     static private $_menus = null;
 
     /**
@@ -65,7 +76,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return string
      */
-    public function addMenuToTracker($menu_slug) {
+    protected function _addMenuToTracker($menu_slug) {
         self::$_menus[$menu_slug] = array();
     }
 
@@ -73,10 +84,44 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * Get Metabox States
      *
      * @param none
-     * @return array $this->$_metabox_default_states;
+     * @return array $this->$_meta_box_open_states;
      */
-    public function getMetaboxDefaultStates() {
-        return $this->_metabox_default_states;
+    public function getMetaboxOpenStatesOld() {
+        return $this->_meta_box_open_states;
+    }
+
+    /**
+     *
+     * @var array Meta Box Initial Open Closed States
+     */
+    protected $_meta_box_open_statesOLD = null;
+
+    /**
+     * Set Meta Box Open State
+     *
+     * Sets the intial open or closed state of a meta box. If persistance is set to 'true' ,
+     * the meta box will retain that state regardless of whether the user changes it.
+     * With this method you can :
+     * initially set the metabox to closed on first visit:
+     * force metabox to always be closed when the page is visited:
+     * force metabox to always be open when the page is visited:
+     *
+     * @param string $id The id of the meta box used in the add_meta_box method. Must be unique to the meta box.
+     * @param boolean $open  True for open, False for closed
+     * @param boolean $persist True will cause the meta box to keep the state indicated by the $open paramater value
+     * at next visit to the page, even if the user changed it (i.e.: it ignores saved changes)
+     * @return void
+     */
+    public function setMetaboxOpenStateOLD($id, $open = true, $persist = false) {
+
+        /*
+         * Apply defaults to array if not all the settings were provided
+         * This also ensures that if an element wasnt provided, it wont
+         * break while the array is accessed
+         */
+
+
+        $this->_meta_box_open_states[$id] = array('open' => $open, 'persist' => $persist);
     }
 
     /**
@@ -89,19 +134,18 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
       'simpli_hello_about' => array('state' => 'closed', 'first' => false)
       , 'simpli_hello_hellosettings' => array('state' => 'closed', 'first' => true)
       ));
-     * @param array $metabox_default_states
+     * @param array $meta_box_open_states
       index of each element is the id of the metabox
      * the value of the element is an array with 'state' = 'closed' or 'open'
      * 'first'=>true means that it will keep that state only until the user changes it. the next visit it will reflect the state the user changed it to
      * if 'first'=>false , the box will retain that state with every visit to the page, no matter if the user previously changed it.
 
 
-
      * @return object $this
      */
-    public function setMetaboxDefaultStates($metabox_default_states) {
+    public function setMetaboxDefaultStatesOLD($meta_box_open_states) {
 
-        if (!is_array($metabox_default_states)) {
+        if (!is_array($meta_box_open_states)) {
             return $this;
         }
 
@@ -113,15 +157,15 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          */
         $defaults = array('state' => 'open', 'persist' => false);
 
-        foreach ($metabox_default_states as $id => $metabox_state) {
-            $metabox_default_states[$id] = array_merge($defaults, $metabox_state);
+        foreach ($meta_box_open_states as $id => $metabox_state) {
+            $meta_box_open_states[$id] = array_merge($defaults, $metabox_state);
         }
 
 //            echo '<pre>';
 //            echo '</pre>';
 
 
-        $this->_metabox_default_states = $metabox_default_states;
+        $this->_meta_box_open_states = $meta_box_open_states;
         return $this;
     }
 
@@ -165,28 +209,55 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
 
         /*
+         * Menu Screen Actions
+         *
          * Fire all actions that must occur after the menu page has been added
+         * Using the 'current_screen' action ensures that the screen object will be available
+         * to check if you are on the correct screen.
+         * Items to add to the hookMenuScreen are things like adding metaboxes, scripts and styles that are unique to the screen
+
+         * 'current_screen' is the best hook to use and it ensures that the screen object is available for filtering
+         * init wont work - its too early and wont give you the screen object
+         * it also is early enough that you can enqueue styles and scripts.
+         * it is not worth trying to fire off off the '_menuPageAdded' hook, since
+         * it  will cause errors when using it for the custom post editor.
          */
-        add_action($this->getPlugin()->getSlug() . '_menuPageAdded', array($this, 'hookMenuPageAdded'));
+        add_action('current_screen', array($this, 'hookMenuScreen'));
+
+
+
 
 
         /*
-         * Add Menu Page Created in the Parent Class
+         * Add Menu Page Created in the Child Class
          */
-        add_action('admin_menu', array($this, 'hookAdminMenu'));
+        add_action('admin_menu', array($this, 'hookAddMenuPage'));
+
+             /*
+         * Add Custom Post Editor.
+         */
+
+
+ add_action('admin_menu', array($this, 'hookAddCustomPostEditor'));
+
+
 
         /*
-         *  add custom ajax handlers
+         *  Add Ajax Handlers
+         * This is where you map any form actions with the php function that handles the ajax request
+         * ajax handlers *must* be added to the addHooks() method. if added elsewhere, they may not be added in time and
+         * will not be recognized. If you get a 0 as a response from an ajax request, the add_action('wp_ajax_' was not added
+         * correctly.
          *
          * adding a wp_ajax hook in this format will execute the specified class method whenever the ajax request specifies an action = to $this->getPlugin()->getSlug() . '_xxxx'
           // see http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
          *
          */
-        //this is where you map any form actions with the php function that handles the ajax request
+
 
         /* save without reloading the page */
         add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array($this, 'hookAjaxSave'));
-
+        // move to hookMenuScreen add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array($this, 'hookAjaxSave'));
         /* save with reloading the page */
         add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save_with_reload', array($this, 'hookAjaxSaveWithReload'));
 
@@ -209,11 +280,12 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
 
 // add ajax action
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_ajax_metabox', array($this, 'hookAjaxMetabox'));
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_ajax_metabox_cache', array($this, 'hookAjaxMetaboxCache'));
+ //       add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_ajax_metabox', array($this, 'hookAjaxMetabox'));
+ //       add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_ajax_metabox_cache', array($this, 'hookAjaxMetaboxCache'));
 
 
-        add_action('current_screen', array($this, 'hookCurrentScreen'));
+
+
 
 
 
@@ -262,9 +334,14 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         //$this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug'=>'edit.php?post_type=simpli_hello_snippet'));
 
         $this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug' => $this->getMenuSlug()));
-    }
 
-    protected $_page_check_cache = null;
+        /*
+         * Configure the metabox object
+         * Pass the optional pageCheck callback method to
+         * ensure no hooks fire on pages other than our Menu page
+         */
+        $this->metabox()->config(array($this, 'pageCheckMenu'));
+    }
 
     /**
      * Page Check
@@ -276,7 +353,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return boolean
      */
-    protected function pageCheck() {
+    protected function pageCheckOLD() {
 
         /*
          * if either the page or the post_type matches, return true to verify the page check
@@ -294,7 +371,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
              * if the previous checks fail, then check the post object's post type
              */
             if (!$result) {
-                $post = $this->getPlugin()->getTools()->getPost(); //get the post object
+                $post = $this->getPlugin()->tools()->getPost(); //get the post object
                 $this->debug()->logVar('$post = ', $post);
                 if (is_object($post)) {
                     $result = ($post->post_type === $this->getPostType()); //check the post object type against what we want
@@ -313,16 +390,54 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
+     * Page Check
+     *
+     * Use for hook functions. Checks to see if we are on the menu that was added by this module.
+     * For optimization, cache the result the first time,so subsequent checks on the same page dont have to rebuild the result.
+     * Must be public since it is used by called objects, like metabox()
+     * Usage:
+     * if (!$this->pageCheckMenu(){return;}
+     * @param none
+     * @return boolean
+     */
+    public function pageCheckMenu() {
+        $this->debug()->t();
+
+
+        $result = ($this->getPlugin()->tools()->getQueryVar('page') === $this->getMenuSlug());
+        $this->debug()->logVar('$result = ', $result);
+        return ($result);
+    }
+
+    protected $_meta_box_object;
+
+    /**
+     * Metabox
+     *
+     * Provides the Metabox  utility object that manages WordPress Meta Boxes
+     *
+     * @param none
+     * @return object A metabox Class Object
+     */
+    public function metabox() {
+
+        if (is_null($this->_meta_box_object)) {
+            $this->_meta_box_object = new Simpli_Basev1c0_Metabox($this);
+        }
+        return $this->_meta_box_object;
+    }
+
+    /**
      * Hook Current Screen
      *
      * Hook Function on Current Screen
      * @param string $content The shortcode content
      * @return string The parsed output of the form body tag
      */
-    function hookCurrentScreen() {
+    function hookCurrentScreenOLD() {
 
 
-        if (!$this->pageCheck()) {
+        if (!$this->pageCheckMenu()) {
             return;
         }
 
@@ -330,37 +445,52 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          * Set some metaboxes as closed.
          * Must hook into current screen so we dont hook in too early
          */
-        add_action('get_user_option_closedpostboxes_' . $this->getScreenId(), array($this, 'hookCloseMetaboxes'));
+        //OLD  add_action('get_user_option_closedpostboxes_' . $this->getScreenId(), array($this->metabox(), 'hookCloseMetaboxes'));
     }
 
     /**
-     * Short Description
+     * Hook Menu Screen
      *
-     * Long Description
+     * Hooks into the 'current_screen' action,  and uses pageCheckMenu() to check if the screen object matches the Menu screen created by this module.
+     * Usage: From within the addHooks() method, add the following line: add_action('current_screen',($this,'hookMenuScreen')
+     *
+     * Add method calls here that should occur when the menu page created
+     * by this module starts to render. Since this hook is called by the current_screen
+     * action, the screen object is available and pageCheckMenu() can be used.
+     * Good things to add here: addMetaBoxes(),Enqueue Scripts,etc.
+     *
      * @param string $content The shortcode content
      * @return string The parsed output of the form body tag
      */
-    function hookMenuPageAdded() {
+    function hookMenuScreen() {
+        $this->debug()->t();
         /*
          *
-         * Add metaboxes and scripts only when we are on the page we want
+         * Use pageCheckMenu() to reject any calls
+         * that dont match the menu created by this module.
          *
          */
 
-        if (!$this->pageCheck()) {
+        if (!$this->pageCheckMenu()) {
+
+
+            $this->debug()->log('Exiting from ' . get_class($this) . '::' . __FUNCTION__ . '()  since didnt pass pageCheckMenu');
             return;
         }
-
         /*
-         * Add our meta boxes
-         * Hook into 'current_screen' .
-         * We dont use the 'add_meta_boxes' action since it will not work when used
-         * with a custom post editor.
+         * add actions
          */
 
-        add_action('current_screen', array($this, 'hookAddMetaBoxes')); //action must be 'current_screen' so screen object can be accessed by the add_meta_boxes function
         // Add scripts
         add_action('admin_enqueue_scripts', array($this, 'hookEnqueueBaseClassScripts'));
+
+        /*
+         * Add our meta boxes using a direct call, which will work
+         * since the hookMenuScreen is itself called by the 'current_screen' action
+         * The 'add_meta_boxes' action is not used since it will not work when used
+         * with a custom post editor.
+         */
+        $this->metabox()->addMetaBoxes();
     }
 
     /**
@@ -394,6 +524,10 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         remove_submenu_page($parent_slug, $menu_slug);
     }
 
+    /**
+     *
+     * @var string The level of the menu, either 'sub_menu' or 'top_level'
+     */
     protected $_menu_level;
 
     /**
@@ -419,13 +553,132 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
+     *
+     * @var array Menu Page Configuration added by addMenuPage
+     */
+    protected $_menu_page = null;
+
+    /**
+     * Add Menu Page (Wrapper)
+     *
+     * Simply adds the Add Menu Page paramaters to an array which is later used in a hook to add the menu page
+     *
+     * @param string $page_title The title of the menu page
+     * @param array $menu_titles An array of titles
+     * @param string $capability The capability
+     * @param string $icon_url The icon url
+     * @param string $position
+     * @return void
+     */
+    public function addMenuPage($page_title, $menu_titles, $capability, $icon_url = '', $position = null) {
+        $this->debug()->t();
+        $this->debug()->logVars(get_defined_vars());
+        $this->_menu_page = compact('page_title', 'menu_titles', 'capability', 'icon_url', 'position');
+    }
+
+    /**
+     *
+     * @var array Custom Editor Args added by addCustomPostEditor
+     */
+    protected $_custom_post_editor = null;
+        /**
+     * Add  Custom Post Editor (Wrapper)
+     *
+     * Simply adds the add Custom Post Editor paramaters to an array which is later used in a hook to add the editor page
+     *
+     * @param string $page_title The title of the menu page
+     * @param array $menu_titles An array of titles
+     * @param string $capability The capability
+     * @param string $icon_url The icon url
+     * @return void
+     */
+    public function addCustomPostEditor($page_title, $menu_title, $capability, $icon_url = '') {
+        $this->debug()->t();
+        $this->debug()->logVars(get_defined_vars());
+        $this->_custom_post_editor = compact('page_title', 'menu_title', 'capability', 'icon_url');
+    }
+
+
+       /**
+     * Hook Add Custom Post Editor
+     *
+     * Adds the configured menu page when the 'admin_menu' action hook is fired.
+     *
+     * @param none
+     * @return void
+     */
+    public function hookAddCustomPostEditor() {
+        $this->debug()->t();
+        if (is_null($this->_custom_post_editor)) {
+            $this->debug()->log('Exiting hookAddCustomPostEditor since $_custom_post_editor is null');
+            return;
+        }
+
+        $this->debug()->logVar('$this->_custom_post_editor = ', $this->_custom_post_editor);
+        /*
+         * extract the array of arguments
+         * provided by the public addMenuPage() method
+         */
+        extract($this->_custom_post_editor);
+
+        /*
+         * Now call the internal method that actually does the work within the hook
+         */
+
+        $this->_addCustomPostEditor
+                (
+                $page_title
+                , $menu_title
+                , $capability
+                , $icon_url
+          );
+    }
+
+
+    /**
+     * Hook Add Menu Page
+     *
+     * Adds the configured menu page when the 'admin_menu' action hook is fired.
+     *
+     * @param none
+     * @return void
+     */
+    public function hookAddMenuPage() {
+        $this->debug()->t();
+        if (is_null($this->_menu_page)) {
+            $this->debug()->log('Exiting hookAddMenuPage since $_menu_page is null');
+            return;
+        }
+
+        $this->debug()->logVar('$this->_menu_page = ', $this->_menu_page);
+        /*
+         * extract the array of arguments
+         * provided by the public addMenuPage() method
+         */
+        extract($this->_menu_page);
+
+        /*
+         * Now call the internal method that actually does the work within the hook
+         */
+
+        $this->_addMenuPage
+                (
+                $page_title
+                , $menu_titles
+                , $capability
+                , $icon_url
+                , $position
+        );
+    }
+
+    /**
      * Add a Menu Page
      *
      * Wrapper around add_menu_page so we can capture the page hook and still provide a nice api interface
      * @param string $content The shortcode content
      * @return string The parsed output of the form body tag
      */
-    public function addMenuPage($page_title, $menu_titles, $capability, $icon_url = '', $position = null) {
+    protected function _addMenuPage($page_title, $menu_titles, $capability, $icon_url, $position) {
 
         $this->debug()->logVars(get_defined_vars());
 
@@ -527,7 +780,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
         $this->updateMenuTracker($this->getMenuSlug(), array('capability' => $capability
             , 'level' => $this->getMenuLevel(), 'top_level_slug' => $this->getMenuSlug()));
-        do_action($this->getPlugin()->getSlug() . '_menuPageAdded');
+        do_action($this->getMenuSlug() . '_menuPageAdded');
     }
 
     /**
@@ -592,11 +845,12 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @param string $content The shortcode content
      * @return string The parsed output of the form body tag
      */
-    public function addCustomPostEditor($page_title, $menu_title, $capability, $icon_url = '') {
+    protected function _addCustomPostEditor($page_title, $menu_title, $capability, $icon_url = '') {
 
         $this->debug()->t();
 
         if (!$this->CUSTOM_POST_EDITOR_ENABLED) {
+
             return;
         }
 
@@ -636,35 +890,26 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
         $this->updateMenuTracker($this->getMenuSlug(), array('capability' => $capability
             , 'level' => $this->getMenuLevel()));
-        do_action($this->getPlugin()->getSlug() . '_menuPageAdded');
+        // do_action($this->getPlugin()->getSlug() . '_menuPageAdded');
+
+        do_action($this->getMenuSlug() . '_menuPageAdded');
     }
 
     /**
      * Add Menu Page Hook
-     * WordPress Hook - hookAdminMenu
+     * WordPress Hook - hookAddMenuPage
      *
      * @param none
      * @return void
      */
-    public function hookAdminMenu() {
-
-        if (!$this->pageCheck()) {
+    public function hookAddMenuPageOLD() {
+        $this->debug()->t();
+        if (!$this->pageCheckMenu()) {
             return;
         }
-        throw new Exception('You are missing a required hookAdminMenu method in  ' . get_class($this));
+        throw new Exception('You are missing a required hookAddMenuPage method in  ' . get_class($this));
     }
 
-    /**
-     * Add meta boxes
-     *
-     * @param none
-     * @return void
-     */
-    public function hookAddMetaBoxes() {
-        if (!$this->pageCheck()) {
-            return;
-        }
-    }
 
     /**
      * Dispatch request for ajax metabox
@@ -672,11 +917,17 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return void
      */
-    public function _AjaxMetabox($cache_timeout = 0) {
+    public function _AjaxMetaboxOLD($cache_timeout = 0) {
 
         //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
         // Disable errors
         error_reporting(0);
+        /*
+         * Compress Output
+         */
+        if ($this->COMPRESS) {
+            $this->tools()->startGzipBuffering();
+        }
 
         // Set headers
         header("Status: 200");
@@ -712,6 +963,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         $result['html'] = $request_result['body'];
         $result['metabox_id'] = $_GET['id'];
 
+
         echo json_encode($result);
         die();
     }
@@ -722,7 +974,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return void
      */
-    public function hookAjaxMetaboxCache() {
+    public function hookAjaxMetaboxCacheOLD() {
         //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
         $this->_AjaxMetabox(30);
     }
@@ -733,7 +985,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @param none
      * @return void
      */
-    public function hookAjaxMetabox() {
+    public function hookAjaxMetaboxOLD() {
         //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
         $this->_AjaxMetabox(0);
     }
@@ -767,43 +1019,30 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        $handle = $this->getPlugin()->getSlug() . '_save-metabox-state.js';
-        $path = $this->getPlugin()->getDirectory() . '/admin/js/save-metabox-state.js';
-        $inline_deps = null;
-        $external_deps = array('post');
-        $this->getPlugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
-
-
         /*
-         * Must pass onto the script the menu slug and current screen id so the metabox placement and expand/collapse will work properly
+         * Old - prior to moving metabox states to separate object
          */
-
-        $vars = array(
-            'menu_slug' => $this->getMenuSlug()
-            , 'screen_id' => get_current_screen()->id
-        );
-
-
-        $this->getPlugin()->setLocalVars($vars);
-
 
         /*
          * Add javascript for form submission
          *
+
+          $handle = $this->getPlugin()->getSlug() . '_metabox-form.js';
+          $path = $this->getPlugin()->getDirectory() . '/admin/js/metabox-form.js';
+          $inline_deps = array();
+          $external_deps = array('jquery');
+          $this->getPlugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+
+          $vars = array('metabox_forms' => array(
+          'reset_message' => __('Are you sure you want to reset this form?', $this->getPlugin()->getTextDomain())
+          , 'reset_all_message' => __('Are you sure you want to reset all the settings for this plugin to installed defaults?', $this->getPlugin()->getTextDomain())
+          ));
+
+
+          $this->getPlugin()->setLocalVars($vars);
+         *
+         *
          */
-        $handle = $this->getPlugin()->getSlug() . '_metabox-form.js';
-        $path = $this->getPlugin()->getDirectory() . '/admin/js/metabox-form.js';
-        $inline_deps = array();
-        $external_deps = array('jquery');
-        $this->getPlugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
-
-        $vars = array('metabox_forms' => array(
-                'reset_message' => __('Are you sure you want to reset this form?', $this->getPlugin()->getTextDomain())
-                , 'reset_all_message' => __('Are you sure you want to reset all the settings for this plugin to installed defaults?', $this->getPlugin()->getTextDomain())
-        ));
-
-
-        $this->getPlugin()->setLocalVars($vars);
     }
 
     /**
@@ -841,7 +1080,6 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         $output = ob_get_clean();
 
         echo do_shortcode($output);
-
     }
 
     /**
@@ -853,6 +1091,8 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     public function hookAjaxReset() {
 
         //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
+
+
 
 
         if (!wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug())) {
@@ -1098,6 +1338,8 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     /**
      * Set Menu Page Hook Name
      *
+     * Called when adding a menu and sub menu. its purpose is to capture the
+     * identifier hook name returned by the add_menu_page and add_submenu_page WordPress function.
      * @param string $menu_page_hook_name
      * @return object $this
      */
@@ -1107,8 +1349,10 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
-     * Get Screen
+     * Get Screen Id
      *
+     * Simply returns the current screen id from the screen object
+     * Used by : do_metaboxes calls in templates
      * @param none
      * @return string
      */
@@ -1121,13 +1365,13 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * Hook - Close Metaboxes
      * WordPress Hook Filter Function for 'get_user_option_closedpostboxes_{screen_id}'
      *
-     * Long Description
+     * Returns an array of the meta box ids that are closed for use in setting the default positions
      * @param array $closed_metaboxes
      * @return array $closed_metaboxes
      *
      */
-    public function hookCloseMetaboxes($closed_metaboxes) {
-        if (!$this->pageCheck()) {
+    public function hookCloseMetaboxesOld($closed_metaboxes) {
+        if (!$this->pageCheckMenu()) {
             return($closed_metaboxes);
         }
 
@@ -1145,7 +1389,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        $metaboxDefaultStates = $this->getMetaboxDefaultStates();
+        $metaboxDefaultStates = $this->getMetaboxOpenStates();
 
 
         /*
@@ -1163,7 +1407,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
         foreach ($metaboxDefaultStates as $metabox_id => $preferences) {
 
-            if ($preferences['state'] == 'closed') {
+            if ($preferences['open'] === false) {
                 /*
                  * if this is the first visit, and user wanted to apply defaults only to first visit
                  * or if this is not the first visit, and the user wanted to apply them always
@@ -1200,7 +1444,10 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @param array $metabox
      * @return void
      */
-    public function renderMetaBoxTemplate($module, $metabox) {
+    public function renderMetaBoxTemplateOLD($module, $metabox) {
+
+
+
 
         /*
          * If no template path provided, use the metabox id as the template name and /admin/templates/metabox as the path
@@ -1214,11 +1461,21 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
             $this->getPlugin()->debug()->logcError($this->getPlugin()->getSlug() . ' : Meta Box ' . $metabox['id'] . ' error - template path does not exist ' . $template_path);
             return;
         }
-        ob_start();
-        include($template_path);
-        $template = ob_get_clean();
 
-        echo do_shortcode($template); //using buffer and do_shortcode is required to allow shortcodes to work within an included file, otherwise they dont render.
+        if ($this->getPlugin()->ALLOW_SHORTCODES) {
+            ob_start();
+            include($template_path);
+            $template = ob_get_clean();
+            echo $template;
+        } else {
+            include($template_path);
+
+            return;
+        }
+
+
+
+        //      echo do_shortcode($template); //using buffer and do_shortcode is required to allow shortcodes to work within an included file, otherwise they dont render.
     }
 
     /**
@@ -1228,32 +1485,11 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @param array $metabox
      * @return void
      */
-    public function renderMetaBoxAjax($module, $metabox) {
+    public function renderMetaBoxAjaxOLD($module, $metabox) {
 
 
         include($this->getPlugin()->getDirectory() . '/admin/templates/metabox/ajax.php');
     }
 
-    public $_post_type = null;
-
-    /**
-     * Set Post Type
-     *
-     * @param array $post_type
-     * @return none
-     */
-    public function setPostType($post_type) {
-        $this->_post_type = $post_type;
-    }
-
-    /**
-     * Get Post Type
-     *
-     * @param none
-     * @return string
-     */
-    public function getPostType() {
-        return $this->_post_type;
-    }
 
 }

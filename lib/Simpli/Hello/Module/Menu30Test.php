@@ -21,7 +21,7 @@ class Simpli_Hello_Module_Menu30Test extends Simpli_Basev1c0_Plugin_Menu {
     public function addHooks() {
         $this->debug()->t();
 
-parent::addHooks();
+        parent::addHooks();
 
 
 
@@ -60,74 +60,39 @@ parent::addHooks();
          */
         parent::config();
 
-        /*
-         * Set default metabox states - must place this after parent::init to get access to the module's slug
-         */
-        $this->setMetaboxDefaultStates(
-                array(
-                    //set the about metabox to stay closed
-                    $this->getSlug() . '_metabox_about' => array('state' => 'closed', 'persist' => true
-                    )
-        ));
-    }
-
-    /**
-     * Admin panel menu option
-     * WordPress Hook - admin_menu
-     *
-     * @param none
-     * @return void
-     */
-    public function hookAdminMenu() {
-        $this->debug()->t();
 
         /*
-         *
-         * Add the main menu
-         *
-         */
-        /*
-         * Add menu
+         * Add the Menu Page
          */
 
-        $page_title = $this->getPlugin()->getName() . ' - Test Menu';
-        $menu_title = 'Test Menu';
-        $capability = 'manage_options';
-        $icon_url = $this->getPlugin()->getUrl() . '/admin/images/menu.png';
-
-        $this->addMenuPage($page_title, $menu_title, $capability, $icon_url, null);
-    }
-
-    /**
-     * Hook Add Meta Boxes
-     *
-     * Hook Function to add meta boxes to the current post
-     * @param none
-     * @return void
-     */
-    public function hookAddMetaBoxes() {
-        $this->debug()->t();
+        $this->addMenuPage
+                (
+                $page_title = $this->getPlugin()->getName() . ' - Test Menu'
+                , $menu_title = 'Test Menu'
+                , $capability = 'manage_options'
+                , $icon_url = $this->getPlugin()->getUrl() . '/admin/images/menu.png'
+                , $position = null
+        );
 
 
-
-
-
-
-
-
-        add_meta_box(
+        $this->metabox()->addMetaBox(
                 $this->getSlug() . '_' . 'metabox_test'  //Meta Box DOM ID
                 , __('Test New Form Addon', $this->getPlugin()->getTextDomain()) //title of the metabox.
-                , array($this, 'renderMetaBoxTemplate') //function that prints the html
+                , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                 , null //$metabox['args'] in callback function
         );
 
+/*
+ * configure initial state of metaboxes
+ */
 
-        $this->debug()->logVars(get_defined_vars());
+        $this->metabox()->setMetaboxOpenState($this->getSlug() . '_metabox_test', true, true);
     }
+
+
 
 }
 

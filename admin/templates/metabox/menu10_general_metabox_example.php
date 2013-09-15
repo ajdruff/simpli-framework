@@ -9,12 +9,13 @@
     $f = $this->getPlugin()->getAddon('Simpli_Forms')->getModule('Form');
 
 
-$f->formStart(array(
-    'theme' => 'Admin',
-  'filter' => array('Admin','Settings')
-
+    $f->formStart(array(
+        'theme' => 'Admin'
+        , 'filter' => array(
+           'Settings'
         )
-);
+            )
+    );
 
 
     $f->el(array(
@@ -53,7 +54,7 @@ $f->formStart(array(
         'hint' => 'Provide helpful text here describing this setting or provide a help <a href="#">link</a>',
             )
     );
-
+//
     $f->el(array(
         'el' => 'checkbox',
         'options' => array(
@@ -79,6 +80,5 @@ $f->formStart(array(
 
 
     $f->formEnd();
-
     ?>
 </div>

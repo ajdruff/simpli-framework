@@ -157,7 +157,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
     private function _setThemeDirectory($theme_directory_path) {
 
 
-        $theme_directory_path_normalized = $this->getPlugin()->getTools()->normalizePath($theme_directory_path);
+        $theme_directory_path_normalized = $this->getPlugin()->tools()->normalizePath($theme_directory_path);
         $this->_theme_directory = $theme_directory_path_normalized;
         $this->debug()->log('Set Theme Template Directory to : ' . $this->_theme_directory);
     }

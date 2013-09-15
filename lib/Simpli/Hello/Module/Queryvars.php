@@ -212,7 +212,7 @@ class Simpli_Hello_Module_QueryVars extends Simpli_Basev1c0_Plugin_Module {
      */
     public function test() {
 
-echo $this->getPlugin()->getTools()->url2dir(admin_url());
+echo $this->getPlugin()->tools()->url2dir(admin_url());
 
 
 

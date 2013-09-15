@@ -211,7 +211,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $template = ' <div style="color:red">Debug Stop - to continue script, remove the $this->debug()->stop() call on line {DS_LINE} in file {BASENAME_FILE} <br/><span style="color:black;">( {FILE} )</span></div>';
         $basename_file = basename($file);
         $tags = (compact('ds_line', 'line', 'file', 'basename_file'));
-        $stop_message = $this->getPlugin()->getTools()->crunchTpl($tags, $template);
+        $stop_message = $this->getPlugin()->tools()->crunchTpl($tags, $template);
 
         $this->_log($stop_message, $props, false, 'all', 'info');
         die();
@@ -496,7 +496,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
         if (is_null($expandable)) {
             $expandable=$this->getOption('expand_on_click');
-      
+
         }
 #init
 
@@ -506,7 +506,8 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          * If an array, format as an array
          */
         if (is_array($var) || is_object($var)) {
-
+            //cast to an array. if you dont, the object will appear as an empty array in the final output
+$var=(array)$var;
             /*
              * if the variable is an array or object, build another array with
              * results. do not attempt to update $var, since there are times when $var is an object passed by reference , which
@@ -546,7 +547,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 ';
             }
 
-            $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
+            $template = $this->getPlugin()->tools()->scrubHtmlWhitespace($template);
 
 
             foreach ($var as $key => $value) {
@@ -616,7 +617,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
              * variable value is a boolean, so we can differentiate from an empty string
              */
             if (is_bool($var)) {
-                $var = ($var) ? $var . '(true)' : $var . '(false)';
+                $var = ($var===true) ? $var . '(true)' : $var . '(false)';
             }
 
             /*
@@ -914,7 +915,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 </div>
 
 ';
-        $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
+        $template = $this->getPlugin()->tools()->scrubHtmlWhitespace($template);
 
 
         $content = str_replace(array_keys($tags), array_values($tags), $template);
@@ -965,7 +966,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             /*
              * populate the template
              */
-            $method_label_text = $this->getPlugin()->getTools()->crunchTpl($props, $method_label_template);
+            $method_label_text = $this->getPlugin()->tools()->crunchTpl($props, $method_label_template);
             $method_label_text = str_ireplace('[[', '', $method_label_text); //removes double brackets that appear after json encode
             $method_label_text = str_ireplace(']]', '', $method_label_text); // ditto
             return $method_label_text;
@@ -974,7 +975,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        $method_label_template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($method_label_template); //this is necessary since there are pre tags in the source . You could just remove it manually using a macro in a text editor , like the 'remove unnecessary whitespace' utility in notepad++ , but using scrubHtmlWhitespace allows us to retain the whitespace in our source file so its human readable, while still removing it when its displayed.
+        $method_label_template = $this->getPlugin()->tools()->scrubHtmlWhitespace($method_label_template); //this is necessary since there are pre tags in the source . You could just remove it manually using a macro in a text editor , like the 'remove unnecessary whitespace' utility in notepad++ , but using scrubHtmlWhitespace allows us to retain the whitespace in our source file so its human readable, while still removing it when its displayed.
         /*
          * Now populate the html template
          */
@@ -1136,7 +1137,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
                 '{COLLAPSE_TEXT}' => 'Hide Backtrace',
                 '{METHOD}' => $props['method']
             );
-            $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
+            $template = $this->getPlugin()->tools()->scrubHtmlWhitespace($template);
             $non_visual_backtrace_html = str_replace(array_keys($tags), array_values($tags), $template);
         }
 
@@ -1158,7 +1159,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
                 '{COLLAPSE_TEXT}' => 'Hide Visual Backtrace',
                 '{METHOD}' => $props['method']
             );
-            $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
+            $template = $this->getPlugin()->tools()->scrubHtmlWhitespace($template);
             $visual_backtrace_html = str_replace(array_keys($tags), array_values($tags), $template);
         }
         $content = $non_visual_backtrace_html . $visual_backtrace_html;
@@ -1271,7 +1272,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             </div>';
 
 
-            $debug_trace_html_template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($debug_trace_html_template); //this is necessary since there are pre tags in the source . You could just remove it manually using a macro in a text editor , like the 'remove unnecessary whitespace' utility in notepad++ , but using scrubHtmlWhitespace allows us to retain the whitespace in our source file so its human readable, while still removing it when its displayed.
+            $debug_trace_html_template = $this->getPlugin()->tools()->scrubHtmlWhitespace($debug_trace_html_template); //this is necessary since there are pre tags in the source . You could just remove it manually using a macro in a text editor , like the 'remove unnecessary whitespace' utility in notepad++ , but using scrubHtmlWhitespace allows us to retain the whitespace in our source file so its human readable, while still removing it when its displayed.
             /*
              * Now populate the html template
              */
@@ -1492,7 +1493,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          * element indexes as the defaults array, and that the values
          * match the defaults if they reached this point and are still null or dont exist
          */
-        $props = $this->getPlugin()->getTools()->screenDefaults($defaults, $props);
+        $props = $this->getPlugin()->tools()->screenDefaults($defaults, $props);
 
 
         /*
@@ -1638,7 +1639,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          * element indexes as the defaults array, and that the values
          * match the defaults if they werent set previously
          */
-        $props = $this->getPlugin()->getTools()->screenDefaults($defaults, $props);
+        $props = $this->getPlugin()->tools()->screenDefaults($defaults, $props);
 
         /*
          * trim strings
@@ -1787,7 +1788,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             $tags['time'] = date($this->getOption('prefix_time_format'));
             $tags['plugin_slug'] = $this->getPlugin()->getSlug();
 
-            $prefix = $this->getPlugin()->getTools()->crunchTpl($tags, $template); //str_ireplace(array_keys($tags), array_values($tags), $template);
+            $prefix = $this->getPlugin()->tools()->crunchTpl($tags, $template); //str_ireplace(array_keys($tags), array_values($tags), $template);
         }
 
         return $prefix;
@@ -1885,20 +1886,20 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
                 $tags['PLUGIN_SLUG'] = $this->getPlugin()->getSlug();
                 $tags['ERROR_MESSAGE'] = $log_entry['content'];
                 $tags = array_merge($tags, $props);
-                $log_entry['content'] = $this->getPlugin()->getTools()->crunchTPL($tags, $error_template);
+                $log_entry['content'] = $this->getPlugin()->tools()->crunchTPL($tags, $error_template);
             }
 
             /*
              * First, convert any new lines introduced by the whitespaces in the source code to <br/> tags
              */
 
-            $log_entry['content'] = $this->getPlugin()->getTools()->nl2br(($log_entry['content'])); //need to do this to protect against the source code introducing new lines to output strings, which breaks console.log
+            $log_entry['content'] = $this->getPlugin()->tools()->nl2br(($log_entry['content'])); //need to do this to protect against the source code introducing new lines to output strings, which breaks console.log
 
 
             /*
              * Then Convert to text, preserve newlines as a tag {NEW_LINE} that will be replaced later when printed to console.
              */
-            $log_entry['content'] = $this->getPlugin()->getTools()->html2text(($log_entry['content']), '{NEW_LINE}');
+            $log_entry['content'] = $this->getPlugin()->tools()->html2text(($log_entry['content']), '{NEW_LINE}');
 
 
 
@@ -1957,14 +1958,14 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
                 $tags['PLUGIN_SLUG'] = $this->getPlugin()->getSlug();
                 $tags['ERROR_MESSAGE'] = $log_entry['content'];
                 $tags = array_merge($tags, $props);
-                $log_entry['content'] = $this->getPlugin()->getTools()->crunchTPL($tags, $error_template);
+                $log_entry['content'] = $this->getPlugin()->tools()->crunchTPL($tags, $error_template);
             }
 
 
             /*
              * Convert to text to strip out html tags but preserve new lines
              */
-            $log_entry['content'] = $this->getPlugin()->getTools()->html2text(($log_entry['content']));
+            $log_entry['content'] = $this->getPlugin()->tools()->html2text(($log_entry['content']));
 
 
 
@@ -2084,7 +2085,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             'type' => null
         );
 
-        $log_entry = $this->getPlugin()->getTools()->screenDefaults($defaults, $log_entry);
+        $log_entry = $this->getPlugin()->tools()->screenDefaults($defaults, $log_entry);
 
         $props = $log_entry['props'];
         $prefix = '';
@@ -2104,7 +2105,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             $tags['PLUGIN_SLUG'] = $this->getPlugin()->getSlug();
             $tags['ERROR_MESSAGE'] = $log_entry['content'];
             $tags = array_merge($tags, $props);
-            $log_entry['content'] = $this->getPlugin()->getTools()->crunchTPL($tags, $error_template);
+            $log_entry['content'] = $this->getPlugin()->tools()->crunchTPL($tags, $error_template);
         }
 
 
@@ -2155,10 +2156,10 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         );
 
         if ($log_entry['type'] === 'trace') {
-            $result = $this->getPlugin()->getTools()->crunchTpl($tags, $trace_block_template);
+            $result = $this->getPlugin()->tools()->crunchTpl($tags, $trace_block_template);
         } else {
 
-            $result = $this->getPlugin()->getTools()->crunchTpl($tags, $log_content_template);
+            $result = $this->getPlugin()->tools()->crunchTpl($tags, $log_content_template);
         }
 
         return $result;
@@ -2370,7 +2371,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
              * check if file is in include path before attempting to include it
              */
 //if not include path, return a message to use
-            if ($this->getPlugin()->getTools()->inIncludePath($graphviz_include_path)) {
+            if ($this->getPlugin()->tools()->inIncludePath($graphviz_include_path)) {
                 include_once $graphviz_include_path; //
             } else {
                 die('<br> [Simpli Framework Debug Module] Error: Attempted to include \'' . $graphviz_include_path . '\' , but it could not be found. Graphviz is either not installed properly, or you need to set the include path for your installation. <br>You can set the Graphviz include path by adding the following line to the config() method in the Debug module: $this->debug()->setOption(\'graphviz_include_path\',\'path/to/GraphViz.php\' ( The default include path =\'Image/GraphViz.php\')<br> If you don\'t want to use graphviz to visually trace your debug backtraces, just add the following line to the config() method in the debug module; $this->setOption(\'graphviz\',false);');
@@ -3478,9 +3479,25 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          * in the filter
          */
         if ($this->getOption('action_inclusion_filter_enabled')) {
-            if (!in_array($current_filter, $this->getOption('action_inclusion_filter'))) {
 
+     if (!in_array($current_filter, $this->getOption('action_inclusion_filter'))) {
+            /* if didnt find it as a direct match,
+             * now check if pregmatch matches anything.
+             */
+            $matches_inclusion_filter_regex_pattern=false;
+            foreach ($this->getOption('action_inclusion_filter') as $filter_regex) {
+
+            if (preg_match("/" . $filter_regex . "/", $current_filter) === 1) {
+              $matches_inclusion_filter_regex_pattern=true;
+            }
+
+            }
+
+            if (!$matches_inclusion_filter_regex_pattern) {
                 return;
+            }
+
+
             }
         }
 
@@ -3558,7 +3575,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         {ARGUMENTS}
         </div>';
 
-        $template = $this->getPlugin()->getTools()->scrubHtmlWhitespace($template);
+        $template = $this->getPlugin()->tools()->scrubHtmlWhitespace($template);
         $tags = array(
             '{HOOK_COUNT}' => $hook_count,
             '{CURRENT_FILTER}' => $current_filter,
@@ -3663,14 +3680,14 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
             'COMMENT' => $comment,
             'METHOD' => implode("", array_slice($file_contents, $start_line, $length))
         );
-        $highlighted_source = highlight_string($this->getPlugin()->getTools()->crunchTpl($tags, $template), true);
+        $highlighted_source = highlight_string($this->getPlugin()->tools()->crunchTpl($tags, $template), true);
         /*
          * then insert the breaks to separate the comment from the source and the php tags
          */
         $tags = array(
             'BREAK' => '<br/>',
         );
-        $highlighted_source = $this->getPlugin()->getTools()->crunchTpl($tags, $highlighted_source);
+        $highlighted_source = $this->getPlugin()->tools()->crunchTpl($tags, $highlighted_source);
 
         /*
          * return the highlighted code

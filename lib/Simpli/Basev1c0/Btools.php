@@ -10,7 +10,7 @@
  */
 class Simpli_Basev1c0_Btools {
 
-    protected $_plugin=null;
+    protected $_plugin = null;
 
 //    /**
 //     * Get Plugin
@@ -22,7 +22,6 @@ class Simpli_Basev1c0_Btools {
 //     */
 //    public function getPlugin() {
 //        $this->debug()->logVar('$this->_plugin = ', $this->_plugin,true);
-
 //
 //return  $this->_plugin;
 //
@@ -37,9 +36,7 @@ class Simpli_Basev1c0_Btools {
         $this->_plugin = $plugin;
     }
 
-
-
-        /**
+    /**
      * Get Plugin
      *
      * @param none
@@ -48,8 +45,6 @@ class Simpli_Basev1c0_Btools {
     public function getPlugin() {
         return $this->_plugin;
     }
-
-
 
 //    function __construct($plugin) {
 //        if (is_null($this->_plugin)) {
@@ -95,7 +90,7 @@ class Simpli_Basev1c0_Btools {
 
           );
 
-          $sorted_handles=$this->getTools()->sortDependentList($list,$dependencies);
+          $sorted_handles=$this->tools()->sortDependentList($list,$dependencies);
           echo '<br> ______________   FINAL RESULT _________';
           echo '<pre>';
 
@@ -188,7 +183,7 @@ class Simpli_Basev1c0_Btools {
      * Converts a local url to an absolute directory path. Very useful to determine WordPress locations
      * Usage:
      * to find wordpress admin directory:
-     *  $admin_dir= $this->getPlugin()->getTools()->url2dir(admin_url());
+     *  $admin_dir= $this->getPlugin()->tools()->url2dir(admin_url());
      * @param string $url The absolute url to the local file
      * @return string The absolute directory path to the Directory
      */
@@ -767,7 +762,9 @@ class Simpli_Basev1c0_Btools {
     public function isScreen($screen_id, $post_type = null) {
         $this->debug()->t();
 
-
+#init
+        $combined_result = false;
+        $debug_message = '';
 
         $result = false;
 
@@ -794,11 +791,11 @@ class Simpli_Basev1c0_Btools {
             $isPostType = true; //if post type is null, then thats really saying this check is for all post types.
             $debug_message_post_types = ' any post type ';
         } else {
-/*
- * if our post type paramater is not null, we check the current_screen post type to see if it matches
- *
- * If the current_screen is not defined (as in the event of a custom editor) , check to see if there is a post type within the url by using get{pstTypeQueryVar
- */
+            /*
+             * if our post type paramater is not null, we check the current_screen post type to see if it matches
+             *
+             * If the current_screen is not defined (as in the event of a custom editor) , check to see if there is a post type within the url by using get{pstTypeQueryVar
+             */
 
             if (is_null($current_screen->post_type)) {
 
@@ -831,74 +828,93 @@ class Simpli_Basev1c0_Btools {
 
 
 
-
-
-        switch ($screen_id) {
-            case 'list': // the listing page for the post type provided
-                $result = ($isList && $isPostType) ? true : false;
-                $debug_message = 'Listing Screen';
-                break;
-
-            case 'add': // the 'add new' page for the post type provided
-
-                $result = ($isAddScreen && $isPostType) ? true : false;
-
-                $debug_message = 'Add Screen';
-                break;
-            case 'edit-add': //will return true if on either the 'edit' or 'add' page for the post type provided
-
-                $result = (($isEditScreen && $isPostType) || ($isAddScreen && $isPostType)) ? true : false;
-                $debug_message = 'Edit or Add Screen';
-
-                break;
-
-            case 'edit': // the post editor page for the post type provided
-
-                $result = ($isEditScreen && $isPostType) ? true : false;
-                $debug_message = 'Edit Screen';
-                break;
-
-
-
-                  case 'CustomAdd': // the 'add new' page for the post type provided
-
-                $result = ($isCustomAddScreen && $isPostType) ? true : false;
-
-                $debug_message = 'Custom Add Screen';
-                break;
-            case 'CustomEdit-CustomAdd': //will return true if on either the 'edit' or 'add' page for the post type provided
-
-                $result = (($isCustomEditScreen && $isPostType) || ($isCustomAddScreen && $isPostType)) ? true : false;
-                $debug_message = 'Custom Edit or Custom Add Screen';
-
-                break;
-
-            case 'CustomEdit': // the post editor page for the post type provided
-
-                $result = ($isCustomEditScreen && $isPostType) ? true : false;
-                $debug_message = 'Custom Edit Screen';
-                break;
-
-
-
-
-
-
-
-            case 'plugins-list': //the plugins listing page
-                $result = ($current_screen->base === 'plugins');
-                $debug_message = 'Plugin Listing Screen';
-                break;
-
-            //todo: add more here (media,comments,etc)
+        if (!is_array($screen_id)) {
+            $screen_id = array($screen_id);
         }
 
-        $debug_result = ($result) ? ', and it is ' : ', and it is NOT ';
+
+        foreach ($screen_id as $screen) {
+
+
+            switch ($screen) {
+                case 'list': // the listing page for the post type provided
+                    $result = ($isList && $isPostType) ? true : false;
+                    $debug_message = 'Listing Screen';
+                    break;
+
+                case 'add': // the 'add new' page for the post type provided
+
+                    $result = ($isAddScreen && $isPostType) ? true : false;
+
+                    $debug_message = 'Add Screen';
+                    break;
+                case 'edit-add': //will return true if on either the 'edit' or 'add' page for the post type provided
+
+                    $result = (($isEditScreen && $isPostType) || ($isAddScreen && $isPostType)) ? true : false;
+                    $debug_message = 'Edit or Add Screen';
+
+                    break;
+
+                case 'edit': // the post editor page for the post type provided
+
+                    $result = ($isEditScreen && $isPostType) ? true : false;
+                    $debug_message = 'Edit Screen';
+                    break;
+
+
+
+                case 'custom_add': // the 'add new' page for the post type provided
+
+                    $result = ($isCustomAddScreen && $isPostType) ? true : false;
+
+                    $debug_message = 'Custom Add Screen';
+                    break;
+//            case 'CustomEdit-CustomAdd': //will return true if on a custom edit or custom add page for the post typeprovided
+//
+//                $result = (($isCustomEditScreen && $isPostType) || ($isCustomAddScreen && $isPostType)) ? true : false;
+//                $debug_message = 'Custom Edit or Custom Add Screen';
+//
+//                break;
+
+                case 'custom_edit': // the post editor page for the post type provided
+
+                    $result = ($isCustomEditScreen && $isPostType) ? true : false;
+                    $debug_message = 'Custom Edit Screen';
+                    break;
+
+
+
+
+
+
+
+                case 'plugins-list': //the plugins listing page
+                    $result = ($current_screen->base === 'plugins');
+                    $debug_message = 'Plugin Listing Screen';
+                    break;
+
+
+                default:
+                    $result = false;
+                    $debug_message = '<ERROR: Could Not Find Screen ID >' . $screen;
+                    $this->debug()->logError('Unable to verify screen, could not find screen id ' . $screen);
+                    break;
+                //todo: add more here (media,comments,etc)
+            }
+            $previous_result = $result;
+            $combined_result = $combined_result | $previous_result;
+        }
+
+
+        $debug_result = ($combined_result) ? ', and it is ' : ', and it is NOT ';
         $this->debug()->log('Checked to see if this was the ' . $debug_message . ' for ' . $debug_message_post_types . $debug_result);
 
         $this->debug()->logVars(get_defined_vars());
-
-        return($result);
+        /*
+         * for some reason, you have to cast to boolean
+         * for the result to be recognized as boolean
+         */
+        return((bool) $combined_result);
     }
 
     /**
@@ -988,6 +1004,24 @@ class Simpli_Basev1c0_Btools {
             $post_type = str_replace($obfuscation, '', $post_type);
         }
         return $post_type;
+    }
+
+    /**
+     * Start Gzip Buffering
+     *
+     * Starts an output buffering session with gzip enabled.
+     * Avoids the 'cannot be used twice' error by first checking
+     * if it has already been enabled
+     * Ref:http://stackoverflow.com/questions/6010403/how-to-determine-wether-ob-start-has-been-called-already
+     *
+     * @param none
+     * @return void
+     */
+    public function startGzipBuffering() {
+
+        if (!in_array('ob_gzhandler', ob_list_handlers())) {
+            ob_start('ob_gzhandler');
+        }
     }
 
 }

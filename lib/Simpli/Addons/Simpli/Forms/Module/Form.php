@@ -338,10 +338,10 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         if (!isset($atts['options']) || is_null($atts['options'])) {
             //  $atts['options'] = $content;
 
-            $atts['options'] = $this->getPlugin()->getTools()->lines2array($content);
+            $atts['options'] = $this->getPlugin()->tools()->lines2array($content);
         } else {
 
-            $atts['options'] = $this->getPlugin()->getTools()->parse_str($atts['options']);
+            $atts['options'] = $this->getPlugin()->tools()->parse_str($atts['options']);
         }
 
 
@@ -770,7 +770,8 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
             'action' => $_SERVER['REQUEST_URI'],
             'method' => 'post',
             'template' => __FUNCTION__,
-            'filter' => 'Settings',);
+            'filter' => null
+            );
 
 
         /*

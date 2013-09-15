@@ -23,4 +23,5 @@ jQuery(document).ready(function($) {
     postboxes.add_postbox_toggles(simpli_hello.screen_id); //e.g.: 'toplevel_page_simpli_hello_menu10_settings'
 
 
+
 });

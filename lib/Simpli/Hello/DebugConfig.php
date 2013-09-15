@@ -45,15 +45,19 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Debug {
         //
 
 //        $this->debug()->setMethodFilter('isScreen', true);
-$this->debug()->setMethodFilter('.*Menu.*', false);
+$this->debug()->setMethodFilter('.*CustomPostType*', false);
 $this->debug()->setMethodFilter('.*PostUserOptions.*', false);
 
-$this->debug()->setMethodFilter('Simpli_Hello_Module_PostUserOptions::pageCheck', false);
+$this->debug()->setMethodFilter('Simpli_Hello_Module_Menu01CustomPostType', false);
 $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Themes_Admin_Module_FilterOptions::_commonFilter', false);
 
 //
-$this->debug()->setMethodFilter('isScreen', false);
+$this->debug()->setMethodFilter('Menu.*', false);
 $this->debug()->setMethodFilter('hook*', false);
+$this->debug()->setMethodFilter('Simpli_Basev1c0_metabox', false);
+$this->debug()->setMethodFilter('renderMenuPage', false);
+$this->debug()->setMethodFilter('_AjaxMetabox', false);
+$this->debug()->setMethodFilter('.*Meta.*', false);
         //addPostEditor
 //        $this->debug()->setMethodFilter('lines2array', false);
 //        $this->debug()->setMethodFilter('el_sc', false);
@@ -70,7 +74,7 @@ $this->debug()->setMethodFilter('hook*', false);
 //
 //
 //        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Addon', false);
-//        $this->debug()->setMethodFilter('hookAdminMenu', false);
+//        $this->debug()->setMethodFilter('hookAddMenuPage', false);
 //
 //        $this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin', false);
 //        $this->debug()->setMethodFilter('Simpli_Hello_Module_Admin', false);
@@ -105,7 +109,7 @@ $this->debug()->setMethodFilter('hook*', false);
     //    $this->debug()->setMethodFilter('_getCachedTemplate', false);
 
 
-
+        $this->setOption('log_all_actions', false);
         $this->setOption('logging_enabled', true);
         $this->setOption('always_show_errors',true); /* always show errors, regardless of filtering */
 
@@ -113,21 +117,21 @@ $this->debug()->setMethodFilter('hook*', false);
 
 
         $this->debug()->setOption('trace_enabled', false);
-        $this->debug()->setOption('defined_vars_enabled', false);
+        $this->debug()->setOption('defined_vars_enabled', true);
         $this->debug()->setOption('backtrace_enabled', false);
         $this->debug()->setOption('visual_backtrace_enabled', false);
 
         $this->setOption('trace_output_format', 'normal');  //options are 'normal'(default), 'text' and 'simple'
 
 
-        $this->setOption('log_all_actions', false);
 
-        $this->debug()->setOption('show_arrays', true);
+
+        $this->debug()->setOption('show_arrays', false);
         $this->debug()->setOption('show_objects', false);
 
 $this->setOption('debug_ajax_enabled',true);
 
- $this->setOption('expand_on_click', false);
+ $this->setOption('expand_on_click', true);
 
         /*
          * Debug Output
@@ -192,12 +196,13 @@ $this->setOption('debug_ajax_enabled',true);
                         $this->getOption('action_inclusion_filter'),
 
                 array(
-                              'pre_get_posts',
-                            'parse_query'
-                            ,'send_headers'
-                            ,'wp_headers'
-                            ,'parse_request'
-                            ,'query_vars'
+                          //    'pre_get_posts',
+                         //   'parse_query'
+                          //  ,'send_headers'
+                         //   ,'wp_headers'
+                         //   ,'parse_request'
+                          //  ,'query_vars'
+                    'simpli_hello_simpli_hello_menu.*'
                             ,'current_screen'
 
                     )

@@ -189,7 +189,7 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
             $tokens['option_value'] = $option_value;
             $tokens['option_text'] = $option_text;
             $option_template = '<option {selected_html} value="{option_value}">{option_text}</option>';
-            $options_html.=$this->getPlugin()->getTools()->crunchTpl($tokens, $option_template);
+            $options_html.=$this->getPlugin()->tools()->crunchTpl($tokens, $option_template);
         }
 
 
@@ -259,7 +259,7 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
 </label>
                         </p>';
 
-            $options_html.=$this->getPlugin()->getTools()->crunchTpl($tokens, $option_template);
+            $options_html.=$this->getPlugin()->tools()->crunchTpl($tokens, $option_template);
         }
 
 
@@ -349,7 +349,7 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
             $tokens['option_text'] = $option_text;
             $option_template = $this->getAddon()->getModule('Form')->getTheme()->getTemplate($atts['template_option']);
 
-            $options_html.=$this->getPlugin()->getTools()->crunchTpl($tokens, $option_template);
+            $options_html.=$this->getPlugin()->tools()->crunchTpl($tokens, $option_template);
             $this->debug()->logVar('$tokens = ', $tokens);
         }
 
@@ -395,7 +395,7 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
         $this->debug()->t();
 
         extract($properties);
-        $post = $this->getPlugin()->getTools()->getPost();
+        $post = $this->getPlugin()->tools()->getPost();
         $post_type = $post->post_type;
 
         $post_ID = $post->ID;

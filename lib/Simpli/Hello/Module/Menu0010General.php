@@ -9,7 +9,7 @@
  * @subpackage SimpliHello
  *
  */
-class Simpli_Hello_Module_Menu10General extends Simpli_Basev1c0_Plugin_Menu {
+class Simpli_Hello_Module_Menu0010General extends Simpli_Basev1c0_Plugin_Menu {
 
     /**
      * Add Hooks
@@ -69,16 +69,109 @@ class Simpli_Hello_Module_Menu10General extends Simpli_Basev1c0_Plugin_Menu {
         parent::config();
 
 
+/*
+ * Set the Meta Box Initial Open/Close state
+ */
+        $this->metabox()->setMetaboxOpenState
+                ($this->getSlug() . '_metabox_about'
+                , false
+                , true
+                );
 
         /*
-         * Set default metabox states - must place this after parent::init to get access to the module's slug
+         * Add the Menu Page
          */
-        $this->setMetaboxDefaultStates(
-                array(
-                    //set the about metabox to stay closed
-                    $this->getSlug() . '_metabox_about' => array('state' => 'closed', 'persist' => true
-                    )
-        ));
+
+        $this->addMenuPage
+                (
+                $page_title = $this->getPlugin()->getName() . ' - General Settings'
+                , $menu_title = array('menu' => $this->getPlugin()->getName(), 'sub_menu' => 'General Settings')
+                , $capability = 'manage_options'
+                , $icon_url = $this->getPlugin()->getUrl() . '/admin/images/menu.png'
+                , $position = null
+        );
+
+
+        $this->metabox()->addMetaBox(
+                $this->getSlug() . '_' . 'metabox_about'  //Meta Box DOM ID
+                , __('About Simpli Hello and the Simpli Framework', $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
+                , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
+                , 'normal' //normal advanced or side The part of the page where the metabox should show
+                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                , null //$metabox['args'] in callback function
+        );
+////
+////
+//
+//
+
+
+        $this->metabox()->addMetaBox(
+                $this->getSlug() . '_' . 'metabox_hellosettings'  //Meta Box DOM ID
+                , __('Simpli Hello Plugin Settings', $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
+                , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
+                , 'normal' //normal advanced or side The part of the page where the metabox should show
+                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                , null //$metabox['args'] in callback function
+        );
+
+
+        $this->metabox()->addMetaBox(
+                $this->getSlug() . '_' . 'metabox_example'  //Meta Box DOM ID
+                , __('Example Metabox with different input types', $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
+                , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
+                , 'normal' //normal advanced or side The part of the page where the metabox should show
+                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                , null //$metabox['args'] in callback function
+        );
+
+
+
+        $this->metabox()->addMetaBox(
+                $this->getSlug() . '_' . 'metabox_updates'  //Meta Box DOM ID
+                , __('Plugin Updates', $this->getPlugin()->getTextDomain()) //title of the metabox
+                , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
+                , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
+                , 'side'//normal advanced or side The part of the page where the metabox should show
+                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                , array('url' => 'http://www.simpliwp.com/simpli-framework/metabox-updates-example/') //$metabox['args'] in callback function
+        );
+//
+//
+
+        $this->metabox()->addMetaBox(
+                $this->getSlug() . '_' . 'metabox_support'  //Meta Box DOM ID
+                , __('Support', $this->getPlugin()->getTextDomain()) //title of the metabox
+                , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
+                , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
+                , 'side'//normal advanced or side The part of the page where the metabox should show
+                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                , array('url' => 'http://www.simpliwp.com/simpli-framework/metabox-support-example/') //$metabox['args'] in callback function
+        );
+//
+        $this->metabox()->addMetaBox(
+                $this->getSlug() . '_' . 'metabox_feedback'  //Meta Box DOM ID
+                , __('Feedback', $this->getPlugin()->getTextDomain()) //title of the metabox
+                , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
+                , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
+                , 'side'//normal advanced or side The part of the page where the metabox should show
+                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                , array('url' => 'http://www.simpliwp.com/simpli-framework/metabox-feedback-example/') //$metabox['args'] in callback function
+        );
+
+        $this->metabox()->addMetaBox(
+                $this->getSlug() . '_' . 'metabox_donate'  //Meta Box DOM ID
+                , __('Donate', $this->getPlugin()->getTextDomain()) //title of the metabox
+                , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
+                , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
+                , 'side'//normal advanced or side The part of the page where the metabox should show
+                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                , array('url' => 'http://www.simpliwp.com/simpli-framework/metabox-donate-example/') //$metabox['args'] in callback function
+        );
+
     }
 
     /**
@@ -88,7 +181,7 @@ class Simpli_Hello_Module_Menu10General extends Simpli_Basev1c0_Plugin_Menu {
      * @param none
      * @return void
      */
-    public function hookAdminMenu() {
+    public function hookAddMenuPageOLD() {
         $this->debug()->t();
 
         /*
@@ -109,13 +202,20 @@ class Simpli_Hello_Module_Menu10General extends Simpli_Basev1c0_Plugin_Menu {
          */
 
 
- $menu_title = array('menu' => $this->getPlugin()->getName(), 'sub_menu' => 'General Settings');
+        $menu_title = array('menu' => $this->getPlugin()->getName(), 'sub_menu' => 'General Settings');
 
 
         $capability = 'manage_options';
         $icon_url = $this->getPlugin()->getUrl() . '/admin/images/menu.png';
 
-        $this->addMenuPage($page_title, $menu_title, $capability, $icon_url, null);
+        $this->addMenuPage
+                (
+                $page_title = $this->getPlugin()->getName() . ' - General Settings'
+                , $menu_title = array('menu' => $this->getPlugin()->getName(), 'sub_menu' => 'General Settings')
+                , $capability = 'manage_options'
+                , $icon_url = $this->getPlugin()->getUrl() . '/admin/images/menu.png'
+                , $position = null
+        );
     }
 
     /**
@@ -125,7 +225,7 @@ class Simpli_Hello_Module_Menu10General extends Simpli_Basev1c0_Plugin_Menu {
      * @param none
      * @return void
      */
-    public function hookAddMetaBoxes() {
+    public function addMetaBoxesOLD() {
         $this->debug()->t();
 
 
@@ -135,10 +235,11 @@ class Simpli_Hello_Module_Menu10General extends Simpli_Basev1c0_Plugin_Menu {
 
 
 
-        add_meta_box(
+
+        $this->metabox()->addMetaBox(
                 $this->getSlug() . '_' . 'metabox_about'  //Meta Box DOM ID
                 , __('About Simpli Hello and the Simpli Framework', $this->getPlugin()->getTextDomain()) //title of the metabox.
-                , array($this, 'renderMetaBoxTemplate') //function that prints the html
+                , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
@@ -148,32 +249,35 @@ class Simpli_Hello_Module_Menu10General extends Simpli_Basev1c0_Plugin_Menu {
 ////
 //
 //
+
+
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_hellosettings'  //Meta Box DOM ID
                 , __('Simpli Hello Plugin Settings', $this->getPlugin()->getTextDomain()) //title of the metabox.
-                , array($this, 'renderMetaBoxTemplate') //function that prints the html
+                , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                 , null //$metabox['args'] in callback function
         );
 
+
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_example'  //Meta Box DOM ID
                 , __('Example Metabox with different input types', $this->getPlugin()->getTextDomain()) //title of the metabox.
-                , array($this, 'renderMetaBoxTemplate') //function that prints the html
+                , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                 , null //$metabox['args'] in callback function
         );
-//
+
 
 
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_updates'  //Meta Box DOM ID
                 , __('Plugin Updates', $this->getPlugin()->getTextDomain()) //title of the metabox
-                , array($this, 'renderMetaBoxAjax') //function that prints the html
+                , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
@@ -181,10 +285,11 @@ class Simpli_Hello_Module_Menu10General extends Simpli_Basev1c0_Plugin_Menu {
         );
 //
 //
+
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_support'  //Meta Box DOM ID
                 , __('Support', $this->getPlugin()->getTextDomain()) //title of the metabox
-                , array($this, 'renderMetaBoxAjax') //function that prints the html
+                , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
@@ -194,7 +299,7 @@ class Simpli_Hello_Module_Menu10General extends Simpli_Basev1c0_Plugin_Menu {
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_feedback'  //Meta Box DOM ID
                 , __('Feedback', $this->getPlugin()->getTextDomain()) //title of the metabox
-                , array($this, 'renderMetaBoxAjax') //function that prints the html
+                , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
@@ -204,7 +309,7 @@ class Simpli_Hello_Module_Menu10General extends Simpli_Basev1c0_Plugin_Menu {
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_donate'  //Meta Box DOM ID
                 , __('Donate', $this->getPlugin()->getTextDomain()) //title of the metabox
-                , array($this, 'renderMetaBoxAjax') //function that prints the html
+                , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
@@ -221,7 +326,7 @@ class Simpli_Hello_Module_Menu10General extends Simpli_Basev1c0_Plugin_Menu {
     public function showDisabledMessage() {
         $this->debug()->t();
 
-        if (!$this->pageCheck()) {
+        if (!$this->pageCheckMenu()) {
             return;
         }
 

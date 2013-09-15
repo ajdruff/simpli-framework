@@ -19,7 +19,8 @@
  * @property string $QUERY_VAR The name of the plugin's query variable
  * @property string $QV_ACTION_EDIT_POST The query variable's value that indicates the editing of a post by a custom post editor
  * @property string $QV_ACTION_ADD_POST The query variable's value that indicates the adding of a post by a custom post editor
- *
+ * @property boolean $COMPRESS Ajax Compression Set to false if server does not support zlib. True is default
+ * @property boolean $ALLOW_SHORTCODES Processes includes files ( like templates ) for shortcodes. Default is true. Disabling improves performance.
  *
  *
  *
@@ -94,13 +95,16 @@ class Simpli_Basev1c0_Plugin {
      */
     protected $_modules = null;
 
-    /**
-     * Logger
-     *
-     * @var Simpli_Basev1c0_Logger_Interface
-     */
-    protected $_logger = null;
+//    /**
+//     * Logger
+//     *
+//     * @var Simpli_Basev1c0_Logger_Interface
+//     */
+//    protected $_logger = null;
 
+
+
+        
     /**
      * Plugin URL
      *
@@ -236,7 +240,7 @@ class Simpli_Basev1c0_Plugin {
      *
      * Contains an array of the disabled addons
      *
-     * @var array
+     * @var array An array of the disabled addons
      */
     protected $_disabled_addonsOLD = null;
 
@@ -267,6 +271,7 @@ class Simpli_Basev1c0_Plugin {
      */
     protected $_slug_parts = null;
 
+
     /**
      * Class Namespace
      *
@@ -293,14 +298,14 @@ class Simpli_Basev1c0_Plugin {
      */
     public function __construct() {
 
-        /*
-         *
-         * Set Logger dependency
-         *
-         */
-
-        $this->setLogger(Simpli_Basev1c0_Logger::getInstance());
-
+//        /*
+//         *
+//         * Set Logger dependency
+//         *
+//         */
+//
+//        $this->setLogger(Simpli_Basev1c0_Logger::getInstance());
+//
 
         return $this;
     }
@@ -366,7 +371,7 @@ class Simpli_Basev1c0_Plugin {
 
         if (is_null($this->_directory)) {
             $directory = dirname($this->getFilePath());
-            $this->_directory = $this->getTools()->normalizePath($directory);
+            $this->_directory = $this->tools()->normalizePath($directory);
         }
 
         return $this->_directory;
@@ -395,7 +400,7 @@ class Simpli_Basev1c0_Plugin {
             $class_namespace_parts = $this->getClassNamespaceParts();
 
             $module_directory = $this->getDirectory() . '/' . $this->DIR_NAME_LIBS . '/' . $class_namespace_parts[0] . '/' . $class_namespace_parts[1] . '/' . $this->DIR_NAME_MODULES;
-            $this->_module_directory = $this->getTools()->normalizePath($module_directory);
+            $this->_module_directory = $this->tools()->normalizePath($module_directory);
         }
 
 
@@ -427,14 +432,14 @@ class Simpli_Basev1c0_Plugin {
      * @return arrayReadOnly
      */
     public function getAvailableModules($filter = 'enabled') {
-        // $this->getTools()->backtrace();
+        // $this->tools()->backtrace();
         $this->debug()->t();
         $available_modules = array();
         if (is_null($this->_available_modules)) {
 
 
 
-            $tools = $this->getTools();
+            $tools = $this->tools();
 
             /*
              * Find all the Module files in the module directory
@@ -549,7 +554,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
      * @param object $logger
      * @return object $this
      */
-    public function setLogger(Simpli_Basev1c0_Logger_Interface $logger) {
+    public function setLoggerOLD(Simpli_Basev1c0_Logger_Interface $logger) {
         $this->_logger = $logger;
         $this->_logger->setPlugin($this); //pass a reference of the plugin to the logger
 
@@ -562,7 +567,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
      * @param none
      * @return object
      */
-    public function getLogger() {
+    public function getLoggerOLD() {
 
         if (!isset($this->_logger)) {
             die(__CLASS__ . ' missing Logger dependency.');
@@ -1003,7 +1008,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
      * @param none
      * @return object Base Tools
      */
-    public function getTools() {
+    public function tools() {
 
         if (is_null($this->_tools)) {
 
@@ -1034,6 +1039,8 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
      * @return void
      */
     public function config() {
+
+
 
     }
 
@@ -1075,6 +1082,13 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
 
 
         $this->config();
+
+                                /*
+         * Compress Output
+         */
+        if ($this->COMPRESS) {
+             $this->tools()->startGzipBuffering();
+        }
 
         /**
          * Load Settings
@@ -1213,7 +1227,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
      */
     public function loadAddons() {
 
-        $tools = $this->getTools();
+        $tools = $this->tools();
         /*
          * get all the add on files in the add on directory
          */
@@ -1230,13 +1244,13 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
              * by removing the known addons directory and base file name
              */
 
-            $addon_file_path = $this->getTools()->normalizePath($addon_file_path);
+            $addon_file_path = $this->tools()->normalizePath($addon_file_path);
 
             //echo '<br/>' . __LINE__ . ' ' . __METHOD__ . ' ' . $addon_file_path;
             /*
              * First, remove  AddonsDirectory path , becomes :  Simpli/Forms/Addon.php
              */
-            $addon_name = $this->getTools()->makePathRelative($this->getAddonsDirectory(), $addon_file_path); //
+            $addon_name = $this->tools()->makePathRelative($this->getAddonsDirectory(), $addon_file_path); //
             //echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style="color:blue;"> $addon_name = ' . $addon_name . '</strong>';
             /*
              * Next, remove the file base name and extension , becomes : Simpli/Forms
@@ -1320,7 +1334,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
 //        $module_file_path = $available_modules[$module_name];
 //        require_once($module_file_path); # simpli-framework/lib/simpli/hello/Module/Admin.php
 //        echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style="color:blue;"> $module_file_path = ' . $module_file_path . '</strong>';
-//        $relative_path = $this->getTools()->makePathRelative($this->getModuleDirectory(), $module_file_path);
+//        $relative_path = $this->tools()->makePathRelative($this->getModuleDirectory(), $module_file_path);
 //        echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style="color:blue;"> $relative_path = ' . $relative_path . '</strong>';
 //        $relative_path = basename($relative_path, '.php'); //remove the extension
 //        echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style="color:blue;"> $relative_path = ' . $relative_path . '</strong>';
@@ -1580,7 +1594,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
         $deps = $script_queue['inline_deps'];
 
         if ($dep_resolution) {
-            $handle_list = $this->getTools()->sortDependentList($handle_list, $deps);
+            $handle_list = $this->tools()->sortDependentList($handle_list, $deps);
         }
 
 
@@ -1642,7 +1656,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
 {END_WINDOW_LOAD}
 </script>
 ';
-                    $template = $this->getTools()->scrubHtmlWhitespace($template);
+                    $template = $this->tools()->scrubHtmlWhitespace($template);
                     $tags = array(
                         '{START_WINDOW_LOAD}' => ($has_external_dependency && !$footer) ? 'window.onload = function() {' : '', // need to do this since wordpress loads external scripts after inline and youl get jquery errors otherwise
                         '{END_WINDOW_LOAD}' => ($has_external_dependency && !$footer) ? '}' : '', ////window.onload closing bracket
@@ -2032,6 +2046,30 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
                 'QV_EDIT_POST'
                 , 'edit_post'
         );
+
+        /*
+         * COMPRESS
+         *
+         * Enable / Disable ZLIB Compression
+         * Uses ob_start('ob_gzhandler') if server supports zlib compression
+         * Set to false if server does not support zlib
+         *
+         */
+        $this->setConfigDefault(
+                'COMPRESS'
+                , true
+        );
+
+        /*
+         * ALLOW_SHORTCODES
+         *
+         * Processes included files ( like templates ) for shortcodes. Default is true. Disabling improves performance.
+         */
+        $this->setConfigDefault(
+                'ALLOW_SHORTCODES'
+                , true
+        );
+
 
 
     }

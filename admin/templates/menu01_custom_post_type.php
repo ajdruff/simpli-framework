@@ -20,7 +20,7 @@ require_once('includes/template.php'); // WordPress Dashboard Functions
 
 
 
-$post = $this->getPlugin()->getTools()->getPost();
+$post = $this->getPlugin()->tools()->getPost();
 $this->debug()->logVar('$post = ', $post);
 /*
  * If the user accesses this page using a link to this menu page (instead of via a redirect after they clicked the edit link, there wont be any post object, and errors will result.

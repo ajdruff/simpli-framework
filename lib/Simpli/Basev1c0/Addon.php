@@ -202,7 +202,7 @@ class Simpli_Basev1c0_Addon {
             /*
              * Now normalize slashes
              */
-            $this->_directory = $this->getPlugin()->getTools()->normalizePath($path);
+            $this->_directory = $this->getPlugin()->tools()->normalizePath($path);
         }
 
         return ($this->_directory);
@@ -229,7 +229,7 @@ class Simpli_Basev1c0_Addon {
             $path = $this->getDirectory() . '/' . $this->getPlugin()->DIR_NAME_MODULES;
 
 
-            $this->_module_directory = $this->getPlugin()->getTools()->normalizePath($path);
+            $this->_module_directory = $this->getPlugin()->tools()->normalizePath($path);
         }
 
 
@@ -261,7 +261,7 @@ class Simpli_Basev1c0_Addon {
 
             $available_modules = array();
 
-            $tools = $this->getPlugin()->getTools();
+            $tools = $this->getPlugin()->tools();
 
             /*
              * Find all the Module files in the module directory
@@ -667,7 +667,7 @@ class Simpli_Basev1c0_Addon {
          */
 
 
-        $relative_path = $this->getPlugin()->getTools()->makePathRelative($this->getPlugin()->getAddonsDirectory(), $module_file_path);
+        $relative_path = $this->getPlugin()->tools()->makePathRelative($this->getPlugin()->getAddonsDirectory(), $module_file_path);
         $module_namespace = str_replace('/', '_', dirname($relative_path));
 
 

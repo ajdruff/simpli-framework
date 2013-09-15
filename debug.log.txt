@@ -1,0 +1,90 @@
+2013-09-04 00:28:03 init/1172 Starting Debug Log for Plugin Simpli Hello
+2013-09-04 00:28:03 init/1174 Plugin Version: 1.2.1 Framework Version: 1.2.0Base Class Version: 1.0
+2013-09-04 00:28:03 addHooks/95 Plugin Directory: C:/wamp/www/wpdev.com/public_html/wp-content/plugins/simpli-framework
+2013-09-04 00:28:03 addHooks/96 Module Directory: C:/wamp/www/wpdev.com/public_html/wp-content/plugins/simpli-framework/lib/Simpli/Hello/Module
+2013-09-04 00:28:03 addHooks/99 Plugin URL: http://wpdev.com/wp-content/plugins/simpli-framework
+2013-09-04 00:28:03 init/1194 Loaded Plugin User Settings 
+2013-09-04 00:28:03 getAvailableModules/520 Module ExampleModule not loaded because it has been disabled
+2013-09-04 00:28:03 loadModule/1454 Loaded Plugin Module simpli_hello/Admin
+2013-09-04 00:28:03 loadModule/1459 Initialized Plugin Module simpli_hello/Admin
+2013-09-04 00:28:03 loadModule/1454 Loaded Plugin Module simpli_hello/Core
+2013-09-04 00:28:03 config/24 loga gets logged to browser, javascript console, and file
+2013-09-04 00:28:03 config/27 logf to the log file
+2013-09-04 00:28:03 loadModule/1459 Initialized Plugin Module simpli_hello/Core
+2013-09-04 00:28:03 loadModule/1454 Loaded Plugin Module simpli_hello/Menu10Settings
+2013-09-04 00:28:03 loadModule/1459 Initialized Plugin Module simpli_hello/Menu10Settings
+2013-09-04 00:28:03 loadModule/1454 Loaded Plugin Module simpli_hello/Menu20Settings
+2013-09-04 00:28:03 loadModule/1459 Initialized Plugin Module simpli_hello/Menu20Settings
+2013-09-04 00:28:03 loadModule/1454 Loaded Plugin Module simpli_hello/Menu30Test
+2013-09-04 00:28:03 loadModule/1459 Initialized Plugin Module simpli_hello/Menu30Test
+2013-09-04 00:28:03 loadModule/1454 Loaded Plugin Module simpli_hello/Post
+2013-09-04 00:28:03 loadModule/1459 Initialized Plugin Module simpli_hello/Post
+2013-09-04 00:28:03 loadModule/1454 Loaded Plugin Module simpli_hello/Queryvars
+2013-09-04 00:28:03 loadModule/1459 Initialized Plugin Module simpli_hello/Queryvars
+2013-09-04 00:28:03 loadModule/1454 Loaded Plugin Module simpli_hello/Shortcodes
+2013-09-04 00:28:03 loadModule/1459 Initialized Plugin Module simpli_hello/Shortcodes
+2013-09-04 00:28:03 loadModule/1454 Loaded Plugin Module simpli_hello/Tools
+2013-09-04 00:28:03 loadModule/1459 Initialized Plugin Module simpli_hello/Tools
+2013-09-04 00:28:04 loadAddon/1288 add on file path = C:/wamp/www/wpdev.com/public_html/wp-content/plugins/simpli-framework/lib/Simpli/Addons/Simpli/Forms/Addon.php
+2013-09-04 00:28:04 loadAddon/1307 Loaded Addon Simpli_Forms
+2013-09-04 00:28:04 init/1208 Loaded Base Class Library  from C:\wamp\www\wpdev.com\public_html\wp-content\plugins\simpli-framework\lib\Simpli\Basev1c0
+2013-09-04 00:28:04 init/587 Addon Directory: C:/wamp/www/wpdev.com/public_html/wp-content/plugins/simpli-framework/lib/Simpli/Addons/Simpli/Forms
+2013-09-04 00:28:04 init/588 Addon Module Directory: C:/wamp/www/wpdev.com/public_html/wp-content/plugins/simpli-framework/lib/Simpli/Addons/Simpli/Forms/Module
+2013-09-04 00:28:04 init/591 Addon URL: http://wpdev.com/wp-content/plugins/simpli-framework/lib/Simpli/Addons/Simpli
+2013-09-04 00:28:04 getAvailableModules/165 $module_directory is null, returning
+2013-09-04 00:28:04 getAvailableModules/165 $module_directory is null, returning
+2013-09-04 00:28:04 getModule/385 Module found, returning module Elements
+2013-09-04 00:28:04 getModule/385 Module found, returning module Elements
+2013-09-04 00:28:04 loadModule/474 Loaded Addon Module simpli_addons_simpli_forms/Elements
+2013-09-04 00:28:04 getAvailableModules/165 $module_directory is null, returning
+2013-09-04 00:28:04 getModule/385 Module found, returning module Filter
+2013-09-04 00:28:04 getModule/385 Module found, returning module Filter
+2013-09-04 00:28:04 loadModule/474 Loaded Addon Module simpli_addons_simpli_forms/Filter
+2013-09-04 00:28:04 getAvailableModules/165 $module_directory is null, returning
+2013-09-04 00:28:04 getModule/385 Module found, returning module Form
+2013-09-04 00:28:04 getModule/385 Module found, returning module Form
+2013-09-04 00:28:04 loadModule/474 Loaded Addon Module simpli_addons_simpli_forms/Form
+2013-09-04 00:28:04 getAvailableModules/165 $module_directory is null, returning
+2013-09-04 00:28:04 getModule/385 Module found, returning module Theme
+2013-09-04 00:28:04 getModule/385 Module found, returning module Theme
+2013-09-04 00:28:04 loadModule/474 Loaded Addon Module simpli_addons_simpli_forms/Theme
+2013-09-04 00:28:04 getModule/385 Module found, returning module Elements
+2013-09-04 00:28:04 getModule/385 Module found, returning module Elements
+2013-09-04 00:28:05 init/624 Initialized Addon Module simpli_addons_simpli_forms/Elements
+2013-09-04 00:28:05 getModule/385 Module found, returning module Filter
+2013-09-04 00:28:05 getModule/385 Module found, returning module Filter
+2013-09-04 00:28:05 init/624 Initialized Addon Module simpli_addons_simpli_forms/Filter
+2013-09-04 00:28:05 getModule/385 Module found, returning module Form
+2013-09-04 00:28:05 getModule/385 Module found, returning module Form
+2013-09-04 00:28:05 init/624 Initialized Addon Module simpli_addons_simpli_forms/Form
+2013-09-04 00:28:05 getModule/385 Module found, returning module Theme
+2013-09-04 00:28:05 setTheme/220 Setting theme ...
+2013-09-04 00:28:05 setTheme/225 Set theme name to Saratoga
+2013-09-04 00:28:05 _setThemeDirectory/162 Set Theme Template Directory to : C:/wamp/www/wpdev.com/public_html/wp-content/plugins/simpli-framework/lib/Simpli/Addons/Simpli/Forms/Themes/Saratoga
+2013-09-04 00:28:05 setTheme/230 Set theme directory to C:/wamp/www/wpdev.com/public_html/wp-content/plugins/simpli-framework/lib/Simpli/Addons/Simpli/Forms/Themes/Saratoga
+2013-09-04 00:28:05 getAvailableModules/165 $module_directory is null, returning
+2013-09-04 00:28:05 getAvailableModules/165 $module_directory is null, returning
+2013-09-04 00:28:05 getModule/385 Module found, returning module Elements
+2013-09-04 00:28:05 getModule/385 Module found, returning module Elements
+2013-09-04 00:28:05 loadModule/474 Loaded Addon Module simpli_addons_simpli_forms/Elements
+2013-09-04 00:28:05 getAvailableModules/165 $module_directory is null, returning
+2013-09-04 00:28:05 getModule/385 Module found, returning module FilterExample
+2013-09-04 00:28:05 getModule/385 Module found, returning module FilterExample
+2013-09-04 00:28:05 loadModule/474 Loaded Addon Module simpli_addons_simpli_forms/FilterExample
+2013-09-04 00:28:05 getAvailableModules/165 $module_directory is null, returning
+2013-09-04 00:28:05 getModule/385 Module found, returning module FilterOptions
+2013-09-04 00:28:05 getModule/385 Module found, returning module FilterOptions
+2013-09-04 00:28:05 loadModule/474 Loaded Addon Module simpli_addons_simpli_forms/FilterOptions
+2013-09-04 00:28:05 getModule/385 Module found, returning module Elements
+2013-09-04 00:28:05 getModule/385 Module found, returning module Elements
+2013-09-04 00:28:05 setTheme/254 Initialized Addon Module theme/Elements
+2013-09-04 00:28:05 getModule/385 Module found, returning module FilterExample
+2013-09-04 00:28:05 getModule/385 Module found, returning module FilterExample
+2013-09-04 00:28:05 setTheme/254 Initialized Addon Module theme/FilterExample
+2013-09-04 00:28:05 getModule/385 Module found, returning module FilterOptions
+2013-09-04 00:28:05 getModule/385 Module found, returning module FilterOptions
+2013-09-04 00:28:05 setTheme/254 Initialized Addon Module theme/FilterOptions
+2013-09-04 00:28:05 getModule/385 Module found, returning module Theme
+2013-09-04 00:28:05 init/624 Initialized Addon Module simpli_addons_simpli_forms/Theme
+2013-09-04 00:28:06 init/655 Completed Initialization for Addon Simpli_Forms
+2013-09-04 00:28:06 init/1242 Completed Initialization for Plugin Simpli Hello

@@ -109,7 +109,7 @@ $this->registerPostType(
             $this->debug()->log('Adding a metabox to a custom  Editing Screen');
 
             $this->metabox()->addMetaBox(
-                    $this->getSlug() . '_' . 'metabox_test'  //Meta Box DOM ID
+                    $this->getSlug() . '_' . 'metabox_post_options'  //Meta Box DOM ID
                     , __('Custom Editor Metabox added from within ' . $this->getName(), $this->getPlugin()->getTextDomain()) //title of the metabox.
                     , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                     , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
@@ -125,7 +125,7 @@ $this->registerPostType(
             $this->debug()->log('Adding a metabox to the regular WordPress Editing Screen');
 
             $this->metabox()->addMetaBox(
-                    $this->getSlug() . '_' . 'metabox_test'  //Meta Box DOM ID
+                    $this->getSlug() . '_' . 'metabox_post_options'  //Meta Box DOM ID
                     , __('Regular Editor Metabox added by ' . $this->getName(), $this->getPlugin()->getTextDomain()) //title of the metabox.
                     , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                     , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.

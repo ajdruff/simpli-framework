@@ -119,12 +119,12 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
         /*
          *  add custom ajax handlers
          *
-         * adding a wp_ajax hook in this format will execute the specified class method whenever the ajax request specifies an action = to $this->getPlugin()->getSlug() . '_xxxx'
+         * adding a wp_ajax hook in this format will execute the specified class method whenever the ajax request specifies an action = to $this->plugin()->getSlug() . '_xxxx'
           // see http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
          *
          */
 //this is where you map any form actions with the php function that handles the ajax request
-//  add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array($this, 'save'));
+//  add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_save', array($this, 'save'));
 // Add any other hooks you need to support this module
     }
 
@@ -138,7 +138,7 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
     public function enqueue_scripts() {
         $this->debug()->t();
         // Example
-//       wp_enqueue_style($this->getPlugin()->getSlug() . '-admin-page', $this->getPlugin()->getUrl() . '/admin/css/settings.css', array(), $this->getPlugin()->getVersion());
+//       wp_enqueue_style($this->plugin()->getSlug() . '-admin-page', $this->plugin()->getUrl() . '/admin/css/settings.css', array(), $this->plugin()->getVersion());
 //        wp_enqueue_script('jquery');
 //        wp_enqueue_script('jquery-form');
 //        wp_enqueue_script('post');
@@ -147,8 +147,8 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 //            add_thickbox();
 //        }
         /* Example
-          $handle = $this->getPlugin()->getSlug() . '_core.js';
-          $src = $this->getPlugin()->getUrl() . '/js/' . $this->getPlugin()->getSlug() . '_core.js';
+          $handle = $this->plugin()->getSlug() . '_core.js';
+          $src = $this->plugin()->getUrl() . '/js/' . $this->plugin()->getSlug() . '_core.js';
           $deps = 'jquery';
           $ver = '1.0';
           $in_footer = false;
@@ -171,8 +171,8 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
         $this->debug()->t();
         //   global $post;
 
-        $post = $this->getPlugin()->getModule('PostUserOptions');
-        $plugin = $this->getPlugin();
+        $post = $this->plugin()->getModule('PostUserOptions');
+        $plugin = $this->plugin();
         $post_user_options = $post->getUserOptions();
         $plugin_user_options = $plugin->getUserOptions();
 

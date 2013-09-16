@@ -29,7 +29,7 @@ To add a metabox, you must add the do_metaboxes line as in the examples below, a
 
 <div class="wrap" id="simpli-main">
 	<div   class="icon32 menu-icon"><br /></div>
-	<h2><?php _e($this->getPlugin()->getName(),$this->getPlugin()->getTextDomain()); ?></h2>
+	<h2><?php _e($this->plugin()->getName(),$this->plugin()->getTextDomain()); ?></h2>
 
 
 

@@ -16,7 +16,7 @@
     <p class="button-controls">
         <input type="submit" id="{form_name}_{form_counter}_settings_reset" class="button-secondary" value="Reset" name="{form_name}_{form_counter}_settings_reset">
         <input type="submit" id="{form_name}_{form_counter}_settings_save" class="button-primary" value="Save Changes" name="{form_name}_{form_counter}_settings_save">
-        <img alt="<?php _e('Waiting...',$this->getPlugin()->getTextDomain()); ?>" src="<?php echo admin_url('/images/wpspin_light.gif'); ?>" class="waiting submit-waiting" />
+        <img alt="<?php _e('Waiting...',$this->plugin()->getTextDomain()); ?>" src="<?php echo admin_url('/images/wpspin_light.gif'); ?>" class="waiting submit-waiting" />
     </p>
 
 

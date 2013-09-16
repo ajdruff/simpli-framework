@@ -28,11 +28,11 @@ class Simpli_Hello_Module_Menu30Test extends Simpli_Basev1c0_Plugin_Menu {
         /*
          *  Add Custom Ajax Handlers
          *
-         * adding a wp_ajax hook in this format will execute the specified class method whenever the ajax request specifies an action = to $this->getPlugin()->getSlug() . '_xxxx'
+         * adding a wp_ajax hook in this format will execute the specified class method whenever the ajax request specifies an action = to $this->plugin()->getSlug() . '_xxxx'
           see http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
 
           Example ( this is included in base class so no need to add it here
-          //add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array($this, 'save'));
+          //add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_save', array($this, 'save'));
          *
          *
          *
@@ -67,17 +67,17 @@ class Simpli_Hello_Module_Menu30Test extends Simpli_Basev1c0_Plugin_Menu {
 
         $this->addMenuPage
                 (
-                $page_title = $this->getPlugin()->getName() . ' - Test Menu'
+                $page_title = $this->plugin()->getName() . ' - Test Menu'
                 , $menu_title = 'Test Menu'
                 , $capability = 'manage_options'
-                , $icon_url = $this->getPlugin()->getUrl() . '/admin/images/menu.png'
+                , $icon_url = $this->plugin()->getUrl() . '/admin/images/menu.png'
                 , $position = null
         );
 
 
         $this->metabox()->addMetaBox(
                 $this->getSlug() . '_' . 'metabox_test'  //Meta Box DOM ID
-                , __('Test New Form Addon', $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , __('Test New Form Addon', $this->plugin()->getTextDomain()) //title of the metabox.
                 , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show

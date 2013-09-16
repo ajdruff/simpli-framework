@@ -35,7 +35,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
 
         if ($this->_menu_position === '') {
 
-            $this->_menu_position = '67.141592653597777777' . $this->getPlugin()->getSlug();
+            $this->_menu_position = '67.141592653597777777' . $this->plugin()->getSlug();
         }
 
 
@@ -83,7 +83,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
         if (isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] == 'plugins.php') {
 
 
-            $plugin = plugin_basename($this->getPlugin()->getFilePath());
+            $plugin = plugin_basename($this->plugin()->getFilePath());
 
             add_filter('plugin_action_links_' . $plugin, array($this, 'plugin_action_links'), 10, 2);
 
@@ -106,7 +106,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
         $this->debug()->t();
 
 
-        wp_enqueue_style($this->getPlugin()->getSlug() . '-admin-global', $this->getPlugin()->getUrl() . '/admin/css/admin.css', array(), $this->getPlugin()->getVersion());
+        wp_enqueue_style($this->plugin()->getSlug() . '-admin-global', $this->plugin()->getUrl() . '/admin/css/admin.css', array(), $this->plugin()->getVersion());
     }
 
 
@@ -133,7 +133,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        include($this->getPlugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php');
+        include($this->plugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php');
     }
 
     /**
@@ -153,15 +153,15 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
          * Do this by checking if $file ( in the form plugin_subdirectory/plugin_file) matches our plugin
          * $file for your plugin can be found by calling the wordpress api plugin_basename() on the __FILE__ of your main plugin file
          */
-        if (strpos($file, plugin_basename($this->getPlugin()->getFilePath())) === false) {
+        if (strpos($file, plugin_basename($this->plugin()->getFilePath())) === false) {
             return $links;
         }
 
-        $links[1] = 'Simpli Framework ' . $this->getPlugin()->getFrameworkVersion() . ' / ' . $this->getPlugin()->getBaseClassVersion();
+        $links[1] = 'Simpli Framework ' . $this->plugin()->getFrameworkVersion() . ' / ' . $this->plugin()->getBaseClassVersion();
 
-        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->getPlugin()->getSlug() . '_' . $this->getPlugin()->getModule('Menu10General')->getSlug() . '" title="' . $this->getPlugin()->getName() . ' Settings">Settings</a>';
-        $links[] = '<a href="http://wordpress.org/extend/plugins/' . $this->getPlugin()->getSlug() . '/faq/" title="Frequently Asked Questions">FAQ</a>';
-        $links[] = '<a href="http://wordpress.org/tags/' . $this->getPlugin()->getSlug() . '#postform" title="Support">Support</a>';
+        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->plugin()->getSlug() . '_' . $this->plugin()->getModule('Menu10General')->getSlug() . '" title="' . $this->plugin()->getName() . ' Settings">Settings</a>';
+        $links[] = '<a href="http://wordpress.org/extend/plugins/' . $this->plugin()->getSlug() . '/faq/" title="Frequently Asked Questions">FAQ</a>';
+        $links[] = '<a href="http://wordpress.org/tags/' . $this->plugin()->getSlug() . '#postform" title="Support">Support</a>';
         $links[] = '<a href="your paypal url here" title="Support this plugin\'s development with a donation!">Donate</a>';
         return $links;
     }
@@ -181,7 +181,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
         $this->debug()->t();
 
 
-        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->getPlugin()->getSlug() . '_' . $this->getPlugin()->getModule('Menu10General')->getSlug() . '">Settings</a>';
+        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->plugin()->getSlug() . '_' . $this->plugin()->getModule('Menu10General')->getSlug() . '">Settings</a>';
         return $links;
     }
 

@@ -19,14 +19,14 @@ $metaboxes = array(
     )
 );
 
-$this->getPlugin()->setLocalVars($metaboxes);
+$this->plugin()->setLocalVars($metaboxes);
 
 
 
 
-$handle = $this->getPlugin()->getSlug() . '_get-remote-metabox-html.js';
-$path = $this->getPlugin()->getDirectory() . '/admin/js/get-remote-metabox-html.js';
+$handle = $this->plugin()->getSlug() . '_get-remote-metabox-html.js';
+$path = $this->plugin()->getDirectory() . '/admin/js/get-remote-metabox-html.js';
 $inline_deps = array();
 $external_deps = array('jquery');
-$this->getPlugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+$this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
 ?>

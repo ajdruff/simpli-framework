@@ -44,7 +44,38 @@
  * @subpackage SimpliHello
  *
  */
-class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
+//class Simpli_Basev1c0_Plugin_Debug {//extends Simpli_Basev1c0_Plugin_Helper{
+class Simpli_Basev1c0_Plugin_Debug extends Simpli_Basev1c0_Plugin_Helper{
+//    function __construct($plugin) {
+//        $this->_plugin = $plugin;
+//    }
+//
+//    protected $_plugin;
+    /**
+     * Short Description
+     *
+     * Long Description
+     *
+     * @param none
+     * @return void
+     */
+
+   // public function plugin() {
+    //        return $this->_plugin;
+
+   // }
+
+    /**
+     * Debug
+     *
+     * Returns the debug() method from the calling plugin object
+     *
+     * @param none
+     * @return void
+     */
+  //  public function debug() {
+  //      return $this;
+  //  }
 
     /**
      * Configure Module
@@ -139,13 +170,13 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
     public function hookEnqueueScripts() {
 
 
-        $handle = $this->getPlugin()->getSlug() . '_' . 'debug-trace.js';
-        $path = $this->getPlugin()->getDirectory() . '/admin/js/debug-trace.js';
+        $handle = $this->plugin()->getSlug() . '_' . 'debug-trace.js';
+        $path = $this->plugin()->getDirectory() . '/admin/js/debug-trace.js';
 
         $inline_deps = array(); //cannot rely on namespaces since namespaces must be loaded in footer for them to work.
         $external_deps = array('jquery');
         $footer = false; //must load in head in case there is a fatal error that prevents foot scripts from loading
-        $this->getPlugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps, $footer);
+        $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps, $footer);
 
 
 
@@ -155,7 +186,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
          * Not used, but left here as an exaple
 
           $handle = 'jquery.multiselect2side.js';
-          $src = $this->getPlugin()->getUrl() . '/js/jquery.multiselect2side.js';
+          $src = $this->plugin()->getUrl() . '/js/jquery.multiselect2side.js';
           $deps = array('jquery');
           $ver = null;
           $in_footer = false;
@@ -181,7 +212,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
 
 
           $handle = 'jquery.multiselect2side.css';
-          $src = $this->getPlugin()->getUrl() . '/css/jquery.multiselect2side.css';
+          $src = $this->plugin()->getUrl() . '/css/jquery.multiselect2side.css';
           $deps = array();
           $ver = null;
           $media=null;
@@ -211,7 +242,7 @@ class Simpli_Basev1c0_Debug {// extends Simpli_Basev1c0_Plugin_Module {
         $template = ' <div style="color:red">Debug Stop - to continue script, remove the $this->debug()->stop() call on line {DS_LINE} in file {BASENAME_FILE} <br/><span style="color:black;">( {FILE} )</span></div>';
         $basename_file = basename($file);
         $tags = (compact('ds_line', 'line', 'file', 'basename_file'));
-        $stop_message = $this->getPlugin()->tools()->crunchTpl($tags, $template);
+        $stop_message = $this->plugin()->tools()->crunchTpl($tags, $template);
 
         $this->_log($stop_message, $props, false, 'all', 'info');
         die();
@@ -547,7 +578,7 @@ $var=(array)$var;
 ';
             }
 
-            $template = $this->getPlugin()->tools()->scrubHtmlWhitespace($template);
+            $template = $this->plugin()->tools()->scrubHtmlWhitespace($template);
 
 
             foreach ($var as $key => $value) {
@@ -915,7 +946,7 @@ $var=(array)$var;
 </div>
 
 ';
-        $template = $this->getPlugin()->tools()->scrubHtmlWhitespace($template);
+        $template = $this->plugin()->tools()->scrubHtmlWhitespace($template);
 
 
         $content = str_replace(array_keys($tags), array_values($tags), $template);
@@ -966,7 +997,7 @@ $var=(array)$var;
             /*
              * populate the template
              */
-            $method_label_text = $this->getPlugin()->tools()->crunchTpl($props, $method_label_template);
+            $method_label_text = $this->plugin()->tools()->crunchTpl($props, $method_label_template);
             $method_label_text = str_ireplace('[[', '', $method_label_text); //removes double brackets that appear after json encode
             $method_label_text = str_ireplace(']]', '', $method_label_text); // ditto
             return $method_label_text;
@@ -975,7 +1006,7 @@ $var=(array)$var;
 
 
 
-        $method_label_template = $this->getPlugin()->tools()->scrubHtmlWhitespace($method_label_template); //this is necessary since there are pre tags in the source . You could just remove it manually using a macro in a text editor , like the 'remove unnecessary whitespace' utility in notepad++ , but using scrubHtmlWhitespace allows us to retain the whitespace in our source file so its human readable, while still removing it when its displayed.
+        $method_label_template = $this->plugin()->tools()->scrubHtmlWhitespace($method_label_template); //this is necessary since there are pre tags in the source . You could just remove it manually using a macro in a text editor , like the 'remove unnecessary whitespace' utility in notepad++ , but using scrubHtmlWhitespace allows us to retain the whitespace in our source file so its human readable, while still removing it when its displayed.
         /*
          * Now populate the html template
          */
@@ -1137,7 +1168,7 @@ $var=(array)$var;
                 '{COLLAPSE_TEXT}' => 'Hide Backtrace',
                 '{METHOD}' => $props['method']
             );
-            $template = $this->getPlugin()->tools()->scrubHtmlWhitespace($template);
+            $template = $this->plugin()->tools()->scrubHtmlWhitespace($template);
             $non_visual_backtrace_html = str_replace(array_keys($tags), array_values($tags), $template);
         }
 
@@ -1159,7 +1190,7 @@ $var=(array)$var;
                 '{COLLAPSE_TEXT}' => 'Hide Visual Backtrace',
                 '{METHOD}' => $props['method']
             );
-            $template = $this->getPlugin()->tools()->scrubHtmlWhitespace($template);
+            $template = $this->plugin()->tools()->scrubHtmlWhitespace($template);
             $visual_backtrace_html = str_replace(array_keys($tags), array_values($tags), $template);
         }
         $content = $non_visual_backtrace_html . $visual_backtrace_html;
@@ -1272,7 +1303,7 @@ $var=(array)$var;
             </div>';
 
 
-            $debug_trace_html_template = $this->getPlugin()->tools()->scrubHtmlWhitespace($debug_trace_html_template); //this is necessary since there are pre tags in the source . You could just remove it manually using a macro in a text editor , like the 'remove unnecessary whitespace' utility in notepad++ , but using scrubHtmlWhitespace allows us to retain the whitespace in our source file so its human readable, while still removing it when its displayed.
+            $debug_trace_html_template = $this->plugin()->tools()->scrubHtmlWhitespace($debug_trace_html_template); //this is necessary since there are pre tags in the source . You could just remove it manually using a macro in a text editor , like the 'remove unnecessary whitespace' utility in notepad++ , but using scrubHtmlWhitespace allows us to retain the whitespace in our source file so its human readable, while still removing it when its displayed.
             /*
              * Now populate the html template
              */
@@ -1493,7 +1524,7 @@ $var=(array)$var;
          * element indexes as the defaults array, and that the values
          * match the defaults if they reached this point and are still null or dont exist
          */
-        $props = $this->getPlugin()->tools()->screenDefaults($defaults, $props);
+        $props = $this->plugin()->tools()->screenDefaults($defaults, $props);
 
 
         /*
@@ -1639,7 +1670,7 @@ $var=(array)$var;
          * element indexes as the defaults array, and that the values
          * match the defaults if they werent set previously
          */
-        $props = $this->getPlugin()->tools()->screenDefaults($defaults, $props);
+        $props = $this->plugin()->tools()->screenDefaults($defaults, $props);
 
         /*
          * trim strings
@@ -1786,9 +1817,9 @@ $var=(array)$var;
             $template = $this->getOption($target . '_prefix_template');
             $tags = $props;
             $tags['time'] = date($this->getOption('prefix_time_format'));
-            $tags['plugin_slug'] = $this->getPlugin()->getSlug();
+            $tags['plugin_slug'] = $this->plugin()->getSlug();
 
-            $prefix = $this->getPlugin()->tools()->crunchTpl($tags, $template); //str_ireplace(array_keys($tags), array_values($tags), $template);
+            $prefix = $this->plugin()->tools()->crunchTpl($tags, $template); //str_ireplace(array_keys($tags), array_values($tags), $template);
         }
 
         return $prefix;
@@ -1883,23 +1914,23 @@ $var=(array)$var;
 
                 $error_template = $this->getOption('error_template');
 
-                $tags['PLUGIN_SLUG'] = $this->getPlugin()->getSlug();
+                $tags['PLUGIN_SLUG'] = $this->plugin()->getSlug();
                 $tags['ERROR_MESSAGE'] = $log_entry['content'];
                 $tags = array_merge($tags, $props);
-                $log_entry['content'] = $this->getPlugin()->tools()->crunchTPL($tags, $error_template);
+                $log_entry['content'] = $this->plugin()->tools()->crunchTPL($tags, $error_template);
             }
 
             /*
              * First, convert any new lines introduced by the whitespaces in the source code to <br/> tags
              */
 
-            $log_entry['content'] = $this->getPlugin()->tools()->nl2br(($log_entry['content'])); //need to do this to protect against the source code introducing new lines to output strings, which breaks console.log
+            $log_entry['content'] = $this->plugin()->tools()->nl2br(($log_entry['content'])); //need to do this to protect against the source code introducing new lines to output strings, which breaks console.log
 
 
             /*
              * Then Convert to text, preserve newlines as a tag {NEW_LINE} that will be replaced later when printed to console.
              */
-            $log_entry['content'] = $this->getPlugin()->tools()->html2text(($log_entry['content']), '{NEW_LINE}');
+            $log_entry['content'] = $this->plugin()->tools()->html2text(($log_entry['content']), '{NEW_LINE}');
 
 
 
@@ -1955,17 +1986,17 @@ $var=(array)$var;
 
                 $error_template = $this->getOption('error_template');
 
-                $tags['PLUGIN_SLUG'] = $this->getPlugin()->getSlug();
+                $tags['PLUGIN_SLUG'] = $this->plugin()->getSlug();
                 $tags['ERROR_MESSAGE'] = $log_entry['content'];
                 $tags = array_merge($tags, $props);
-                $log_entry['content'] = $this->getPlugin()->tools()->crunchTPL($tags, $error_template);
+                $log_entry['content'] = $this->plugin()->tools()->crunchTPL($tags, $error_template);
             }
 
 
             /*
              * Convert to text to strip out html tags but preserve new lines
              */
-            $log_entry['content'] = $this->getPlugin()->tools()->html2text(($log_entry['content']));
+            $log_entry['content'] = $this->plugin()->tools()->html2text(($log_entry['content']));
 
 
 
@@ -2085,7 +2116,7 @@ $var=(array)$var;
             'type' => null
         );
 
-        $log_entry = $this->getPlugin()->tools()->screenDefaults($defaults, $log_entry);
+        $log_entry = $this->plugin()->tools()->screenDefaults($defaults, $log_entry);
 
         $props = $log_entry['props'];
         $prefix = '';
@@ -2102,10 +2133,10 @@ $var=(array)$var;
 
             $error_template = $this->getOption('error_template');
 
-            $tags['PLUGIN_SLUG'] = $this->getPlugin()->getSlug();
+            $tags['PLUGIN_SLUG'] = $this->plugin()->getSlug();
             $tags['ERROR_MESSAGE'] = $log_entry['content'];
             $tags = array_merge($tags, $props);
-            $log_entry['content'] = $this->getPlugin()->tools()->crunchTPL($tags, $error_template);
+            $log_entry['content'] = $this->plugin()->tools()->crunchTPL($tags, $error_template);
         }
 
 
@@ -2156,10 +2187,10 @@ $var=(array)$var;
         );
 
         if ($log_entry['type'] === 'trace') {
-            $result = $this->getPlugin()->tools()->crunchTpl($tags, $trace_block_template);
+            $result = $this->plugin()->tools()->crunchTpl($tags, $trace_block_template);
         } else {
 
-            $result = $this->getPlugin()->tools()->crunchTpl($tags, $log_content_template);
+            $result = $this->plugin()->tools()->crunchTpl($tags, $log_content_template);
         }
 
         return $result;
@@ -2371,7 +2402,7 @@ $var=(array)$var;
              * check if file is in include path before attempting to include it
              */
 //if not include path, return a message to use
-            if ($this->getPlugin()->tools()->inIncludePath($graphviz_include_path)) {
+            if ($this->plugin()->tools()->inIncludePath($graphviz_include_path)) {
                 include_once $graphviz_include_path; //
             } else {
                 die('<br> [Simpli Framework Debug Module] Error: Attempted to include \'' . $graphviz_include_path . '\' , but it could not be found. Graphviz is either not installed properly, or you need to set the include path for your installation. <br>You can set the Graphviz include path by adding the following line to the config() method in the Debug module: $this->debug()->setOption(\'graphviz_include_path\',\'path/to/GraphViz.php\' ( The default include path =\'Image/GraphViz.php\')<br> If you don\'t want to use graphviz to visually trace your debug backtraces, just add the following line to the config() method in the debug module; $this->setOption(\'graphviz\',false);');
@@ -2964,7 +2995,7 @@ $var=(array)$var;
          */
 
 
-        $this->_setDefaultOption('log_file_path', $this->getPlugin()->getDirectory() . '/debug.log.txt');
+        $this->_setDefaultOption('log_file_path', $this->plugin()->getDirectory() . '/debug.log.txt');
 
 
         /* Ajax Debugging
@@ -3575,7 +3606,7 @@ $var=(array)$var;
         {ARGUMENTS}
         </div>';
 
-        $template = $this->getPlugin()->tools()->scrubHtmlWhitespace($template);
+        $template = $this->plugin()->tools()->scrubHtmlWhitespace($template);
         $tags = array(
             '{HOOK_COUNT}' => $hook_count,
             '{CURRENT_FILTER}' => $current_filter,
@@ -3597,48 +3628,14 @@ $var=(array)$var;
         $this->_log($content, $props, $use_prefix = true, $target = 'browser', $type = 'info');
     }
 
-    /**
-     * Debug Object
-     *
-     * Provides access to the plugin's debug object
-     *
-     * @param none
-     * @return object Plugin's debug object
-     */
-    public function debug() {
 
-        return $this;
-    }
 
-    protected $_plugin;
 
-    /**
-     * Set Plugin
-     *
-     * @param  $plugin
-     * @return object $this
-     * @uses Simpli_Basev1c0_Plugin
-     */
-    public function setPlugin($plugin) {
-        $this->_plugin = $plugin;
-        return $this;
-    }
 
-    /**
-     * Get Plugin
-     *
-     * @param none
-     * @return Simpli_Basev1c0_Plugin
-     */
-    public function getPlugin() {
-        if (!isset($this->_plugin)) {
-            die('Module ' . __CLASS__ . ' missing Plugin dependency.');
-        }
 
-        return $this->_plugin;
-    }
 
-    /**
+
+        /**
      * Get Method Source
      *
      * Get a method's source code
@@ -3680,14 +3677,14 @@ $var=(array)$var;
             'COMMENT' => $comment,
             'METHOD' => implode("", array_slice($file_contents, $start_line, $length))
         );
-        $highlighted_source = highlight_string($this->getPlugin()->tools()->crunchTpl($tags, $template), true);
+        $highlighted_source = highlight_string($this->plugin()->tools()->crunchTpl($tags, $template), true);
         /*
          * then insert the breaks to separate the comment from the source and the php tags
          */
         $tags = array(
             'BREAK' => '<br/>',
         );
-        $highlighted_source = $this->getPlugin()->tools()->crunchTpl($tags, $highlighted_source);
+        $highlighted_source = $this->plugin()->tools()->crunchTpl($tags, $highlighted_source);
 
         /*
          * return the highlighted code

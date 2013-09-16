@@ -27,7 +27,7 @@ class Simpli_Addons_Acme_Forms_Themes_Seattle_Module_FilterOptions extends Simpl
         extract($properties);
 
 
-        $atts['value'] = $this->getPlugin()->getModule('PostUserOptions')->getUserOption($atts['name']);
+        $atts['value'] = $this->plugin()->getModule('PostUserOptions')->getUserOption($atts['name']);
 
         return (compact('scid','atts', 'tags'));
     }

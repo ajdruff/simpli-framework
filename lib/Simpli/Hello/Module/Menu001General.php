@@ -28,11 +28,11 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
         /*
          *  Add Custom Ajax Handlers
          *
-         * adding a wp_ajax hook in this format will execute the specified class method whenever the ajax request specifies an action = to $this->getPlugin()->getSlug() . '_xxxx'
+         * adding a wp_ajax hook in this format will execute the specified class method whenever the ajax request specifies an action = to $this->plugin()->getSlug() . '_xxxx'
           see http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
 
           Example ( this is included in base class so no need to add it here
-          //add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array($this, 'save'));
+          //add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_save', array($this, 'save'));
          *
          *
          *
@@ -84,17 +84,17 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 
         $this->addMenuPage
                 (
-                $page_title = $this->getPlugin()->getName() . ' - General Settings'
-                , $menu_title = array('menu' => $this->getPlugin()->getName(), 'sub_menu' => 'General Settings')
+                $page_title = $this->plugin()->getName() . ' - General Settings'
+                , $menu_title = array('menu' => $this->plugin()->getName(), 'sub_menu' => 'General Settings')
                 , $capability = 'manage_options'
-                , $icon_url = $this->getPlugin()->getUrl() . '/admin/images/menu.png'
+                , $icon_url = $this->plugin()->getUrl() . '/admin/images/menu.png'
                 , $position = null
         );
 
 
         $this->metabox()->addMetaBox(
                 $this->getSlug() . '_' . 'metabox_about'  //Meta Box DOM ID
-                , __('About Simpli Hello and the Simpli Framework', $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , __('About Simpli Hello and the Simpli Framework', $this->plugin()->getTextDomain()) //title of the metabox.
                 , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
@@ -109,7 +109,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 
         $this->metabox()->addMetaBox(
                 $this->getSlug() . '_' . 'metabox_hellosettings'  //Meta Box DOM ID
-                , __('Simpli Hello Plugin Settings', $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , __('Simpli Hello Plugin Settings', $this->plugin()->getTextDomain()) //title of the metabox.
                 , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
@@ -120,7 +120,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 
         $this->metabox()->addMetaBox(
                 $this->getSlug() . '_' . 'metabox_example'  //Meta Box DOM ID
-                , __('Example Metabox with different input types', $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , __('Example Metabox with different input types', $this->plugin()->getTextDomain()) //title of the metabox.
                 , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
@@ -132,7 +132,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 
         $this->metabox()->addMetaBox(
                 $this->getSlug() . '_' . 'metabox_updates'  //Meta Box DOM ID
-                , __('Plugin Updates', $this->getPlugin()->getTextDomain()) //title of the metabox
+                , __('Plugin Updates', $this->plugin()->getTextDomain()) //title of the metabox
                 , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
@@ -144,7 +144,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 
         $this->metabox()->addMetaBox(
                 $this->getSlug() . '_' . 'metabox_support'  //Meta Box DOM ID
-                , __('Support', $this->getPlugin()->getTextDomain()) //title of the metabox
+                , __('Support', $this->plugin()->getTextDomain()) //title of the metabox
                 , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
@@ -154,7 +154,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 //
         $this->metabox()->addMetaBox(
                 $this->getSlug() . '_' . 'metabox_feedback'  //Meta Box DOM ID
-                , __('Feedback', $this->getPlugin()->getTextDomain()) //title of the metabox
+                , __('Feedback', $this->plugin()->getTextDomain()) //title of the metabox
                 , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
@@ -164,7 +164,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 
         $this->metabox()->addMetaBox(
                 $this->getSlug() . '_' . 'metabox_donate'  //Meta Box DOM ID
-                , __('Donate', $this->getPlugin()->getTextDomain()) //title of the metabox
+                , __('Donate', $this->plugin()->getTextDomain()) //title of the metabox
                 , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
@@ -193,7 +193,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
          * Add menu
          */
 
-        $page_title = $this->getPlugin()->getName() . ' - General Settings';
+        $page_title = $this->plugin()->getName() . ' - General Settings';
 
         /*
          * If this menu is a top level item, pass an array, with elements 'menu' and 'sub_menu'. We want
@@ -202,18 +202,18 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
          */
 
 
-        $menu_title = array('menu' => $this->getPlugin()->getName(), 'sub_menu' => 'General Settings');
+        $menu_title = array('menu' => $this->plugin()->getName(), 'sub_menu' => 'General Settings');
 
 
         $capability = 'manage_options';
-        $icon_url = $this->getPlugin()->getUrl() . '/admin/images/menu.png';
+        $icon_url = $this->plugin()->getUrl() . '/admin/images/menu.png';
 
         $this->addMenuPage
                 (
-                $page_title = $this->getPlugin()->getName() . ' - General Settings'
-                , $menu_title = array('menu' => $this->getPlugin()->getName(), 'sub_menu' => 'General Settings')
+                $page_title = $this->plugin()->getName() . ' - General Settings'
+                , $menu_title = array('menu' => $this->plugin()->getName(), 'sub_menu' => 'General Settings')
                 , $capability = 'manage_options'
-                , $icon_url = $this->getPlugin()->getUrl() . '/admin/images/menu.png'
+                , $icon_url = $this->plugin()->getUrl() . '/admin/images/menu.png'
                 , $position = null
         );
     }
@@ -238,7 +238,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 
         $this->metabox()->addMetaBox(
                 $this->getSlug() . '_' . 'metabox_about'  //Meta Box DOM ID
-                , __('About Simpli Hello and the Simpli Framework', $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , __('About Simpli Hello and the Simpli Framework', $this->plugin()->getTextDomain()) //title of the metabox.
                 , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
@@ -253,7 +253,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_hellosettings'  //Meta Box DOM ID
-                , __('Simpli Hello Plugin Settings', $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , __('Simpli Hello Plugin Settings', $this->plugin()->getTextDomain()) //title of the metabox.
                 , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
@@ -264,7 +264,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_example'  //Meta Box DOM ID
-                , __('Example Metabox with different input types', $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , __('Example Metabox with different input types', $this->plugin()->getTextDomain()) //title of the metabox.
                 , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
@@ -276,7 +276,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_updates'  //Meta Box DOM ID
-                , __('Plugin Updates', $this->getPlugin()->getTextDomain()) //title of the metabox
+                , __('Plugin Updates', $this->plugin()->getTextDomain()) //title of the metabox
                 , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
@@ -288,7 +288,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_support'  //Meta Box DOM ID
-                , __('Support', $this->getPlugin()->getTextDomain()) //title of the metabox
+                , __('Support', $this->plugin()->getTextDomain()) //title of the metabox
                 , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
@@ -298,7 +298,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 //
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_feedback'  //Meta Box DOM ID
-                , __('Feedback', $this->getPlugin()->getTextDomain()) //title of the metabox
+                , __('Feedback', $this->plugin()->getTextDomain()) //title of the metabox
                 , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
@@ -308,7 +308,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_donate'  //Meta Box DOM ID
-                , __('Donate', $this->getPlugin()->getTextDomain()) //title of the metabox
+                , __('Donate', $this->plugin()->getTextDomain()) //title of the metabox
                 , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
@@ -333,7 +333,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 
 
 //dont show if the plugin is enabled
-        if (($this->getPlugin()->getUserOption('plugin_enabled') == 'enabled')) {
+        if (($this->plugin()->getUserOption('plugin_enabled') == 'enabled')) {
             return;
         }
         ?>
@@ -341,7 +341,7 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
 
 
         <div class="error">
-            <p><strong>You have disabled <?php echo $this->getPlugin()->getName() ?> functionality.</strong> To re-enable <?php echo $this->getPlugin()->getName() ?> , set  'Maintenance -> Enable Plugin' to 'Yes'.</p>
+            <p><strong>You have disabled <?php echo $this->plugin()->getName() ?> functionality.</strong> To re-enable <?php echo $this->plugin()->getName() ?> , set  'Maintenance -> Enable Plugin' to 'Yes'.</p>
         </div>
 
         <?php

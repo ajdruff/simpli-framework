@@ -34,10 +34,10 @@ class Simpli_Addons_Acme_Forms_Themes_Admin_Module_FilterSettings extends Simpli
             return ($atts);
         }
 
-            $atts['selected'] = $this->getPlugin()->getUserOption($atts['name']);
+            $atts['selected'] = $this->plugin()->getUserOption($atts['name']);
 
 
-            $atts['value'] = $this->getPlugin()->getUserOption($atts['name']);
+            $atts['value'] = $this->plugin()->getUserOption($atts['name']);
 
 
 

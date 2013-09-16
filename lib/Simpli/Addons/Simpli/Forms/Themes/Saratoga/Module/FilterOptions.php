@@ -27,7 +27,7 @@ class Simpli_Addons_Simpli_Forms_Themes_Saratoga_Module_FilterOptions extends Si
         extract($properties);
 
 
-        $atts['value'] = $this->getPlugin()->getModule('PostUserOptions')->getUserOption($atts['name']);
+        $atts['value'] = $this->plugin()->getModule('PostUserOptions')->getUserOption($atts['name']);
 
         return (compact('scid','atts', 'tags'));
     }

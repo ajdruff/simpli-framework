@@ -20,7 +20,7 @@ require_once('includes/template.php'); // WordPress Dashboard Functions
 
 
 
-$post = $this->getPlugin()->tools()->getPost();
+$post = $this->plugin()->tools()->getPost();
 $this->debug()->logVar('$post = ', $post,true);
 /*
  * If the user accesses this page using a link to this menu page (instead of via a redirect after they clicked the edit link, there wont be any post object, and errors will result.
@@ -46,7 +46,7 @@ if (!is_object($post)) {
 
     <div class="wrap" id="simpli-main">
         <div   class="icon32 menu-icon"><br /></div>
-        <h2><?php _e($this->getPlugin()->getName(), $this->getPlugin()->getTextDomain()); ?></h2>
+        <h2><?php _e($this->plugin()->getName(), $this->plugin()->getTextDomain()); ?></h2>
 
 
 
@@ -66,7 +66,7 @@ if (!is_object($post)) {
 
 <!-- Start Editor -->
 <?php
-    $f = $this->getPlugin()->getAddon('Simpli_Forms')->getModule('Form');
+    $f = $this->plugin()->getAddon('Simpli_Forms')->getModule('Form');
 
 
 

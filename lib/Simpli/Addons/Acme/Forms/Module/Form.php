@@ -33,8 +33,8 @@ class Simpli_Addons_Acme_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Module
         /*
          * Add Shortcodes
          */
-        add_shortcode($this->getPlugin()->getSlug() . '_form', array($this, 'hookShortcodeElementWithoutContent'), 10);
-        add_shortcode($this->getPlugin()->getSlug() . '_form_options', array($this, 'hookShortcodeElementWithContent'), 10);
+        add_shortcode($this->plugin()->getSlug() . '_form', array($this, 'hookShortcodeElementWithoutContent'), 10);
+        add_shortcode($this->plugin()->getSlug() . '_form_options', array($this, 'hookShortcodeElementWithContent'), 10);
     }
 
     /**
@@ -338,10 +338,10 @@ class Simpli_Addons_Acme_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Module
         if (!isset($atts['options']) || is_null($atts['options'])) {
             //  $atts['options'] = $content;
 
-            $atts['options'] = $this->getPlugin()->tools()->lines2array($content);
+            $atts['options'] = $this->plugin()->tools()->lines2array($content);
         } else {
 
-            $atts['options'] = $this->getPlugin()->tools()->parse_str($atts['options']);
+            $atts['options'] = $this->plugin()->tools()->parse_str($atts['options']);
         }
 
 
@@ -393,6 +393,7 @@ class Simpli_Addons_Acme_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Module
     public function el($properties) {
         $this->debug()->t();
 echo '<br>this is my own addon';
+echo ' The name of this addon is '.$this->addon()->getName();
         //echo($this->_el($properties));
     }
 
@@ -503,12 +504,12 @@ echo '<br>this is my own addon';
 
         foreach ($filters as $filter) {
 
-            $filter_module_name = $this->getAddon()->MODULE_NAME_FILTERS . $filter; // e.g.: 'FilterOptions'
-            if (method_exists($this->getAddon()->getModule($filter_module_name), 'filter')) {
+            $filter_module_name = $this->addon()->MODULE_NAME_FILTERS . $filter; // e.g.: 'FilterOptions'
+            if (method_exists($this->addon()->getModule($filter_module_name), 'filter')) {
                 $this->debug()->log('filtering using ' . $filter_module_name);
                 $this->debug()->logVar('unfiltered properties are  = ', $properties);
                 $this->debug()->log('Filtering with module ' . $filter_module_name);
-                $properties = $this->getAddon()->getModule($filter_module_name)->filter($properties);
+                $properties = $this->addon()->getModule($filter_module_name)->filter($properties);
                 $this->debug()->logVar('filtered properties are  = ', $properties);
             }
         }
@@ -625,11 +626,11 @@ echo '<br>this is my own addon';
 
 
 
-        $result = $this->getAddon()->getModule('Theme');
+        $result = $this->addon()->getModule('Theme');
         $this->debug()->log('theme name in getTheme is : ' . $result->getThemeName());
-        $this->debug()->logVar('$this->getAddon()->getModule(\'Theme\') ', $result);
+        $this->debug()->logVar('$this->addon()->getModule(\'Theme\') ', $result);
 
-        $this->debug()->log('Theme object =<pre>', print_r($this->getAddon()->getModule('Theme'), true), '</pre>');
+        $this->debug()->log('Theme object =<pre>', print_r($this->addon()->getModule('Theme'), true), '</pre>');
         return ($result);
     }
 
@@ -663,7 +664,7 @@ echo '<br>this is my own addon';
 
 
         if (is_null($this->_field_prefix)) {
-            $this->setFieldPrefix($this->getPlugin()->getSlug() . '_');
+            $this->setFieldPrefix($this->plugin()->getSlug() . '_');
         }
 
         return $this->_field_prefix;

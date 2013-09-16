@@ -52,7 +52,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
         $this->debug()->t();
 
 
-        // add_action($this->getAddon()->_slug . '_init',array($this,'loadTheme'));
+        // add_action($this->addon()->_slug . '_init',array($this,'loadTheme'));
     }
 
 
@@ -72,7 +72,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
         $this->setTheme('Saratoga');
 
 
-        //  $addon_modules = $this->getAddon()->getModules();
+        //  $addon_modules = $this->addon()->getModules();
     }
 
     private $_cached_templates;
@@ -157,7 +157,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
     private function _setThemeDirectory($theme_directory_path) {
 
 
-        $theme_directory_path_normalized = $this->getPlugin()->tools()->normalizePath($theme_directory_path);
+        $theme_directory_path_normalized = $this->plugin()->tools()->normalizePath($theme_directory_path);
         $this->_theme_directory = $theme_directory_path_normalized;
         $this->debug()->log('Set Theme Template Directory to : ' . $this->_theme_directory);
     }
@@ -172,7 +172,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
         $this->debug()->t();
         //if theme directory wasnt set yet, set it now with whatever theme name exists
         if (is_null($this->_theme_directory)) {
-            $this->_theme_directory = $this->getAddon()->getDirectory() . '/' . $this->getAddon()->DIR_NAME_THEMES . '/' . $this->getThemeName();
+            $this->_theme_directory = $this->addon()->getDirectory() . '/' . $this->addon()->DIR_NAME_THEMES . '/' . $this->getThemeName();
         }
 
         return $this->_theme_directory;
@@ -186,7 +186,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
      */
     private function _getDefaultThemeDirectory() {
 
-        return ($this->getAddon()->getDirectory() . '/' . $this->getAddon()->DIR_NAME_THEMES . '/' . self::DEFAULT_THEME);
+        return ($this->addon()->getDirectory() . '/' . $this->addon()->DIR_NAME_THEMES . '/' . self::DEFAULT_THEME);
     }
 
 //    /**
@@ -226,14 +226,14 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
         /*
          * set theme directory
          */
-        $this->_setThemeDirectory($this->getAddon()->getDirectory() . '/' . $this->getAddon()->DIR_NAME_THEMES . '/' . $this->getThemeName());
+        $this->_setThemeDirectory($this->addon()->getDirectory() . '/' . $this->addon()->DIR_NAME_THEMES . '/' . $this->getThemeName());
         $this->debug()->log('Set theme directory to ' . $this->_getThemeDirectory());
 
         /*
          * load theme modules
          */
 
-        $new_enabled_modules = $this->getAddon()->loadModules($this->_getThemeDirectory() . '/Module');
+        $new_enabled_modules = $this->addon()->loadModules($this->_getThemeDirectory() . '/Module');
 
 //        foreach ($new_enabled_modules as $module_name => $module_path) {
 //
@@ -250,8 +250,8 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
             foreach ($new_enabled_modules as $module_name => $module) {
 
 
-                $this->getAddon()->getModule($module_name)->init();
-                $this->debug()->log('Initialized Addon Module ' . $this->getSlug() . '/' . $this->getAddon()->getModule($module_name)->getName());
+                $this->addon()->getModule($module_name)->init();
+                $this->debug()->log('Initialized Addon Module ' . $this->getSlug() . '/' . $this->addon()->getModule($module_name)->getName());
             }
         }
 
@@ -309,19 +309,19 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
 
         $theme = ucwords($this->getThemeName());
 
-        $module_name = $this->getAddon()->MODULE_NAME_ELEMENTS . $theme;
+        $module_name = $this->addon()->MODULE_NAME_ELEMENTS . $theme;
 
-        $theme_elements_module_exists = $this->getAddon()->isModuleLoaded($module_name);
+        $theme_elements_module_exists = $this->addon()->isModuleLoaded($module_name);
 
         if ($theme_elements_module_exists) {
 
-            $module_name = $this->getAddon()->MODULE_NAME_ELEMENTS . $theme;
+            $module_name = $this->addon()->MODULE_NAME_ELEMENTS . $theme;
         } else {
-            $module_name = $this->getAddon()->MODULE_NAME_ELEMENTS;
+            $module_name = $this->addon()->MODULE_NAME_ELEMENTS;
         }
 
 
-        return $this->getAddon()->getModule($module_name);
+        return $this->addon()->getModule($module_name);
     }
 
 }

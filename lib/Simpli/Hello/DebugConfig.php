@@ -11,7 +11,7 @@
  * @subpackage SimpliHello
  *
  */
-class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Debug {
+class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Plugin_Debug {
 
     /**
      * Configure Module
@@ -116,8 +116,8 @@ $this->debug()->setMethodFilter('.*Meta.*', false);
         $this->setOption('error_template','<div ><em style="color:red;"> Error ( Plugin {PLUGIN_SLUG} ) </em> {ERROR_MESSAGE}  <p>Calling method : {CALLING_CLASS}::{CALLING_METHOD}() </p>on Line {CALLING_LINE} in file {CALLING_FILE}</div>');
 
 
-        $this->debug()->setOption('trace_enabled', false);
-        $this->debug()->setOption('defined_vars_enabled', true);
+        $this->debug()->setOption('trace_enabled', true);
+        $this->debug()->setOption('defined_vars_enabled', false);
         $this->debug()->setOption('backtrace_enabled', false);
         $this->debug()->setOption('visual_backtrace_enabled', false);
 
@@ -141,12 +141,12 @@ $this->setOption('debug_ajax_enabled',true);
         $this->setOption('output_to_footer', false);
         $this->setOption('output_to_file', false);
         $this->setOption('output_to_console', false);
-        $this->setOption('log_file_path', $this->getPlugin()->getDirectory() . '/debug.log.txt');
+        $this->setOption('log_file_path', $this->plugin()->getDirectory() . '/debug.log.txt');
 
         /*
          * Demo Enabled
          */
-        $this->setOption('demo_enabled', false);
+        $this->setOption('demo_enabled', true);
 
         /*
          * Excluded Functions Filter Enabled

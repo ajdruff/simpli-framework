@@ -60,11 +60,11 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
         /*
          *  Add Custom Ajax Handlers
          *
-         * adding a wp_ajax hook in this format will execute the specified class method whenever the ajax request specifies an action = to $this->getPlugin()->getSlug() . '_xxxx'
+         * adding a wp_ajax hook in this format will execute the specified class method whenever the ajax request specifies an action = to $this->plugin()->getSlug() . '_xxxx'
           see http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
 
           Example ( this is included in base class so no need to add it here
-          //add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array($this, 'save'));
+          //add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_save', array($this, 'save'));
          *
          *
          *
@@ -189,7 +189,7 @@ $args['show_in_admin_bar']=(isset($args['show_in_admin_bar']))?$args['show_in_ad
  * is designed to return a unique position , using the slug as a kind of salt
 
  */
-$args['menu_position']=(isset($args['menu_position']))?$args['menu_position']:$this->getPlugin()->getModule('Admin')->getMenuPosition();//make same as show_in_menu
+$args['menu_position']=(isset($args['menu_position']))?$args['menu_position']:$this->plugin()->getModule('Admin')->getMenuPosition();//make same as show_in_menu
 
 
         /*
@@ -198,7 +198,7 @@ $args['menu_position']=(isset($args['menu_position']))?$args['menu_position']:$t
 $this->_register_post_type($post_type, $args);
 
 
-        //add_post_type_support( $this->getPlugin()->getSlug() . '_snippet', array('title', 'editor') );
+        //add_post_type_support( $this->plugin()->getSlug() . '_snippet', array('title', 'editor') );
     }
 
     /**
@@ -264,7 +264,7 @@ $this->_register_post_type($post_type, $args);
          * and provides defaults for those elements that are not supplied.
          */
 
-        $args = $this->getPlugin()->tools()->screenDefaults($arg_defaults, $args);
+        $args = $this->plugin()->tools()->screenDefaults($arg_defaults, $args);
 
         /*
          * Use array_filter to remove null values so that the wordpress builtin function supplies defaults
@@ -318,10 +318,10 @@ $this->_register_post_type($post_type, $args);
 
 
 
-        //  $settings_page_slug = $this->getPlugin()->getSlug() . '_' . $this->getSlug(); //$this->getMenuSlug(); still empty
+        //  $settings_page_slug = $this->plugin()->getSlug() . '_' . $this->getSlug(); //$this->getMenuSlug(); still empty
 
 
-        $isScreenAdd = ($this->getPlugin()->tools()->isScreen('add', $this->getPostType()));
+        $isScreenAdd = ($this->plugin()->tools()->isScreen('add', $this->getPostType()));
         /*
          * Return if not the edit screen
          */
@@ -347,9 +347,9 @@ $this->_register_post_type($post_type, $args);
              * if the custom post type is a top level menu page, redirect using its top level slug, which includes the post type
              */
 
-            $redirect_url = admin_url() . $menu_tracker[$top_menu]['top_level_slug'] . '&' . $this->getPlugin()->QUERY_VAR . '=' . $this->getPlugin()->QV_ADD_POST . '&page=' . $this->getMenuSlug();
+            $redirect_url = admin_url() . $menu_tracker[$top_menu]['top_level_slug'] . '&' . $this->plugin()->QUERY_VAR . '=' . $this->plugin()->QV_ADD_POST . '&page=' . $this->getMenuSlug();
 
-            //works too:         $redirect_url=(admin_url() . 'edit.php?' . $this->getPlugin()->QUERY_VAR . '=' . $this->getPlugin()->QV_ADD_POST . '&post_type='.$this->getPostType().'&page=' . $this->getMenuSlug());
+            //works too:         $redirect_url=(admin_url() . 'edit.php?' . $this->plugin()->QUERY_VAR . '=' . $this->plugin()->QV_ADD_POST . '&post_type='.$this->getPostType().'&page=' . $this->getMenuSlug());
 
 
             $this->debug()->logVar('$redirect_url = ', $redirect_url);
@@ -362,7 +362,7 @@ $this->_register_post_type($post_type, $args);
              */
 
 
-            $redirect_url = admin_url() . 'admin.php?' . $this->getPlugin()->QUERY_VAR . '=' . $this->getPlugin()->QV_ADD_POST . '&post_type=' . $this->getPlugin()->tools()->getPostTypeQueryVar($this->getPostType()) . '&page=' . $this->getMenuSlug();
+            $redirect_url = admin_url() . 'admin.php?' . $this->plugin()->QUERY_VAR . '=' . $this->plugin()->QV_ADD_POST . '&post_type=' . $this->plugin()->tools()->getPostTypeQueryVar($this->getPostType()) . '&page=' . $this->getMenuSlug();
 
 
             $this->debug()->logVar('$redirect_url = ', $redirect_url);
@@ -428,9 +428,9 @@ $this->_register_post_type($post_type, $args);
         }
 
 
-        //   $settings_page_slug = $this->getPlugin()->getSlug() . '_' . $this->getSlug(); //$this->getMenuSlug(); still empty
+        //   $settings_page_slug = $this->plugin()->getSlug() . '_' . $this->getSlug(); //$this->getMenuSlug(); still empty
 
-        $isScreenEdit = $this->getPlugin()->tools()->isScreen('edit-add', $this->getPostType());
+        $isScreenEdit = $this->plugin()->tools()->isScreen('edit-add', $this->getPostType());
 
         /*
          * Return if not the edit screen
@@ -447,13 +447,13 @@ $this->_register_post_type($post_type, $args);
         $menu_tracker = $this->getMenuTracker();
         $top_menu = key($menu_tracker);
         if (stripos($menu_tracker[$top_menu]['top_level_slug'], 'edit.php') !== false) { //if a custom post type is the top level menu
-            $redirect_url = admin_url() . $menu_tracker[$top_menu]['top_level_slug'] . '&' . $this->getPlugin()->QUERY_VAR . '=' . $this->getPlugin()->QV_EDIT_POST . '&post=' . $post->ID . '&page=' . $this->getMenuSlug();
+            $redirect_url = admin_url() . $menu_tracker[$top_menu]['top_level_slug'] . '&' . $this->plugin()->QUERY_VAR . '=' . $this->plugin()->QV_EDIT_POST . '&post=' . $post->ID . '&page=' . $this->getMenuSlug();
             $this->debug()->logVar('$redirect_url = ', $redirect_url);
 
             wp_redirect($redirect_url);
             die();
         } else {
-            $redirect_url = admin_url() . 'admin.php?' . $this->getPlugin()->QUERY_VAR . '=' . $this->getPlugin()->QV_EDIT_POST . '&post=' . $post->ID . '&page=' . $this->getMenuSlug();
+            $redirect_url = admin_url() . 'admin.php?' . $this->plugin()->QUERY_VAR . '=' . $this->plugin()->QV_EDIT_POST . '&post=' . $post->ID . '&page=' . $this->getMenuSlug();
             $this->debug()->logVar('$redirect_url = ', $redirect_url);
 
             wp_redirect($redirect_url);
@@ -461,8 +461,8 @@ $this->_register_post_type($post_type, $args);
         }
 
 
-//'admin.php?'.$this->getPlugin()->QUERY_VAR.'='. $this->getPlugin()->QV_ADD_POST.'&
-        // wp_redirect(admin_url() . 'admin.php?'.$this->getPlugin()->QUERY_VAR.'='. $this->getPlugin()->QV_EDIT_POST .'&post=' . $post->ID . '&page=' . $this->getMenuSlug());
+//'admin.php?'.$this->plugin()->QUERY_VAR.'='. $this->plugin()->QV_ADD_POST.'&
+        // wp_redirect(admin_url() . 'admin.php?'.$this->plugin()->QUERY_VAR.'='. $this->plugin()->QV_EDIT_POST .'&post=' . $post->ID . '&page=' . $this->getMenuSlug());
 
         die();
         return;
@@ -477,12 +477,12 @@ $this->_register_post_type($post_type, $args);
     public function showDisabledMessage() {
         $this->debug()->t();
         if ($this->CUSTOM_POST_EDITOR_ENABLED) {
-            if (!$this->getPlugin()->tools()->isScreen(array('custom_edit', 'custom_add'), $this->getPostType())) {
+            if (!$this->plugin()->tools()->isScreen(array('custom_edit', 'custom_add'), $this->getPostType())) {
                 return;
             }
         } else {
 
-            if (!$this->getPlugin()->tools()->isScreen(array('edit', 'add'), $this->getPostType())) {
+            if (!$this->plugin()->tools()->isScreen(array('edit', 'add'), $this->getPostType())) {
                 return;
             }
         }
@@ -493,7 +493,7 @@ $this->_register_post_type($post_type, $args);
 
 
 //dont show if the plugin is enabled
-        if (($this->getPlugin()->getUserOption('plugin_enabled') == 'enabled')) {
+        if (($this->plugin()->getUserOption('plugin_enabled') == 'enabled')) {
             return;
         }
         ?>
@@ -501,7 +501,7 @@ $this->_register_post_type($post_type, $args);
 
 
         <div class="error">
-            <p><strong>You have disabled <?php echo $this->getPlugin()->getName() ?> functionality.</strong> To re-enable <?php echo $this->getPlugin()->getName() ?> , set  'Maintenance -> Enable Plugin' to 'Yes'.</p>
+            <p><strong>You have disabled <?php echo $this->plugin()->getName() ?> functionality.</strong> To re-enable <?php echo $this->plugin()->getName() ?> , set  'Maintenance -> Enable Plugin' to 'Yes'.</p>
         </div>
 
         <?php
@@ -540,14 +540,14 @@ $this->_register_post_type($post_type, $args);
      */
     public function hookCreateNewPost() {
 
-        $tools = $this->getPlugin()->tools();
+        $tools = $this->plugin()->tools();
 
         /*
          * Check if our query variable is set to 'add_post'. if it is, we are on the 'add_post' page and
          * we create an auto-draft of a post.
          */
 
-        if (($tools->getQueryVar($this->getPlugin()->QUERY_VAR) === $this->getPlugin()->QV_ADD_POST)) {
+        if (($tools->getQueryVar($this->plugin()->QUERY_VAR) === $this->plugin()->QV_ADD_POST)) {
             // Create post object
             /*
              * get post type,
@@ -557,7 +557,7 @@ $this->_register_post_type($post_type, $args);
              * if it did, it would throw an error (cannot load page) since it doesnt recognize it as a valid edit page.
              */
 
-            $post_type = $this->getPlugin()->tools()->getPostTypeQueryVar();
+            $post_type = $this->plugin()->tools()->getPostTypeQueryVar();
 
             global $post;
             $new_post_values = array(
@@ -601,7 +601,7 @@ $this->_register_post_type($post_type, $args);
          * Add our meta boxes
          */
 
-        $this->metabox()->addMetaBoxes();
+        $this->metabox()->hookAddMetaBoxes();
         //  add_action('current_screen', array($this, 'addMetaBoxes')); //action must be 'current_screen' so screen object can be accessed by the add_meta_boxes function
         // Add scripts
         add_action('admin_enqueue_scripts', array($this, 'hookEnqueueBaseClassScripts'));
@@ -638,13 +638,13 @@ $this->_register_post_type($post_type, $args);
                 $this->_page_check_editor = false;
             } else {
 
-                $this->_page_check_editor = $this->getPlugin()->tools()->isScreen(array('edit', 'add'), null, false);
+                $this->_page_check_editor = $this->plugin()->tools()->isScreen(array('edit', 'add'), null, false);
                 if (!$this->_page_check_editor) {
                     /*
                      * if pageCheck failed, check to see if we are on a custom edit or add screen
                      */
                     $this->debug()->log('Not a standard edit or add page, checking to see if its a CustomEdit or CustomAdd screen');
-                    $this->_page_check_editor = $this->getPlugin()->tools()->isScreen(array('custom_edit', 'custom_add'), null, false);
+                    $this->_page_check_editor = $this->plugin()->tools()->isScreen(array('custom_edit', 'custom_add'), null, false);
                 }
             }
         }

@@ -34,7 +34,7 @@ class Simpli_Addons_Acme_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Modu
 //    public function getHookName() {
 //        $this->debug()->t();
 //
-//        $hook_name = $this->getAddon()->getSlug() . '_' . $this->getSlug(); //e.g.: simpli_addons_Acme_Forms_filters
+//        $hook_name = $this->addon()->getSlug() . '_' . $this->getSlug(); //e.g.: simpli_addons_Acme_Forms_filters
 //        return $hook_name;
 //    }
 
@@ -121,12 +121,12 @@ class Simpli_Addons_Acme_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Modu
             $atts['label'] = $this->getDefaultFieldLabel($atts['name']);
         }
 
-        $tags['form_counter'] = $this->getAddon()->getModule('Form')->form_counter;
-        if (isset($this->getAddon()->getModule('Form')->form['form']['name'])) {
-            $tags['form_name'] = $this->getAddon()->getModule('Form')->form['form']['name'];
+        $tags['form_counter'] = $this->addon()->getModule('Form')->form_counter;
+        if (isset($this->addon()->getModule('Form')->form['form']['name'])) {
+            $tags['form_name'] = $this->addon()->getModule('Form')->form['form']['name'];
         }
 
-        $this->debug()->logVar('$this->getAddon()->getModule(\'Form\')->form = ', $this->getAddon()->getModule('Form')->form);
+        $this->debug()->logVar('$this->addon()->getModule(\'Form\')->form = ', $this->addon()->getModule('Form')->form);
 
 
         return (compact('scid', 'atts', 'tags'));
@@ -189,7 +189,7 @@ class Simpli_Addons_Acme_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Modu
             $tokens['option_value'] = $option_value;
             $tokens['option_text'] = $option_text;
             $option_template = '<option {selected_html} value="{option_value}">{option_text}</option>';
-            $options_html.=$this->getPlugin()->tools()->crunchTpl($tokens, $option_template);
+            $options_html.=$this->plugin()->tools()->crunchTpl($tokens, $option_template);
         }
 
 
@@ -259,7 +259,7 @@ class Simpli_Addons_Acme_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Modu
 </label>
                         </p>';
 
-            $options_html.=$this->getPlugin()->tools()->crunchTpl($tokens, $option_template);
+            $options_html.=$this->plugin()->tools()->crunchTpl($tokens, $option_template);
         }
 
 
@@ -347,9 +347,9 @@ class Simpli_Addons_Acme_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Modu
 
             $tokens['option_value'] = $option_value;
             $tokens['option_text'] = $option_text;
-            $option_template = $this->getAddon()->getModule('Form')->getTheme()->getTemplate($atts['template_option']);
+            $option_template = $this->addon()->getModule('Form')->getTheme()->getTemplate($atts['template_option']);
 
-            $options_html.=$this->getPlugin()->tools()->crunchTpl($tokens, $option_template);
+            $options_html.=$this->plugin()->tools()->crunchTpl($tokens, $option_template);
             $this->debug()->logVar('$tokens = ', $tokens);
         }
 
@@ -395,7 +395,7 @@ class Simpli_Addons_Acme_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Modu
         $this->debug()->t();
 
         extract($properties);
-        $post = $this->getPlugin()->tools()->getPost();
+        $post = $this->plugin()->tools()->getPost();
         $post_type = $post->post_type;
 
         $post_ID = $post->ID;
@@ -505,7 +505,7 @@ if (is_null($atts['id'])) {
         $this->debug()->t();
 
 
-        $this->getPlugin()->getSlug() . '_';
+        $this->plugin()->getSlug() . '_';
     }
 
 }

@@ -116,12 +116,12 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
          * We dont use the 'add_meta_boxes' action since it will not work when used
          * with a custom post editor.
          */
-        $this->metabox()->addMetaBoxes();
+        $this->metabox()->hookAddMetaBoxes();
         //     add_action('current_screen', array($this, 'addMetaBoxes'));
 
 
         /* save using ajax */
-        //  add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array($this, 'hookAjaxSave'));
+        //  add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_save', array($this, 'hookAjaxSave'));
 
 
         /* DEPRECATED
@@ -166,18 +166,18 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 
         $this->metabox()->addMetaBox(
                 $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
-                , __('Box 1 - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , __('Box 1 - Metabox added from within ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
                 , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
                 , $screen_id = null// post_type when you embed meta boxes into post edit pages
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                 , null //$metabox['args'] in callback function
-                //,  array('path' => $this->getPlugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
+                //,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
         );
 //
        $this->metabox()->addMetaBox(
                 $this->getSlug() . '_' . 'metabox_test'  //Meta Box DOM ID
-                , __('Box 2 - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , __('Box 2 - Metabox added from within ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
                 , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
@@ -299,7 +299,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 //        $field_name = $this->getUseroptionName($option_id);
 //        $value = $this->getUserOption($option_id);
 //
-//        echo $this->getPlugin()->getModule('Form')->text($field_name, $value, $label, $hint, $help, $template_id);
+//        echo $this->plugin()->getModule('Form')->text($field_name, $value, $label, $hint, $help, $template_id);
 //    }
 //    /**
 //     * Template Tag - Post Option
@@ -326,7 +326,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 //
 //
 //        $post_user_options = $this->getUserOptions();
-//        $name_with_added_prefix = $this->getPlugin()->getSlug() . '_' . $name;
+//        $name_with_added_prefix = $this->plugin()->getSlug() . '_' . $name;
 //
 ////echo '<br/> getUserOptions()=';
 ////        echo '<pre>';
@@ -463,14 +463,14 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 //        /*
 //         * If the $name already has the slug prepended, return it without further processing
 //         */
-//        if (stripos($name, $this->getPlugin()->getSlug() . '_') !== false) {
+//        if (stripos($name, $this->plugin()->getSlug() . '_') !== false) {
 //            return $name;
 //        } else
 //        /*
 //         * If the name does not have a prefix, give it one.
 //         */ {
 //
-//            return $this->getPlugin()->getSlug() . '_' . $name;
+//            return $this->plugin()->getSlug() . '_' . $name;
 //        }
 //    }
 
@@ -532,7 +532,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 
         $this->debug()->log('Saving Post Options');
 
-        $wp_option_name = $this->getPlugin()->getSlug() . '_options';
+        $wp_option_name = $this->plugin()->getSlug() . '_options';
         $options = $this->getUserOptions();
         $this->debug()->logVar('$options = ', $options);
         update_post_meta($post_id, $wp_option_name, $options);
@@ -577,7 +577,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         $default_options = $this->getUserOptionDefaults();
         $post_meta_options = array();
 
-        $wp_option_name = $this->getPlugin()->getSlug() . '_options';
+        $wp_option_name = $this->plugin()->getSlug() . '_options';
 
         global $post;
 
@@ -641,8 +641,8 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 //         */
 //        if (!$this->pageCheck()) {
 //
-//            $custom_edit_page = ((isset($_GET[$this->getPlugin()->QUERY_VAR]) && ($_GET[$this->getPlugin()->QUERY_VAR] === $this->getPlugin()->QV_EDIT_POST)) ? true : false);
-//            $custom_add_page = ((isset($_GET[$this->getPlugin()->QUERY_VAR]) && ($_GET[$this->getPlugin()->QUERY_VAR] === $this->getPlugin()->QV_ADD_POST)) ? true : false);
+//            $custom_edit_page = ((isset($_GET[$this->plugin()->QUERY_VAR]) && ($_GET[$this->plugin()->QUERY_VAR] === $this->plugin()->QV_EDIT_POST)) ? true : false);
+//            $custom_add_page = ((isset($_GET[$this->plugin()->QUERY_VAR]) && ($_GET[$this->plugin()->QUERY_VAR] === $this->plugin()->QV_ADD_POST)) ? true : false);
 //            /*
 //             * Check if on Custom Editor
 //             * If not on either the custom edit page or the custom add page, return
@@ -668,18 +668,18 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
          */
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
-                , __('Box 1 - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , __('Box 1 - Metabox added from within ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
                 , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
                 , $screen_id = null// post_type when you embed meta boxes into post edit pages
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                 , null //$metabox['args'] in callback function
-                //,  array('path' => $this->getPlugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
+                //,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
         );
 
         add_meta_box(
                 $this->getSlug() . '_' . 'metabox_test'  //Meta Box DOM ID
-                , __('Box 2 - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                , __('Box 2 - Metabox added from within ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
                 , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
@@ -702,25 +702,25 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 
             add_meta_box(
                     $this->getSlug() . '_' . 'metabox_options2'  //Meta Box DOM ID
-                    , __('Box 3  - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                    , __('Box 3  - Metabox added from within ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
                     , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
                     , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                     , 'normal' //normal advanced or side The part of the page where the metabox should show
                     , 'high' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                     , null //$metabox['args'] in callback function
-                    //,  array('path' => $this->getPlugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
+                    //,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
             );
 
 
             add_meta_box(
                     $this->getSlug() . '_' . 'metabox_ajax_options'  //Meta Box DOM ID
-                    , __('Box 4  - Metabox added from within ' . basename(__FILE__), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                    , __('Box 4  - Metabox added from within ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
                     , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
                     , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                     , 'side' //normal advanced or side The part of the page where the metabox should show
                     , 'high' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                     , null //$metabox['args'] in callback function
-                    //,  array('path' => $this->getPlugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
+                    //,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
             );
         }
 
@@ -745,18 +745,18 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
          * Add javascript for form submission
          *
          */
-        $handle = $this->getPlugin()->getSlug() . '_metabox-form-post.js';
-        $path = $this->getPlugin()->getDirectory() . '/admin/js/metabox-form-post.js';
+        $handle = $this->plugin()->getSlug() . '_metabox-form-post.js';
+        $path = $this->plugin()->getDirectory() . '/admin/js/metabox-form-post.js';
         $inline_deps = array();
         $external_deps = array('jquery');
-        $this->getPlugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+        $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
 
 
         /* You could also load it as an external file
          * Example of loading using the wp_enqueue_script method
          */
-        //                  $handle = $this->getPlugin()->getSlug() . '_metabox-form-post.js';
-        //        $src = $this->getPlugin()->getUrl() . '/admin/js/metabox-form-post.js';
+        //                  $handle = $this->plugin()->getSlug() . '_metabox-form-post.js';
+        //        $src = $this->plugin()->getUrl() . '/admin/js/metabox-form-post.js';
         //        $deps = array('jquery');
         //        $ver = '1.0';
         //        $in_footer = false;
@@ -779,7 +779,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 
         //if the post variable doesnt include our plugin, than exit.
         if (is_admin()) {
-            if (!array_key_exists($this->getPlugin()->getSlug(), $_POST)) {
+            if (!array_key_exists($this->plugin()->getSlug(), $_POST)) {
                 $this->debug()->logVar('$_POST = ', $_POST);
                 $this->debug()->log('Exiting Post Save since $_POST doesnt include our options');
                 return $post_id;
@@ -787,7 +787,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
             //   $this->debug()->log('Exiting save ajax call');
             $this->debug()->logVar('$_POST = ', $_POST, false, true, false, false); //automatically show arrays without needing to click
             // if nonce fails , return
-            if (!wp_verify_nonce($_POST[$this->getPlugin()->getSlug() . '_nonce'], 'save_post')) {
+            if (!wp_verify_nonce($_POST[$this->plugin()->getSlug() . '_nonce'], 'save_post')) {
                 $this->debug()->log('Nonce Failed while trying to save options');
                 return $post_id;
             }
@@ -823,7 +823,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
              * Set new option value equal to the submitted value only if the option was actually submitted, otherwise, keep the option value the same.
              *  Add extra code to scrub the values for specific options if needed
              */
-            $option_value = (isset($_POST[$this->getPlugin()->getSlug()][$option_name])) ? $_POST[$this->getPlugin()->getSlug()][$option_name] : $option_value;
+            $option_value = (isset($_POST[$this->plugin()->getSlug()][$option_name])) ? $_POST[$this->plugin()->getSlug()][$option_name] : $option_value;
 
             $this->setUserOption($option_name, $option_value);
         }
@@ -843,15 +843,15 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
      */
     public function hookAjaxSave() {
 
-//        if (!wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug())) {
+//        if (!wp_verify_nonce($_POST['_wpnonce'], $this->plugin()->getSlug())) {
 //            return false;
 //        }
         //do something here.
 
-        $message = __("Post Options Saved.", $this->getPlugin()->getTextDomain());
+        $message = __("Post Options Saved.", $this->plugin()->getTextDomain());
         $errors = array(); // initialize the error array , add any validation errors when you scrub the form_field values
         //return a success message on submission
-        require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
+        require_once($this->plugin()->getDirectory() . '/admin/templates/ajax_message.php');
 
         die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
     }
@@ -870,13 +870,13 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         /*
          * If no template path provided, use the metabox id as the template name and /admin/templates/metabox as the path
          */
-        $template_path = $this->getPlugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php';
+        $template_path = $this->plugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php';
         if (isset($metabox['args']['path'])) {
             $template_path = $metabox['args']['path'];
         }
         if (!file_exists($template_path)) {
-            _e('Not available at this time.', $this->getPlugin()->getTextDomain());
-            $this->getPlugin()->debug()->logcError($this->getPlugin()->getSlug() . ' : Meta Box ' . $metabox['id'] . ' error - template path does not exist ' . $template_path);
+            _e('Not available at this time.', $this->plugin()->getTextDomain());
+            $this->plugin()->debug()->logcError($this->plugin()->getSlug() . ' : Meta Box ' . $metabox['id'] . ' error - template path does not exist ' . $template_path);
             return;
         }
         include($template_path);
@@ -894,7 +894,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 
 
 
-        include($this->getPlugin()->getDirectory() . '/admin/templates/metabox/ajax.php');
+        include($this->plugin()->getDirectory() . '/admin/templates/metabox/ajax.php');
     }
 
     /*
@@ -927,13 +927,13 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
                 $this->_page_check_editor = false;
             } else {
 
-                $this->_page_check_editor = $this->getPlugin()->tools()->isScreen(array('edit', 'add'), null, false);
+                $this->_page_check_editor = $this->plugin()->tools()->isScreen(array('edit', 'add'), null, false);
                 if (!$this->_page_check_editor) {
                     /*
                      * if pageCheck failed, check to see if we are on a custom edit or add screen
                      */
                     $this->debug()->log('Not a standard edit or add page, checking to see if its a CustomEdit or CustomAdd screen');
-                    $this->_page_check_editor = $this->getPlugin()->tools()->isScreen(array('custom_edit', 'custom_add'), null, false);
+                    $this->_page_check_editor = $this->plugin()->tools()->isScreen(array('custom_edit', 'custom_add'), null, false);
                 }
             }
         }
@@ -1025,7 +1025,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
     public function metabox() {
 
         if (is_null($this->_meta_box_object)) {
-            $this->_meta_box_object = new Simpli_Basev1c0_Metabox($this);
+            $this->_meta_box_object = new Simpli_Basev1c0_Plugin_Module_Metabox($this);
         }
         return $this->_meta_box_object;
     }

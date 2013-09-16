@@ -9,7 +9,7 @@
  * @subpackage SimpliBase
   * @property string $DISABLED_MODULES An array of Module Names of the Addon that you don't want to have loaded
  */
-class Simpli_Basev1c0_Addon {
+class Simpli_Basev1c0_Plugin_Addon implements  Simpli_Basev1c0_Plugin_Addon_Interface,Simpli_Basev1c0_Plugin_Interface{
 
     /**
      * Plugin directory path
@@ -115,19 +115,13 @@ class Simpli_Basev1c0_Addon {
         $this->_ro_properties[$name] = $value;
     }
 
-    /**
-     * Set Plugin
-     *
-     * @param Simpli_Basev1c0_Plugin $plugin
-     * @return object $this
-     * @uses Simpli_Basev1c0_Plugin
-     */
-    public function setPlugin(Simpli_Basev1c0_Plugin $plugin) {
 
-
+    function __construct($plugin) {
         $this->_plugin = $plugin;
-        return $this;
     }
+
+
+
 
     /**
      * Get Plugin
@@ -135,13 +129,8 @@ class Simpli_Basev1c0_Addon {
      * @param none
      * @return Simpli_Basev1c0_Plugin
      */
-    public function getPlugin() {
+    public function plugin() {
 
-
-
-        if (!isset($this->_plugin)) {
-            die('Module ' . __CLASS__ . ' missing Plugin dependency.');
-        }
 
         return $this->_plugin;
     }
@@ -166,7 +155,7 @@ class Simpli_Basev1c0_Addon {
 
 
 
-        return $this->getPlugin()->debug();
+        return $this->plugin()->debug();
     }
 
     /**
@@ -197,12 +186,12 @@ class Simpli_Basev1c0_Addon {
              * part of the class name represents the class file name
              * and prefix it with the plugin's directory to get the absolute path
              */
-            $path = dirname($this->getPlugin()->getDirectory() . '/' . $this->getPlugin()->DIR_NAME_LIBS . '/' . $path);
+            $path = dirname($this->plugin()->getDirectory() . '/' . $this->plugin()->DIR_NAME_LIBS . '/' . $path);
 
             /*
              * Now normalize slashes
              */
-            $this->_directory = $this->getPlugin()->tools()->normalizePath($path);
+            $this->_directory = $this->plugin()->tools()->normalizePath($path);
         }
 
         return ($this->_directory);
@@ -226,10 +215,10 @@ class Simpli_Basev1c0_Addon {
              * Addon class file is in.
              */
 
-            $path = $this->getDirectory() . '/' . $this->getPlugin()->DIR_NAME_MODULES;
+            $path = $this->getDirectory() . '/' . $this->plugin()->DIR_NAME_MODULES;
 
 
-            $this->_module_directory = $this->getPlugin()->tools()->normalizePath($path);
+            $this->_module_directory = $this->plugin()->tools()->normalizePath($path);
         }
 
 
@@ -415,7 +404,7 @@ class Simpli_Basev1c0_Addon {
 
 
 
-        return $this->getPlugin()->ADDON_NAMESPACE;
+        return $this->plugin()->ADDON_NAMESPACE;
     }
 
     /**
@@ -552,7 +541,7 @@ class Simpli_Basev1c0_Addon {
         }
     }
 
-    
+
 
 
 
@@ -766,7 +755,7 @@ class Simpli_Basev1c0_Addon {
 
 
 
-        $tools = $this->getPlugin()->tools();
+        $tools = $this->plugin()->tools();
 
         /*
          * Find all the Module files in the module directory
@@ -869,7 +858,7 @@ class Simpli_Basev1c0_Addon {
          */
 
 
-        $relative_path = $this->getPlugin()->tools()->makePathRelative($this->getPlugin()->getAddonsDirectory(), $module_file_path);
+        $relative_path = $this->plugin()->tools()->makePathRelative($this->plugin()->getAddonsDirectory(), $module_file_path);
         $module_namespace = str_replace('/', '_', dirname($relative_path));
 
 
@@ -882,11 +871,11 @@ class Simpli_Basev1c0_Addon {
         //       if (!isset($this->_modules[$module_name]) || !is_object($this->_modules[$module_name]) || get_class($this->_modules[$module_name]) != $class) {
         try {
 
-            $object = new $class;
+            $object = new $class($this->plugin(),$this); //set the plugin and addon dependency during creation
 
             $this->_modules[$module_name] = $object;
-            $this->getModule($module_name)->setPlugin($this->getPlugin()); //set the plugin dependency
-            $this->getModule($module_name)->setAddon($this); //set the addon dependency
+           // $this->getModule($module_name)->setTTTTTTTTPlugin($this->plugin()); //set the plugin dependency
+           // $this->getModule($module_name)->setTTTTTTTTTAddon($this); //set the addon dependency
 //$this->getModule($module_name)->init();
             $this->debug()->log('Loaded Addon Module ' . $this->getSlug() . '/' . $module_name);
             $this->debug()->logVars(get_defined_vars());

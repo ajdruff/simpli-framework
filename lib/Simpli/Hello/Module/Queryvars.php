@@ -113,7 +113,7 @@ class Simpli_Hello_Module_QueryVars extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        $this->getPlugin()->addActivateAction(array($this, 'flushRewriteRules'));
+        $this->plugin()->addActivateAction(array($this, 'flushRewriteRules'));
     }
 
     /**
@@ -131,7 +131,7 @@ class Simpli_Hello_Module_QueryVars extends Simpli_Basev1c0_Plugin_Module {
          *
          */
 
-        $this->_query_var_prefix = $this->getPlugin()->QUERY_VAR;
+        $this->_query_var_prefix = $this->plugin()->QUERY_VAR;
         $this->_query_var_suffixes = array('action', 'page');
 
         /*
@@ -140,7 +140,7 @@ class Simpli_Hello_Module_QueryVars extends Simpli_Basev1c0_Plugin_Module {
          *
          */
 
-        $this->_template_directory = $this->getPlugin()->getDirectory() . '/templates'; // no ending slash
+        $this->_template_directory = $this->plugin()->getDirectory() . '/templates'; // no ending slash
 
 
         /*
@@ -212,7 +212,7 @@ class Simpli_Hello_Module_QueryVars extends Simpli_Basev1c0_Plugin_Module {
      */
     public function test() {
 
-echo $this->getPlugin()->tools()->url2dir(admin_url());
+echo $this->plugin()->tools()->url2dir(admin_url());
 
 
 

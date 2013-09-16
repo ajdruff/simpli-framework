@@ -27,52 +27,7 @@
  *
  *
  */
-class Simpli_Basev1c0_Plugin {
-    //   private $_ro_properties = null;
-//    /**
-//     * Set Plugin Configuration
-//     *
-//     * Sets a Plugin Property
-//     *
-//     * @param none
-//     * @return void
-//     */
-//    protected function setConfig($name, $value) {
-//
-//        $this->_ro_properties[$name] = $value;
-//    }
-
-    /**
-     * Get Read Only Properties
-     *
-     * Define any configuration data here that needs to be accessible to all modules and derived classes and objects.
-     * usage from Plugin module $this->NAME_OF_PROPERTY without quotes.
-     * Returns read-only properties using a magic method __get
-     * ref: http://stackoverflow.com/questions/2343790/how-to-implement-a-read-only-member-variable-in-php
-     * @param none
-     * @return void
-     */
-    public function __getOLD($name) {
-
-
-
-        if (is_null($this->_ro_properties)) {
-            $this->_ro_properties = array
-                (
-                'ADDON_NAMESPACE' => 'Simpli_Addons'
-                , 'FILE_NAME_ADDON' => 'Addon'
-                , 'DIR_NAME_MODULES' => 'Module'
-                , 'DIR_NAME_LIBS' => 'lib'
-                , 'FILE_NAME_PLUGIN' => 'plugin.php'
-            );
-        }
-
-        if (isset($this->_ro_properties[$name])) {
-            return $this->_ro_properties[$name];
-        } else {
-            return null;
-        }
-    }
+class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface{
 
     /**
      * Plugin directory path
@@ -104,7 +59,7 @@ class Simpli_Basev1c0_Plugin {
 
 
 
-        
+
     /**
      * Plugin URL
      *
@@ -346,9 +301,10 @@ class Simpli_Basev1c0_Plugin {
                 $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
             } else {
                 try {
+                 
                     $debug_class = $this->getClassNamespace() . '_DebugConfig';
-                    $this->_debug = new $debug_class();
-                    $this->_debug->setPlugin($this);
+                    $this->_debug = new $debug_class($this);
+
                     $this->_debug->config();
                     $this->_debug->addHooks();
                 } catch (Exception $exc) {
@@ -548,33 +504,6 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
 //return $this;
 //    }
 
-    /**
-     * Set Logger
-     *
-     * @param object $logger
-     * @return object $this
-     */
-    public function setLoggerOLD(Simpli_Basev1c0_Logger_Interface $logger) {
-        $this->_logger = $logger;
-        $this->_logger->setPlugin($this); //pass a reference of the plugin to the logger
-
-        return $this;
-    }
-
-    /**
-     * Get Logger
-     *
-     * @param none
-     * @return object
-     */
-    public function getLoggerOLD() {
-
-        if (!isset($this->_logger)) {
-            die(__CLASS__ . ' missing Logger dependency.');
-        }
-
-        return $this->_logger->getInstance();
-    }
 
     /**
      * Get Plugin Url - Read Only
@@ -1006,14 +935,14 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
      *
      * Provides access to the library of methods in the Base Tools class
      * @param none
-     * @return object Base Tools
+     * @return Simpli_Basev1c0_Plugin_Tools Base Tools
      */
     public function tools() {
 
         if (is_null($this->_tools)) {
 
-            $this->_tools = new Simpli_Basev1c0_Btools();
-             $this->_tools->setPlugin($this);
+            $this->_tools = new Simpli_Basev1c0_Plugin_Tools($this);
+
         }
 
 
@@ -1199,14 +1128,14 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
 
         if (!isset($this->_addons[$class]) || !is_object($this->_addons[$class]) || get_class($this->_addons[$class]) != $class) {
             try {
-                $obj_addon = new $class;
+                $obj_addon = new $class($this); //create the addon, setting $this as the addon's plugin dependency
 
 
                 $this->_addons[$addon_name] = $obj_addon;
 
                 //$obj_addon=$this->getAddon($addon_name);
                 $obj_addon->setName($addon_name);
-                $obj_addon->setPlugin($this); //set the add on's plugin reference
+              ///  $obj_addon->setTTTTTPlugin($this); //set the add on's plugin reference
                 $this->debug()->log('Loaded Addon ' . $addon_name);
             } catch (Exception $e) {
 
@@ -1330,7 +1259,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
 
 
         $class = $this->getClassNamespace() . '_' . $this->DIR_NAME_MODULES . '_' . $module_name;
-        $module_object = new $class;
+        $module_object = new $class($this); //create the module object, setting $this as its plugin dependency
 //        $module_file_path = $available_modules[$module_name];
 //        require_once($module_file_path); # simpli-framework/lib/simpli/hello/Module/Admin.php
 //        echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style="color:blue;"> $module_file_path = ' . $module_file_path . '</strong>';
@@ -1354,7 +1283,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
                 /*
                  * set the plugin reference
                  */
-                $this->getModule($module_name)->setPlugin($this);
+             //   $this->getModule($module_name)->setTTTTPlugin($this);
                 $this->debug()->log('Loaded Plugin Module ' . $this->getSlug() . '/' . $module_name);
                 /*
                  * initialize the module
@@ -1465,7 +1394,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
      * In this way , we are able to cycle through the actions
      * Usage:
      * To add an action
-     *  $this->getPlugin()->addActivateAction(array($this, 'flush_rewrite_rules'));
+     *  $this->plugin()->addActivateAction(array($this, 'flush_rewrite_rules'));
      * see the Plugin::install method for an example of how to cycle through all the activate actions.
      *
      *

@@ -1,5 +1,5 @@
-<form name="<?php echo $this->getPlugin()->getSlug(); ?><?php echo '_' . $metabox['id']; ?>" id="<?php echo $this->getPlugin()->getSlug() . $metabox['id']; ?>" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
-    <?php wp_nonce_field($this->getPlugin()->getSlug()); ?>
+<form name="<?php echo $this->plugin()->getSlug(); ?><?php echo '_' . $metabox['id']; ?>" id="<?php echo $this->plugin()->getSlug() . $metabox['id']; ?>" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+    <?php wp_nonce_field($this->plugin()->getSlug()); ?>
     <input type="hidden" name="action" id="action" value="" />
 
     <table class="form-table">
@@ -12,17 +12,17 @@
 
 
         <tr valign="top" id="plugin_enabled_row">
-            <th scope="row"><?php _e('Enable Plugin', $this->getPlugin()->getTextDomain()); ?></th>
+            <th scope="row"><?php _e('Enable Plugin', $this->plugin()->getTextDomain()); ?></th>
             <td>
                 <fieldset>
                     <label for="plugin_enabled" class="label-radio">
 
                         <label class="label-radio">
-                            <input type="radio" name="plugin_enabled" value="enabled" <?php echo (($this->getPlugin()->getUserOption('plugin_enabled') == 'enabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Yes', $this->getPlugin()->getTextDomain()); ?></span>
+                            <input type="radio" name="plugin_enabled" value="enabled" <?php echo (($this->plugin()->getUserOption('plugin_enabled') == 'enabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Yes', $this->plugin()->getTextDomain()); ?></span>
                         </label>
 
                         <label class="label-radio">
-                            <input type="radio" name="plugin_enabled" value="disabled"  <?php echo (($this->getPlugin()->getUserOption('plugin_enabled') == 'disabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('No', $this->getPlugin()->getTextDomain()); ?></span></label>
+                            <input type="radio" name="plugin_enabled" value="disabled"  <?php echo (($this->plugin()->getUserOption('plugin_enabled') == 'disabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('No', $this->plugin()->getTextDomain()); ?></span></label>
 
 
 
@@ -32,7 +32,7 @@
                             <?php
                             printf(
                                     __(
-                                            'Use this setting to temporarily disable ' . $this->getPlugin()->getName() . ' for troubleshooting or maintenance. \'No\' will disable all plugin functionality except for this Administrative area, allowing you continued access to these settings. To completely remove ' . $this->getPlugin()->getName() . ', de-activate it from the plugins menu.', $this->getPlugin()->getSlug()
+                                            'Use this setting to temporarily disable ' . $this->plugin()->getName() . ' for troubleshooting or maintenance. \'No\' will disable all plugin functionality except for this Administrative area, allowing you continued access to these settings. To completely remove ' . $this->plugin()->getName() . ', de-activate it from the plugins menu.', $this->plugin()->getSlug()
                                     ), '<a href="#" target="_blank">', '</a>'
                             );
                             ?></p>
@@ -67,7 +67,7 @@
 
 
         <input type="submit" id="<?php echo $metabox['id']; ?>_settings_save" class="button-primary" value="Save Changes" name="<?php echo $metabox['id']; ?>_settings_save">
-        <img alt="<?php _e('Waiting...', $this->getPlugin()->getTextDomain()); ?>" src="<?php echo admin_url('/images/wpspin_light.gif'); ?>" class="waiting submit-waiting" />
+        <img alt="<?php _e('Waiting...', $this->plugin()->getTextDomain()); ?>" src="<?php echo admin_url('/images/wpspin_light.gif'); ?>" class="waiting submit-waiting" />
 
 
     </p>

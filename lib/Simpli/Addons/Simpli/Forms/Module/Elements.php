@@ -41,7 +41,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
          *
          * Add custom ajax handlers
          *  Map Ajax Handlers to Ajax Actions passed to php by the ajax request
-         * example: add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_my_action', array($this, 'my_function'));
+         * example: add_action('wp_ajax_' . $this->plugin()->getSlug() . '_my_action', array($this, 'my_function'));
          * see http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
          */
     }
@@ -66,7 +66,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
     public function getFormModule() {
         $this->debug()->t();
 
-        return $this->getPlugin()->getModule('Form');
+        return $this->plugin()->getModule('Form');
     }
 
     /**
@@ -93,7 +93,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
         );
 
 
-        return($this->getAddon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
+        return($this->addon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
     }
 
     /**
@@ -122,7 +122,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
 
 
 
-        return($this->getAddon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
+        return($this->addon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
     }
 
     /**
@@ -150,7 +150,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
         );
 
 
-        return($this->getAddon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
+        return($this->addon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
     }
 
     /**
@@ -178,7 +178,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
         );
 
 
-        return($this->getAddon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
+        return($this->addon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
     }
 
     /**
@@ -203,7 +203,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
         );
 
 
-        return($this->getAddon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
+        return($this->addon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
     }
 
     /**
@@ -227,7 +227,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
 
 
 
-        return($this->getAddon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
+        return($this->addon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
     }
 
     /**
@@ -247,7 +247,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
         );
 
 
-        return($this->getAddon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
+        return($this->addon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
     }
 
 }

@@ -40,12 +40,12 @@ $setting_name=$atts['name'];//capture the name before it gets converted to an ar
          * Because the settings will be saved in an array that will serve to namespace the names from the other names
          * on the form, we will convert the name to an array element
          */
-        $atts['name']=$this->getPlugin()->getSlug() . '[' . $atts['name'] .']';
+        $atts['name']=$this->plugin()->getSlug() . '[' . $atts['name'] .']';
 
-            $atts['selected'] =  $this->getPlugin()->getModule('PostUserOptions')->getUserOption($setting_name);
+            $atts['selected'] =  $this->plugin()->getModule('PostUserOptions')->getUserOption($setting_name);
 
 
-            $atts['value'] =  $this->getPlugin()->getModule('PostUserOptions')->getUserOption($setting_name);
+            $atts['value'] =  $this->plugin()->getModule('PostUserOptions')->getUserOption($setting_name);
 
 
 

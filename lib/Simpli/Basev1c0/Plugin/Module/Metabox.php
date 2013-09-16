@@ -24,40 +24,9 @@
  * @package SimpliFramework
  * @subpackage SimpliBase
  */
-class Simpli_Basev1c0_Metabox{
+class Simpli_Basev1c0_Plugin_Module_Metabox extends Simpli_Basev1c0_Plugin_Module_Helper{
 
-    /**
-     *
-     * @var object The object that creates this class's object
-     * (usually the menu screen that will be adding the metabox).
-     * Could be a Menu object or a PostUserOptions object
-     */
-    protected $_caller;
 
-    /**
-     * Get caller
-     *
-     * Returns the caller object (the calling object)
-     *
-     * @param none
-     * @return object Calling Object
-     */
-    private function _getCaller() {
-        return $this->_caller;
-    }
-    /**
-     * Constructor
-     *
-     * Use a constructor so we can capture the caller's reference
-     *
-     * @param object $caller The object that uses a method to instantiate this
-     * class's object
-     * @return void
-     */
-
-    public function __construct($caller) {
-        $this->_caller = $caller;
-    }
 
     /**
      *
@@ -117,8 +86,8 @@ class Simpli_Basev1c0_Metabox{
         add_action('current_screen', array($this, 'hookCurrentScreen'));
 
         // add ajax action
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_ajax_metabox', array($this, 'hookAjaxMetabox'));
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_ajax_metabox_cache', array($this, 'hookAjaxMetaboxCache'));
+        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_ajax_metabox', array($this, 'hookAjaxMetabox'));
+        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_ajax_metabox_cache', array($this, 'hookAjaxMetaboxCache'));
 
 
 
@@ -165,9 +134,9 @@ class Simpli_Basev1c0_Metabox{
         }
 
         if (is_array($this->_page_check_callback) && isset($this->_page_check_callback[1])) {
-            $this->getPlugin()->debug()->logVar('$this->_page_check_callback = ', $this->_page_check_callback);
-            $this->getPlugin()->debug()->logVar('$this->_page_check_callback[0] = ',$this->_page_check_callback[0]);
-            $this->getPlugin()->debug()->logVar('$this->_page_check_callback[1] = ', $this->_page_check_callback[1]);
+            $this->plugin()->debug()->logVar('$this->_page_check_callback = ', $this->_page_check_callback);
+            $this->plugin()->debug()->logVar('$this->_page_check_callback[0] = ',$this->_page_check_callback[0]);
+            $this->plugin()->debug()->logVar('$this->_page_check_callback[1] = ', $this->_page_check_callback[1]);
 
             return (call_user_func(array($this->_page_check_callback[0], $this->_page_check_callback[1])));
         } else {
@@ -324,19 +293,19 @@ class Simpli_Basev1c0_Metabox{
 
             return;
         }
-        $handle = $this->getPlugin()->getSlug() . '_save-metabox-state.js';
-        $path = $this->getPlugin()->getDirectory() . '/admin/js/save-metabox-state.js';
+        $handle = $this->plugin()->getSlug() . '_save-metabox-state.js';
+        $path = $this->plugin()->getDirectory() . '/admin/js/save-metabox-state.js';
         $inline_deps = null;
         $external_deps = array('post');
-        $this->getPlugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+        $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
 
-        $this->getPlugin()->debug()->logVar('get_current_screen() = ', get_current_screen());
+        $this->plugin()->debug()->logVar('get_current_screen() = ', get_current_screen());
         /*
          * Must pass onto the script the menu slug and current screen id so the metabox placement and expand/collapse will work properly
          * If on an edit screen, the screen_id and menu_slug should be empty strings
          */
         $screen_id=get_current_screen()->id;
-        $isEditScreen=$this->getPlugin()->tools()->isScreen(array('edit','add','custom_edit','custom_add'),null,false);
+        $isEditScreen=$this->plugin()->tools()->isScreen(array('edit','add','custom_edit','custom_add'),null,false);
         if ($isEditScreen) {
 
                         $vars = array(
@@ -346,51 +315,32 @@ class Simpli_Basev1c0_Metabox{
 
         }else{
                   $vars = array(
-            'menu_slug' => $this->_getCaller()->getMenuSlug()
+            'menu_slug' => $this->module()->getMenuSlug()
             , 'screen_id' => get_current_screen()->id
         );
 
         }
 
-        $this->getPlugin()->setLocalVars($vars);
+        $this->plugin()->setLocalVars($vars);
     }
-    /**
-     * debug
-     *
-     * Returns the plugin's debug object
-     *
-     * @param none
-     * @return void
-     */
-    public function debug() {
 
-        return $this->getPlugin()->debug();
-    }
-    /**
-     * Get Plugin
-     *
-     * Returns the calling caller's plugin object
-     *
-     * @param none
-     * @return void
-     */
-    public function getPlugin() {
 
-        return $this->_getCaller()->getPlugin();
-    }
     /**
      * Hook Add Meta Boxes
      *
-     * Fired when metaboxes are added, and adds all the metaboxes that have been configured.
+     * Adds all the metaboxes that have been configured using the public addMetaBox method.
+     *
+     * Usage:
+     * add_action('current_screen',array($my_obj,'hookAddMetaBoxes')) or called directly from within a wrapper method that is itself called by the current_screen hook.
      *
      * @param none
      * @return void
      */
-    public function addMetaBoxes() {
+    public function hookAddMetaBoxes() {
 
-        $this->getPlugin()->debug()->t();
+        $this->plugin()->debug()->t();
         if (is_null($this->_meta_boxes_args)) {
-            $this->getPlugin()->debug()->log('Exiting ' . __FUNCTION__ . ' since $_meta_boxes_args is null');
+            $this->plugin()->debug()->log('Exiting ' . __FUNCTION__ . ' since $_meta_boxes_args is null');
             return;
         }
 
@@ -452,7 +402,7 @@ class Simpli_Basev1c0_Metabox{
      * @param int $cache_timeout Minutes before the cache refreshes
      * @return void
      */
-    public function _AjaxMetabox($cache_timeout = 0) {
+    protected function _AjaxMetabox($cache_timeout = 0) {
         $this->debug()->t();
 
         //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
@@ -461,9 +411,9 @@ class Simpli_Basev1c0_Metabox{
         /*
          * Compress Output
          */
-        if ($this->getPlugin()->COMPRESS) {
+        if ($this->plugin()->COMPRESS) {
                $this->debug()->log('Started zlib buffering');
-           $this->getPlugin()->tools()->startGzipBuffering();
+           $this->plugin()->tools()->startGzipBuffering();
 
 
         }
@@ -492,7 +442,7 @@ class Simpli_Basev1c0_Metabox{
         }
 
 
-        if (!wp_verify_nonce($_GET['_nonce'], $this->getPlugin()->getSlug())) {
+        if (!wp_verify_nonce($_GET['_nonce'], $this->plugin()->getSlug())) {
 
             $this->debug()->log('Nonce check failed, exiting method');
             exit;
@@ -546,7 +496,7 @@ class Simpli_Basev1c0_Metabox{
     public function renderMetaBoxAjax($module, $metabox) {
 
 
-        include($this->getPlugin()->getDirectory() . '/admin/templates/metabox/ajax.php');
+        include($this->plugin()->getDirectory() . '/admin/templates/metabox/ajax.php');
     }
     /**
      * Renders a meta box
@@ -563,17 +513,17 @@ class Simpli_Basev1c0_Metabox{
         /*
          * If no template path provided, use the metabox id as the template name and /admin/templates/metabox as the path
          */
-        $template_path = $this->getPlugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php';
+        $template_path = $this->plugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php';
         if (isset($metabox['args']['path'])) {
             $template_path = $metabox['args']['path'];
         }
         if (!file_exists($template_path)) {
-            _e('Not available at this time.', $this->getPlugin()->getTextDomain());
-            $this->getPlugin()->debug()->logcError($this->getPlugin()->getSlug() . ' : Meta Box ' . $metabox['id'] . ' error - template path does not exist ' . $template_path);
+            _e('Not available at this time.', $this->plugin()->getTextDomain());
+            $this->plugin()->debug()->logcError($this->plugin()->getSlug() . ' : Meta Box ' . $metabox['id'] . ' error - template path does not exist ' . $template_path);
             return;
         }
 
-        if ($this->getPlugin()->ALLOW_SHORTCODES) {
+        if ($this->plugin()->ALLOW_SHORTCODES) {
             ob_start();
             include($template_path);
             $template = ob_get_clean();

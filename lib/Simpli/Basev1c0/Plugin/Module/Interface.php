@@ -23,17 +23,8 @@ interface Simpli_Basev1c0_Plugin_Module_Interface {
      * @param none
      * @return void
      */
-    public function getAddon($addon_name = null);
+    public function addon($addon_name = null);
 
-    /**
-     * Set Addon Reference
-     *
-     * Set the Addon that the module is dependent on
-     *
-     * @param string $addon_name
-     * @return object Addon
-     */
-    public function setAddon($addon_object);
 
     /**
      * Debug
@@ -85,38 +76,15 @@ interface Simpli_Basev1c0_Plugin_Module_Interface {
      */
     public function init() ;
 
-    /**
-     *
-     * Initializes the module when initialized in an Admin environment
-     * @param none
-     * @return void
-     */
-    public function initModuleAdmin() ;
 
-    /**
-     *
-     * nitializes the module when initialized in a non-admin environment
-     * @param none
-     * @return void
-     */
-    public function initModule() ;
-
-    /**
-     * Set Plugin
-     *
-     * @param Simpli_Basev1c0_Plugin $plugin
-     * @return object $this
-     * @uses Simpli_Basev1c0_Plugin
-     */
-    public function setPlugin(Simpli_Basev1c0_Plugin $plugin) ;
 
     /**
      * Get Plugin
      *
-     * @param none
      * @return Simpli_Basev1c0_Plugin
      */
-    public function getPlugin() ;
+    public function plugin() ;
+
 
 
     /**

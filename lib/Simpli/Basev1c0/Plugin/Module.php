@@ -34,6 +34,28 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
     protected $_name;
     protected $_addon = null;
 
+    function __construct(Simpli_Basev1c0_Plugin $plugin, Simpli_Basev1c0_Plugin_Addon $addon = null) {
+
+        if (is_null($addon)) {
+            $this->_plugin = $plugin;
+        } else {
+            $this->_plugin = $plugin;
+            $this->_addon = $addon;
+        }
+    }
+
+        /**
+     * Addon
+     *
+     * Returns the Addon object with name of the $addon_name parameter
+     *
+     * @param string $addon_name The name of the addon
+     * @return void
+     */
+
+    public function addon($addon_name = null) {
+        return $this->_addon;
+    }
     /**
      * Get Addon
      *
@@ -43,15 +65,15 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
      * @param none
      * @return void
      */
-    public function getAddon($addon_name = null) {
+    public function addonOLD($addon_name = null) {
 
 
         if (is_null($addon_name)) {
             return $this->_addon;
         }
 
-        /* else, if not null, pass it onto the getPlugin->getAddon() method */
-        return $this->getPlugin()->getAddon($addon_name);
+        /* else, if not null, pass it onto the getPlugin->addon() method */
+        return $this->plugin()->addon($addon_name);
     }
 
     /**
@@ -62,7 +84,7 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
      * @param string $addon_name
      * @return object Addon
      */
-    public function setAddon($addon_object) {
+    public function setAddonOLD($addon_object) {
 
         $this->_addon = $addon_object;
     }
@@ -77,8 +99,7 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
      */
     public function debug() {
 
-        return $this->getPlugin()->debug();
-
+        return $this->plugin()->debug();
     }
 
     /*
@@ -155,60 +176,24 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
      * @return void
      */
     public function init() {
-   $this->config();
+        $this->config();
         $this->addHooks();
-
     }
 
     /**
+     * Plugin
      *
-     * Initializes the module when initialized in an Admin environment
-     * @param none
-     * @return void
-     */
-    public function initModuleAdmin() {
-        throw new Exception('No initModuleAdmin method in ' . get_class($this));
-    }
-
-    /**
-     *
-     * nitializes the module when initialized in a non-admin environment
-     * @param none
-     * @return void
-     */
-    public function initModule() {
-        throw new Exception('No initModule method in ' . get_class($this));
-    }
-
-    /**
-     * Set Plugin
-     *
-     * @param Simpli_Basev1c0_Plugin $plugin
-     * @return object $this
-     * @uses Simpli_Basev1c0_Plugin
-     */
-    public function setPlugin(Simpli_Basev1c0_Plugin $plugin) {
-        $this->_plugin = $plugin;
-        return $this;
-    }
-
-    /**
-     * Get Plugin
+     * Returns the plugin object that created the module
      *
      * @param none
      * @return Simpli_Basev1c0_Plugin
      */
-    public function getPlugin() {
-        if (!isset($this->_plugin)) {
-            die('Module ' . __CLASS__ . ' missing Plugin dependency.');
-        }
+    public function plugin() {
 
         return $this->_plugin;
     }
 
-
-
-     protected $_config_properties = null;
+    protected $_config_properties = null;
 
     /**
      * Get Configuration (Magic Method)
@@ -234,9 +219,6 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
 
         return $config_value;
     }
-
-
-
 
     /**
      * Set Config
@@ -302,24 +284,7 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
         $this->_property_defaults[$property_name] = $config_value;
     }
 
+
     protected $_property_defaults = null;
 
-    /**
-     * Set Config Defaults
-     *
-     * Sets all the default configs.
-     * All configurations must have defaults, or errors will result since the
-     * code will look for an option's value, and if not set, will throw an
-     * undefined error.
-     * Defaults should be set in the base class. There should be no need
-     * to set defaults in children, since you can use the protected method setConfig()
-     *
-     * @param none
-     * @return void
-     */
-    protected function setConfigDefaults() {
-
-
-
-    }
 }

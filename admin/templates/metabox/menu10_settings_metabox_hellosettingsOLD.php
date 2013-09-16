@@ -1,27 +1,27 @@
-<form name="<?php echo $this->getPlugin()->getSlug(); ?><?php echo '_' . $metabox['id']; ?>" id="<?php echo $this->getPlugin()->getSlug() . $metabox['id']; ?>" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
-<?php wp_nonce_field($this->getPlugin()->getSlug()); ?>
+<form name="<?php echo $this->plugin()->getSlug(); ?><?php echo '_' . $metabox['id']; ?>" id="<?php echo $this->plugin()->getSlug() . $metabox['id']; ?>" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+<?php wp_nonce_field($this->plugin()->getSlug()); ?>
     <input type="hidden" name="action"  value="" />
 
 
 
-    <h4 class="title"><?php _e('Text Placement',$this->getPlugin()->getTextDomain()); ?></h4>
+    <h4 class="title"><?php _e('Text Placement',$this->plugin()->getTextDomain()); ?></h4>
 
     <table class="form-table">
         <tbody>
 
             <tr>
                 <th>
-<?php _e('Where do you want to place the text?',$this->getPlugin()->getTextDomain()); ?>
+<?php _e('Where do you want to place the text?',$this->plugin()->getTextDomain()); ?>
 
                 </th>
                 <td>
                     <fieldset>
                         <label>
                             <label>
-                                <input type="radio" name="hello_global_default_placement" value="before"  <?php echo (($this->getPlugin()->getUserOption('hello_global_default_placement') == 'before') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Before the content',$this->getPlugin()->getTextDomain()); ?></span></label>
+                                <input type="radio" name="hello_global_default_placement" value="before"  <?php echo (($this->plugin()->getUserOption('hello_global_default_placement') == 'before') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Before the content',$this->plugin()->getTextDomain()); ?></span></label>
 
                             <label>
-                                <input type="radio" name="hello_global_default_placement" value="after" <?php echo (($this->getPlugin()->getUserOption('hello_global_default_placement') == 'after') ? ' checked="checked"' : ''); ?> /> <span><?php _e('After the content',$this->getPlugin()->getTextDomain()); ?></span>
+                                <input type="radio" name="hello_global_default_placement" value="after" <?php echo (($this->plugin()->getUserOption('hello_global_default_placement') == 'after') ? ' checked="checked"' : ''); ?> /> <span><?php _e('After the content',$this->plugin()->getTextDomain()); ?></span>
                             </label>
 
 
@@ -29,7 +29,7 @@
                             <span class="description" style="padding-left:10px;">
 <?php
 printf(
-        __('Selecting \'Before\' will add your text<em> before</em> the content in the post. Selecting \'After\' will add your text <em>after</em> the content in the post.  ' , $this->getPlugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
+        __('Selecting \'Before\' will add your text<em> before</em> the content in the post. Selecting \'After\' will add your text <em>after</em> the content in the post.  ' , $this->plugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
 );
 ?></span>
                         </label>
@@ -42,24 +42,24 @@ printf(
         </tbody>
     </table>
 
-<h4 class="title"><?php _e('Global Enable',$this->getPlugin()->getTextDomain()); ?></h4>
+<h4 class="title"><?php _e('Global Enable',$this->plugin()->getTextDomain()); ?></h4>
 
     <table class="form-table">
         <tbody>
 
             <tr>
                 <th>
-<?php _e('Enable or Disable Text Insertion for All Posts',$this->getPlugin()->getTextDomain()); ?>
+<?php _e('Enable or Disable Text Insertion for All Posts',$this->plugin()->getTextDomain()); ?>
 
                 </th>
                 <td>
                     <fieldset>
                         <label>
                             <label>
-                                <input type="radio" name="hello_global_default_enabled" value="enabled"  <?php echo (($this->getPlugin()->getUserOption('hello_global_default_enabled') == 'enabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Enabled',$this->getPlugin()->getTextDomain()); ?></span></label>
+                                <input type="radio" name="hello_global_default_enabled" value="enabled"  <?php echo (($this->plugin()->getUserOption('hello_global_default_enabled') == 'enabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Enabled',$this->plugin()->getTextDomain()); ?></span></label>
 
                             <label>
-                                <input type="radio" name="hello_global_default_enabled" value="disabled" <?php echo (($this->getPlugin()->getUserOption('hello_global_default_enabled') == 'disabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Disabled',$this->getPlugin()->getTextDomain()); ?></span>
+                                <input type="radio" name="hello_global_default_enabled" value="disabled" <?php echo (($this->plugin()->getUserOption('hello_global_default_enabled') == 'disabled') ? ' checked="checked"' : ''); ?> /> <span><?php _e('Disabled',$this->plugin()->getTextDomain()); ?></span>
                             </label>
 
 
@@ -67,7 +67,7 @@ printf(
                             <span class="description" style="padding-left:10px;">
 <?php
 printf(
-        __('Selecting \'Enabled\' will turn on text insertion for all posts that have it enabled. Selecting \'Disabled\' will prevent any text from being inserted even if your post settings allow it.  ' , $this->getPlugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
+        __('Selecting \'Enabled\' will turn on text insertion for all posts that have it enabled. Selecting \'Disabled\' will prevent any text from being inserted even if your post settings allow it.  ' , $this->plugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
 );
 ?></span>
                         </label>
@@ -82,14 +82,14 @@ printf(
 
 
 
- <h4 class="title"><?php _e('Hello World Text',$this->getPlugin()->getTextDomain()); ?></h4>
+ <h4 class="title"><?php _e('Hello World Text',$this->plugin()->getTextDomain()); ?></h4>
 
     <table class="form-table">
         <tbody>
 
             <tr>
                 <th>
-<?php _e('Text to Insert into Post Content:',$this->getPlugin()->getTextDomain()); ?>
+<?php _e('Text to Insert into Post Content:',$this->plugin()->getTextDomain()); ?>
 
                 </th>
                 <td>
@@ -97,7 +97,7 @@ printf(
                         <label>
                             <label>
 
-                                                        <input name="hello_global_default_text" type="text" id="hello_global_default_text" class="regular-text code" value="<?php echo $this->getPlugin()->getUserOption('hello_global_default_text'); ?>" />
+                                                        <input name="hello_global_default_text" type="text" id="hello_global_default_text" class="regular-text code" value="<?php echo $this->plugin()->getUserOption('hello_global_default_text'); ?>" />
 
                             </label>
 
@@ -106,7 +106,7 @@ printf(
                             <span class="description" style="padding-left:10px;">
 <?php
 printf(
-        __('Add the text that you want to insert into your post content. ' , $this->getPlugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
+        __('Add the text that you want to insert into your post content. ' , $this->plugin()->getSlug() ), '<a href="#" target="_blank">', '</a>'
 );
 ?></span>
                         </label>
@@ -140,7 +140,7 @@ printf(
     <p class="button-controls">
         <input type="submit" id="<?php echo $metabox['id']; ?>_settings_reset" class="button-secondary" value="Reset" name="<?php echo $metabox['id']; ?>_settings_reset">
         <input type="submit" id="<?php echo $metabox['id']; ?>_settings_save" class="button-primary" value="Save Changes" name="<?php echo $metabox['id']; ?>_settings_save">
-        <img alt="<?php _e('Waiting...',$this->getPlugin()->getTextDomain()); ?>" src="<?php echo admin_url('/images/wpspin_light.gif'); ?>" class="waiting submit-waiting" />
+        <img alt="<?php _e('Waiting...',$this->plugin()->getTextDomain()); ?>" src="<?php echo admin_url('/images/wpspin_light.gif'); ?>" class="waiting submit-waiting" />
     </p>
 
 

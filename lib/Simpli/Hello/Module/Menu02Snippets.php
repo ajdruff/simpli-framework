@@ -34,7 +34,7 @@ class Simpli_Hello_Module_Menu02Snippets extends Simpli_Basev1c0_Plugin_PostType
  */
 
 $this->registerPostType(
-        $this->getPlugin()->getSlug() . '_snippet',
+        $this->plugin()->getSlug() . '_snippet',
                 array(
             'label' => 'Simpli Hello Snippets' //A plural descriptive name for the post type marked for translation.
             , 'labels' => array(
@@ -57,8 +57,8 @@ $this->registerPostType(
             , 'publicly_queryable' => true //If you set this to FALSE, you will find that you cannot preview/see your custom post (return 404)
             , 'show_ui' => true //
             , 'show_in_nav_menus' => true //
-            , 'menu_position' => $this->getPlugin()->getModule('Admin')->getMenuPosition() // The position in the menu order the post type should appear. show_in_menu must be true.
-            , 'menu_icon' => $this->getPlugin()->getUrl() . '/admin/images/menu.png' //The url to the icon to be used for this menu.
+            , 'menu_position' => $this->plugin()->getModule('Admin')->getMenuPosition() // The position in the menu order the post type should appear. show_in_menu must be true.
+            , 'menu_icon' => $this->plugin()->getUrl() . '/admin/images/menu.png' //The url to the icon to be used for this menu.
             , 'capability_type' => null //The string to use to build the read, edit, and delete capabilities.
             , 'capabilities' => null //An array of the capabilities for this post type.
             , 'map_meta_cap' => false //Whether to use the internal default meta capability handling.
@@ -85,7 +85,7 @@ $this->registerPostType(
          * If false, you'll get the regular editor.
          */
 
-        $this->setConfig('CUSTOM_POST_EDITOR_ENABLED', false);
+        $this->setConfig('CUSTOM_POST_EDITOR_ENABLED', true);
 
 
 
@@ -94,14 +94,14 @@ $this->registerPostType(
          */
 
         $this->addCustomPostEditor(
-                $page_title = $this->getPlugin()->getName() . ' - Editor'
+                $page_title = $this->plugin()->getName() . ' - Editor'
                 , $menu_title = 'Edit My Custom Post Type'
                 , $capability = 'edit_published_posts'
-                , $icon_url = $this->getPlugin()->getUrl() . '/admin/images/menu.png'
+                , $icon_url = $this->plugin()->getUrl() . '/admin/images/menu.png'
         );
 
 
-        $post = $this->getPlugin()->tools()->getPost();
+        $post = $this->plugin()->tools()->getPost();
         $this->debug()->logVar('$post = ', $post);
         if ($this->CUSTOM_POST_EDITOR_ENABLED) {
 
@@ -110,7 +110,7 @@ $this->registerPostType(
 
             $this->metabox()->addMetaBox(
                     $this->getSlug() . '_' . 'metabox_post_options'  //Meta Box DOM ID
-                    , __('Custom Editor Metabox added from within ' . $this->getName(), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                    , __('Custom Editor Metabox added from within ' . $this->getName(), $this->plugin()->getTextDomain()) //title of the metabox.
                     , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                     , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                     , 'normal' //normal advanced or side The part of the page where the metabox should show
@@ -126,7 +126,7 @@ $this->registerPostType(
 
             $this->metabox()->addMetaBox(
                     $this->getSlug() . '_' . 'metabox_post_options'  //Meta Box DOM ID
-                    , __('Regular Editor Metabox added by ' . $this->getName(), $this->getPlugin()->getTextDomain()) //title of the metabox.
+                    , __('Regular Editor Metabox added by ' . $this->getName(), $this->plugin()->getTextDomain()) //title of the metabox.
                     , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                     , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                     , 'normal' //normal advanced or side The part of the page where the metabox should show

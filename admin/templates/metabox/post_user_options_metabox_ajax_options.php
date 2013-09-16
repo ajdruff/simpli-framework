@@ -2,7 +2,7 @@
     <?php
 //echo '<pre>';
 //echo '<pre>';
-//$this->getPlugin()->getModule('Form')->text($field_name, $value, $label, $hint, $help,$template_id);
+//$this->plugin()->getModule('Form')->text($field_name, $value, $label, $hint, $help,$template_id);
     /*
      * Must add a namespace div
      */
@@ -11,7 +11,7 @@
 
 
 
-    $f = $this->getPlugin()->getAddon('Simpli_Forms')->getModule('Form');
+    $f = $this->plugin()->getAddon('Simpli_Forms')->getModule('Form');
 
 $f->formStart(array(
             'name' => 'simpli_forms_ajaxoptions',
@@ -27,12 +27,12 @@ $f->formStart(array(
      * nonce field is required since the hookPostSave method verifies it
      *
      */
-    wp_nonce_field('save_post', $this->getPlugin()->getSlug() . '_nonce');
+    wp_nonce_field('save_post', $this->plugin()->getSlug() . '_nonce');
 
    // $f->getTheme()->setTheme('Admin');
    // $f->setFilter(array('Options'));
 
-    $prefix = $this->getPlugin()->getSlug();
+    $prefix = $this->plugin()->getSlug();
     $f->el(array(
         'el' => 'radio',
         'options' => array('enabled' => 'Yes', 'disabled' => 'No'),
@@ -56,7 +56,7 @@ $f->formStart(array(
             )
     );
 
-    if (!in_array('Menu15CustomPostType', $this->getPlugin()->DISABLED_MODULES)) {
+    if (!in_array('Menu15CustomPostType', $this->plugin()->DISABLED_MODULES)) {
         $options = array('false' => 'Custom', 'true' => 'Default', 'snippet' => 'Snippet');
     } else {
         $options = array('false' => 'Custom', 'true' => 'Default', 'snippet' => 'Snippet');
@@ -93,7 +93,7 @@ $f->formStart(array(
      * if they are available.
      *
      */
-    if (!in_array('Menu15CustomPostType', $this->getPlugin()->DISABLED_MODULES)) {
+    if (!in_array('Menu15CustomPostType', $this->plugin()->DISABLED_MODULES)) {
 
 
         $snippets = get_posts(

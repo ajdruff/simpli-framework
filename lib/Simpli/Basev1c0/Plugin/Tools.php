@@ -8,50 +8,9 @@
  * @package SimpliFramework
  * @subpackage SimpliBase
  */
-class Simpli_Basev1c0_Btools {
+class Simpli_Basev1c0_Plugin_Tools extends Simpli_Basev1c0_Plugin_Helper {
 
-    protected $_plugin = null;
 
-//    /**
-//     * Get Plugin
-//     *
-//     * Returns a reference to our plugin
-//     *
-//     * @param none
-//     * @return Simpli_Hello_Plugin object
-//     */
-//    public function getPlugin() {
-//        $this->debug()->logVar('$this->_plugin = ', $this->_plugin,true);
-//
-//return  $this->_plugin;
-//
-//    }
-    /**
-     * Set Plugin
-     *
-     * @param $plugin
-     * @return none
-     */
-    public function setPlugin($plugin) {
-        $this->_plugin = $plugin;
-    }
-
-    /**
-     * Get Plugin
-     *
-     * @param none
-     * @return string
-     */
-    public function getPlugin() {
-        return $this->_plugin;
-    }
-
-//    function __construct($plugin) {
-//        if (is_null($this->_plugin)) {
-//            $this->_plugin = $plugin;
-//        }
-//
-//    }
 
     /**
      * Sort Dependent List
@@ -183,7 +142,7 @@ class Simpli_Basev1c0_Btools {
      * Converts a local url to an absolute directory path. Very useful to determine WordPress locations
      * Usage:
      * to find wordpress admin directory:
-     *  $admin_dir= $this->getPlugin()->tools()->url2dir(admin_url());
+     *  $admin_dir= $this->plugin()->tools()->url2dir(admin_url());
      * @param string $url The absolute url to the local file
      * @return string The absolute directory path to the Directory
      */
@@ -604,7 +563,7 @@ class Simpli_Basev1c0_Btools {
 //    public function getTempFile($string) {
 //
 //
-//        $tmpfname = tempnam(sys_get_temp_dir(), $this->getPlugin()->getSlug());
+//        $tmpfname = tempnam(sys_get_temp_dir(), $this->plugin()->getSlug());
 //
 //        $handle = fopen($tmpfname, "w");
 //        fwrite($handle, $string);
@@ -813,7 +772,7 @@ class Simpli_Basev1c0_Btools {
         /*
          * Check for a Custom Editor by checking for the 'edit_post' value in our query variable
          */
-        $isCustomEditScreen = $this->getQueryVar($this->getPlugin()->QUERY_VAR) === $this->getPlugin()->QV_EDIT_POST;
+        $isCustomEditScreen = $this->getQueryVar($this->plugin()->QUERY_VAR) === $this->plugin()->QV_EDIT_POST;
 
 
         $isEditScreen = ($current_screen->base === 'post' && $current_screen->action === ''); //base will always be post regardless of post type. action will always be an empty string.
@@ -824,7 +783,7 @@ class Simpli_Basev1c0_Btools {
         /*
          * Check for a Custom Add Page by checking for the 'add_post' value in our query variable
          */
-        $isCustomAddScreen = $this->getQueryVar($this->getPlugin()->QUERY_VAR) === $this->getPlugin()->QV_ADD_POST;
+        $isCustomAddScreen = $this->getQueryVar($this->plugin()->QUERY_VAR) === $this->plugin()->QV_ADD_POST;
 
 
 
@@ -917,17 +876,9 @@ class Simpli_Basev1c0_Btools {
         return((bool) $combined_result);
     }
 
-    /**
-     * Debug
-     *
-     * Returns the debug() method from the calling plugin object
-     *
-     * @param none
-     * @return void
-     */
-    public function debug() {
-        return $this->_plugin->debug();
-    }
+
+
+
 
     /**
      * Get Post
@@ -1023,6 +974,7 @@ class Simpli_Basev1c0_Btools {
             ob_start('ob_gzhandler');
         }
     }
+
 
 }
 

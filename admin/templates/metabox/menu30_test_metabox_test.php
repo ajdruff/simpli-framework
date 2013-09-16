@@ -1,8 +1,8 @@
 <?php
 //echo '<pre>';
 //echo '<pre>';
-//$this->getPlugin()->getModule('Form')->text($field_name, $value, $label, $hint, $help,$template_id);
-//  $f = $this->getPlugin()->getAddon('Simpli_Forms')->getModule('Form');
+//$this->plugin()->getModule('Form')->text($field_name, $value, $label, $hint, $help,$template_id);
+//  $f = $this->plugin()->getAddon('Simpli_Forms')->getModule('Form');
 //
 //$f->formStart(array(
 //    'theme' => 'Admin',
@@ -60,7 +60,7 @@
 //        'name' => 'plugin_enabled',
 //        'heading' => '',
 //        'label' => 'Enable Plugin',
-//        'hint' => 'Use this setting to temporarily disable ' . $this->getPlugin()->getName() . ' for troubleshooting or maintenance. \'No\' will disable all plugin functionality except for this Administrative area, allowing you continued access to these settings. To completely remove ' . $this->getPlugin()->getName() . ', de-activate it from the plugins menu.', $this->getPlugin()->getSlug(),
+//        'hint' => 'Use this setting to temporarily disable ' . $this->plugin()->getName() . ' for troubleshooting or maintenance. \'No\' will disable all plugin functionality except for this Administrative area, allowing you continued access to these settings. To completely remove ' . $this->plugin()->getName() . ', de-activate it from the plugins menu.', $this->plugin()->getSlug(),
 //            )
 //    );
 //
@@ -71,7 +71,7 @@
 //    $f->formEnd(array('template'=>'formEndMaintenance'));
 //
 
-$f = $this->getPlugin()->getAddon('Simpli_Forms')->getModule('Form');
+$f = $this->plugin()->getAddon('Simpli_Forms')->getModule('Form');
 
 
 

@@ -28,7 +28,7 @@ add_filter('widget_text', 'do_shortcode');
 add_filter('the_content', 'do_shortcode', 11); // From shortcodes.php
 
 
-        add_shortcode($this->getPlugin()->getSlug(), array($this, 'sayHello'), 10);
+        add_shortcode($this->plugin()->getSlug(), array($this, 'sayHello'), 10);
 
         /**
          *
@@ -41,7 +41,7 @@ add_filter('the_content', 'do_shortcode', 11); // From shortcodes.php
          *
          * Add custom ajax handlers
          *  Map Ajax Handlers to Ajax Actions passed to php by the ajax request
-         * example: add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_my_action', array($this, 'my_function'));
+         * example: add_action('wp_ajax_' . $this->plugin()->getSlug() . '_my_action', array($this, 'my_function'));
          * see http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
          */
 
@@ -67,7 +67,7 @@ add_filter('the_content', 'do_shortcode', 11); // From shortcodes.php
     public function enqueue_scripts() {
         $this->debug()->t();
 
-//       wp_enqueue_style($this->getPlugin()->getSlug() . '-admin-page', $this->getPlugin()->getUrl() . '/admin/css/settings.css', array(), $this->getPlugin()->getVersion());
+//       wp_enqueue_style($this->plugin()->getSlug() . '-admin-page', $this->plugin()->getUrl() . '/admin/css/settings.css', array(), $this->plugin()->getVersion());
 //        wp_enqueue_script('jquery');
 //        wp_enqueue_script('jquery-form');
 //        wp_enqueue_script('post');
@@ -88,7 +88,7 @@ add_filter('the_content', 'do_shortcode', 11); // From shortcodes.php
 
 
 
-        $result = '<div>Hello World! , says the ' . $this->getPlugin()->getName() . ' plugin</div>';
+        $result = '<div>Hello World! , says the ' . $this->plugin()->getName() . ' plugin</div>';
 
         return $result;
     }

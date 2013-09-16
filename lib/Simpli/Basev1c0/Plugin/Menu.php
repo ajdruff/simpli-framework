@@ -249,39 +249,39 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          * will not be recognized. If you get a 0 as a response from an ajax request, the add_action('wp_ajax_' was not added
          * correctly.
          *
-         * adding a wp_ajax hook in this format will execute the specified class method whenever the ajax request specifies an action = to $this->getPlugin()->getSlug() . '_xxxx'
+         * adding a wp_ajax hook in this format will execute the specified class method whenever the ajax request specifies an action = to $this->plugin()->getSlug() . '_xxxx'
           // see http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
          *
          */
 
 
         /* save without reloading the page */
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array($this, 'hookAjaxSave'));
-        // move to hookMenuScreen add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save', array($this, 'hookAjaxSave'));
+        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_save', array($this, 'hookAjaxSave'));
+        // move to hookMenuScreen add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_save', array($this, 'hookAjaxSave'));
         /* save with reloading the page */
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_save_with_reload', array($this, 'hookAjaxSaveWithReload'));
+        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_save_with_reload', array($this, 'hookAjaxSaveWithReload'));
 
 
 
 
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_reset', array($this, 'hookAjaxReset'));
+        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_reset', array($this, 'hookAjaxReset'));
 
         /*
          * Reset all settings to defaults
          *
          */
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_reset_all', array($this, 'hookAjaxResetAll'));
+        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_reset_all', array($this, 'hookAjaxResetAll'));
         /*
          * Manuall Update settings so as to add any newly added settings due to a developer update
          *
          */
-        add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_settings_update_all', array($this, 'hookAjaxUpdateAll'));
+        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_update_all', array($this, 'hookAjaxUpdateAll'));
 
 
 
 // add ajax action
- //       add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_ajax_metabox', array($this, 'hookAjaxMetabox'));
- //       add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_ajax_metabox_cache', array($this, 'hookAjaxMetaboxCache'));
+ //       add_action('wp_ajax_' . $this->plugin()->getSlug() . '_ajax_metabox', array($this, 'hookAjaxMetabox'));
+ //       add_action('wp_ajax_' . $this->plugin()->getSlug() . '_ajax_metabox_cache', array($this, 'hookAjaxMetaboxCache'));
 
 
 
@@ -330,7 +330,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          */
 
 
-        $this->setMenuSlug($this->getPlugin()->getSlug() . '_' . $this->getSlug());
+        $this->setMenuSlug($this->plugin()->getSlug() . '_' . $this->getSlug());
         //$this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug'=>'edit.php?post_type=simpli_hello_snippet'));
 
         $this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug' => $this->getMenuSlug()));
@@ -371,7 +371,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
              * if the previous checks fail, then check the post object's post type
              */
             if (!$result) {
-                $post = $this->getPlugin()->tools()->getPost(); //get the post object
+                $post = $this->plugin()->tools()->getPost(); //get the post object
                 $this->debug()->logVar('$post = ', $post);
                 if (is_object($post)) {
                     $result = ($post->post_type === $this->getPostType()); //check the post object type against what we want
@@ -404,7 +404,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         $this->debug()->t();
 
 
-        $result = ($this->getPlugin()->tools()->getQueryVar('page') === $this->getMenuSlug());
+        $result = ($this->plugin()->tools()->getQueryVar('page') === $this->getMenuSlug());
         $this->debug()->logVar('$result = ', $result);
         return ($result);
     }
@@ -422,7 +422,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     public function metabox() {
 
         if (is_null($this->_meta_box_object)) {
-            $this->_meta_box_object = new Simpli_Basev1c0_Metabox($this);
+            $this->_meta_box_object = new Simpli_Basev1c0_Plugin_Module_Metabox($this);
         }
         return $this->_meta_box_object;
     }
@@ -490,7 +490,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          * The 'add_meta_boxes' action is not used since it will not work when used
          * with a custom post editor.
          */
-        $this->metabox()->addMetaBoxes();
+        $this->metabox()->hookAddMetaBoxes();
     }
 
     /**
@@ -712,7 +712,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          * with other plugins
          */
         if (is_null($position)) {
-            $position = $this->getPlugin()->getModule('Admin')->getMenuPosition();
+            $position = $this->plugin()->getModule('Admin')->getMenuPosition();
         }
 
         /*
@@ -890,7 +890,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
         $this->updateMenuTracker($this->getMenuSlug(), array('capability' => $capability
             , 'level' => $this->getMenuLevel()));
-        // do_action($this->getPlugin()->getSlug() . '_menuPageAdded');
+        // do_action($this->plugin()->getSlug() . '_menuPageAdded');
 
         do_action($this->getMenuSlug() . '_menuPageAdded');
     }
@@ -953,7 +953,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         }
 
 
-        if (!wp_verify_nonce($_GET['_nonce'], $this->getPlugin()->getSlug())) {
+        if (!wp_verify_nonce($_GET['_nonce'], $this->plugin()->getSlug())) {
             exit;
         }
 
@@ -1000,7 +1000,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function hookEnqueueBaseClassScripts() {
-        wp_enqueue_style($this->getPlugin()->getSlug() . '-admin-page', $this->getPlugin()->getUrl() . '/admin/css/settings.css', array(), $this->getPlugin()->getVersion());
+        wp_enqueue_style($this->plugin()->getSlug() . '-admin-page', $this->plugin()->getUrl() . '/admin/css/settings.css', array(), $this->plugin()->getVersion());
         wp_enqueue_script('jquery');
         wp_enqueue_script('post');
         /* by enqueuing post, you are enqueuing all the following scripts required to handle metaboxes (except save-metabox-state, which is enqueued in the next step):
@@ -1027,19 +1027,19 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          * Add javascript for form submission
          *
 
-          $handle = $this->getPlugin()->getSlug() . '_metabox-form.js';
-          $path = $this->getPlugin()->getDirectory() . '/admin/js/metabox-form.js';
+          $handle = $this->plugin()->getSlug() . '_metabox-form.js';
+          $path = $this->plugin()->getDirectory() . '/admin/js/metabox-form.js';
           $inline_deps = array();
           $external_deps = array('jquery');
-          $this->getPlugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+          $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
 
           $vars = array('metabox_forms' => array(
-          'reset_message' => __('Are you sure you want to reset this form?', $this->getPlugin()->getTextDomain())
-          , 'reset_all_message' => __('Are you sure you want to reset all the settings for this plugin to installed defaults?', $this->getPlugin()->getTextDomain())
+          'reset_message' => __('Are you sure you want to reset this form?', $this->plugin()->getTextDomain())
+          , 'reset_all_message' => __('Are you sure you want to reset all the settings for this plugin to installed defaults?', $this->plugin()->getTextDomain())
           ));
 
 
-          $this->getPlugin()->setLocalVars($vars);
+          $this->plugin()->setLocalVars($vars);
          *
          *
          */
@@ -1070,9 +1070,9 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
 
-        $template_path = $this->getPlugin()->getDirectory() . '/admin/templates/' . $this->getSlug() . '.php';
+        $template_path = $this->plugin()->getDirectory() . '/admin/templates/' . $this->getSlug() . '.php';
         if (!file_exists($template_path)) {
-            $template_path = $this->getPlugin()->getDirectory() . '/admin/templates/menu_settings_default.php';
+            $template_path = $this->plugin()->getDirectory() . '/admin/templates/menu_settings_default.php';
         }
 
         ob_start();
@@ -1095,7 +1095,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        if (!wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug())) {
+        if (!wp_verify_nonce($_POST['_wpnonce'], $this->plugin()->getSlug())) {
             //    return false;
         }
 
@@ -1103,24 +1103,24 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         $errors = array();
         $reload = true;
         $logout = false; //whether you want to logout after settings are saved
-        $user_option_defaults = $this->getPlugin()->getUserOptionDefaults();
-        foreach ($this->getPlugin()->getUserOptions() as $setting_name => $setting_value) {
+        $user_option_defaults = $this->plugin()->getUserOptionDefaults();
+        foreach ($this->plugin()->getUserOptions() as $setting_name => $setting_value) {
             /**
              * Set new setting value equal to the post value only if the setting was actually submitted, otherwise, keep the setting value the same.
              *  Add extra code to scrub the values for specific settings if needed
              */
             $setting_value = ((isset($_POST[$setting_name]) === true) ? $user_option_defaults[$setting_name] : $setting_value);
 
-            $this->getPlugin()->setUserOption($setting_name, $setting_value);
+            $this->plugin()->setUserOption($setting_name, $setting_value);
         }
 
 
-        $this->getPlugin()->saveUserOptions();
+        $this->plugin()->saveUserOptions();
 
         if ($logout) {
             wp_logout();
         }
-        require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
+        require_once($this->plugin()->getDirectory() . '/admin/templates/ajax_message.php');
 
         die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
     }
@@ -1158,11 +1158,11 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function _save($reload = false) {
-        if (!wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug())) {
+        if (!wp_verify_nonce($_POST['_wpnonce'], $this->plugin()->getSlug())) {
             return false;
         }
 
-        $message = __("Settings saved.", $this->getPlugin()->getTextDomain());
+        $message = __("Settings saved.", $this->plugin()->getTextDomain());
         $errors = array(); // initialize the error array , add any validation errors when you scrub the form_field values
         // eg: $errors[]="You really screwed up on that one";
         // $reload = false; //whether to reload the page after settings are saved
@@ -1179,7 +1179,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          *          */
 
 
-        foreach ($this->getPlugin()->getUserOptions() as $setting_name => $setting_value) {
+        foreach ($this->plugin()->getUserOptions() as $setting_name => $setting_value) {
             /**
              * Set new setting value equal to the post value only if the setting was actually submitted, otherwise, keep the setting value the same.
              *  Add extra code to scrub the values for specific settings if needed
@@ -1214,17 +1214,17 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-            $this->getPlugin()->setUserOption($setting_name, $setting_value);
+            $this->plugin()->setUserOption($setting_name, $setting_value);
         }
 
 
-        $this->getPlugin()->saveUserOptions();
+        $this->plugin()->saveUserOptions();
 
         if ($logout) {
             wp_logout();
         }
         //return a success message on submission
-        require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
+        require_once($this->plugin()->getDirectory() . '/admin/templates/ajax_message.php');
 
         die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
     }
@@ -1243,12 +1243,12 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
 
 
-        if (!wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug())) {
+        if (!wp_verify_nonce($_POST['_wpnonce'], $this->plugin()->getSlug())) {
             return false;
         }
 
 
-        $message = __("Settings have been updated", $this->getPlugin()->getTextDomain());
+        $message = __("Settings have been updated", $this->plugin()->getTextDomain());
         $errors = array();
         $reload = true;
         $logout = false; //whether you want to logout after settings are saved
@@ -1261,25 +1261,25 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          */
 
 
-        $wp_option_name = $this->getPlugin()->getSlug() . '_options';
-        $existing_options = $this->getPlugin()->getUserOptions();
-        $option_defaults = $this->getPlugin()->getUserOptionDefaults();
+        $wp_option_name = $this->plugin()->getSlug() . '_options';
+        $existing_options = $this->plugin()->getUserOptions();
+        $option_defaults = $this->plugin()->getUserOptionDefaults();
         $options = array_merge($option_defaults, $existing_options);
 
 
         /*
-         * Save back to the database ( do not use the $this->getPlugin()->saveUserOptions() method since that
+         * Save back to the database ( do not use the $this->plugin()->saveUserOptions() method since that
          * will only use existing settings)
          *
          */
 
-        $this->getPlugin()->saveUserOptions($options);
+        $this->plugin()->saveUserOptions($options);
 
 
         if ($logout) {
             wp_logout();
         }
-        require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
+        require_once($this->plugin()->getDirectory() . '/admin/templates/ajax_message.php');
 
         die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
     }
@@ -1295,18 +1295,18 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
 
 
-        if (!wp_verify_nonce($_POST['_wpnonce'], $this->getPlugin()->getSlug())) {
+        if (!wp_verify_nonce($_POST['_wpnonce'], $this->plugin()->getSlug())) {
             return false;
         }
 
-        $message = __("All Settings Have been reset to initial defaults.", $this->getPlugin()->getTextDomain());
+        $message = __("All Settings Have been reset to initial defaults.", $this->plugin()->getTextDomain());
 
         $errors = array();
         $reload = true;
         $logout = false; //whether you want to logout after settings are saved
 
         global $wpdb;
-        $query = 'delete from wp_options where option_name = \'' . $this->getPlugin()->getSlug() . '_options\'';
+        $query = 'delete from wp_options where option_name = \'' . $this->plugin()->getSlug() . '_options\'';
         $dbresult = $wpdb->query($query);
 
         /* if no rows affected, that means the defaults havent been changed yet and stored in the database */
@@ -1316,12 +1316,12 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
             $message = 'Setting reset failed due to database error.';
         }
 
-        $this->getPlugin()->saveUserOptions();
+        $this->plugin()->saveUserOptions();
 
         if ($logout) {
             wp_logout();
         }
-        require_once($this->getPlugin()->getDirectory() . '/admin/templates/ajax_message.php');
+        require_once($this->plugin()->getDirectory() . '/admin/templates/ajax_message.php');
         die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
     }
 
@@ -1452,17 +1452,17 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         /*
          * If no template path provided, use the metabox id as the template name and /admin/templates/metabox as the path
          */
-        $template_path = $this->getPlugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php';
+        $template_path = $this->plugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php';
         if (isset($metabox['args']['path'])) {
             $template_path = $metabox['args']['path'];
         }
         if (!file_exists($template_path)) {
-            _e('Not available at this time.', $this->getPlugin()->getTextDomain());
-            $this->getPlugin()->debug()->logcError($this->getPlugin()->getSlug() . ' : Meta Box ' . $metabox['id'] . ' error - template path does not exist ' . $template_path);
+            _e('Not available at this time.', $this->plugin()->getTextDomain());
+            $this->plugin()->debug()->logcError($this->plugin()->getSlug() . ' : Meta Box ' . $metabox['id'] . ' error - template path does not exist ' . $template_path);
             return;
         }
 
-        if ($this->getPlugin()->ALLOW_SHORTCODES) {
+        if ($this->plugin()->ALLOW_SHORTCODES) {
             ob_start();
             include($template_path);
             $template = ob_get_clean();
@@ -1488,8 +1488,10 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     public function renderMetaBoxAjaxOLD($module, $metabox) {
 
 
-        include($this->getPlugin()->getDirectory() . '/admin/templates/metabox/ajax.php');
+        include($this->plugin()->getDirectory() . '/admin/templates/metabox/ajax.php');
     }
+
+
 
 
 }

@@ -49,6 +49,11 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
          */
 
         add_action('current_screen', array($this, 'hookEditingScreen'));
+
+        /*
+         * Must add any wp_ajax actions to addHooks
+         */
+        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_post_options_save', array($this, 'hookAjaxSave'));
     }
 
     /**
@@ -92,10 +97,11 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
     public function hookEditingScreen() {
         $this->debug()->t();
         if (!$this->pageCheckEditor()) {
+            $this->debug()->log('Exiting hookEditingScreen since it didnt pass pageCheckEditor test');
             return;
         }
 
-
+        $this->debug()->log('Passed pageCheckEditor test');
         /*
          * Hook our save method into the post's save action
          */
@@ -120,15 +126,11 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         //     add_action('current_screen', array($this, 'addMetaBoxes'));
 
 
-        /* save using ajax */
-        //  add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_save', array($this, 'hookAjaxSave'));
-
-
-        /* DEPRECATED
-         * Hook into the form class so we can provide the value of forms with an option lookup
-
-          add_action('simpli_hello_forms_pre_parse', array($this, 'forms_pre_parse'));
+        /* Ajax
+         * Note: You cannot add wp_ajax actions here or they wont fire. You must add them to the addHooks method
          */
+
+
 
 
         // Add scripts
@@ -160,30 +162,30 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
          */
         $this->metabox()->config(array($this, 'pageCheckEditor'));
 
-/*
- * add the metaboxes
- */
-
-        $this->metabox()->addMetaBox(
-                $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
-                , __('Box 1 - Metabox added from within ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
-                , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
-                , $screen_id = null// post_type when you embed meta boxes into post edit pages
-                , 'normal' //normal advanced or side The part of the page where the metabox should show
-                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , null //$metabox['args'] in callback function
-                //,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
-        );
-//
-       $this->metabox()->addMetaBox(
-                $this->getSlug() . '_' . 'metabox_test'  //Meta Box DOM ID
-                , __('Box 2 - Metabox added from within ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
-                , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
-                , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
-                , 'normal' //normal advanced or side The part of the page where the metabox should show
-                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , null //$metabox['args'] in callback function
-        );
+        /*
+         * add the metaboxes
+         */
+        if (false)
+            $this->metabox()->addMetaBox(
+                    $this->getSlug() . '_' . 'metabox_ajax_options'  //Meta Box DOM ID
+                    , __('Post Options box but with ajax ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
+                    , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
+                    , $screen_id = null// post_type when you embed meta boxes into post edit pages
+                    , 'advanced' //normal advanced or side The part of the page where the metabox should show
+                    , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                    , null //$metabox['args'] in callback function
+                    //,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
+            );
+        if (false)
+            $this->metabox()->addMetaBox(
+                    $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
+                    , __('Box 2 - Metabox added from within ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
+                    , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
+                    , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
+                    , 'normal' //normal advanced or side The part of the page where the metabox should show
+                    , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                    , null //$metabox['args'] in callback function
+            );
 
 
         /*
@@ -523,10 +525,11 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
     /**
      * Save User Options for the Post object to the WordPress Database
      * Takes post_options array and saves it to wp_options table
-     * @param int $blog_id
-     * @return $this
+     * @param int $post_id The id of the post object
+     * @param boolean $true_on_success True means you will recieve true when the update succeeds, even if the existing data matches the data you are updating it with, and even if the option_name had to be created first. If you set this to False, you'll get the semi-asinine result that the update_post_meta gives you such that 'false' is returned if the values dont change and the meta_id is returned if a new option had to be created. See this :http://codex.wordpress.org/Function_Reference/update_post_meta  . The default for $true_on_success if false since we want to be consistent with the codex even if it is asinine, and because it means we take one less trip to the database.
+     * @return mixed If $true_on_success is set to true, gives true if there is no failure on save. If $true_on_success is false,  the result behaves identically to the codex explanation of update_post_meta result: Returns meta_id if the meta doesn't exist, otherwise returns true on success and false on failure
      */
-    public function saveUserOptions($post_id) {
+    public function saveUserOptions($post_id, $true_on_success = false) {
         $this->debug()->t();
 
 
@@ -535,12 +538,34 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         $wp_option_name = $this->plugin()->getSlug() . '_options';
         $options = $this->getUserOptions();
         $this->debug()->logVar('$options = ', $options);
-        update_post_meta($post_id, $wp_option_name, $options);
+        $this->debug()->log('update_post_meta (' . $post_id . ',' . $wp_option_name . ',$options');
+
+        /*
+         * if the user wants the 'true' result, meaning , they want to see if the false is
+         * really a failure, we need to compare with existing
+         */
+        if ($true_on_success) {
+            $existing_options = get_post_meta($wp_option_name);
+            $result = update_post_meta($post_id, $wp_option_name, $options);
+            if ($existing_options === $options) {
+                if ($result === false) {
+                    $result = true;
+                }
+            } else {
+                if ($result !== true) { //if $result is not false but is not true, then $result is the meta_id of the added option, so the $result is actually true. get it? per codex: update_post_meta Returns meta_id if the meta doesn't exist, otherwise returns true on success and false on failure
+                    $result = true;
+                }
+            }
+        } else {
 
 
-
-
-        return $this;
+            $result = update_post_meta($post_id, $wp_option_name, $options);
+        }
+        /*
+         * Note that false does not necessarily mean failure, only if the
+         */
+        $this->debug()->logVar('$result = ', $result);
+        return $result;
     }
 
     /**
@@ -552,23 +577,30 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         $this->debug()->t();
 
 
+        /*
+         *
+         */
+
+        if (!$this->plugin()->tools()->isAjax()) {
 
 
-        if (!$this->pageCheckEditor()) {
 
-            /*
-             * even though its not
-             * and editing page, if its not admin, do *not* return,
-             * since we need to load options for the 'the_post' action
-             * which occurs on the frontend (the non-admin pages)
-             *
-             */
-            if (is_admin()) {
+            if (!$this->pageCheckEditor()) {
+
+                /*
+                 * even though its not
+                 * and editing page, if its not admin, do *not* return,
+                 * since we need to load options for the 'the_post' action
+                 * which occurs on the frontend (the non-admin pages)
+                 *
+                 */
+                if (is_admin()) {
 
 
-                $this->debug()->log('pageCheck failed, returning');
+                    $this->debug()->log('pageCheck failed, returning');
 
-                return;
+                    return;
+                }
             }
         }
         $this->debug()->log('pageCheck passed');
@@ -769,14 +801,20 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
      * @param int $post_id
      * @return int $post_id
      */
-    public function hookPostSave($post_id) {
+    public function hookPostSave($post_id = null) {
         $this->debug()->t();
 
+        if (!$this->plugin()->tools()->isAjax()) {
 
-        if (!$this->pageCheckEditor()) {
-            return;
+
+            if (!$this->pageCheckEditor()) {
+                return;
+            }
         }
-
+        if (is_null($post_id)) {
+            $post_id = (isset($_POST['post_ID'])) ? $_POST['post_ID'] : null;
+        }
+        $this->debug()->logVar('$post_id = ', $post_id);
         //if the post variable doesnt include our plugin, than exit.
         if (is_admin()) {
             if (!array_key_exists($this->plugin()->getSlug(), $_POST)) {
@@ -810,12 +848,25 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
             }
         }
 
+        /*
+         * Get User Options
+         *
+         * On a non-ajax call, they will
+         * already be loaded. If being called by Ajax
+         * however, they are probably not yet loaded so check first, then load them.
+         */
 
-        $this->debug()->logVar('$this->getUserOptions() ', $this->getUserOptions(), false, true, false, false);
+        $user_options = $this->getUserOptions();
 
+        if (is_null($user_options)) {
+            $this->loadUserOptions();
+            $user_options = $this->getUserOptions();
+        } elseif (!is_array($user_options)) {
+            $user_options = array();
+        }
+        $this->debug()->logVar('$user_options ', $user_options, false, true, false, false);
 
-
-        foreach ($this->getUserOptions() as $option_name => $option_value) {
+        foreach ($user_options as $option_name => $option_value) {
 
 
 
@@ -827,10 +878,11 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 
             $this->setUserOption($option_name, $option_value);
         }
-        $this->saveUserOptions($post_id);
+        $success = $this->saveUserOptions($post_id);
 
 
-        return $post_id;
+        // return $post_id;
+        return $success;
     }
 
     /**
@@ -843,10 +895,27 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
      */
     public function hookAjaxSave() {
 
-//        if (!wp_verify_nonce($_POST['_wpnonce'], $this->plugin()->getSlug())) {
-//            return false;
-//        }
+        if (!$this->plugin()->DEBUG)
+            if (!wp_verify_nonce($_POST['_wpnonce'], $this->plugin()->getSlug())) {
+                return false;
+            }
+
+
         //do something here.
+        $logout = false;
+        $reload = false;
+
+        /*
+         * save post options
+         */
+
+        $success = $this->hookPostSave();
+        /*
+         * WordPress update_post_meta function does not give a true indication of
+         * success or failure , so as a result, neither do we by default and by designso we choose here to always return a success message.
+         * If you want to override this behavior, you'll need to set the parameter $true_on_success to true in (Simpli_Hello_Module_PostUserOptions::saveUserOptions)
+         * If the user questions whether updating is occuring properly, they can turn on debugging.
+         */
 
         $message = __("Post Options Saved.", $this->plugin()->getTextDomain());
         $errors = array(); // initialize the error array , add any validation errors when you scrub the form_field values
@@ -1012,7 +1081,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         $this->_meta_box_open_states[$id] = array('open' => $open, 'persist' => $persist);
     }
 
-    protected $_meta_box_object=null;
+    protected $_meta_box_object = null;
 
     /**
      * Metabox

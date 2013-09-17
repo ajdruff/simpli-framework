@@ -14,7 +14,7 @@
      *
      */
     wp_nonce_field('save_post', $this->plugin()->getSlug() . '_nonce');
-    $f = $this->plugin()->getAddon('Acme_Forms')->getModule('Form');
+    $f = $this->plugin()->getAddon('Simpli_Forms')->getModule('Form');
 
 
 
@@ -96,8 +96,8 @@
             'label' => 'Simpli Hello Snippets:',
             'hint' => '<a href="#' . admin_url() . '/wp-admin/edit.php?post_type=simpli_hello_snippet' . '">View/Edit Snippets</a>',
             'heading' => '',
-      //      'template' => 'dropdown_post',
-       //     'template_option' => 'dropdown_post_option',
+                //      'template' => 'dropdown_post',
+                //     'template_option' => 'dropdown_post_option',
                 )
         );
     }
@@ -122,20 +122,18 @@
 
 
     <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            var form = $('#post');
-            $(form).find('.hidden-temp').remove();
-            $(form).find('.hidden-checkbox').removeClass('hidden-checkbox');
-            $('#publish,#save-post').click(function() {
-                // alert( $('#simpli-hello').find('input:checkbox:not(:checked)').attr('name'));
+<!--        jQuery(document).ready(function($) {
+        var form = $('#post');
+                $(form).find('.hidden-temp').remove();
+                $(form).find('.hidden-checkbox').removeClass('hidden-checkbox');
+                $('#publish,#save-post').click(function() {
+        // alert( $('#simpli-hello').find('input:checkbox:not(:checked)').attr('name'));
 
-                $('#simpli-hello').find('input:checkbox:not(:checked)').addClass('hidden-checkbox');
+        $('#simpli-hello').find('input:checkbox:not(:checked)').addClass('hidden-checkbox');
                 $('.hidden-checkbox').prepend('<input class="hidden-temp" type="hidden" name="' + $('.hidden-checkbox').attr('name') + '">');
                 //$('.hidden-checkbox').get(0).type = 'hidden'; // bug in jquery prevents you from using attr http://stackoverflow.com/a/7634737
-            });
-
-
         });
+        }); -- >
     </script>
 
 </div>

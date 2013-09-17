@@ -293,6 +293,9 @@ class Simpli_Basev1c0_Plugin_Module_Metabox extends Simpli_Basev1c0_Plugin_Modul
 
             return;
         }
+
+
+
         $handle = $this->plugin()->getSlug() . '_save-metabox-state.js';
         $path = $this->plugin()->getDirectory() . '/admin/js/save-metabox-state.js';
         $inline_deps = null;

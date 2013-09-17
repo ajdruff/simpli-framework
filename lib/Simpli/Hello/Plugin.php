@@ -102,7 +102,7 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
      *
      * Configures Plugin
      *
-     *@param none
+     * @param none
      * @return void
      */
     public function config() {
@@ -139,14 +139,16 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
          */
         $this->setConfig(
                 'DISABLED_MODULES'
-               // , array('Menu01CustomPostType','Shortcodes', 'ExampleModule')
-                 , array(
-                     'Shortcodes'
-                     , 'ExampleModule'
-                 //    ,'Menu10General'
-                  //   ,'Menu30Test'
-                     ,'Menu01CustomPostType'
-                     )
+                // , array('Menu01CustomPostType','Shortcodes', 'ExampleModule')
+                , array(
+            'Shortcodes'
+            , 'ExampleModule'
+                //  , 'Menu02Snippets'
+                //'PostUserOptions'
+                //    ,'Menu10General'
+                //   ,'Menu30Test'
+                //   ,'Menu01CustomPostType'
+                )
         );
 
 
@@ -162,6 +164,16 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
         );
 
 
+        /*
+         * COMPRESS
+         *
+         * Compress with Zlib
+         */
+        $this->setConfig(
+                'COMPRESS'
+                , false
+        );
+
 
         /*
          * DISABLED_ADDONS
@@ -174,21 +186,15 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
         );
 
 
-                $this->setConfig(
+        $this->setConfig(
                 'DEBUG'
                 , true
         );
 
-                $this->setConfig(
+        $this->setConfig(
                 'ALLOW_SHORTCODES'
                 , false
         );
-
-
-
-
-
-
     }
 
     /**

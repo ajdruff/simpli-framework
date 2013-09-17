@@ -19,25 +19,22 @@ class Simpli_Basev1c0_Plugin_Module_Helper implements Simpli_Basev1c0_Plugin_Mod
      * @param none
      * @return void
      */
-
     protected $_module = null;
-
-
     protected $_addon = null;
-
-  protected $_plugin = null;
+    protected $_plugin = null;
 
     function __construct(Simpli_Basev1c0_Plugin_Module $module, Simpli_Basev1c0_Plugin_Addon $addon = null) {
 
         if (is_null($addon)) {
             $this->_module = $module;
-            $this->_plugin=$module->plugin();
+            $this->_plugin = $module->plugin();
         } else {
             $this->_module = $module;
-            $this->_plugin=$module->plugin();
+            $this->_plugin = $module->plugin();
             $this->_addon = $addon;
         }
     }
+
     /**
      * Get Module
      *
@@ -47,7 +44,6 @@ class Simpli_Basev1c0_Plugin_Module_Helper implements Simpli_Basev1c0_Plugin_Mod
     public function module() {
         return $this->_module;
     }
-
 
     /**
      * Get Plugin
@@ -85,6 +81,3 @@ class Simpli_Basev1c0_Plugin_Module_Helper implements Simpli_Basev1c0_Plugin_Mod
 
 }
 ?>
-
-
-

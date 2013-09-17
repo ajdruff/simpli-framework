@@ -297,11 +297,11 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface{
         if (is_null($this->_debug)) {
             $class_namespace_parts = $this->getClassNamespaceParts();
             if (!file_exists($this->getDirectory() . '/lib/' . $class_namespace_parts[0] . '/' . $class_namespace_parts[1] . '/DebugConfig.php')) {
-
+                $this->setConfig('DEBUG', false); //switch Debug to off since phantom will not be accurate.
                 $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
             } else {
                 try {
-                 
+
                     $debug_class = $this->getClassNamespace() . '_DebugConfig';
                     $this->_debug = new $debug_class($this);
 

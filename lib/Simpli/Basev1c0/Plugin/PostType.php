@@ -103,10 +103,9 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
 
 
 
-/*
- * add other configuration here
- */
-
+        /*
+         * add other configuration here
+         */
     }
 
     protected $_register_post_type_args;
@@ -121,13 +120,10 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
      * @args (optional)An array of arguments.
      * @return void
      */
-    protected function registerPostType($post_type,$args=null) {
+    protected function registerPostType($post_type, $args = null) {
 
-        $this->_register_post_type_args=compact('post_type','args');
-
+        $this->_register_post_type_args = compact('post_type', 'args');
     }
-
-
 
     /**
      * Hook to Register Post Types
@@ -140,16 +136,16 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
     public function hookRegisterPostTypes() {
 
 
-/*
- * Retrieve the args that were saved earlier during config()
- */
-     /*
-      * dont process hook any further
-      * if no post type was registered
-      */
-if (is_null($this->_register_post_type_args)) {
-    return;
-}
+        /*
+         * Retrieve the args that were saved earlier during config()
+         */
+        /*
+         * dont process hook any further
+         * if no post type was registered
+         */
+        if (is_null($this->_register_post_type_args)) {
+            return;
+        }
 
 
         extract($this->_register_post_type_args);
@@ -173,29 +169,29 @@ if (is_null($this->_register_post_type_args)) {
          * If 'show_in_menu' is not set, set it so that it forces the post type menus to
          * be added in the right place ( under the top level menu, or as the top level menu itself)
          */
-$args['show_in_menu']=(isset($args['show_in_menu']))?$args['show_in_menu']:$parent_slug;
+        $args['show_in_menu'] = (isset($args['show_in_menu'])) ? $args['show_in_menu'] : $parent_slug;
 
-/*
- * 'show_in_admin_bar
- *
- * set the 'show_in_admin_bar' to be equal to 'show_in_menu' if it not already set
- */
-$args['show_in_admin_bar']=(isset($args['show_in_admin_bar']))?$args['show_in_admin_bar']:$args['show_in_menu'];//make same as show_in_menu
+        /*
+         * 'show_in_admin_bar
+         *
+         * set the 'show_in_admin_bar' to be equal to 'show_in_menu' if it not already set
+         */
+        $args['show_in_admin_bar'] = (isset($args['show_in_admin_bar'])) ? $args['show_in_admin_bar'] : $args['show_in_menu']; //make same as show_in_menu
 
-/*
- * 'menu_position' The position in the menu order the post type should appear. show_in_menu must be true.
- *
- * Set Menu Position if not set, using the getMenuPosition method of the Admin method which
- * is designed to return a unique position , using the slug as a kind of salt
+        /*
+         * 'menu_position' The position in the menu order the post type should appear. show_in_menu must be true.
+         *
+         * Set Menu Position if not set, using the getMenuPosition method of the Admin method which
+         * is designed to return a unique position , using the slug as a kind of salt
 
- */
-$args['menu_position']=(isset($args['menu_position']))?$args['menu_position']:$this->plugin()->getModule('Admin')->getMenuPosition();//make same as show_in_menu
+         */
+        $args['menu_position'] = (isset($args['menu_position'])) ? $args['menu_position'] : $this->plugin()->getModule('Admin')->getMenuPosition(); //make same as show_in_menu
 
 
         /*
          * call the internal method that does all the work
          */
-$this->_register_post_type($post_type, $args);
+        $this->_register_post_type($post_type, $args);
 
 
         //add_post_type_support( $this->plugin()->getSlug() . '_snippet', array('title', 'editor') );
@@ -273,9 +269,9 @@ $this->_register_post_type($post_type, $args);
         $args['labels'] = array_filter($args['labels']);
         $args = array_filter($args);
 
-/*
- * Finally, register it using the WordPress register_post_type function
- */
+        /*
+         * Finally, register it using the WordPress register_post_type function
+         */
         register_post_type($post_type, $args);
 
         /*
@@ -287,13 +283,7 @@ $this->_register_post_type($post_type, $args);
          * update the menu tracker
          */
         $this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug' => 'edit.php?post_type=' . $post_type));
-
-
-
-
     }
-
-
 
     /**
      * Hook - Redirect Add Page
@@ -607,62 +597,7 @@ $this->_register_post_type($post_type, $args);
         add_action('admin_enqueue_scripts', array($this, 'hookEnqueueBaseClassScripts'));
     }
 
-
-    /*
-     * Page Check Editor
-     *
-     * Indicates whether the current page is
-     * an editor of any post type
-     *
-     * @var $_page_check_editor boolean
-     *
-     */
-
-    protected $_page_check_editor = null;
-
     /**
-     * Page Check Editor
-     *
-     * Use for hook functions. Checks to see if we are on an Edit page before we take any hook actions.
-     * @param none
-     * @return boolean
-     */
-    protected function pageCheckEditor() {
-        $this->debug()->t();
-
-
-
-        if (is_null($this->_page_check_editor)) {
-
-            if (!is_admin()) {
-                $this->_page_check_editor = false;
-            } else {
-
-                $this->_page_check_editor = $this->plugin()->tools()->isScreen(array('edit', 'add'), null, false);
-                if (!$this->_page_check_editor) {
-                    /*
-                     * if pageCheck failed, check to see if we are on a custom edit or add screen
-                     */
-                    $this->debug()->log('Not a standard edit or add page, checking to see if its a CustomEdit or CustomAdd screen');
-                    $this->_page_check_editor = $this->plugin()->tools()->isScreen(array('custom_edit', 'custom_add'), null, false);
-                }
-            }
-        }
-
-
-
-        /*
-         * check to see if we are either on the edit or add screen
-         *
-         */
-
-
-
-        $this->debug()->logVar('$this->_page_check_editor  = ', $this->_page_check_editor);
-
-        return ($this->_page_check_editor);
-    }
-   /**
      *
      * @var string The post type created by registerCustomPostType()
      */

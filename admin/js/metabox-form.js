@@ -131,7 +131,7 @@ console.log('form submitted');
 //return;
             jQuery(form).find('.submit-waiting').show();
             jQuery.post(ajaxurl, jQuery(form).serialize(), function(response) {
-
+console.log('received response');
                 //  jQuery('.hidden-checkbox').get(0).type = 'checkbox'; // bug in jquery prevents you from using attr http://stackoverflow.com/a/7634737
                 jQuery(form).find('.hidden-temp').remove();
 

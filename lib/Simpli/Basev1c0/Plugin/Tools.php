@@ -975,7 +975,22 @@ class Simpli_Basev1c0_Plugin_Tools extends Simpli_Basev1c0_Plugin_Helper {
         }
     }
 
+    /**
+     * Is Ajax Request
+     *
+     * Checks to see if the current url request is an ajax request.
+     *
+     * @param none
+     * @return boolean
+     */
+    public function isAjax() {
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'){
+                return true;
+            }else{
+                return false;
+            }
 
+    }
 }
 
 ?>

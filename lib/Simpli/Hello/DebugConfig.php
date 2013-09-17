@@ -22,7 +22,6 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Plugin_Debug {
      * @param none
      * @return void
      */
-
     public function config() {
 
 
@@ -45,19 +44,19 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Plugin_Debug {
         //
 
 //        $this->debug()->setMethodFilter('isScreen', true);
-$this->debug()->setMethodFilter('.*CustomPostType*', false);
-$this->debug()->setMethodFilter('.*PostUserOptions.*', false);
+        $this->debug()->setMethodFilter('.*CustomPostType*', false);
+        $this->debug()->setMethodFilter('.*PostUserOptions.*', false);
 
-$this->debug()->setMethodFilter('Simpli_Hello_Module_Menu01CustomPostType', false);
-$this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Themes_Admin_Module_FilterOptions::_commonFilter', false);
+        $this->debug()->setMethodFilter('Simpli_Hello_Module_Menu01CustomPostType', false);
+        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Themes_Admin_Module_FilterOptions::_commonFilter', false);
 
 //
-$this->debug()->setMethodFilter('Menu.*', false);
-$this->debug()->setMethodFilter('hook*', false);
-$this->debug()->setMethodFilter('Simpli_Basev1c0_metabox', false);
-$this->debug()->setMethodFilter('renderMenuPage', false);
-$this->debug()->setMethodFilter('_AjaxMetabox', false);
-$this->debug()->setMethodFilter('.*Meta.*', false);
+        $this->debug()->setMethodFilter('hookPostSave', false);
+        $this->debug()->setMethodFilter('hook*', false);
+        $this->debug()->setMethodFilter('Simpli_Basev1c0_metabox', false);
+        $this->debug()->setMethodFilter('.*UserOption.*', false);
+        $this->debug()->setMethodFilter('_Ajax.*', false);
+        $this->debug()->setMethodFilter('.*Meta.*', false);
         //addPostEditor
 //        $this->debug()->setMethodFilter('lines2array', false);
 //        $this->debug()->setMethodFilter('el_sc', false);
@@ -104,16 +103,16 @@ $this->debug()->setMethodFilter('.*Meta.*', false);
          * Templates
          */
 
-    //    $this->debug()->setMethodFilter('renderElement', false);
-     //   $this->debug()->setMethodFilter('_setCachedTemplate', false);
-    //    $this->debug()->setMethodFilter('_getCachedTemplate', false);
+        //    $this->debug()->setMethodFilter('renderElement', false);
+        //   $this->debug()->setMethodFilter('_setCachedTemplate', false);
+        //    $this->debug()->setMethodFilter('_getCachedTemplate', false);
 
 
         $this->setOption('log_all_actions', false);
         $this->setOption('logging_enabled', true);
-        $this->setOption('always_show_errors',true); /* always show errors, regardless of filtering */
+        $this->setOption('always_show_errors', true); /* always show errors, regardless of filtering */
 
-        $this->setOption('error_template','<div ><em style="color:red;"> Error ( Plugin {PLUGIN_SLUG} ) </em> {ERROR_MESSAGE}  <p>Calling method : {CALLING_CLASS}::{CALLING_METHOD}() </p>on Line {CALLING_LINE} in file {CALLING_FILE}</div>');
+        $this->setOption('error_template', '<div ><em style="color:red;"> Error ( Plugin {PLUGIN_SLUG} ) </em> {ERROR_MESSAGE}  <p>Calling method : {CALLING_CLASS}::{CALLING_METHOD}() </p>on Line {CALLING_LINE} in file {CALLING_FILE}</div>');
 
 
         $this->debug()->setOption('trace_enabled', true);
@@ -129,9 +128,9 @@ $this->debug()->setMethodFilter('.*Meta.*', false);
         $this->debug()->setOption('show_arrays', false);
         $this->debug()->setOption('show_objects', false);
 
-$this->setOption('debug_ajax_enabled',true);
+        $this->setOption('debug_ajax_enabled', true);
 
- $this->setOption('expand_on_click', true);
+        $this->setOption('expand_on_click', true);
 
         /*
          * Debug Output
@@ -146,7 +145,7 @@ $this->setOption('debug_ajax_enabled',true);
         /*
          * Demo Enabled
          */
-        $this->setOption('demo_enabled', true);
+        $this->setOption('demo_enabled', false);
 
         /*
          * Excluded Functions Filter Enabled
@@ -193,41 +192,39 @@ $this->setOption('debug_ajax_enabled',true);
 
         $this->setOption('action_inclusion_filter_enabled', true);
         $this->setOption('action_inclusion_filter', array_merge(
-                        $this->getOption('action_inclusion_filter'),
-
-                array(
-                          //    'pre_get_posts',
-                         //   'parse_query'
-                          //  ,'send_headers'
-                         //   ,'wp_headers'
-                         //   ,'parse_request'
-                          //  ,'query_vars'
-                    'simpli_hello_simpli_hello_menu.*'
-                            ,'current_screen'
-
-                    )
+                        $this->getOption('action_inclusion_filter'), array(
+            //    'pre_get_posts',
+            //   'parse_query'
+            //  ,'send_headers'
+            //   ,'wp_headers'
+            //   ,'parse_request'
+            //  ,'query_vars'
+            //     'simpli_hello_simpli_hello_menu.*'
+            //     , 'current_screen'
+            'wp_ajax.*'
+                        )
                 )
         );
-/* inclusion filter set/query variables
- *                             ,'pre_get_posts',
-                            'parse_query'
-                            ,'send_headers'
-                            ,'wp_headers'
-                            ,'parse_request'
-                            ,'query_vars'
-                            ,'query'
-                            ,'current_screen'
- */
+        /* inclusion filter set/query variables
+         *                             ,'pre_get_posts',
+          'parse_query'
+          ,'send_headers'
+          ,'wp_headers'
+          ,'parse_request'
+          ,'query_vars'
+          ,'query'
+          ,'current_screen'
+         */
 
-  /*
-   * Inclusion Filter Set ( current_screen / metaboxes)
-                            ,'add_meta_boxes'
-                    ,'current_screen'
-   */
+        /*
+         * Inclusion Filter Set ( current_screen / metaboxes)
+          ,'add_meta_boxes'
+          ,'current_screen'
+         */
 
 
         /*
-        /*
+          /*
          * Javascript Source Code
          * Set to True to use the WordPress source versions
          * instead of the minified versions of the builtin javascript libraries, allowing
@@ -254,7 +251,6 @@ $this->setOption('debug_ajax_enabled',true);
          */
         //$this->setOption('browser_prefix_enabled', true);
         //  $this->setOption('browser_prefix_template', '<em>{METHOD}/{LINE}</em>&nbsp;');
-
 //        $this->setOption('browser_prefix_template', true);
 //        $this->setOption('console_prefix_enabled', true);
 //        $this->setOption('file_prefix_enabled', true);
@@ -264,5 +260,5 @@ $this->setOption('debug_ajax_enabled',true);
 //        $this->setOption('prefix_time_format', 'Y-m-d H:i:s');
     }
 
-
 }
+

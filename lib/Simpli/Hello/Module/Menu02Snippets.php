@@ -10,8 +10,6 @@
  */
 class Simpli_Hello_Module_Menu02Snippets extends Simpli_Basev1c0_Plugin_PostType {
 
-
-
     /**
      * Config
      *
@@ -29,13 +27,12 @@ class Simpli_Hello_Module_Menu02Snippets extends Simpli_Basev1c0_Plugin_PostType
          */
         parent::config();
 
-/*
- * add the post type
- */
+        /*
+         * add the post type
+         */
 
-$this->registerPostType(
-        $this->plugin()->getSlug() . '_snippet',
-                array(
+        $this->registerPostType(
+                $this->plugin()->getSlug() . '_snippet', array(
             'label' => 'Simpli Hello Snippets' //A plural descriptive name for the post type marked for translation.
             , 'labels' => array(
                 'name' => null // general name for the post type, usually plural. The same as, and overridden by $post_type_object->label
@@ -107,38 +104,37 @@ $this->registerPostType(
 
 
             $this->debug()->log('Adding a metabox to a custom  Editing Screen');
-
-            $this->metabox()->addMetaBox(
-                    $this->getSlug() . '_' . 'metabox_post_options'  //Meta Box DOM ID
-                    , __('Custom Editor Metabox added from within ' . $this->getName(), $this->plugin()->getTextDomain()) //title of the metabox.
-                    , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
-                    , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
-                    , 'normal' //normal advanced or side The part of the page where the metabox should show
-                    , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                    , null //$metabox['args'] in callback function
-            );
+            if (true)
+                $this->metabox()->addMetaBox(
+                        $this->getSlug() . '_' . 'metabox_post_ajax_options'  //Meta Box DOM ID
+                        , __('Custom Editor Metabox added from within ' . $this->getName(), $this->plugin()->getTextDomain()) //title of the metabox.
+                        , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
+                        , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
+                        , 'normal' //normal advanced or side The part of the page where the metabox should show
+                        , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                        , null //$metabox['args'] in callback function
+                );
         } else {
 
             /*
              * add metaboxes to the regular editor
              */
             $this->debug()->log('Adding a metabox to the regular WordPress Editing Screen');
-
-            $this->metabox()->addMetaBox(
-                    $this->getSlug() . '_' . 'metabox_post_options'  //Meta Box DOM ID
-                    , __('Regular Editor Metabox added by ' . $this->getName(), $this->plugin()->getTextDomain()) //title of the metabox.
-                    , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
-                    , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
-                    , 'normal' //normal advanced or side The part of the page where the metabox should show
-                    , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                    , null //$metabox['args'] in callback function
-            );
+            if (true)
+                $this->metabox()->addMetaBox(
+                        $this->getSlug() . '_' . 'metabox_post_ajax_options'  //Meta Box DOM ID
+                        , __('Regular Editor Metabox added by ' . $this->getName(), $this->plugin()->getTextDomain()) //title of the metabox.
+                        , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
+                        , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
+                        , 'normal' //normal advanced or side The part of the page where the metabox should show
+                        , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                        , null //$metabox['args'] in callback function
+                );
         }
 
-        $this->metabox()->setMetaboxOpenState('post_user_options_metabox_ajax_options', false, true);
+        $this->metabox()->setMetaboxOpenState('post_user_options_metabox_ajax_options', true, false);
     }
 
-
-
 }
+
 ?>

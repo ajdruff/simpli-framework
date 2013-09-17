@@ -233,12 +233,12 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
          */
         add_action('admin_menu', array($this, 'hookAddMenuPage'));
 
-             /*
+        /*
          * Add Custom Post Editor.
          */
 
 
- add_action('admin_menu', array($this, 'hookAddCustomPostEditor'));
+        add_action('admin_menu', array($this, 'hookAddCustomPostEditor'));
 
 
 
@@ -280,15 +280,8 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
 
 // add ajax action
- //       add_action('wp_ajax_' . $this->plugin()->getSlug() . '_ajax_metabox', array($this, 'hookAjaxMetabox'));
- //       add_action('wp_ajax_' . $this->plugin()->getSlug() . '_ajax_metabox_cache', array($this, 'hookAjaxMetaboxCache'));
-
-
-
-
-
-
-
+        //       add_action('wp_ajax_' . $this->plugin()->getSlug() . '_ajax_metabox', array($this, 'hookAjaxMetabox'));
+        //       add_action('wp_ajax_' . $this->plugin()->getSlug() . '_ajax_metabox_cache', array($this, 'hookAjaxMetaboxCache'));
         // $this->addMenuHooks();
     }
 
@@ -581,7 +574,8 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @var array Custom Editor Args added by addCustomPostEditor
      */
     protected $_custom_post_editor = null;
-        /**
+
+    /**
      * Add  Custom Post Editor (Wrapper)
      *
      * Simply adds the add Custom Post Editor paramaters to an array which is later used in a hook to add the editor page
@@ -598,8 +592,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         $this->_custom_post_editor = compact('page_title', 'menu_title', 'capability', 'icon_url');
     }
 
-
-       /**
+    /**
      * Hook Add Custom Post Editor
      *
      * Adds the configured menu page when the 'admin_menu' action hook is fired.
@@ -631,9 +624,8 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
                 , $menu_title
                 , $capability
                 , $icon_url
-          );
+        );
     }
-
 
     /**
      * Hook Add Menu Page
@@ -910,7 +902,6 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         throw new Exception('You are missing a required hookAddMenuPage method in  ' . get_class($this));
     }
 
-
     /**
      * Dispatch request for ajax metabox
      *
@@ -1000,6 +991,11 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function hookEnqueueBaseClassScripts() {
+
+        if (!$this->pageCheckMenu()) {
+            return;
+        }
+
         wp_enqueue_style($this->plugin()->getSlug() . '-admin-page', $this->plugin()->getUrl() . '/admin/css/settings.css', array(), $this->plugin()->getVersion());
         wp_enqueue_script('jquery');
         wp_enqueue_script('post');
@@ -1014,35 +1010,33 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
          */
 
-
-
-
-
-
         /*
-         * Old - prior to moving metabox states to separate object
+         * Load the metabox form javascript but only if its not the editor since the editor has its own script
          */
-
-        /*
-         * Add javascript for form submission
-         *
-
-          $handle = $this->plugin()->getSlug() . '_metabox-form.js';
-          $path = $this->plugin()->getDirectory() . '/admin/js/metabox-form.js';
-          $inline_deps = array();
-          $external_deps = array('jquery');
-          $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
-
-          $vars = array('metabox_forms' => array(
-          'reset_message' => __('Are you sure you want to reset this form?', $this->plugin()->getTextDomain())
-          , 'reset_all_message' => __('Are you sure you want to reset all the settings for this plugin to installed defaults?', $this->plugin()->getTextDomain())
-          ));
+        if (!$this->pageCheckEditor()) {
 
 
-          $this->plugin()->setLocalVars($vars);
-         *
-         *
-         */
+            /*
+             * Add javascript for form submission
+             *
+             *
+             *
+             */
+            $handle = $this->plugin()->getSlug() . '_metabox-form.js';
+            $this->debug()->logVar('Loading script with $handle = ', $handle, true);
+            $path = $this->plugin()->getDirectory() . '/admin/js/metabox-form.js';
+            $inline_deps = array();
+            $external_deps = array('jquery');
+            $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+
+            $vars = array('metabox_forms' => array(
+                    'reset_message' => __('Are you sure you want to reset this form?', $this->plugin()->getTextDomain())
+                    , 'reset_all_message' => __('Are you sure you want to reset all the settings for this plugin to installed defaults?', $this->plugin()->getTextDomain())
+            ));
+
+
+            $this->plugin()->setLocalVars($vars);
+        }
     }
 
     /**
@@ -1135,7 +1129,6 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
 
         //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
 
-
         $this->_save(false);
     }
 
@@ -1158,9 +1151,13 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function _save($reload = false) {
-        if (!wp_verify_nonce($_POST['_wpnonce'], $this->plugin()->getSlug())) {
-            return false;
-        }
+
+
+        if (!$this->plugin()->DEBUG) //disables nonce checking for debug, allowing direct requests to the browser
+            if (!wp_verify_nonce($_POST['_wpnonce'], $this->plugin()->getSlug())) {
+
+                return false;
+            }
 
         $message = __("Settings saved.", $this->plugin()->getTextDomain());
         $errors = array(); // initialize the error array , add any validation errors when you scrub the form_field values
@@ -1223,7 +1220,9 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         if ($logout) {
             wp_logout();
         }
+
         //return a success message on submission
+
         require_once($this->plugin()->getDirectory() . '/admin/templates/ajax_message.php');
 
         die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
@@ -1491,7 +1490,60 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
         include($this->plugin()->getDirectory() . '/admin/templates/metabox/ajax.php');
     }
 
+    /*
+     * Page Check Editor
+     *
+     * Indicates whether the current page is
+     * an editor of any post type
+     *
+     * @var $_page_check_editor boolean
+     *
+     */
+
+    protected $_page_check_editor = null;
+
+    /**
+     * Page Check Editor
+     *
+     * Use for hook functions. Checks to see if we are on an Edit page before we take any hook actions.
+     * @param none
+     * @return boolean
+     */
+    public function pageCheckEditor() {
+        $this->debug()->t();
 
 
+
+        if (is_null($this->_page_check_editor)) {
+
+            if (!is_admin()) {
+                $this->_page_check_editor = false;
+            } else {
+
+                $this->_page_check_editor = $this->plugin()->tools()->isScreen(array('edit', 'add'), null, false);
+                if (!$this->_page_check_editor) {
+                    /*
+                     * if pageCheck failed, check to see if we are on a custom edit or add screen
+                     */
+                    $this->debug()->log('Not a standard edit or add page, checking to see if its a CustomEdit or CustomAdd screen');
+                    $this->_page_check_editor = $this->plugin()->tools()->isScreen(array('custom_edit', 'custom_add'), null, false);
+                }
+            }
+        }
+
+
+
+        /*
+         * check to see if we are either on the edit or add screen
+         *
+         */
+
+
+
+        $this->debug()->logVar('$this->_page_check_editor  = ', $this->_page_check_editor);
+
+        return ($this->_page_check_editor);
+    }
 
 }
+

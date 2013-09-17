@@ -1,3 +1,4 @@
+<?php return; ?>
 <div id="simpli-hello">
     <?php
 //echo '<pre>';

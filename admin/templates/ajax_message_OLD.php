@@ -46,6 +46,7 @@ if (sizeof($errors) > 0) { //if there are error messages, display them
     // $template = '<div class="updated below-h2 fade" id="message"><p>{MESSAGE}</p></div>{RELOAD_SCRIPT}';
     //  $template = '<div style="" id="message"><p>{MESSAGE}</p></div>{RELOAD_SCRIPT}';
     $template = '<span style="background:#FFFBCC" id="message">{MESSAGE}</span>{RELOAD_SCRIPT}';
+    $template = '<div class="updated below-h2 fade" id="message"><p>{MESSAGE}</p></div>{RELOAD_SCRIPT}';
 }
 
 if (!$this->plugin()->DEBUG) //if debug is not on, then check if its an ajax request.We dont want to check ajax when debugging since we want to be able to call it directly

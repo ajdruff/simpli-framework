@@ -194,7 +194,7 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
         $this->debug()->t();
         $defaults = array(
             'name' => 'postdivrich' //required, because its required for everything else, but ignored
-            ,'id'=>'postdivrich'
+            , 'id' => 'postdivrich'
             , 'label' => null
             , 'hint' => null
             , 'help' => null
@@ -219,6 +219,8 @@ class Simpli_Addons_Simpli_Forms_Module_Elements extends Simpli_Basev1c0_Plugin_
 
         $defaults = array(
             'name' => 'simpli_forms', //the name of the form field.
+            'content_override' => null,
+            'ajax' => null, //whether to submit form via ajax.
             'action' => null, //the action of the form
             'method' => null, //the method of the form , 'post' or 'get'
             'template' => __FUNCTION__

@@ -55,7 +55,8 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
             /*
              * Create a new post object for the custom editor when adding a new post
              */
-            add_action('current_screen', array($this, 'hookCreateNewPost')); //Checks to see if user wants to create a new post, and creates it.
+            // dont need to create new post object since we did that before redirecting.
+            //  add_action('current_screen', array($this, 'hookCreateNewPost')); //Checks to see if user wants to create a new post, and creates it.
         }
         /*
          *  Add Custom Ajax Handlers
@@ -100,12 +101,6 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
          * this is required or menus wont load
          */
         parent::config();
-
-
-
-        /*
-         * add other configuration here
-         */
     }
 
     protected $_register_post_type_args;
@@ -336,6 +331,7 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
             /*
              * if the custom post type is a top level menu page, redirect using its top level slug, which includes the post type
              */
+            $post_type = $this->plugin()->tools()->getQueryVarFromUrl('post_type', $menu_tracker[$top_menu]['top_level_slug']);
 
             $redirect_url = admin_url() . $menu_tracker[$top_menu]['top_level_slug'] . '&' . $this->plugin()->QUERY_VAR . '=' . $this->plugin()->QV_ADD_POST . '&page=' . $this->getMenuSlug();
 
@@ -343,23 +339,31 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
 
 
             $this->debug()->logVar('$redirect_url = ', $redirect_url);
-
-            wp_redirect($redirect_url);
         } else {
 
             /*
              * Otherwise, redirect using admin.php and the known post type previously set when we registered it.
              */
+            $post_type = $this->plugin()->tools()->getPostTypeQueryVar($this->getPostType());
 
-
-            $redirect_url = admin_url() . 'admin.php?' . $this->plugin()->QUERY_VAR . '=' . $this->plugin()->QV_ADD_POST . '&post_type=' . $this->plugin()->tools()->getPostTypeQueryVar($this->getPostType()) . '&page=' . $this->getMenuSlug();
+            $redirect_url = admin_url() . 'admin.php?' . $this->plugin()->QUERY_VAR . '=' . $this->plugin()->QV_ADD_POST . '&post_type=' . $post_type . '&page=' . $this->getMenuSlug();
 
 
             $this->debug()->logVar('$redirect_url = ', $redirect_url);
-            wp_redirect($redirect_url);
         }
+        global $current_user;
 
+        $new_post_values = array(
+            'post_status' => 'auto-draft',
+            'post_author' => $current_user->ID,
+            'post_type' => $post_type
+        );
 
+// Insert the post into the database
+        $post_id = wp_insert_post($new_post_values);
+        $redirect_url = $redirect_url . '&post=' . $post_id;
+
+        wp_redirect($redirect_url);
         die(); // to help wp_redirect exit cleanly
     }
 
@@ -520,6 +524,21 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
         $this->setConfigDefault('CUSTOM_POST_EDITOR_ENABLED', false);
     }
 
+    protected $_add_new_post_ID = null;
+
+    /**
+     * Get Add New Post ID
+     *
+     * If a new post was created using 'Add New', retrieves the new post ID.
+     *
+     * @param none
+     * @return void
+     */
+    public function getAddNewPostID() {
+
+        return $this->_add_new_post_ID;
+    }
+
     /**
      * Hook - Create New Post
      *
@@ -537,7 +556,7 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
          * we create an auto-draft of a post.
          */
 
-        if (($tools->getQueryVar($this->plugin()->QUERY_VAR) === $this->plugin()->QV_ADD_POST)) {
+        if (($tools->getRequestVar($this->plugin()->QUERY_VAR) === $this->plugin()->QV_ADD_POST)) {
             // Create post object
             /*
              * get post type,
@@ -550,16 +569,18 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
             $post_type = $this->plugin()->tools()->getPostTypeQueryVar();
 
             global $post;
+            global $current_user;
             $new_post_values = array(
                 'post_status' => 'auto-draft',
-                'post_author' => 1,
+                'post_author' => $current_user,
                 'post_type' => $post_type
             );
 
 // Insert the post into the database
-            $id = wp_insert_post($new_post_values);
-            $this->debug()->log('Created New Post with id = ' . $id);
-            $post = get_post($id);
+            $this->_add_new_post_ID = wp_insert_post($new_post_values);
+            $this->debug()->log('Created New Post with id = ' . $this->getAddNewPostID());
+
+            $post = get_post($this->getAddNewPostID());
             $this->debug()->logVar('$post = ', $post);
         }
     }

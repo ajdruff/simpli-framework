@@ -143,10 +143,11 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
                 , array(
             'Shortcodes'
             , 'ExampleModule'
-                //  , 'Menu02Snippets'
+                //   , 'Menu02Snippets'
                 //'PostUserOptions'
-                //    ,'Menu10General'
-                //   ,'Menu30Test'
+                // , 'Menu001General'
+                //   , 'Menu20Advanced'
+                //  , 'Menu30Test'
                 //   ,'Menu01CustomPostType'
                 )
         );

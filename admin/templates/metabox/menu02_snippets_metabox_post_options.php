@@ -13,7 +13,7 @@
      * nonce field is required since the hookPostSave method verifies it
      *
      */
-    wp_nonce_field('save_post', $this->plugin()->getSlug() . '_nonce');
+    //  wp_nonce_field('save_post', $this->plugin()->getSlug() . '_nonce');
     $f = $this->plugin()->getAddon('Simpli_Forms')->getModule('Form');
 
 
@@ -121,19 +121,5 @@
 
 
 
-    <script type="text/javascript">
-<!--        jQuery(document).ready(function($) {
-        var form = $('#post');
-                $(form).find('.hidden-temp').remove();
-                $(form).find('.hidden-checkbox').removeClass('hidden-checkbox');
-                $('#publish,#save-post').click(function() {
-        // alert( $('#simpli-hello').find('input:checkbox:not(:checked)').attr('name'));
-
-        $('#simpli-hello').find('input:checkbox:not(:checked)').addClass('hidden-checkbox');
-                $('.hidden-checkbox').prepend('<input class="hidden-temp" type="hidden" name="' + $('.hidden-checkbox').attr('name') + '">');
-                //$('.hidden-checkbox').get(0).type = 'hidden'; // bug in jquery prevents you from using attr http://stackoverflow.com/a/7634737
-        });
-        }); -- >
-    </script>
 
 </div>

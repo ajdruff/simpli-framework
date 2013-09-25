@@ -858,7 +858,7 @@ class Simpli_Basev1c0_Plugin_Addon implements  Simpli_Basev1c0_Plugin_Addon_Inte
          */
 
 
-        $relative_path = $this->plugin()->tools()->makePathRelative($this->plugin()->getAddonsDirectory(), $module_file_path);
+        $relative_path = $this->plugin()->tools()->getRelativePath($this->plugin()->getAddonsDirectory(), $module_file_path);
         $module_namespace = str_replace('/', '_', dirname($relative_path));
 
 

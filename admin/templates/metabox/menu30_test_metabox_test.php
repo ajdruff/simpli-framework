@@ -77,7 +77,7 @@ $f = $this->plugin()->getAddon('Simpli_Forms')->getModule('Form');
 
 $f->getTheme()->setTheme('Admin');
 
-$f->setFilter(array('Admin','Settings'));
+$f->setFilter(array('Admin', 'Settings'));
 //$f->el(array(
 //    'el' => 'text',
 //    'name' => 'hello_global_default_text',
@@ -90,10 +90,9 @@ $f->setFilter(array('Admin','Settings'));
 
 $f->el(array(
     'el' => 'checkbox',
-    'options'=>array('enabled'=>'Enabled','disabled'=>'Click for Disabled'),
-   // 'selected'=>array('disabled'=>'yes','enabled'=>'no'),
- 'selected'=>'disabled',
-
+    'options' => array('enabled' => 'Enabled', 'disabled' => 'Click for Disabled'),
+    // 'selected'=>array('disabled'=>'yes','enabled'=>'no'),
+    'selected' => 'disabled',
     'name' => 'hello_global_default_enabled',
     'label' => 'Radio produced by method call',
     'hint' => 'Global ENable',
@@ -102,9 +101,9 @@ $f->el(array(
 );
 $f->el(array(
     'el' => 'radio',
-    'options'=>array('orange'=>'Orange','red'=>'Red','yellow'=>'Yellow','blue'=>'Blue'),
-  //  'selected'=>array('orange'=>'yes','red'=>'no'),
-      'selected'=>'yellow',
+    'options' => array('orange' => 'Orange', 'red' => 'Red', 'yellow' => 'Yellow', 'blue' => 'Blue'),
+    //  'selected'=>array('orange'=>'yes','red'=>'no'),
+    'selected' => 'yellow',
     'name' => 'dropdown_setting',
     'label' => 'Method Call Radio/Checkbox/Dropdown',
     'hint' => 'Example colors',
@@ -140,19 +139,5 @@ yellow | Yellow
 <?php $this->debug()->stop(false); ?>
 </div>
 
-<script type="text/javascript">
-    jQuery(document).ready(function($) {
-        var form = $('#post');
-        $(form).find('.hidden-temp').remove();
-        $(form).find('.hidden-checkbox').removeClass('hidden-checkbox');
-        $('#publish,#save-post').click(function() {
-            //alert( $('#simpli-hello').find('input:checkbox:not(:checked)').attr('name'));
 
-            $('#simpli-hello').find('input:checkbox:not(:checked)').addClass('hidden-checkbox');
-            $('.hidden-checkbox').prepend('<input class="hidden-temp" type="hidden" name="' + $('.hidden-checkbox').attr('name') + '">');
-            //$('.hidden-checkbox').get(0).type = 'hidden'; // bug in jquery prevents you from using attr http://stackoverflow.com/a/7634737
-        });
-
-
-    });
 </script>

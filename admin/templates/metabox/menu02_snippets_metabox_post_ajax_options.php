@@ -13,23 +13,17 @@
 
     $f = $this->plugin()->getAddon('Simpli_Forms')->getModule('Form');
 
+
     $f->formStart(array(
         'name' => 'simpli_forms_ajaxoptions',
         'theme' => 'Admin',
-        'action' => 'settings_save',
+        'ajax' => true,
+        'action' => 'post_options_save',
         'method' => 'post',
         'template' => 'formStart',
-        'filter' => 'Options',)
+        'filter' => 'Options')
     );
 
-    /*
-     * nonce field is required since the hookPostSave method verifies it
-     *
-     */
-    wp_nonce_field('save_post', $this->plugin()->getSlug() . '_nonce');
-
-    // $f->getTheme()->setTheme('Admin');
-    // $f->setFilter(array('Options'));
 
     $prefix = $this->plugin()->getSlug();
     $f->el(array(
@@ -108,31 +102,30 @@
             'options' => $options,
             'name' => 'snippet',
             'label' => 'Simpli Hello Snippets:',
-            'hint' => '<a href="#' . admin_url() . '/wp-admin/edit.php?post_type=simpli_hello_snippet' . '">View/Edit Snippets</a>',
+            'hint' => '<a href = "#' . admin_url() . '/wp-admin/edit.php?post_type=simpli_hello_snippet' . '">View/Edit Snippets</a>',
             'heading' => '',
                 //      'template' => 'dropdown_post',
                 //     'template_option' => 'dropdown_post_option',
                 )
         );
-
+        /*
+         * Example Checkbox
+         *
+         */
+        $f->el(array(
+            'el' => 'checkbox',
+            'options' => array('red' => 'Red', 'orange' => 'Orange'),
+            'selected' => array('red' => 'yes'),
+            'name' => 'my_checkbox',
+            'label' => 'My Checkboxes',
+            'template' => 'checkbox_post',
+            'template_option' => 'checkbox_post_option',
+            'hint' => '',
+            'heading' => '',
+                )
+        );
         $f->formEnd(array('template' => 'formEndPostAjax'));
     }
-    /*
-     * Example Checkbox
-      $f->el(array(
-      'el' => 'checkbox',
-      'options' => array('red' => 'Red','orange'=>'Orange'),
-      'selected' => array('red' => 'yes'),
-      'name' => 'my_checkbox',
-      'label' => 'My Checkboxes',
-      'template' => 'checkbox_post',
-      'template_option' => 'checkbox_post_option',
-      'hint' => '',
-      'heading' => '',
-      )
-      );
-     *
-     */
     ?>
 
 

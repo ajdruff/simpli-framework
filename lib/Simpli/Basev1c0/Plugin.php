@@ -1179,7 +1179,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
             /*
              * First, remove  AddonsDirectory path , becomes :  Simpli/Forms/Addon.php
              */
-            $addon_name = $this->tools()->makePathRelative($this->getAddonsDirectory(), $addon_file_path); //
+            $addon_name = $this->tools()->getRelativePath($this->getAddonsDirectory(), $addon_file_path); //
             //echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style="color:blue;"> $addon_name = ' . $addon_name . '</strong>';
             /*
              * Next, remove the file base name and extension , becomes : Simpli/Forms
@@ -1263,7 +1263,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
 //        $module_file_path = $available_modules[$module_name];
 //        require_once($module_file_path); # simpli-framework/lib/simpli/hello/Module/Admin.php
 //        echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style="color:blue;"> $module_file_path = ' . $module_file_path . '</strong>';
-//        $relative_path = $this->tools()->makePathRelative($this->getModuleDirectory(), $module_file_path);
+//        $relative_path = $this->tools()->getRelativePath($this->getModuleDirectory(), $module_file_path);
 //        echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style="color:blue;"> $relative_path = ' . $relative_path . '</strong>';
 //        $relative_path = basename($relative_path, '.php'); //remove the extension
 //        echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style="color:blue;"> $relative_path = ' . $relative_path . '</strong>';

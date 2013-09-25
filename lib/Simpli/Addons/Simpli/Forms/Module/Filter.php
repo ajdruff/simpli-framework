@@ -62,6 +62,9 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
         $this->debug()->log('Filtering using filter method in base class');
         $method = 'filter' . ucwords($properties['scid']);
 
+
+
+
         /*
          * apply the common filter
          */
@@ -91,11 +94,12 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
     protected function _commonFilter($properties) {
         $this->debug()->t();
         $this->debug()->log('applying the common filters of the base class');
+
         extract($properties);
         /*
          * Return error if required arguments are not found
          */
-        if ((!isset($atts['name'])) || (is_null($atts['name']))) {
+        if (array_key_exists('name', $atts) && is_null($atts['name'])) {
 
             $atts ['_error'][] = 'Name attribute is required';
         }
@@ -107,7 +111,7 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
          * Add a unique prefix to the name so we dont conflict with other plugins that might be on the same form
          */
 
-        if ((isset($atts['name']))) {
+        if (array_key_exists('name', $atts) && is_null($atts['name'])) {
             $atts['name'] = $this->getFieldPrefix() . $atts['name'];
         }
 
@@ -117,16 +121,19 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
          * Add a default label if one wasnt provided
          */
 
-        if (!isset($atts['label']) || is_null($atts['label'])) {
+
+        if (array_key_exists('label', $atts) && is_null($atts['label'])) {
+
             $atts['label'] = $this->getDefaultFieldLabel($atts['name']);
         }
+
+        $this->debug()->logVar('$atts = ', $atts);
 
         $tags['form_counter'] = $this->addon()->getModule('Form')->form_counter;
         if (isset($this->addon()->getModule('Form')->form['form']['name'])) {
             $tags['form_name'] = $this->addon()->getModule('Form')->form['form']['name'];
         }
 
-        $this->debug()->logVar('$this->addon()->getModule(\'Form\')->form = ', $this->addon()->getModule('Form')->form);
 
 
         return (compact('scid', 'atts', 'tags'));
@@ -382,7 +389,6 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
         return($this->_filterOptions($properties));
     }
 
-
     /**
      * Post Editor Filter
      *
@@ -405,9 +411,9 @@ class Simpli_Addons_Simpli_Forms_Module_Filter extends Simpli_Basev1c0_Plugin_Mo
              * capture the output of wp_editor so
              * we can assign it to a tag
              */
-ob_start();
-wp_editor($post->post_content, 'content', array('dfw' => true, 'tabindex' => 1));
-$tags['wp_editor']=ob_get_clean();
+            ob_start();
+            wp_editor($post->post_content, 'content', array('dfw' => true, 'tabindex' => 1));
+            $tags['wp_editor'] = ob_get_clean();
 
 
             $tags['word_count'] = sprintf(__('Word count: %s'), '<span class="word-count">0</span>');
@@ -433,13 +439,13 @@ $tags['wp_editor']=ob_get_clean();
              */
             $atts['content_override'] = '';
         }
-/*
- * Ensure default editor id.
- * if id is duplicate, the editor wont display
- */
-if (is_null($atts['id'])) {
-   $atts['id']='postdivrich';
-}
+        /*
+         * Ensure default editor id.
+         * if id is duplicate, the editor wont display
+         */
+        if (is_null($atts['id'])) {
+            $atts['id'] = 'postdivrich';
+        }
 
 
         $properties = compact('scid', 'atts', 'tags');
@@ -459,14 +465,16 @@ if (is_null($atts['id'])) {
 
         extract($properties);
 
-        if (!isset($atts['name']) || is_null($atts['name'])) {
+
+        if (array_key_exists('name', $atts) && is_null($atts['name'])) {
+
             $atts['name'] = 'simpli_forms';
         }
-        if (!isset($atts['action']) || is_null($atts['action'])) {
+        if (array_key_exists('action', $atts) && is_null($atts['action'])) {
             $atts['action'] = $_SERVER['REQUEST_URI'];
         }
 
-        if (!isset($atts['method']) || is_null($atts['method'])) {
+        if (array_key_exists('method', $atts) && is_null($atts['method'])) {
             $atts['method'] = 'post';
         }
 

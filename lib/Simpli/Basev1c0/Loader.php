@@ -237,7 +237,6 @@ class Simpli_Basev1c0_Loader {
         $matches = array();
         $matches = explode('_', $class); // alternative :  $pattern='/[A-Za-z0-9]+/';preg_match_all($pattern, $class, $matches);
 //echo '<pre>';
-
 //echo '</pre>';
 //
 
@@ -257,7 +256,6 @@ class Simpli_Basev1c0_Loader {
 //echo '<br/>' . __LINE__ . ' ' . __METHOD__ . ' $plugin_class_match =  ' . $plugin_class_match;
 //   $base_class_match = strpos($class, $this->getClassNamespace()) !== false;
 //echo '<pre>';
-
 //echo '</pre>';
 //echo '<br/>' . __LINE__ . ' ' . __METHOD__ . ' $base_class_match =  ' . $base_class_match;
         if (in_array($matches[0] . '_' . $matches[1], $namespaces)) {  // match[0]='Simpli' match[1]='Hello' match[2]='Plugin'
@@ -270,21 +268,22 @@ class Simpli_Basev1c0_Loader {
             $file = dirname($this->getPluginFilePath()) . '/lib/' . $subdirectory_path . '/' . $filename;
             $file = $path = str_replace('\\', '/', $file); //quick and dirty normalize path
 
-            $require_result=require $file; // do not use file_exists for performance reasons
+            $require_result = require $file; // do not use file_exists for performance reasons
 
-            if(!class_exists($class) && (stripos($class,'Interface')===false)){
-
-
-                echo '<div ><em style="color:red;">Class File and Class Name Mismatch. </em> Check to make sure that the file name for '. basename($file) .' is included in its class\'s declared name .</div>';
-;}
+            if (!class_exists($class) && (stripos($class, 'Interface') === false)) {
 
 
-
+                echo '<div ><em style="color:red;">Class File and Class Name Mismatch. </em> Check to make sure that the file name for ' . basename($file) . ' is included in its class\'s declared name .</div>';
+                ;
+            }
 
 
 
 
-          //  $this->debug()->logVar('$require_result = ', $require_result,true);
+
+
+
+
 //            if (file_exists($file)) {
 //                echo '<br> Including class ' . $class . ' file  = ' . $file;
 //                require $file;

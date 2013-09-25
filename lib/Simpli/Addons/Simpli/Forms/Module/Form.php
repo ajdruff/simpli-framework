@@ -295,6 +295,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
          * the shortcode tag. or [simpli_hello el='text'
          */
         if (!isset($atts['el']) || is_null($atts['el'])) {
+
             $atts['el'] = $atts[0];
         }
 
@@ -472,6 +473,10 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
             'tags' => $tags
         );
 
+
+
+
+
         $this->debug()->logVar('$properties = ', $properties);
         /*
          * Filter
@@ -523,7 +528,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
 
 
 
-                /*
+        /*
          * Return content from content_override if set
          */
         if (isset($atts['content_override']) &&
@@ -592,7 +597,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         $this->setElement($element_name, $properties);
 
         $this->debug()->logVars(get_defined_vars());
-
+        $this->debug()->logVar('$processed_template = ', $processed_template);
         return $processed_template;
     }
 
@@ -629,7 +634,7 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         $this->debug()->log('theme name in getTheme is : ' . $result->getThemeName());
         $this->debug()->logVar('$this->addon()->getModule(\'Theme\') ', $result);
 
-        $this->debug()->log('Theme object =<pre>', print_r($this->addon()->getModule('Theme'), true), '</pre>');
+
         return ($result);
     }
 
@@ -767,11 +772,12 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
         $defaults = array(
             'name' => 'simpli_forms',
             'theme' => 'Admin',
+            'ajax' => null,
             'action' => $_SERVER['REQUEST_URI'],
             'method' => 'post',
             'template' => __FUNCTION__,
             'filter' => null
-            );
+        );
 
 
         /*
@@ -836,15 +842,14 @@ class Simpli_Addons_Simpli_Forms_Module_Form extends Simpli_Basev1c0_Plugin_Modu
 
         /*
          * output the html
+         * Note that we pass on *all* the properties
+         * The el() method will scrub out the ones that dont have a a default
+         *
          */
         $this->debug()->logVars(get_defined_vars());
-        $this->el(array(
-            'el' => 'formStart',
-            'name' => $properties['name'],
-            'action' => $properties['action'],
-            'method' => $properties['method'],
-            'template' => $properties['template'],
-                )
+        $atts = $properties;
+        $atts['el'] = 'formStart';
+        $this->el($atts
         );
     }
 

@@ -69,14 +69,14 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
         parent::config();
 
 
-/*
- * Set the Meta Box Initial Open/Close state
- */
+        /*
+         * Set the Meta Box Initial Open/Close state
+         */
         $this->metabox()->setMetaboxOpenState
                 ($this->getSlug() . '_metabox_about'
                 , false
                 , true
-                );
+        );
 
         /*
          * Add the Menu Page
@@ -172,6 +172,11 @@ class Simpli_Hello_Module_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
                 , array('url' => 'http://www.simpliwp.com/simpli-framework/metabox-donate-example/') //$metabox['args'] in callback function
         );
 
+
+        /*
+         * Lets use unique nonces for extra security :)
+         */
+        $this->setConfig('UNIQUE_ACTION_NONCES', false);
     }
 
     /**

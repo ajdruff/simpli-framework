@@ -74,7 +74,7 @@ class Simpli_Hello_Module_Menu02Snippets extends Simpli_Basev1c0_Plugin_PostType
          * Enable/Disable Custom Post Editor
          *
          * Configure a custom Post Editor to use for your post type
-         * This can be a completly custom editor without relying on any
+         * This can be a completely customized editor without relying on any
          * core WordPress code. If you use the postEditor element from the Simpli_Forms
          * plugin, you can even add WordPress's editor easily but reposition it anywhere in your form.
          * You need to build it by editing the menu01_custom_post_type template
@@ -82,7 +82,7 @@ class Simpli_Hello_Module_Menu02Snippets extends Simpli_Basev1c0_Plugin_PostType
          * If false, you'll get the regular editor.
          */
 
-        $this->setConfig('CUSTOM_POST_EDITOR_ENABLED', true);
+        $this->setConfig('CUSTOM_POST_EDITOR_ENABLED', false);
 
 
 
@@ -94,45 +94,27 @@ class Simpli_Hello_Module_Menu02Snippets extends Simpli_Basev1c0_Plugin_PostType
                 $page_title = $this->plugin()->getName() . ' - Editor'
                 , $menu_title = 'Edit My Custom Post Type'
                 , $capability = 'edit_published_posts'
-                , $icon_url = $this->plugin()->getUrl() . '/admin/images/menu.png'
         );
 
 
-        $post = $this->plugin()->tools()->getPost();
-        $this->debug()->logVar('$post = ', $post);
-        if ($this->CUSTOM_POST_EDITOR_ENABLED) {
 
 
-            $this->debug()->log('Adding a metabox to a custom  Editing Screen');
-            if (true)
-                $this->metabox()->addMetaBox(
-                        $this->getSlug() . '_' . 'metabox_post_ajax_options'  //Meta Box DOM ID
-                        , __('Custom Editor Metabox added from within ' . $this->getName(), $this->plugin()->getTextDomain()) //title of the metabox.
-                        , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
-                        , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
-                        , 'normal' //normal advanced or side The part of the page where the metabox should show
-                        , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                        , null //$metabox['args'] in callback function
-                );
-        } else {
-
-            /*
-             * add metaboxes to the regular editor
-             */
-            $this->debug()->log('Adding a metabox to the regular WordPress Editing Screen');
-            if (true)
-                $this->metabox()->addMetaBox(
-                        $this->getSlug() . '_' . 'metabox_post_ajax_options'  //Meta Box DOM ID
-                        , __('Regular Editor Metabox added by ' . $this->getName(), $this->plugin()->getTextDomain()) //title of the metabox.
-                        , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
-                        , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
-                        , 'normal' //normal advanced or side The part of the page where the metabox should show
-                        , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                        , null //$metabox['args'] in callback function
-                );
-        }
-
-        $this->metabox()->setMetaboxOpenState('post_user_options_metabox_ajax_options', true, false);
+        /*
+         * Example of Adding Metabox from within a
+         * Custom Post Type. This will be added to the editing page.
+         * 
+         *
+         */
+        if (false)
+            $this->metabox()->addMetaBox(
+                    $this->getSlug() . '_' . 'metabox_post_ajax_options'  //Meta Box DOM ID
+                    , __('Custom Editor Metabox added from within ' . $this->getName(), $this->plugin()->getTextDomain()) //title of the metabox.
+                    , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
+                    , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
+                    , 'normal' //normal advanced or side The part of the page where the metabox should show
+                    , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                    , null //$metabox['args'] in callback function
+            );
     }
 
 }

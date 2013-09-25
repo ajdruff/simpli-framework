@@ -45,7 +45,7 @@
  *
  */
 //class Simpli_Basev1c0_Plugin_Debug {//extends Simpli_Basev1c0_Plugin_Helper{
-class Simpli_Basev1c0_Plugin_Debug extends Simpli_Basev1c0_Plugin_Helper{
+class Simpli_Basev1c0_Plugin_Debug extends Simpli_Basev1c0_Plugin_Helper {
 //    function __construct($plugin) {
 //        $this->_plugin = $plugin;
 //    }
@@ -59,11 +59,9 @@ class Simpli_Basev1c0_Plugin_Debug extends Simpli_Basev1c0_Plugin_Helper{
      * @param none
      * @return void
      */
-
-   // public function plugin() {
+    // public function plugin() {
     //        return $this->_plugin;
-
-   // }
+    // }
 
     /**
      * Debug
@@ -73,9 +71,9 @@ class Simpli_Basev1c0_Plugin_Debug extends Simpli_Basev1c0_Plugin_Helper{
      * @param none
      * @return void
      */
-  //  public function debug() {
-  //      return $this;
-  //  }
+    //  public function debug() {
+    //      return $this;
+    //  }
 
     /**
      * Configure Module
@@ -83,7 +81,6 @@ class Simpli_Basev1c0_Plugin_Debug extends Simpli_Basev1c0_Plugin_Helper{
      * @param none
      * @return void
      */
-
     public function config() {
         /* this method intentionally left empty since it should be implemented using the child class */
     }
@@ -526,8 +523,7 @@ class Simpli_Basev1c0_Plugin_Debug extends Simpli_Basev1c0_Plugin_Helper{
         }
 
         if (is_null($expandable)) {
-            $expandable=$this->getOption('expand_on_click');
-
+            $expandable = $this->getOption('expand_on_click');
         }
 #init
 
@@ -538,7 +534,7 @@ class Simpli_Basev1c0_Plugin_Debug extends Simpli_Basev1c0_Plugin_Helper{
          */
         if (is_array($var) || is_object($var)) {
             //cast to an array. if you dont, the object will appear as an empty array in the final output
-$var=(array)$var;
+            $var = (array) $var;
             /*
              * if the variable is an array or object, build another array with
              * results. do not attempt to update $var, since there are times when $var is an object passed by reference , which
@@ -626,7 +622,7 @@ $var=(array)$var;
                      */
 
                     if (is_null($value)) {
-                        $value =  '(null)';
+                        $value = '(null)';
                     }
                     if ($value === '') {
                         $value = '(empty string)';
@@ -648,7 +644,7 @@ $var=(array)$var;
              * variable value is a boolean, so we can differentiate from an empty string
              */
             if (is_bool($var)) {
-                $var = ($var===true) ? $var . '(true)' : $var . '(false)';
+                $var = ($var === true) ? $var . '(true)' : $var . '(false)';
             }
 
             /*
@@ -2292,19 +2288,31 @@ $var=(array)$var;
             return false;
         }
 
+        /*
+         * Show only posted form debugging if enabled
+         */
+        if ($this->getOption('debug_post_only') === true) {
 
+            if (!isset($_POST) || empty($_POST)) {
 
+                return false;
+            }
+        }
 
         /*
          * Do not do any logging if ajax request
          * AJAX check
          */
-        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-
-            if (!$this->getOption('debug_ajax_enabled')) {
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') { //if isAjax()
+            if (!$this->getOption('ajax_debugging_enabled')) { //then if ajax is not enabled, return false
                 return false;
             };
             /* special ajax here */
+        } else {
+
+            if ($this->getOption('ajax_debugging_only')) { //if not ajax, but ajax_debugging_only is true, return false.
+                return false;
+            };
         }
         /*
          * Always Show Errors
@@ -3000,10 +3008,21 @@ $var=(array)$var;
 
         /* Ajax Debugging
          * whether to allow for debugging during an ajax call
-         * normally,we dont want this since the output would interfere with javascript
+         * Ajax output may interfere with javascript and cause errors, so
+         * we keep this false by default
          */
-        $this->_setDefaultOption('debug_ajax_enabled', false);
+        $this->_setDefaultOption('ajax_debugging_enabled', false);
 
+        /* Ajax Debugging Only
+         * Whether to filter all output except if the request is an ajax request.
+         */
+        $this->_setDefaultOption('ajax_debugging_only', false);
+
+        /* Debug Posted Forms Only
+         *
+         * Whether to filter all output except if a form has been posted
+         */
+        $this->_setDefaultOption('debug_post_only', false);
 
         /*
          * Demo Enabled
@@ -3511,24 +3530,21 @@ $var=(array)$var;
          */
         if ($this->getOption('action_inclusion_filter_enabled')) {
 
-     if (!in_array($current_filter, $this->getOption('action_inclusion_filter'))) {
-            /* if didnt find it as a direct match,
-             * now check if pregmatch matches anything.
-             */
-            $matches_inclusion_filter_regex_pattern=false;
-            foreach ($this->getOption('action_inclusion_filter') as $filter_regex) {
+            if (!in_array($current_filter, $this->getOption('action_inclusion_filter'))) {
+                /* if didnt find it as a direct match,
+                 * now check if pregmatch matches anything.
+                 */
+                $matches_inclusion_filter_regex_pattern = false;
+                foreach ($this->getOption('action_inclusion_filter') as $filter_regex) {
 
-            if (preg_match("/" . $filter_regex . "/", $current_filter) === 1) {
-              $matches_inclusion_filter_regex_pattern=true;
-            }
+                    if (preg_match("/" . $filter_regex . "/", $current_filter) === 1) {
+                        $matches_inclusion_filter_regex_pattern = true;
+                    }
+                }
 
-            }
-
-            if (!$matches_inclusion_filter_regex_pattern) {
-                return;
-            }
-
-
+                if (!$matches_inclusion_filter_regex_pattern) {
+                    return;
+                }
             }
         }
 
@@ -3628,14 +3644,7 @@ $var=(array)$var;
         $this->_log($content, $props, $use_prefix = true, $target = 'browser', $type = 'info');
     }
 
-
-
-
-
-
-
-
-        /**
+    /**
      * Get Method Source
      *
      * Get a method's source code
@@ -3693,3 +3702,4 @@ $var=(array)$var;
     }
 
 }
+

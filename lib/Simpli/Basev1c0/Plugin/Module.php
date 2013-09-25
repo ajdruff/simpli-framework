@@ -44,7 +44,7 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
         }
     }
 
-        /**
+    /**
      * Addon
      *
      * Returns the Addon object with name of the $addon_name parameter
@@ -52,10 +52,10 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
      * @param string $addon_name The name of the addon
      * @return void
      */
-
     public function addon($addon_name = null) {
         return $this->_addon;
     }
+
     /**
      * Get Addon
      *
@@ -228,7 +228,7 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
      *
      * @return object $this
      */
-    protected function setConfig($property_name, $config_value) {
+    public function setConfig($property_name, $config_value) {
 
         $this->_config_properties[$property_name] = $config_value;
 
@@ -261,7 +261,8 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
     private function _getConfigDefault($property_name) {
 
         if (is_null($this->_property_defaults)) {
-            $this->setConfigDefaults();
+            //$this->setConfigDefaults();
+            $this->_property_defaults = array();
         }
         if (!isset($this->_property_defaults[$property_name])) {
 
@@ -284,7 +285,7 @@ class Simpli_Basev1c0_Plugin_Module implements Simpli_Basev1c0_Plugin_Module_Int
         $this->_property_defaults[$property_name] = $config_value;
     }
 
-
     protected $_property_defaults = null;
 
 }
+

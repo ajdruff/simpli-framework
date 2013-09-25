@@ -53,7 +53,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         /*
          * Must add any wp_ajax actions to addHooks
          */
-        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_post_options_save', array($this, 'hookAjaxSave'));
+        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_save_post', array($this, 'hookAjaxSavePost'));
     }
 
     /**
@@ -100,20 +100,20 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
             $this->debug()->log('Exiting hookEditingScreen since it didnt pass pageCheckEditor test');
             return;
         }
-
+        $this->debug()->logVar('current_screen = ', get_current_screen());
         $this->debug()->log('Passed pageCheckEditor test');
         /*
          * Hook our save method into the post's save action
          */
 
-        add_action('save_post', array($this, 'hookPostSave'));
+        add_action('save_post', array($this, 'hookSavePost'));
 
 
         /*
          * Load Post options when in Admin
          */
         $this->loadUserOptions();
-        //      add_action('current_screen', array($this, 'loadUserOptions')); //wp hook is not reliable on edit post page. admin_init cannot be used since a call to get_current_screen will return null see usage restrictions: http://codex.wordpress.org/Function_Reference/get_current_screen
+//      add_action('current_screen', array($this, 'loadUserOptions')); //wp hook is not reliable on edit post page. admin_init cannot be used since a call to get_current_screen will return null see usage restrictions: http://codex.wordpress.org/Function_Reference/get_current_screen
 
 
         /*
@@ -123,7 +123,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
          * with a custom post editor.
          */
         $this->metabox()->hookAddMetaBoxes();
-        //     add_action('current_screen', array($this, 'addMetaBoxes'));
+//     add_action('current_screen', array($this, 'addMetaBoxes'));
 
 
         /* Ajax
@@ -133,8 +133,27 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 
 
 
-        // Add scripts
-        add_action('admin_enqueue_scripts', array($this, 'hookEnqueueScripts'));
+// Add scripts
+        /*
+         * Add javascript for Ajax form submission
+         *
+         */
+        $handle = $this->plugin()->getSlug() . '_ajax-actions-post.js';
+        $path = $this->plugin()->getDirectory() . '/admin/js/ajax-actions-post.js';
+        $inline_deps = array();
+        $external_deps = array('jquery');
+        $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+
+        /*
+         * Add javascript for non-ajax form submission
+         *
+         */
+        $handle = $this->plugin()->getSlug() . '_publish-post-actions.js';
+        $path = $this->plugin()->getDirectory() . '/admin/js/publish-post-actions.js';
+        $inline_deps = array();
+        $external_deps = array('jquery');
+        //  $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+        //  add_action('admin_enqueue_scripts', array($this, 'hookEnqueueScripts'));
     }
 
     /**
@@ -165,18 +184,18 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         /*
          * add the metaboxes
          */
-        if (false)
+        if (true)
             $this->metabox()->addMetaBox(
                     $this->getSlug() . '_' . 'metabox_ajax_options'  //Meta Box DOM ID
-                    , __('Post Options box but with ajax ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
+                    , __('Box 1 - Metabox added from within' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
                     , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
                     , $screen_id = null// post_type when you embed meta boxes into post edit pages
-                    , 'advanced' //normal advanced or side The part of the page where the metabox should show
+                    , 'normal' //normal advanced or side The part of the page where the metabox should show
                     , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                     , null //$metabox['args'] in callback function
-                    //,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
+//,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
             );
-        if (false)
+        if (true)
             $this->metabox()->addMetaBox(
                     $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
                     , __('Box 2 - Metabox added from within ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
@@ -226,7 +245,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
          *
          */
         $this->setUserOptionDefault(
-                'use_global_text', false
+                'use_global_text', 'snippet'
         );
 
 
@@ -269,6 +288,30 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         $this->setUserOptionDefault(
                 'my_checkbox', array('red' => 'yes')
         );
+
+        /*
+         * Messages to the User
+         */
+        $this->setConfigDefault('MESSAGE_SAVE_SUCCESS', __("Changes saved.", $this->plugin()->getTextDomain()));
+        $this->setConfigDefault('MESSAGE_NONCE_FAILED', __("Failed to save changes, please log out and log back in and try again.", $this->plugin()->getTextDomain()));
+        $this->setConfigDefault('MESSAGE_SAVE_FAILED', __("Failed to save changes, please log out and log back in and try again.", $this->plugin()->getTextDomain()));
+
+
+
+        /*
+         *
+         * Nonces
+         * The PostUserOptions module controls nonce creation of metaboxes that are added
+         * to editor pages. Any NONCE_ properties created by other menu modules are ignored.
+         */
+
+        $this->setConfig('NONCE_ACTION', $this->plugin()->getSlug() . '_' . $this->plugin()->getSlug() . '_save_post');
+
+
+        $this->setConfig('NONCE_DEFAULT_VALUE', null); //cant wp_create_nonce now, since function not available
+        $this->setConfig('NONCE_FIELD_NAME', $this->plugin()->getSlug() . '_nonce');
+
+        $this->setConfig('UNIQUE_ACTION_NONCES', true);
     }
 
     /**
@@ -510,7 +553,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
          * you set the allowed keys in your plugin's $_options declaration
          */
         if (in_array(trim($option_name), array_keys($this->getUserOptions()))) {
-            //if (in_array(trim($option_name), array_keys($this->getUserOptionDefaults()))) {
+//if (in_array(trim($option_name), array_keys($this->getUserOptionDefaults()))) {
             if (is_string($option_value)) {
                 $option_value = trim($option_value);
             }
@@ -558,11 +601,17 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
             }
         } else {
 
+            $this->debug()->log('Updating post meta using update_post_meta()');
+
+
+            $this->debug()->logExtract(array('post_id' => $post_id, 'wp_option_name' => $wp_option_name, 'options' => $options,));
+
 
             $result = update_post_meta($post_id, $wp_option_name, $options);
         }
         /*
-         * Note that false does not necessarily mean failure, only if the
+         * Note that false does not necessarily mean failure
+         * false also means that the data has not changed.
          */
         $this->debug()->logVar('$result = ', $result);
         return $result;
@@ -615,14 +664,14 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 
         $post = (isset($_GET['post'])) ? get_post($_GET['post']) : $post;
         $post = (empty($post) && !empty($_POST['post_ID'])) ? get_post($_POST['post_ID']) : $post;
-        // if (!empty($post)&& !empty($_POST['post_ID'])) {
+// if (!empty($post)&& !empty($_POST['post_ID'])) {
         if (!empty($post)) {
-            // $this->loadUserOptions($post->ID);
+// $this->loadUserOptions($post->ID);
             $post_id = $post->ID;
             $post_meta_options = get_post_meta($post_id, $wp_option_name, true);
         } else {
             $default_options = $this->getUserOptionDefaults();
-            // echo '<br> loading defaults' ;
+// echo '<br> loading defaults' ;
         }
 
 
@@ -692,7 +741,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         $post_types = get_post_types($args);
         global $post;
         $this->debug()->logVar('$post = ', $post);
-        //    foreach ($post_types as $post_type) {
+//    foreach ($post_types as $post_type) {
 
         /*
          * Add the options metabox, but only if the post type is not
@@ -706,7 +755,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                 , null //$metabox['args'] in callback function
-                //,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
+//,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
         );
 
         add_meta_box(
@@ -720,7 +769,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         );
 
 
-        //  if ($post->post_type!=='simpli_hello_snippet') {
+//  if ($post->post_type!=='simpli_hello_snippet') {
         if (true) {
 
 
@@ -740,7 +789,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
                     , 'normal' //normal advanced or side The part of the page where the metabox should show
                     , 'high' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                     , null //$metabox['args'] in callback function
-                    //,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
+//,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
             );
 
 
@@ -752,14 +801,14 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
                     , 'side' //normal advanced or side The part of the page where the metabox should show
                     , 'high' // 'high' , 'core','default', 'low' The priority within the context where the box should show
                     , null //$metabox['args'] in callback function
-                    //,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
+//,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
             );
         }
 
 
 
 
-        //  }
+//  }
     }
 
     /**
@@ -773,77 +822,99 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
     public function hookEnqueueScripts() {
 
 
-        /*
-         * Add javascript for form submission
-         *
-         */
-        $handle = $this->plugin()->getSlug() . '_metabox-form-post.js';
-        $path = $this->plugin()->getDirectory() . '/admin/js/metabox-form-post.js';
-        $inline_deps = array();
-        $external_deps = array('jquery');
-        $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+//        /*
+//         * Add javascript for form submission
+//         *
+//         */
+//        $handle = $this->plugin()->getSlug() . '_ajax-actions-post.js';
+//        $path = $this->plugin()->getDirectory() . '/admin/js/ajax-actions-post.js';
+//        $inline_deps = array();
+//        $external_deps = array('jquery');
+//        $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+//+ '&' + simpli_hello.plugin.slug + '_nonce= ' + simpli_hello.save_post_option_nonce
+//        <?php wp_nonce_field('ajax_save_post_options', $this->plugin()->getSlug() . '_nonce');
+
 
 
         /* You could also load it as an external file
          * Example of loading using the wp_enqueue_script method
-         */
-        //                  $handle = $this->plugin()->getSlug() . '_metabox-form-post.js';
-        //        $src = $this->plugin()->getUrl() . '/admin/js/metabox-form-post.js';
-        //        $deps = array('jquery');
-        //        $ver = '1.0';
-        //        $in_footer = false;
-        //        wp_enqueue_script($handle, $src, $deps, $ver, $in_footer);
+
+          $handle = $this->plugin()->getSlug() . '_save-menu-options-post.js';
+          $src = $this->plugin()->getUrl() . '/admin/js/save-post-options.js';
+          $deps = array('jquery');
+          $ver = '1.0';
+          $in_footer = true;
+          wp_enqueue_script($handle, $src, $deps, $ver, $in_footer);
+          wp_localize_script($handle, 'my_localize_script_object', array('save_post_option_nonce' => wp_create_nonce($this->plugin()->getSlug() . '_save_post')));//this would make my_localize_script_object.save_post_option_nonce available in javascript
+         *   */
     }
 
     /**
-     * Save  option to post or page
+     * Hook - Save Post (Wrapper)
      *
+     * Saves the posted form to user options
      * @param int $post_id
      * @return int $post_id
      */
-    public function hookPostSave($post_id = null) {
+    public function hookSavePost() {
+
+
+        /*
+         * check we're on the editor page
+         */
+        if (!$this->pageCheckEditor()) {
+            return;
+        }
+
+
+        /*
+         * check that there is something to save
+         */
+        if (empty($_POST)) {
+            return;
+        }
+
+        $post_id = $this->plugin()->tools()->getEditPostId();
+        $this->_savePost($post_id);
+    }
+
+    /**
+     * Save Post (Internal)
+     *
+     * Internal method to save post options to wordpress database
+     * @param int $post_id
+     * @return int $post_id
+     */
+    protected function _savePost($post_id = null) {
         $this->debug()->t();
 
-        if (!$this->plugin()->tools()->isAjax()) {
 
-
-            if (!$this->pageCheckEditor()) {
-                return;
-            }
-        }
-        if (is_null($post_id)) {
-            $post_id = (isset($_POST['post_ID'])) ? $_POST['post_ID'] : null;
-        }
-        $this->debug()->logVar('$post_id = ', $post_id);
-        //if the post variable doesnt include our plugin, than exit.
         if (is_admin()) {
-            if (!array_key_exists($this->plugin()->getSlug(), $_POST)) {
+
+            /*
+             * check if our query variable exists,
+             * if it doesnt, exit since the post wont include any of our form values
+             */
+            if ($this->plugin()->tools()->getRequestVar($this->plugin()->getSlug()) === null) {
                 $this->debug()->logVar('$_POST = ', $_POST);
                 $this->debug()->log('Exiting Post Save since $_POST doesnt include our options');
-                return $post_id;
+                return false;
             }
-            //   $this->debug()->log('Exiting save ajax call');
             $this->debug()->logVar('$_POST = ', $_POST, false, true, false, false); //automatically show arrays without needing to click
-            // if nonce fails , return
-            if (!wp_verify_nonce($_POST[$this->plugin()->getSlug() . '_nonce'], 'save_post')) {
-                $this->debug()->log('Nonce Failed while trying to save options');
-                return $post_id;
-            }
-
 //return if doing autosave
             if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-                return $post_id;
+                return true;
             }
 //check permissions
-            if (@$_POST['post_type'] == 'page') {
-                if (!current_user_can('edit_page', $post_id)) {
-                    $this->debug()->log('Cant save options - user is not authorized');
-                    return $post_id;
+            if (isset($_POST['post_type']) && $_POST['post_type'] == 'page') {
+                if (!current_user_can('edit_pages', $post_id)) {
+                    $this->debug()->log('Cant save options - user is not authorized to edit a page');
+                    return false;
                 }
             } else {
-                if (!current_user_can('edit_post', $post_id)) {
-                    $this->debug()->log('Cant save options - user is not authorized');
-                    return $post_id;
+                if (!current_user_can('edit_posts', $post_id)) {
+                    $this->debug()->log('Cant save options - user is not authorized to edit this post type');
+                    return false;
                 }
             }
         }
@@ -878,51 +949,87 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
 
             $this->setUserOption($option_name, $option_value);
         }
-        $success = $this->saveUserOptions($post_id);
-
-
-        // return $post_id;
-        return $success;
-    }
-
-    /**
-     * Hook - Ajax Save
-     *
-     * Save the post options using ajax
-     *
-     * @param none
-     * @return void
-     */
-    public function hookAjaxSave() {
-
-        if (!$this->plugin()->DEBUG)
-            if (!wp_verify_nonce($_POST['_wpnonce'], $this->plugin()->getSlug())) {
-                return false;
-            }
-
-
-        //do something here.
-        $logout = false;
-        $reload = false;
-
         /*
-         * save post options
+         * since saveUserOptions doesnt give us a good true/false result we always set it to true
          */
-
-        $success = $this->hookPostSave();
         /*
          * WordPress update_post_meta function does not give a true indication of
          * success or failure , so as a result, neither do we by default and by designso we choose here to always return a success message.
          * If you want to override this behavior, you'll need to set the parameter $true_on_success to true in (Simpli_Hello_Module_PostUserOptions::saveUserOptions)
          * If the user questions whether updating is occuring properly, they can turn on debugging.
          */
+        $this->saveUserOptions($post_id);
 
-        $message = __("Post Options Saved.", $this->plugin()->getTextDomain());
-        $errors = array(); // initialize the error array , add any validation errors when you scrub the form_field values
-        //return a success message on submission
-        require_once($this->plugin()->getDirectory() . '/admin/templates/ajax_message.php');
 
-        die(); //required after require to ensure ajax request exits cleanly; otherwise it hangs and browser request is garbled.
+// return $post_id;
+        return true;
+    }
+
+    /**
+     * Hook - Save Post Ajax
+     *
+     * Save the post options using ajax
+     *
+     * @param none
+     * @return void
+     */
+    public function hookAjaxSavePost() {
+
+        /*
+         * No pageCheck needed since this is ajax, so the method wouldnt even be called unless it was on the right page
+         */
+
+        /*
+         * Check Nonces
+         * This check *must* happen within the wrapper, not in the internal function, or
+         * the __FUNCTION__ parameter wont be correct and the nonce will fail.
+         */
+        if (!$this->metabox()->wpVerifyNonce(__FUNCTION__)) {
+
+            $message = $this->MESSAGE_NONCE_FAILED;
+            $this->metabox()->displayAjaxMessage(
+                    $this->plugin()->getDirectory() . '/admin/templates/ajax_message_post_options.php', //string $template The path to the template to be used
+                    $message, // string $message The html or text message to be displayed to the user
+                    array(), //$errors Any error messages to display
+                    false, //boolean $logout Whether to force a logout after the message is displayed
+                    false //boolean $reload Whether to force a page reload after the message is displayed
+            );
+        }
+
+
+        /*
+         * save post options
+         */
+
+
+        /*
+         * Get the post id that is provided by the editor
+         * getEditPostID() will try different places the id might
+         * be located , depending on whether its a new or existeing post, and
+         * whether you are using a custom post editor
+         */
+
+        $post_id = $this->plugin()->tools()->getEditPostID();
+
+        /*
+         * Now that we know the post id, we can save the options
+         */
+        $success = $this->_savePost($post_id);
+
+        if ($success === true) {
+            $message = $this->MESSAGE_SAVE_SUCCESS;
+        } else {
+            $message = $this->MESSAGE_SAVE_FAILED;
+        }
+
+
+        $this->metabox()->displayAjaxMessage(
+                $this->plugin()->getDirectory() . '/admin/templates/ajax_message_post_options.php', //string $template The path to the template to be used
+                $message, // string $message The html or text message to be displayed to the user
+                array(), //$errors Any error messages to display
+                false, //boolean $logout Whether to force a logout after the message is displayed
+                false //boolean $reload Whether to force a page reload after the message is displayed
+        );
     }
 
     /**

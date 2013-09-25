@@ -16,6 +16,7 @@
     $f->formStart(array(
         'name' => 'simpli_forms_ajaxoptions',
         'theme' => 'Admin',
+        'ajax' => true,
         'action' => 'settings_save',
         'method' => 'post',
         'template' => 'formStart',
@@ -55,12 +56,7 @@
             )
     );
 
-    if (!in_array('Menu15CustomPostType', $this->plugin()->DISABLED_MODULES)) {
-        $options = array('false' => 'Custom', 'true' => 'Default', 'snippet' => 'Snippet');
-    } else {
-        $options = array('false' => 'Custom', 'true' => 'Default', 'snippet' => 'Snippet');
-    }
-
+    $options = array('custom' => 'Custom', 'default' => 'Default', 'snippet' => 'Snippet');
     $f->el(array(
         'el' => 'radio',
         'options' => $options,

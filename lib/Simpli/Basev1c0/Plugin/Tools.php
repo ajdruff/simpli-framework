@@ -10,8 +10,6 @@
  */
 class Simpli_Basev1c0_Plugin_Tools extends Simpli_Basev1c0_Plugin_Helper {
 
-
-
     /**
      * Sort Dependent List
      *
@@ -347,7 +345,7 @@ class Simpli_Basev1c0_Plugin_Tools extends Simpli_Basev1c0_Plugin_Helper {
      * @param  $longer_path
      * @return string normalized relative path
      */
-    function makePathRelative($base_path, $longer_path) {
+    function getRelativePath($base_path, $longer_path) {
         $base_path = $this->normalizePath($base_path);
         $longer_path = $this->normalizePath($longer_path);
         if (0 !== strpos($longer_path, $base_path)) {
@@ -662,6 +660,39 @@ class Simpli_Basev1c0_Plugin_Tools extends Simpli_Basev1c0_Plugin_Helper {
     }
 
     /**
+     * Get Query Var From Url
+     *
+     * Returns the value of the Query Variable that is contained within a url
+     *
+     * @param string $query_var The name of the query variable
+     * @param $url The url you need to retrieve the query variable's value from
+     * @return string The value of the query variable. Null if it doesnt appear in the url
+     */
+    public function getQueryVarFromUrl($query_var, $url) {
+
+        /*
+         * split the url by the first question mark
+         */
+        $query_array = explode('?', $url, 2);
+
+        /*
+         * if no question mark, then make sure we don't error out with a 'no index' error
+         */
+        $query_string = (isset($query_array[1])) ? $query_array[1] : $query_array[0];
+
+        /*
+         * use our parse_str method to get an array of name value pairs
+         */
+        $query_vars_array = $this->plugin()->tools()->parse_str($query_string);
+
+        $this->debug()->logVar('$query_vars_array = ', $query_vars_array);
+
+        $result = (isset($query_vars_array[$query_var])) ? $query_vars_array[$query_var] : null;
+
+        return $result;
+    }
+
+    /**
      * Html To Text
      *
      * A very crude attempt at changing html to text. Does not attempt to preserve formatting except for line breaks
@@ -772,7 +803,7 @@ class Simpli_Basev1c0_Plugin_Tools extends Simpli_Basev1c0_Plugin_Helper {
         /*
          * Check for a Custom Editor by checking for the 'edit_post' value in our query variable
          */
-        $isCustomEditScreen = $this->getQueryVar($this->plugin()->QUERY_VAR) === $this->plugin()->QV_EDIT_POST;
+        $isCustomEditScreen = $this->getRequestVar($this->plugin()->QUERY_VAR) === $this->plugin()->QV_EDIT_POST;
 
 
         $isEditScreen = ($current_screen->base === 'post' && $current_screen->action === ''); //base will always be post regardless of post type. action will always be an empty string.
@@ -783,7 +814,7 @@ class Simpli_Basev1c0_Plugin_Tools extends Simpli_Basev1c0_Plugin_Helper {
         /*
          * Check for a Custom Add Page by checking for the 'add_post' value in our query variable
          */
-        $isCustomAddScreen = $this->getQueryVar($this->plugin()->QUERY_VAR) === $this->plugin()->QV_ADD_POST;
+        $isCustomAddScreen = $this->getRequestVar($this->plugin()->QUERY_VAR) === $this->plugin()->QV_ADD_POST;
 
 
 
@@ -876,10 +907,6 @@ class Simpli_Basev1c0_Plugin_Tools extends Simpli_Basev1c0_Plugin_Helper {
         return((bool) $combined_result);
     }
 
-
-
-
-
     /**
      * Get Post
      *
@@ -894,12 +921,22 @@ class Simpli_Basev1c0_Plugin_Tools extends Simpli_Basev1c0_Plugin_Helper {
      */
     public function getPost() {
         global $post;
+
+
+
         if (is_object($post)) {
+            $this->debug()->log('Post already in global $post object');
             return $post;
         }
-        $post_id_query_var = (isset($_GET['post'])) ? $_GET['post'] : null;
+
+        /*
+         * attempt to get post id from the GET variables or, if its an editor, get it via the getEditPostID method
+         */
+        $post_id_query_var = (isset($_GET['post'])) ? $_GET['post'] : $this->plugin()->tools()->getEditPostID();
+
 
         if (!is_null($post_id_query_var)) {
+            $this->debug()->log('Post taken from query var');
             return get_post($post_id_query_var);
         } else {
             return null;
@@ -907,16 +944,231 @@ class Simpli_Basev1c0_Plugin_Tools extends Simpli_Basev1c0_Plugin_Helper {
     }
 
     /**
-     * Get Query Var
+     * Get Edit Post ID
      *
-     * Returns the value of the query variable if it is in the url, if it isnt, returns null. Similar to WordPress get_query_var but works in admin and with non-white listed query variables. Main advantage is that it saves you from checking whether its set first, allowing you to a direct comparison.
+     * Returns the post id being edited or created. Checks all the most common places the the $post->id is provided
+     * during a post editor form submission
      *
-     * @param string $query_var
-     * @return string
+     * @param none
+     * @return string The id of the post being edited or created.
      */
-    public function getQueryVar($query_var) {
+    public function getEditPostID() {
 
-        if (isset($_GET[$query_var])) {
+
+        #init
+        $post_id = null;
+
+
+        /*
+         * Check $_POST['post_ID']
+         * When editing a WordPress Post, the editor submits post_id using
+         * the $_POST form field post_ID
+         *
+         */
+
+        $post_id = (isset($_POST['post_ID'])) ? $_POST['post_ID'] : null;
+
+        if (!is_null($post_id)) {
+            $this->debug()->logVar('Found $_POST[\'post_ID\'], $post_id=', $post_id);
+            return $post_id;
+        }
+
+
+        /*
+         * Check $_GET['post]
+         * The WordPress Post Editing page embeds the post id in the $_GET request during an edit,
+         * and the Custom Post Editor also embeds the post id in the $_GET request during the 'Add New' redirect to the Editor a
+         *
+         */
+        $post_id = $this->getRequestVar('post');
+
+        if (!is_null($post_id)) {
+            $this->debug()->logVar('Found post_id in $_GET, $post_id=', $post_id);
+            return $post_id;
+        }
+        /*
+         * Check $_POST['_wp_http_referer']
+         * Ajax requests have access to the _wp_referer $_POST variable
+         * Which represents the $_GET variables contained in the Editor page
+         * from which the ajax request was made from
+         *
+         * Use the getQueryVarFromUrl method to retrieve the query variable from the _wp_http_referer string
+         */
+
+        $post_id = (isset($_POST['_wp_http_referer'])) ? $this->plugin()->tools()->getQueryVarFromUrl('post', $_POST['_wp_http_referer']) : null;
+        if (!is_null($post_id)) {
+            $this->debug()->logVar('Found post_id in _wp_http_referer, $post_id=', $post_id);
+            return $post_id;
+        }
+        /*
+         * if still null, then its probably a custom edit page, which embeds it in the _ajax_referer_url
+         *
+         * _ajax_referer_url
+         */
+
+        $post_id = (isset($_POST['_ajax_referer_url'])) ? $this->plugin()->tools()->getQueryVarFromUrl('post', $_POST['_ajax_referer_url']) : null;
+        if (!is_null($post_id)) {
+            $this->debug()->logVar('Found post_id in _ajax_referal_url, $post_id=', $post_id);
+            return $post_id;
+        }
+        /*
+         *
+         */
+        $this->debug()->log('Couldnt find post id anywhere, setting it to null');
+        return $post_id;
+
+        /*
+         * You can get rid of the remaining when you've tested everything.
+         */
+
+
+        /*
+         * if the post_id is in the $_GET query string of the editing page,
+         * an ajax request can find it in _wp_http_referer
+         */
+        if (!isset($_POST['_wp_http_referer'])) {
+            $this->debug()->log('Cant save post options with ajax - _wp_http_referer does not exist, so can\'t determine post id.');
+            $success = false;
+        } else {
+
+
+            /*
+             * If saving the option from a new post page, WordPress sends
+             * the new post_id in $_POST['post_ID'])
+             * Check for $_POST['post_ID'])
+             * attempt to get the $post_id from the post paramaters. $post_id is set if its a new post...
+             */
+            $post_id = (isset($_POST['post_ID'])) ? $_POST['post_ID'] : null;
+
+            /*
+             * If that didnt work, then assume its an edit page and get it from the referrer
+             */
+            if (is_null($post_id)) {
+                /*
+                 * split the referer by the question mark so we get the query variables
+                 *
+                 */
+
+
+
+
+                //     $wp_http_referer_query_array = explode('?', $_POST['_wp_http_referer'], 2);
+
+                /*
+                 * if no question mark, then make sure we don't error out with a 'no index' error
+                 */
+                //   $wp_http_referer_query_string = (isset($wp_http_referer_query_array[1])) ? $wp_http_referer_query_array[1] : $wp_http_referer_query_array[0];
+
+                /*
+                 * use our parse_str method to get an array of name value pairs
+                 */
+                //   $wp_http_referer = $this->plugin()->tools()->parse_str($wp_http_referer_query_string);
+                ///   $this->debug()->logVar('$wp_http_referer = ', $wp_http_referer);
+                //   $post_id = $wp_http_referer['post'];
+
+                $post_id = $this->plugin()->tools()->getQueryVarFromUrl('post', $_POST['_wp_http_referer']);
+            }
+        }
+    }
+
+//    /**
+//     * Get Query Var
+//     *
+//     * Returns the value of the query variable if it is in the url, if it isnt, returns null. Similar to WordPress get_query_var but works in admin and with non-white listed query variables. Main advantage is that it saves you from checking whether its set first, allowing you to a direct comparison.
+//     *
+//     * @param string $query_var
+//     * @return string
+//     */
+//    public function getRequestVar($query_var) {
+//
+//        if (isset($_GET[$query_var])) {
+//            return $_GET[$query_var];
+//        } else {
+//            return null;
+//        }
+//    }
+
+    /**
+     * Create Slug
+     *
+     * Takes a word like MyWord and makes it into my_word. Optionally creates WordPress like slugs.
+     * Usage:
+     * To Create a 'simpli' type , slug:
+     * createSlug('MyAwesomePlugin');  // gives 'my_awesome_plugin'
+     *
+     * To create a WordPress slug:
+     * createSlug('MyAwesome Plugin',true) //gives 'MyAwesome-Plugin'
+     *
+     *
+     * @param string $text Text to turn into a slug
+     * @param boolean $wordpress_slug Whether to use WordPress's slug conversion. This will turn 'My Slug' to 'my-slug'
+     * @param string $regex Regex Pattern to be used for replacement. If not provided, will use one that identifies
+     * capitalized word groups.
+     * @param separator Seperator only used when $likeWP=false.
+     * @return void
+     */
+    public function createSlug($text, $wordpress_slug = false, $regex = null, $separator = null) {
+
+        $this->debug()->logVar('$text = ', $text);
+
+        if (!$wordpress_slug) {//  Not like WP
+            /*
+             * then use the regex and separators to create the slug
+             */
+            if (is_null($separator)) {
+                $separator = '_';
+            }
+            if (is_null($regex)) {
+                /*
+                 * set regex pattern to find all capatilized word groups like 'MyPlugin'
+                 */
+                $regex = '/(?<!^)((?<![[:upper:]])[[:upper:]]|[[:upper:]](?![[:upper:]]))/';
+            }
+
+
+            $slug = strtolower(preg_replace($regex, $separator . '$1', $text));
+        } else {
+            $slug = sanitize_title($text);
+        }
+        return $slug;
+    }
+
+    /**
+     * Get Request Variable
+     *
+     * Returns the value of the variable $_REQUEST[$var]
+     * $_REQUEST contains $_GET,$_POST, and cookies
+     * Will return null if the variable does not exist in the array
+     * Similar to WordPress get_query_var but works in admin and with non-white listed query variables. Main advantage is that it works with $_POST variables as well, and saves you from checking whether its set first, allowing you to a direct comparison.
+     * Ref:http://php.net/manual/en/reserved.variables.request.php
+     *
+     * @param none
+     * @return void
+     */
+    public function getRequestVar($var) {
+        $request_var = trim($var); //trim it to ensure inadvertent spaces dont mess up value comparisons
+        if (array_key_exists($request_var, $_REQUEST)) {
+            return $_REQUEST[$request_var];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get Query Variable
+     *
+     * Returns the value of the variable $_GET[$var]
+
+     * Will return null if the variable does not exist in the array
+     * Similar to WordPress get_query_var but works in admin and with non-white listed query variables. Main advantage is that it works with $_POST variables as well, and saves you from checking whether its set first, allowing you to a direct comparison.
+     * Ref:http://php.net/manual/en/reserved.variables.request.php
+     *
+     * @param none
+     * @return void
+     */
+    public function getQueryVar($var) {
+        $query_var = trim($var); //trim it to ensure inadvertent spaces dont mess up value comparisons
+        if (array_key_exists($query_var, $_GET)) {
             return $_GET[$query_var];
         } else {
             return null;
@@ -949,7 +1201,7 @@ class Simpli_Basev1c0_Plugin_Tools extends Simpli_Basev1c0_Plugin_Helper {
         if (!is_null($post_type)) {
             return $obfuscation . $post_type;
         }
-        $post_type = $this->getQueryVar('post_type');
+        $post_type = $this->getRequestVar('post_type');
 
         if (substr($post_type, 0, strlen($obfuscation)) === $obfuscation) {
             $post_type = str_replace($obfuscation, '', $post_type);
@@ -984,13 +1236,104 @@ class Simpli_Basev1c0_Plugin_Tools extends Simpli_Basev1c0_Plugin_Helper {
      * @return boolean
      */
     public function isAjax() {
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'){
-                return true;
-            }else{
-                return false;
-            }
-
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+            return true;
+        } else {
+            return false;
+        }
     }
+
+    /**
+     * Get Strings with Substring
+     *
+     * Search array elements for an array of substrings and returns an array of elements that contain the substring.
+     * taken from : http://psoug.org/snippet/Search-array-elements-for-a-substring_923.htm
+     * @param $substrings An array of substrings to match against
+     * @param $strings The array of strings to match
+     * @return false if not found, otherwise an array of the elements that contain the substrings
+     */
+    public function getStringsWithSubstring($substrings, $strings) {
+
+
+
+        /*
+         * Method 1
+         *
+         */
+        //   $method = 2;
+        //    if ($method === 1) {
+        $substrings = (array) $substrings;
+        $matches = array();
+
+        foreach ($strings as $string) {
+
+            foreach ($substrings as $substring) {
+
+                if (stripos($string, $substring) !== false) {
+                    array_push($matches, $string);
+                }
+            }
+        }
+        if (count($matches) === 0) {
+            return (false);
+        } else {
+            $this->debug()->logVar('$matches = ', $matches);
+            return ($matches);
+        }
+        //   }
+//        if ($method === 2) {
+//            $found = array();
+//
+//            // cast to array
+//            $needle = (array) $substrings;
+//
+//            // map with preg_quote
+//            $needle = array_map('preg_quote', $substrings);
+//
+//            // loop over  array to get the search pattern
+//            foreach ($needle AS $pattern) {
+//                if (count($found = preg_grep("/$pattern/", $strings)) > 0) {
+//                    $this->debug()->logVar('$found = ', $found);
+//                    return $found;
+//                }
+//            }
+//
+//            // if not found
+//            return false;
+//        }
+    }
+
+    /**
+     * Get Method Names of a class
+     *
+     * Uses reflection to get an array of method names for a class
+     *
+     * @param string $className The name of the class that you want to get methods for
+     * @param int $filter, any filters that you want to pass per http://php.net/manual/en/reflectionclass.getmethods.php
+     * ref:  http://stackoverflow.com/a/3712754
+     * @return void
+     */
+    function getMethodsNames($className, $filters = null) {
+
+        $reflector = new ReflectionClass($className);
+        if (!is_null($filters)) {
+
+            $methods_object = $reflector->getMethods($filters);
+        } else {
+            $methods_object = $reflector->getMethods();
+        }
+
+
+        $methodNames = array();
+        $lowerClassName = strtolower($className);
+        foreach ($methods_object as $method) {
+            if (strtolower($method->class) == $lowerClassName) {
+                $methodNames[] = $method->name;
+            }
+        }
+        return $methodNames;
+    }
+
 }
 
 ?>

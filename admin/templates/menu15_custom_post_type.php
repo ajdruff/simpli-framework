@@ -21,7 +21,7 @@ require_once('includes/template.php'); // WordPress Dashboard Functions
 
 
 $post = $this->plugin()->tools()->getPost();
-$this->debug()->logVar('$post = ', $post,true);
+$this->debug()->logVar('$post = ', $post);
 /*
  * If the user accesses this page using a link to this menu page (instead of via a redirect after they clicked the edit link, there wont be any post object, and errors will result.
  * Instead, simply tell the user to hit the back button to continue editing (although previous changes will be likely lost).
@@ -31,7 +31,6 @@ if (!is_object($post)) {
     echo '<div class="updated below-h2"> <h2>Click the back button on your browser to continue editing your post.</h2>
          You are seeing this message because you inadvertently clicked the editor menu link while already editing a post. To avoid seeing this message, always access the editor by first clicking the menu post\'s edit link.</div>';
     return;
-
 }
 ?>
 <div class="simpli-hello">
@@ -57,20 +56,20 @@ if (!is_object($post)) {
 
 
 
-<?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false); ?>
-<?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false); ?>
+                <?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false); ?>
+                <?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false); ?>
 
 
 
                 <div class="postbox-container column-primary">
 
-<!-- Start Editor -->
-<?php
-    $f = $this->plugin()->getAddon('Simpli_Forms')->getModule('Form');
+                    <!-- Start Editor -->
+                    <?php
+                    $f = $this->plugin()->getAddon('Simpli_Forms')->getModule('Form');
 
 
 
-    $f->getTheme()->setTheme('Admin');
+                    $f->getTheme()->setTheme('Admin');
 
 
 
@@ -81,34 +80,33 @@ if (!is_object($post)) {
 //        'hint' => '',
 //            )
 //    );
-
-?>
-
-
-<!-- alternately, use the shortcode: simpli_hello_form el='postEditor'
-DO NOT PLACE MORE THAN ONE postEditor on the page at one time or they will not work.
-Remember that even if you comment out the shortcode, it will still be parsed!
-shortcode format (place in brackets and move outside of comments to see it parsed ):
-simpli_hello_form el='postEditor'
-
-->
+                    ?>
 
 
-<!-- End Editor -->
+                    <!-- alternately, use the shortcode: simpli_hello_form el='postEditor'
+                    DO NOT PLACE MORE THAN ONE postEditor on the page at one time or they will not work.
+                    Remember that even if you comment out the shortcode, it will still be parsed!
+                    shortcode format (place in brackets and move outside of comments to see it parsed ):
+                    simpli_hello_form el='postEditor'
 
+                    ->
+
+
+                    <!-- End Editor -->
 
 
 
 
 
-                <?php
- do_meta_boxes($this->getScreenId(), 'advanced', $this);
-                ?>
+
 <?php
-do_meta_boxes($this->getScreenId(), 'normal', $this);
+do_meta_boxes($this->getScreenId(), 'advanced', $this);
 ?>
+                    <?php
+                    do_meta_boxes($this->getScreenId(), 'normal', $this);
+                    ?>
 
-[simpli_hello_form el='postEditor']
+                    [simpli_hello_form el='postEditor']
                 </div>
 
 
@@ -121,7 +119,7 @@ do_meta_boxes($this->getScreenId(), 'normal', $this);
 
 
 <?php
- do_meta_boxes($this->getScreenId(), 'side', $this);
+do_meta_boxes($this->getScreenId(), 'side', $this);
 ?>
 
                 </div>

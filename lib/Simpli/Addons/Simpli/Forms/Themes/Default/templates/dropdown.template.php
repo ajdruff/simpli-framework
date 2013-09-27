@@ -11,13 +11,13 @@
                 <td>
                     <fieldset>
                         <label>
-                            <label>
-
-                                                        <input name="{NAME}" type="text" id="{ID}" class="{CLASS}" value="{VALUE}" />
-
-                            </label>
 
 
+        <select name='{name}'>
+
+            {options_html}
+
+        </select>
 
                             <span class="description" style="padding-left:10px;">
 {HINT}</span>
@@ -30,3 +30,6 @@
 
         </tbody>
     </table>
+
+
+

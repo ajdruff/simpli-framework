@@ -92,7 +92,6 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
 
         // Add global admin scripts
         add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
-
     }
 
     /**
@@ -108,7 +107,6 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
 
         wp_enqueue_style($this->plugin()->getSlug() . '-admin-global', $this->plugin()->getUrl() . '/admin/css/admin.css', array(), $this->plugin()->getVersion());
     }
-
 
     /**
      * Configure Module
@@ -159,7 +157,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
 
         $links[1] = 'Simpli Framework ' . $this->plugin()->getFrameworkVersion() . ' / ' . $this->plugin()->getBaseClassVersion();
 
-        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->plugin()->getSlug() . '_' . $this->plugin()->getModule('Menu10General')->getSlug() . '" title="' . $this->plugin()->getName() . ' Settings">Settings</a>';
+        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->plugin()->getSlug() . '_' . $this->plugin()->getModule('Menu001General')->getSlug() . '" title="' . $this->plugin()->getName() . ' Settings">Settings</a>';
         $links[] = '<a href="http://wordpress.org/extend/plugins/' . $this->plugin()->getSlug() . '/faq/" title="Frequently Asked Questions">FAQ</a>';
         $links[] = '<a href="http://wordpress.org/tags/' . $this->plugin()->getSlug() . '#postform" title="Support">Support</a>';
         $links[] = '<a href="your paypal url here" title="Support this plugin\'s development with a donation!">Donate</a>';
@@ -181,8 +179,9 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
         $this->debug()->t();
 
 
-        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->plugin()->getSlug() . '_' . $this->plugin()->getModule('Menu10General')->getSlug() . '">Settings</a>';
+        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->plugin()->getSlug() . '_' . $this->plugin()->getModule('Menu001General')->getSlug() . '">Settings</a>';
         return $links;
     }
 
 }
+

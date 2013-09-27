@@ -105,7 +105,7 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
          * add scripts
          *  */
 //something
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_hookEnqueueScripts', array($this, 'hookEnqueueScripts'));
 
         //__START_EXAMPLE_CODE__
         /*
@@ -130,12 +130,12 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 
     /**
      * Adds javascript and stylesheets
-     * WordPress Hook - enqueue_scripts
+     * WordPress Hook - hookEnqueueScripts
      *
      * @param none
      * @return void
      */
-    public function enqueue_scripts() {
+    public function hookEnqueueScripts() {
         $this->debug()->t();
         // Example
 //       wp_enqueue_style($this->plugin()->getSlug() . '-admin-page', $this->plugin()->getUrl() . '/admin/css/settings.css', array(), $this->plugin()->getVersion());
@@ -171,27 +171,35 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
         $this->debug()->t();
         //   global $post;
 
-        $post = $this->plugin()->getModule('PostUserOptions');
-        $plugin = $this->plugin();
-        $post_user_options = $post->getUserOptions();
-        $plugin_user_options = $plugin->getUserOptions();
+        $post_user_options_module = $this->plugin()->getModule('PostUserOptions');
 
-        $this->debug()->logVar('$plugin_user_options = ', $plugin_user_options);
-        $this->debug()->logVar('$post_user_options = ', $post_user_options);
+
+        $this->debug()->logVar('$post_user_options = ', $post_user_options_module->getUserOptions());
+        $this->debug()->logVar('$this->plugin()->getUserOptions() = ', $this->plugin()->getUserOptions());
         /*
          * If the global setting is configured for disabled, then dont
          * add the hello text
          */
 
+        $post_object = $this->plugin()->tools()->getPost();
 
-        if ($plugin->getUserOption('hello_global_default_enabled') !== 'enabled') {
+        /*
+         * dont show the Meta Box for the Snippet
+         * post type,since that would cause recursion when
+         * viewing the snippet post type.
+         */
+        if (is_object($post_object) && $post_object->post_type === 'simpli_hello_snippet') {
+            return($content);
+        }
+
+        if ($this->plugin()->getUserOption('hello_global_default_enabled') !== 'enabled') {
             $this->debug()->logVars(get_defined_vars());
             $this->debug()->log('Did not modify content because global enable option is set to disabled');
             return($content);
         }
 
 
-        if ($post->getUserOption('enabled') !== 'enabled') {
+        if ($post_user_options_module->getUserOption('enabled') !== 'enabled') {
             $this->debug()->log('Did not modify content because post option was not enabled');
             $this->debug()->logVars(get_defined_vars());
             return($content);
@@ -204,14 +212,15 @@ class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
          * or wants to use the text from the global option
          *
          */
-$text='';
-        if ($post->getUserOption('use_global_text') === 'true') {
+        $text = '';
+        $global_text_post_option = $post_user_options_module->getUserOption('use_global_text');
+        if ($global_text_post_option === 'default') {
 
-            $text = $plugin->getUserOption('hello_global_default_text');
-        } elseif ($post->getUserOption('use_global_text') === 'false') {
-            $text = $post->getUserOption('text');
-        }elseif ($post->getUserOption('use_global_text') === 'snippet') {
-            $snippet_object= get_post($post->getUserOption('snippet'));
+            $text = $this->plugin()->getUserOption('hello_global_default_text');
+        } elseif ($global_text_post_option === 'custom') {
+            $text = $post_user_options_module->getUserOption('text');
+        } elseif ($global_text_post_option === 'snippet') {
+            $snippet_object = get_post($post_user_options_module->getUserOption('snippet'));
             $text = $snippet_object->post_content;
         }
 
@@ -221,20 +230,20 @@ $text='';
          *
          *
          */
-          if ($post->getUserOption('placement') === 'default') {
+        if ($post_user_options_module->getUserOption('placement') === 'default') {
 
-            $placement = $plugin->getUserOption('hello_global_default_placement');
+            $placement = $this->plugin()->getUserOption('hello_global_default_placement');
         } else {
-            $placement = $post->getUserOption('placement');
+            $placement = $post_user_options_module->getUserOption('placement');
         }
 
 
 
 
 
-        if (is_single() ) {
+        if (is_single()) {
             $this->debug()->log('Modifying Content of Single Post...');
-        // welcome message
+            // welcome message
 //        $content .= sprintf(
 //            '<img class="post-icon" src="%s/images/post_icon.png" alt="Post icon" title=""/>%s',
 //            get_bloginfo( 'stylesheet_directory' ),
@@ -254,3 +263,4 @@ $text='';
 
 //__END_EXAMPLE_CODE__
 }
+

@@ -101,6 +101,8 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
          * this is required or menus wont load
          */
         parent::config();
+        $this->debug()->log('Adding Activate action for hookFlushRewriteRules');
+        $this->plugin()->addActivateAction(array($this, 'hookFlushRewriteRules'));
     }
 
     protected $_register_post_type_args;
@@ -118,6 +120,20 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
     protected function registerPostType($post_type, $args = null) {
 
         $this->_register_post_type_args = compact('post_type', 'args');
+    }
+
+    /**
+     * Hook - Flush Rewrite Rules
+     *
+     * Flushes the rewrite rules
+     *
+     * @param none
+     * @return void
+     */
+    public function hookFlushRewriteRules() {
+        $this->debug()->t();
+        $this->debug()->log('Flushed Rules');
+        flush_rewrite_rules();
     }
 
     /**
@@ -189,6 +205,7 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
         $this->_register_post_type($post_type, $args);
 
 
+
         //add_post_type_support( $this->plugin()->getSlug() . '_snippet', array('title', 'editor') );
     }
 
@@ -240,7 +257,7 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
             , 'taxonomies' => array() //An array of registered taxonomies like category or post_tag that will be used with this post type.
             , 'has_archive' => false //Enables post type archives. Will use $post_type as archive slug by default.
             //   , 'permalink_epmask' => EP_PERMALINK  //The default rewrite endpoint bitmasks
-            //   , 'rewrite' => true  //Triggers the handling of rewrites for this post type. To prevent rewrites, set to false. Default: true and use $post_type as slug
+            , 'rewrite' => null  //Triggers the handling of rewrites for this post type. To prevent rewrites, set to false. Default: true and use $post_type as slug
             , 'query_var' => true //Sets the query_var key for this post type.Default: true - set to $post_type
             , 'can_export' => true //Can this post_type be exported.
                 ///the remaining arguments are fyi only and should not be used
@@ -268,7 +285,7 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
          * Finally, register it using the WordPress register_post_type function
          */
         register_post_type($post_type, $args);
-
+        $this->debug()->log('Registered Post Type ' . $post_type);
         /*
          * set the post type added to the post type for the module
          */
@@ -278,6 +295,22 @@ class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
          * update the menu tracker
          */
         $this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug' => 'edit.php?post_type=' . $post_type));
+
+        /*
+         * Flush the re-write rules
+         *
+         * A Custom Post type using permalinks must flush the re-write rules
+         * before the the new urls will work, otherwise you'll get a 404 when
+         * you try to browse to the custom post type's post.
+         *
+         * Use a persistent action to flush the re-write rules
+         * Because the persistent action is only added during the Plugin::activatePlugin() method,
+         * the flush will only occur once, during activation, not for every page request.
+         *
+         * Note that trying to use a 'do_action' here will *not* work, because the activation
+         * occurs in a separate page request.
+         */
+        $this->plugin()->doPersistentAction($this->plugin()->getSlug() . '_flush_rewrite_rules');
     }
 
     /**

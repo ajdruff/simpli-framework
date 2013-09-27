@@ -64,71 +64,15 @@ class Simpli_Hello_Module_Menu20Advanced extends Simpli_Basev1c0_Plugin_Menu {
         $this->metabox()->setMetaboxOpenState('menu20_advanced_metabox_maintain', $open = false, $persist = false);
 
         $this->addMenuPage
-        (
-        $page_title = $this->plugin()->getName() . ' - Advanced Settings'
-        ,$menu_titles = 'Advanced Settings'
-        ,$capability = 'manage_options'
-        ,$icon_url = $this->plugin()->getUrl() . '/admin/images/menu.png'
-        , $position = null
+                (
+                $page_title = $this->plugin()->getName() . ' - Advanced Settings'
+                , $menu_titles = 'Advanced Settings'
+                , $capability = 'manage_options'
+                , $icon_url = $this->plugin()->getUrl() . '/admin/images/menu.png'
+                , $position = null
         );
 
         $this->metabox()->addMetaBox(
-                $this->getSlug() . '_' . 'metabox_maintain'  //Meta Box DOM ID
-                , __('Maintenance', $this->plugin()->getTextDomain()) //title of the metabox.
-                , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
-                , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
-                , 'normal' //normal advanced or side The part of the page where the metabox should show
-                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , null //$metabox['args'] in callback function
-        );
-
-    }
-
-    /**
-     * Admin panel menu option
-     * WordPress Hook - admin_menu
-     *
-     * @param none
-     * @return void
-     */
-    public function hookAddMenuPageOLD() {
-        $this->debug()->t();
-
-        /*
-         *
-         * Add the main menu
-         *
-         */
-        /*
-         * Add menu
-         */
-
-        $page_title = $this->plugin()->getName() . ' - Advanced Settings';
-        $menu_title = 'Advanced Settings';
-        $capability = 'manage_options';
-        $icon_url = $this->plugin()->getUrl() . '/admin/images/menu.png';
-
-        $this->addMenuPage($page_title, $menu_title, $capability, $icon_url, null);
-    }
-
-    /**
-     * Hook Add Meta Boxes
-     *
-     * Hook Function to add meta boxes to the current post
-     * @param none
-     * @return void
-     */
-    public function addMetaBoxesOLD() {
-        $this->debug()->t();
-
-
-
-
-////
-////
-//
-//
-        add_meta_box(
                 $this->getSlug() . '_' . 'metabox_maintain'  //Meta Box DOM ID
                 , __('Maintenance', $this->plugin()->getTextDomain()) //title of the metabox.
                 , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html

@@ -27,7 +27,7 @@
  *
  *
  */
-class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface{
+class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface {
 
     /**
      * Plugin directory path
@@ -56,9 +56,6 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface{
 //     * @var Simpli_Basev1c0_Logger_Interface
 //     */
 //    protected $_logger = null;
-
-
-
 
     /**
      * Plugin URL
@@ -119,13 +116,6 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface{
      * @var string
      */
     protected $_activate_actions = null;
-
-    /**
-     * Debug Options
-     *
-     * @var string
-     */
-    protected $_debug_optionsDEPRECATED = null;
 
     /**
      * Utility Object
@@ -225,7 +215,6 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface{
      * @var array
      */
     protected $_slug_parts = null;
-
 
     /**
      * Class Namespace
@@ -363,16 +352,6 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface{
         return $this->_module_directory;
     }
 
-
-
-
-
-
-
-
-
-
-
     /**
      * Get Available Modules ( Read Only )
      *
@@ -469,7 +448,7 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface{
         } else {
 
 
-$this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not found');
+            $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not found');
             $this->debug()->logcError('getAddon Failed, Addon \'' . $addon_name . '\' was not found');
             return (false);
         }
@@ -503,7 +482,6 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
 //        $this->_addons[$addon_name] = $object;
 //return $this;
 //    }
-
 
     /**
      * Get Plugin Url - Read Only
@@ -928,8 +906,6 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
         return $this;
     }
 
-
-
     /**
      * Tools
      *
@@ -942,7 +918,6 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
         if (is_null($this->_tools)) {
 
             $this->_tools = new Simpli_Basev1c0_Plugin_Tools($this);
-
         }
 
 
@@ -968,8 +943,6 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
      * @return void
      */
     public function config() {
-
-
 
     }
 
@@ -1012,11 +985,11 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
 
         $this->config();
 
-                                /*
+        /*
          * Compress Output
          */
         if ($this->COMPRESS) {
-             $this->tools()->startGzipBuffering();
+            $this->tools()->startGzipBuffering();
         }
 
         /**
@@ -1135,7 +1108,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
 
                 //$obj_addon=$this->getAddon($addon_name);
                 $obj_addon->setName($addon_name);
-              ///  $obj_addon->setTTTTTPlugin($this); //set the add on's plugin reference
+                ///  $obj_addon->setTTTTTPlugin($this); //set the add on's plugin reference
                 $this->debug()->log('Loaded Addon ' . $addon_name);
             } catch (Exception $e) {
 
@@ -1198,13 +1171,13 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
              */
 
 
-            //   die('stopping to check disbled addons' . __LINE__ . __FILE__);
+
             if (in_array($addon_name, $this->DISABLED_ADDONS)) {
                 $this->debug()->log('Addon ' . $addon_name . ' not loaded because it is has been disabled.');
                 continue;
             }
             $this->loadAddon($addon_name);
-             $this->debug()->log('Addon ' . $addon_name . ' loaded.');
+            $this->debug()->log('Addon ' . $addon_name . ' loaded.');
         }
     }
 
@@ -1268,7 +1241,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
 //        $relative_path = basename($relative_path, '.php'); //remove the extension
 //        echo '<br/>(' . __LINE__ . ' ' . __METHOD__ . ')<br><strong style="color:blue;"> $relative_path = ' . $relative_path . '</strong>';
 //        $class = str_replace('/', '_', $relative_path); //
-        //     die('<br>' . __LINE__ . 'exiting to check class, $class = ' . $class);
+
 
         /*
          * Create the module object and attach it to $_modules
@@ -1283,7 +1256,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
                 /*
                  * set the plugin reference
                  */
-             //   $this->getModule($module_name)->setTTTTPlugin($this);
+                //   $this->getModule($module_name)->setTTTTPlugin($this);
                 $this->debug()->log('Loaded Plugin Module ' . $this->getSlug() . '/' . $module_name);
                 /*
                  * initialize the module
@@ -1333,8 +1306,8 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
         $this->debug()->t();
         if (!isset($this->_modules[$module_name])) {
             //attempt to load module
-            $loaded_result=$this->loadModule($module_name);
-            if ($loaded_result===false) {
+            $loaded_result = $this->loadModule($module_name);
+            if ($loaded_result === false) {
                 $this->debug()->logError('Could not find Module  \'' . $module_name . '\' in  ' . get_class($this));
             }
 
@@ -1384,6 +1357,9 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
      * @return string
      */
     public function getActivateActions() {
+        if (is_null($this->_activate_actions)) {
+            $this->_activate_actions = array();
+        }
         return $this->_activate_actions;
     }
 
@@ -1394,7 +1370,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
      * In this way , we are able to cycle through the actions
      * Usage:
      * To add an action
-     *  $this->plugin()->addActivateAction(array($this, 'flush_rewrite_rules'));
+     *  $this->plugin()->addActivateAction(array($this, 'my_method'));
      * see the Plugin::install method for an example of how to cycle through all the activate actions.
      *
      *
@@ -1402,6 +1378,9 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
      * @return object $this
      */
     public function addActivateAction($action) {
+
+        $this->debug()->t();
+
         #initialize
         if (is_null($this->_activate_actions)) {
             $this->_activate_actions = array();
@@ -1733,8 +1712,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
         $this->_option_defaults[$option_name] = $option_value;
     }
 
-
-     protected $_config_properties = null;
+    protected $_config_properties = null;
 
     /**
      * Get Configuration (Magic Method)
@@ -1760,9 +1738,6 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
 
         return $config_value;
     }
-
-
-
 
     /**
      * Set Config
@@ -1951,7 +1926,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
                 , false
         );
 
-               /*
+        /*
          * Query Variable that is white listed for use by the plugin
          */
         $this->setConfigDefault(
@@ -1971,7 +1946,7 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
          * Query Variable value indicating the admin screen that provides
          * a custom editor for editing a new post
          */
-         $this->setConfigDefault(
+        $this->setConfigDefault(
                 'QV_EDIT_POST'
                 , 'edit_post'
         );
@@ -1998,9 +1973,139 @@ $this->debug()->log('getAddon Failed, Addon \'' . $addon_name . '\' was not foun
                 'ALLOW_SHORTCODES'
                 , true
         );
+    }
+
+    /**
+     * Add Persistent Action
+     *
+     * Behaves similarly to the WordPress add_action method, but persists through subsequent requests.
+     * One application is during activation where an action must be taken at a certain point in your plugin's
+     * execution (which occurs during a separate http request after activation) but must only be done once , after activation.
+     *
+     * @param $action_name The name of the action
+     * @param mixed $method An array consisting of an object and a method, or a string consisting of just a method.
+     * @return void
+     */
+    public function addPersistentAction($action_name, $method) {
+        $persistent_actions = get_transient($this->getSlug() . '_persistent_actions');
+        $persistent_actions[$action_name]['method'] = $method;
+        $persistent_actions[$action_name]['action_taken'] = false; //tracks whether the action has been taken at least once. if so, it will be unset.
+        set_transient($this->getSlug() . '_persistent_actions', $persistent_actions);
+    }
+
+    /**
+     * Do Persistent Action
+     *
+     * Behaves similarly to the WordPress do_action method, but has access to actions that may have been added
+     * from a previous http request. This is especially important during activation and other actions that occur
+     * outside the normal plugin execution order.
+     *
+     * @param $action_name The name of the action
+     * @return void
+     */
+    public function doPersistentAction($action_name) {
+        $action_name = trim($action_name);
+        $persistent_actions = get_transient($this->getSlug() . '_persistent_actions');
+        $this->debug()->logVar('$persistent_actions = ', $persistent_actions);
+        /*
+         * Ignore doPersistentAction calls when the action hasnt been added.
+         *
+         * This is not an error, so dont raise one. Silently ignoring actions
+         * is a way to allow adding actions.
+         */
+        /*
+          $this->debug()->logVar('isset($persistent_actions[$action_name]) = ', isset($persistent_actions[$action_name]));
+          $this->debug()->logVar('empty($persistent_actions) = ', empty($persistent_actions));
+          $this->debug()->logVar('is_array($persistent_actions) = ', empty($persistent_actions));
+
+          if (!is_array($persistent_actions) || (is_array($persistent_actions) && !empty($persistent_actions) && !isset($persistent_actions[$action_name])) || empty($persistent_actions)) {
+          $this->debug()->log('Exiting doPersistentActions because couldnt find action');
+          return;
+          } else {
+          $this->debug()->log('Found action...');
+          }
+         */
+        if (!isset($persistent_actions[$action_name])) {
+            $this->debug()->log('Exiting doPersistentActions because couldnt find action');
+            return;
+        } else {
+            $this->debug()->log('Found action...');
+        }
 
 
 
+        $action = $persistent_actions[$action_name];
+
+
+        if (is_array($action['method'])) {
+            $object = $action['method'][0];
+            $method = $action['method'][1];
+            $this->debug()->log('Doing Persistent Action : ' . get_class($object) . '::' . $method);
+
+            /*
+             * call the method
+             *
+             * You can do this with call_user_function but you dont
+             * get a good debug_backtrace when you do it that way
+             *
+             */
+            $object->$method();
+        } else {
+
+            $function = $action['method'];
+            $this->debug()->log('Doing Persistent Action : ' . $function);
+            $function(); //call the function
+        }
+
+
+        /*
+         * mark the action as already taken so we can unset it at the end of the request (see __destruct() method)
+         */
+        $persistent_actions[$action_name]['action_taken'] = true;
+        set_transient($this->getSlug() . '_persistent_actions', $persistent_actions);
+    }
+
+    /**
+     * Save Activation Error
+     *
+     * Saves buffer contents to a transient ( a WordPress database entry) which can be retrieved later on shutdown.
+     * This allows you to see errors that occur during activation. It also allows you to see debug output
+     * that occurs during activation
+     *
+     * @param none
+     * @return void
+     */
+    public function save_activation_error() {
+        set_transient($this->getSlug() . '_activation_error', ob_get_contents(), 5);
+    }
+
+    /**
+     * Show Activation Extra Characters
+     *
+     * Shows any output that occurred during activation
+     * @param none
+     * @return void
+     */
+    public function show_activation_extra_characters() {
+
+
+        $activation_error = get_transient($this->getSlug() . '_activation_error');
+
+        if ($activation_error != '') {
+            ?>
+
+
+            <div class="updated">
+                <p><strong>Unexpected Output generated during activation of plugin '<?php echo $this->getName(); ?>':</strong></p>
+            <?php
+            if ($this->DEBUG && $this->debug()->isOn()) {
+                echo '<p style="color:red" ><em>(Debugging is On and may be the reason you are seeing the \'unexpected output\' message.)</em></p>';
+            }
+            ?>
+                <p style="border:gray solid 1px"><?php echo $activation_error; ?></p>
+            </div>
+            <?php
+        }
     }
 
 }

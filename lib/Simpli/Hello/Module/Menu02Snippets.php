@@ -102,7 +102,7 @@ class Simpli_Hello_Module_Menu02Snippets extends Simpli_Basev1c0_Plugin_PostType
         /*
          * Example of Adding Metabox from within a
          * Custom Post Type. This will be added to the editing page.
-         * 
+         *
          *
          */
         if (false)

@@ -982,8 +982,9 @@ class Simpli_Basev1c0_Plugin_Debug extends Simpli_Basev1c0_Plugin_Helper {
          * use a simple trace format to reduce html and speed things up.
          * this just provides a simple label
          */
+        $prop_args = $props['args'];
         if ($template_type === 'text') {
-            $props['args'] = htmlspecialchars(json_encode($props['args']));
+            $props['args'] = htmlspecialchars(@json_encode($prop_args)); // the '@' is to suppress spurious 'recursion' notices for json_encode.
 
 
 
@@ -2584,7 +2585,7 @@ class Simpli_Basev1c0_Plugin_Debug extends Simpli_Basev1c0_Plugin_Helper {
 
 
         return $this->gvGraphString($graph_dot_markup);
-//  die('<br> ' . __METHOD__ . __LINE__ . ' exiting after printing digraph ');
+
 
 
         /*

@@ -117,14 +117,9 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
         if (!class_exists('WP_Http'))
             include_once( ABSPATH . WPINC . '/class-http.php' );
 
-        /*
-         * Set the Default User Options
-         *
-         * Edit the _setUserOptionDefaults() method to change
-         * individual default values. An option must have a default
-         * before being recognized by the save/load methods
-         */
-        $this->_setUserOptionDefaults();
+
+
+
 
 
         /*
@@ -139,16 +134,8 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
          */
         $this->setConfig(
                 'DISABLED_MODULES'
-                // , array('Menu01CustomPostType','Shortcodes', 'ExampleModule')
                 , array(
-            'Shortcodes'
-            , 'ExampleModule'
-                //   , 'Menu02Snippets'
-                //'PostUserOptions'
-                // , 'Menu001General'
-                //   , 'Menu20Advanced'
-                //  , 'Menu30Test'
-                //   ,'Menu01CustomPostType'
+            'ExampleModule'
                 )
         );
 
@@ -189,110 +176,25 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
 
         $this->setConfig(
                 'DEBUG'
-                , true
+                , false
         );
 
         $this->setConfig(
                 'ALLOW_SHORTCODES'
                 , false
         );
-    }
-
-    /**
-     * Install
-     *
-     * @param none
-     * @return void
-     */
-    public function install() {
-        global $wpdb;
-
-        if (is_multisite() && is_network_admin()) {
-            $blogs = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM " . $wpdb->blogs, NULL));
-        } else {
-            $blogs = array($wpdb->blogid);
-        }
-
-        /*
-         * Execute all the Activate Actions
-         * Due to the way that WordPress handles the activation events,its not possible to add a custom hook and use the add_action function
-         * in the normal way to enable modules to hook into this event.
-         * Instead, we implement the actions a different way, through the Plugin class's AddActivateAction method.
-         * So now, we just need to cycle through the actions, calling each method as they are provided. Note its not possible at this time to
-         * include arguments.
-         */
-
-
-        $activate_actions = $this->getActivateActions();
-        foreach ($activate_actions as $action) {
-
-            $object = $action[0];
-            $method = $action[1];
-            // this is equivilent to $object->method();
-            call_user_func(array($object, $method));
-        }
-
-
-
 
         /*
          *
-         * Add any installation routines that you need
-         * Modify as necessary if single or multi-site
+         * Start Default User Options
+         *
+         * A user option must have a default
+         * or it wont be recognized.
+         * After adding a new default, you must run 'update all settings' from the
+         * maintenance panel for it to be recognized in the save and load routines.
          *
          */
-    }
 
-    /* Save Activation Error
-     *
-     * @param none
-     * @return void
-     */
-
-    public function save_activation_error() {
-        set_transient($this->getSlug() . '_activation_error', ob_get_contents(), 5);
-    }
-
-    /* Show Activation Extra Characters
-     *
-     * Shows any output that occurred during activation
-     * Note: Logs do not work in activation - use echo instead to troubleshoot.
-     * @param none
-     * @return void
-     */
-
-    public function show_activation_extra_characters() {
-
-
-        $activation_error = get_transient($this->getSlug() . '_activation_error');
-
-        if ($activation_error != '') {
-            ?>
-
-
-            <div class="updated">
-                <p><strong>Unexpected Output generated during activation:</strong></p>
-                <p style="border:gray solid 1px"><?php echo $activation_error; ?></p>
-            </div>
-            <?php
-        }
-    }
-
-    /**
-     * Set User Option Defaults
-     *
-     * Sets the default values for the user options that are
-     * configured from within the admin panels
-     *
-     * @param none
-     * @return void
-     */
-    private function _setUserOptionDefaults() {
-        /*
-         *
-         * Start Default Admin Settings
-         *
-         */
 
         /*
          *
@@ -382,11 +284,130 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
         );
 
 
+
+
+
+
+
+
         /*
          *
-         * End Default Admin Settings
+         * End Default Plugin User Options
          *
          */
     }
 
+    /**
+     * Plugin Shutdown
+     *
+     * called by register_shutdown_function. Takes cleanup actions here. use this instead of __destruct because some objects
+     * are not available within __destruct  ( e.g. get_transient will fail)
+     *
+     * @param none
+     * @return void
+     */
+    public function shutdown() {
+
+        /*
+         * Update Persistent Actions
+         *
+         * Remove any persistent actions that have been taken
+         * so they dont keep getting taken for subsequent requests.
+         */
+
+
+        $persistent_actions = get_transient($this->getSlug() . '_persistent_actions');
+
+
+
+
+        foreach ($persistent_actions as $action_name => $action) {
+            if ($action['action_taken'] === true) {
+
+                unset($persistent_actions[$action_name]);
+            }
+        }
+
+
+        set_transient($this->getSlug() . '_persistent_actions', $persistent_actions);
+    }
+
+    /**
+     * Deactivate Plugin
+     *
+     * Add any actions that need to take place during plugin deactivation here.
+     *
+     * @param none
+     * @return void
+     */
+    public function deactivatePlugin() {
+        flush_rewrite_rules();
+    }
+
+    /**
+     * Activate Plugin
+     *
+     * Installs the plugin when user activates it
+     *
+     * @param none
+     * @return void
+     */
+    public function activatePlugin() {
+        $this->debug()->t();
+
+
+        /*
+         * Execute all the Activate Actions
+         * Due to the way that WordPress handles the activation events,its not possible to add a custom hook and use the add_action function
+         * in the normal way to enable modules to hook into this event.
+         * Instead, we implement the actions a different way, through the Plugin class's AddActivateAction method.
+         * So now, we just need to cycle through the actions, calling each method as they are provided. Note its not possible at this time to
+         * include arguments.
+         *
+         *
+         * Instead of the variable methods used here, call_user_func(array($object, $method)) could be used instead.
+         * variable method calls were chosen instead so that we had more informative output for debugging
+         * ( call_user_function would hide the calling class and method).
+         */
+
+
+        $activate_actions = $this->getActivateActions();
+
+        foreach ($activate_actions as $action) {
+
+            $object = $action[0];
+            $method = $action[1];
+            $this->debug()->log('Calling Activate Action : ' . get_class($object) . '::' . $method);
+
+            $object->$method();
+            //
+        }
+
+
+
+
+        /*
+         *
+         * Add any installation routines that you need
+         * Modify as necessary if single or multi-site
+         *
+         */
+
+        /*
+         * Extend a Hook to trigger other activation actions
+         */
+        do_action($this->getSlug() . '_activated');
+
+        /*
+         * Flush rewrite rules
+         *
+         * Add a 'doPersistentAction($this->getSlug() . '_flush_rewrite_rules') after any code that requires
+         * rewrite rules flushing. the flush will occur immediately after the user activates the plugin, and at the point
+         * in the code where the 'doPersistentAction' method is called.
+         */
+
+        $this->addPersistentAction($this->getSlug() . '_flush_rewrite_rules', 'flush_rewrite_rules');
+    }
+
 }
+

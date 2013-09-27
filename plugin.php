@@ -16,7 +16,9 @@
  */
 /*
   Simpli Framework Copyright 2013  Andrew Druffner  (email :andrew@nomstock.com)
- * The Simpli framwork was substantially based on the WordPress plugin wordpress-https developed by Mike Ems Copyright 2012  Mike Ems  (email : mike@mvied.com)
+ * The Simpli framework was originally based on the WordPress plugin wordpress-https developed by Mike Ems Copyright 2012  Mike Ems  (email : mike@mvied.com).
+ * Since 1.2.1, the code has been significantly re-written so as to make it virtually unrecognizable except for the basic module architecture, whose
+ * implementation was included in the re-write.
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,7 +35,8 @@
 
 /*
  * Get Started with the Plugin Framework
- * Please see framework-getting-started.html for information on how to Get Started
+ * Please see http://simpliwp.com/framework for information on how to get
+ * started using the Simpli Framework for creating your next WordPress plugin.
  *
  */
 
@@ -91,19 +94,6 @@ $simpli_hello->init();
 
 
 
-/*
- * Configure Modules - Must Occur After Plugin Initialization
- */
-
-//e.g.:  $simpli_hello->getModule('Admin')->setMenuPosition ('67.141592653597777777');
 
 
-/**
- *
- *  Register activation hook. Must be called outside of a class.
- *
- *
- */
-register_activation_hook(__FILE__, array($simpli_hello, 'install'));
-
-
+//register_activation_hook(__FILE__, array('Simpli_Hello_Plugin', 'activatePlugin'));

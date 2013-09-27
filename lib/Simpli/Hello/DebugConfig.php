@@ -1,9 +1,14 @@
 <?php
 
 /**
- * Debug Module
+ * Debug Helper Class
  *
- * This module provides
+ * This helper class provides the functionality of the debug() method within each of the modules and the plugin.
+ * The only required method is config() , which turns on debugging, sets options, and sets filters.
+ * You may also add your own methods that 'preconfigure' debugging filters such as some of the examples shown.
+ * To disable debugging, go to the Plugin class and set the DEBUG property to false. You could also just rename this module
+ * from DebugConfig to something else. To temporarily turn off debugging, just use $this->turnOff() ; within the config method.
+ *
  *
  * For a more complete description of this module's methods, see the base class's comments.
  * @author Andrew Druffner
@@ -31,115 +36,215 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Plugin_Debug {
          * $this->debug()->turnOff();
          * Off by default
          */
-        $this->debug()->turnOn();
+        $this->debug()->turnOff();
 
-        //    $this->debug()->setMethodFilter('hookEditingScreen', true);
-        //  $this->debugNonces();
-        //   $this->debugJavascriptLoading();
-        // $this->debugSavePost();
+
+        $this->setCommonOptions(); //sets most commonly used options (these are overrides of defaults. you may comment this out to get defaults, or edit setCommonOptions to provide your own set of favorite options)
 
         /*
-         * Why No debugging output?
-         *
-         * Check these thingsL
-         * turnOn
-         * turn on all or some filters
-         * ajax_debugging_only = True if you are not debugging ajax
-         * ajax_debugging = True if you are debugging ajax
-         * logging_enabled=true
-         *
-         *
-         *
+         * Call any custom debug methods. Examples below:
+         *         $this->debugActivation(); //a set of filters and options that provides debugging information for plugin activation
+         * $this->debugNonces();// a set of filters and options that provides debugging information about nonce creation and verification
+         * $this->debugJavascriptLoading(); // a set of filters and options that provides debugging information on javascript loading
+         * $this->debugSavePost(); // a set of filters and options that provides debugging information when saving a post
          */
-//  $this->debug()->turnOff();
-
-        /*
-         * set options . if modules set their own options, they will override these
-         */
-        //     $this->debug()->setMethodFilter('hookCurrentScreen', true);
-        //     $this->debug()->setMethodFilter('hookEnqueueScripts', true);
-
-        $this->setOption('method_filters_enabled', true); //set to false to ignore all filters and print all module debug output
-        //dont forget you can also just use a method   $this->debug()->setMethodFilter('config', false);
-        //addPostEditor
-//        $this->debug()->setMethodFilter('el_sc', false);
-//                $this->debug()->setMethodFilter('_sc', false);
-//        $this->debug()->setMethodFilter('el_sc_options', false);
-        $this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin_Module_Metabox::hookEnqueueScripts', false);
-        $this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin_Module_Metabox::pageCheck', false);
-
-//        $this->debug()->setMethodFilter('hookShortcodeElementWithContent', true);
-//        $this->debug()->setMethodFilter('_getThemeDirectory', false);
-//        $this->debug()->setMethodFilter('createForm', false);
-//        $this->debug()->setMethodFilter('_filterOptions', false);
-//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Addon::loadModule', false);
-//        $this->debug()->setMethodFilter('setTheme', false);
-//$this->debug()->setMethodFilter('_setCachedTemplate', false);
-//
-//
-//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Addon', false);
-//        $this->debug()->setMethodFilter('hookAddMenuPage', false);
-//
-//        $this->debug()->setMethodFilter('Simpli_Basev1c0_Plugin', false);
-//        $this->debug()->setMethodFilter('Simpli_Hello_Module_Admin', false);
-//        $this->debug()->setMethodFilter('Simpli_Hello_Module_Core', false);
-//        $this->debug()->setMethodFilter('Simpli_Hello_Module_Debug', false);
-//
-//
-//        $this->debug()->setMethodFilter('Simpli_Hello_Module_Post', true);
-//        $this->debug()->setMethodFilter('Simpli_Hello_Module_Menu10Settings', false);
-//        $this->debug()->setMethodFilter('Simpli_Hello_Module_Menu20Settings', false);
-//        $this->debug()->setMethodFilter('Simpli_Hello_Module_Menu30Test', false);
-//
-//
-//
-//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Themes_Admin_Module_FilterSettings', false);
-//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Filter', false);
-//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Themes_Admin_Module_FilterAdmin', false);
-//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Form', false);
-//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Elements', false);
-//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Theme', false);
-        //
-//        $this->debug()->setMethodFilter('isScreen', true);
-//        $this->debug()->setMethodFilter('.*CustomPostType*', false);
-//        $this->debug()->setMethodFilter('.*PostUserOptions.*', false);
-//
-//        $this->debug()->setMethodFilter('Simpli_Hello_Module_Menu01CustomPostType', false);
-//        $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Themes_Admin_Module_FilterOptions::_commonFilter', false);
-//        //   $this->debug()->setMethodFilter('____', true);
-//        $this->debug()->setMethodFilter('loadUserOptions', false);
-//
-//        $this->debug()->setMethodFilter('hookAjaxSave', false);
-//        $this->debug()->setMethodFilter('hookPostSave', false);
-//
-//
-//        $this->debug()->setMethodFilter('.*filter.*', false); //form filters
-//        $this->debug()->setMethodFilter('hook.*', false);
-//
-//        $this->debug()->setMethodFilter('getEditPostID', false);
-//        $this->debug()->setMethodFilter('.*UserOption.*', false);
-//        $this->debug()->setMethodFilter('.*Meta.*', false);
-//
-//        $this->setOption('debug_post_only', false); //block all but post , block all but ajax, block all but
-//
-//
-//
-//        $this->debug()->setMethodFilter('hookEnqueueBaseClassScripts', false);
-
-
+        // $this->debugHello();// a set of filters and options that provides debugging information for the core module
 
 
         /*
-         * Filter Sets
+         *
+         * Add additional Filters
+         *
+         *
+          Some Filter Examples
+
+          $this->debug()->setMethodFilter('hookSavePost', true);//by method
+          $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Form', true);//by class
+          $this->debug()->setMethodFilter('Simpli_Hello_Module_Core::config', true);//by class and method
+          $this->debug()->setMethodFilter('hook.*', true); //by regex
+
+         *
+         *
          */
+    }
+
+    /*
+     * Custom Filtering Methods
+     *
+     * Group commonly used filters and options under a
+     * single method call
+     */
+
+    /**
+     * Debug Javascript Loading
+     *
+     * Shows debug messages for the loading of javascript
+     *
+     * @param none
+     * @return void
+     */
+    public function debugJavascriptLoading() {
+
+        $this->debug()->setMethodFilter('hookEnqueue.*', true);
+        $this->debug()->setMethodFilter('hookEdit.*', true);
+
+        $this->setOption('debug_post_only', false); //block all but post , block all but ajax, block all but
+    }
+
+    /**
+     * Debug Nonces
+     *
+     * Shows debug messages for nonce creation and verification
+     *
+     * @param none
+     * @return void
+     */
+    public function debugNonces() {
+
+
+
+        $this->debug()->setMethodFilter('.*_createNonces.*', true);
+        $this->debug()->setMethodFilter('wpVerifyNonce', true);
+
+
+        $this->debug()->setMethodFilter('.*_jax.*', true);
+
+        $this->debug()->setMethodFilter('.*once.*', true); //nonces
+
+        $this->debug()->setMethodFilter('.*ave.*', true); //savePost,etc
         /*
-         * Templates
+         * Only output debugging information if a form has posted
+         * @todo: add this to defaults as false
          */
 
-        //    $this->debug()->setMethodFilter('renderElement', false);
-        //   $this->debug()->setMethodFilter('_setCachedTemplate', false);
-        //    $this->debug()->setMethodFilter('_getCachedTemplate', false);
+        $this->setOption('debug_post_only', false); //block all but post , block all but ajax, block all but
+    }
 
+    /**
+     * Debug Save Post
+     *
+     * Shows debug messages when saving post options
+     *
+     * @param none
+     * @return void
+     */
+    public function debugSavePost() {
+
+
+
+        $this->debug()->setMethodFilter('hookSavePost', true);
+        $this->debug()->setMethodFilter('setUserOption', true);
+
+        $this->debug()->setMethodFilter('_savePost', true);
+        $this->debug()->setMethodFilter('saveUserOptions', true);
+        $this->setOption('debug_post_only', true); //block all but post , block all but ajax, block all but
+    }
+
+    /**
+     * Debug Hello
+     *
+     * Shows debug messages for posts that show the hello world message.
+     *
+     * @param none
+     * @return void
+     */
+    public function debugHello() {
+
+
+
+        $this->debug()->setMethodFilter('addTextToPost', true);
+        $this->debug()->setMethodFilter('Core', true);
+        $this->debug()->setOption('trace_enabled', true);
+        $this->debug()->setOption('defined_vars_enabled', true);
+        $this->debug()->setOption('backtrace_enabled', true);
+        $this->setOption('expand_on_click', true);
+    }
+
+    /**
+     * Debug Activation
+     *
+     * Shows debug messages from activation
+     *
+     * @param none
+     * @return void
+     */
+    public function debugActivation() {
+        /*
+         * options
+         */
+        $this->setOption('log_all_actions', true);
+
+        $this->setOption('method_filters_enabled', true);
+        $this->setOption('trace_output_format', 'text');
+        $this->setOption('expand_on_click', false);
+        $this->setOption('trace_enabled', true);
+        $this->setOption('output_to_inline', true);
+        $this->setOption('output_to_file', true);
+        $this->setOption('action_inclusion_filter', array_merge(
+                        $this->getOption('action_inclusion_filter'), array(
+            //    'pre_get_posts',
+            //   'parse_query'
+            //  ,'send_headers'
+            //   ,'wp_headers'
+            //   ,'parse_request'
+            //  ,'query_vars'
+            //     'simpli_hello_simpli_hello_menu.*'
+            //     , 'current_screen'
+            $this->plugin()->getSlug() . '_flush_rewrite_rules'
+            , $this->plugin()->getSlug() . '_activated'
+                        //   'wp_ajax.*'
+                        )
+        ));
+
+        /*
+         * filters
+         */
+
+
+        $this->setMethodFilter('flushRewriteRules', true);
+        $this->setMethodFilter('Simpli_Hello_Plugin::shutdown', true);
+
+
+        $this->setMethodFilter('Simpli_Hello_Plugin::__destruct', true);
+        $this->setMethodFilter('doPersistentAction', true);
+        $this->setMethodFilter('addPersistentAction', true);
+        $this->setMethodFilter('toggleActivationStatus', true);
+        $this->setMethodFilter('Simpli_Basev1c0_Plugin_PostType::config', true);
+
+        $this->setMethodFilter('_register_post_type', true);
+
+        $this->setMethodFilter('my_plugin.*', true);
+
+
+        $this->setMethodFilter('hookFlushRewriteRules', true);
+        $this->setMethodFilter('addAction.*', true);
+
+        $this->setMethodFilter('.*flush.*', true);
+
+
+
+
+        $this->setMethodFilter('activatePlugin', true);
+        $this->setMethodFilter('addActivateAction', false);
+    }
+
+    /**
+     * Set Common Options
+     *
+     * Sets common options for debug
+     *
+     * @param none
+     * @return void
+     */
+    public function setCommonOptions() {
+
+        /*
+         * Enable Filters
+         *
+         * set to false to ignore all filters and print all module debug output
+         *
+         */
+        $this->setOption('method_filters_enabled', true);
 
         $this->setOption('log_all_actions', true);
         $this->setOption('logging_enabled', true);
@@ -156,11 +261,6 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Plugin_Debug {
         $this->setOption('trace_output_format', 'normal');  //options are 'normal'(default), 'text' and 'simple'
 
 
-        /*
-         * Future Option: Show a summary of blocking filters
-         * @todo: implement this !
-         */
-        $this->setOption('show_filter_summary', true);
 
 
         $this->debug()->setOption('show_arrays', false);
@@ -232,136 +332,19 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Plugin_Debug {
         $this->setOption('action_inclusion_filter_enabled', true);
         $this->setOption('action_inclusion_filter', array_merge(
                         $this->getOption('action_inclusion_filter'), array(
-            //    'pre_get_posts',
-            //   'parse_query'
-            //  ,'send_headers'
-            //   ,'wp_headers'
-            //   ,'parse_request'
-            //  ,'query_vars'
-            //     'simpli_hello_simpli_hello_menu.*'
-            //     , 'current_screen'
-            'wp_ajax.*'
+                        //    'pre_get_posts',
+                        //   'parse_query'
+                        //  ,'send_headers'
+                        //   ,'wp_headers'
+                        //   ,'parse_request'
+                        //  ,'query_vars'
+                        //     'simpli_hello_simpli_hello_menu.*'
+                        //     , 'current_screen'
+                        // $this->plugin()->getSlug() . '_flush_rewrite_rules'
+                        //   'wp_ajax.*'
                         )
                 )
         );
-        /* inclusion filter set/query variables
-         *                             ,'pre_get_posts',
-          'parse_query'
-          ,'send_headers'
-          ,'wp_headers'
-          ,'parse_request'
-          ,'query_vars'
-          ,'query'
-          ,'current_screen'
-         */
-
-        /*
-         * Inclusion Filter Set ( current_screen / metaboxes)
-          ,'add_meta_boxes'
-          ,'current_screen'
-         */
-
-
-        /*
-          /*
-         * Javascript Source Code
-         * Set to True to use the WordPress source versions
-         * instead of the minified versions of the builtin javascript libraries, allowing
-         * you to view the human readable versions of jquery,etc.
-         */
-
-        /* this wont work after 3.4 - must be defined before wp-settings loads */
-        //    if (!defined('SCRIPT_DEBUG')) {
-        //        if ($this->isOn()) {
-        //           define('SCRIPT_DEBUG', true); //true to step through readable source code, false for minification,
-        //       }
-        //  }
-
-
-        /*
-         * Prefixes
-         * Prefix Template Available tags:
-         * {PLUGIN_SLUG}
-         * {TIME}
-         * {LINE}
-         * {CLASS}
-         * {METHOD}
-         * {FILE}
-         */
-        //$this->setOption('browser_prefix_enabled', true);
-        //  $this->setOption('browser_prefix_template', '<em>{METHOD}/{LINE}</em>&nbsp;');
-//        $this->setOption('browser_prefix_template', true);
-//        $this->setOption('console_prefix_enabled', true);
-//        $this->setOption('file_prefix_enabled', true);
-//        $this->setOption('browser_prefix_template', '<em>{METHOD}/{LINE}</em>&nbsp;');
-//        $this->setOption('console_prefix_template', '{TIME} | {LINE} | {PLUGIN_SLUG} | {CLASS}->{METHOD}() |  : ');
-//        $this->setOption('file_prefix_template', '{TIME} {METHOD}/{LINE}');
-//        $this->setOption('prefix_time_format', 'Y-m-d H:i:s');
-    }
-
-    /**
-     * Short Description
-     *
-     * Long Description
-     *
-     * @param none
-     * @return void
-     */
-    public function debugJavascriptLoading() {
-
-        $this->debug()->setMethodFilter('hookEnqueue.*', true);
-        $this->debug()->setMethodFilter('hookEdit.*', true);
-
-        $this->setOption('debug_post_only', false); //block all but post , block all but ajax, block all but
-    }
-
-    /**
-     * Debug Nonces
-     *
-     * Will Filter for nonce creation
-     *
-     * @param none
-     * @return void
-     */
-    public function debugNonces() {
-
-
-
-        $this->debug()->setMethodFilter('.*_createNonces.*', true);
-        $this->debug()->setMethodFilter('wpVerifyNonce', true);
-
-
-        $this->debug()->setMethodFilter('.*_jax.*', true);
-
-        $this->debug()->setMethodFilter('.*once.*', true); //nonces
-
-        $this->debug()->setMethodFilter('.*ave.*', true); //savePost,etc
-        /*
-         * Only output debugging information if a form has posted
-         * @todo: add this to defaults as false
-         */
-
-        $this->setOption('debug_post_only', false); //block all but post , block all but ajax, block all but
-    }
-
-    /**
-     * Debug Save Post
-     *
-     * Will Filter for nonce creation
-     *
-     * @param none
-     * @return void
-     */
-    public function debugSavePost() {
-
-
-
-        $this->debug()->setMethodFilter('hookSavePost', true);
-        $this->debug()->setMethodFilter('setUserOption', true);
-
-        $this->debug()->setMethodFilter('_savePost', true);
-        $this->debug()->setMethodFilter('saveUserOptions', true);
-        $this->setOption('debug_post_only', true); //block all but post , block all but ajax, block all but
     }
 
 }

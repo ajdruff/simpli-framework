@@ -47,6 +47,8 @@ class Simpli_Basev1c0_Loader {
 
 
 
+
+
         $this->setBaseClassVersion($base_class_version);
 
 
@@ -87,15 +89,29 @@ class Simpli_Basev1c0_Loader {
         $plugin = new $plugin_class();
 
 
-
         /*
          * Set the properties of the new plugin object
          */
 
         $plugin->setSlug($this->getPluginSlug());
 
+        /**
+         *
+         *  Register activation hook.
+         *
+         *
+         */
+        register_shutdown_function(array($plugin, 'shutdown'));
+
+        register_activation_hook($plugin_file_path, array($plugin, 'activatePlugin'));
+
+        register_deactivation_hook($plugin_file_path, array($plugin, 'deactivatePlugin'));
 
 
+
+
+        //  register_activation_hook($plugin_file_path, array($plugin, 'activatePlugin'));
+        //  register_activation_hook($plugin_file_path, 'simpli_hello_activate');
 //  $plugin->setVersion($plugin_file_data['Version']);  // Version is the version of your plugin and should match value of 'Version' in WordPress Information header
 //    $plugin->setBaseClassVersion($this->getBaseClassVersion());
         $plugin->setFilePath($plugin_file_path);
@@ -306,7 +322,7 @@ class Simpli_Basev1c0_Loader {
 // public function autoloader_old($class) { //e.g. class= 'Simpli_Hello_Plugin'
 //
 //
-        //  echo '<br>' . debug_print_backtrace();
+//  echo '<br>' . debug_print_backtrace();
 //        require('C:\wamp\www\wpdev.com\public_html\wp-content\plugins\simpli-framework/lib/Simpli\Hello/Plugin.php');
 //        require('C:\wamp\www\wpdev.com\public_html\wp-content\plugins\simpli-framework/lib/Simpli\Basev1c0/Plugin.php');
 //        require('C:\wamp\www\wpdev.com\public_html\wp-content\plugins\simpli-framework/lib/Simpli\Basev1c0/Logger.php');
@@ -339,7 +355,6 @@ class Simpli_Basev1c0_Loader {
 // echo '<br> class:' . $class;
 //    $matches = explode('_', $class); // alternative :  $pattern='/[A-Za-z0-9]+/';preg_match_all($pattern, $class, $matches);
 //echo '<pre>';
-
 //echo '</pre>';
 //
 //if (isset($matches[0]) && ($matches[0]!='Simpli')) {echo '<br>$class foujnd to be not simpli';return;}
@@ -356,12 +371,10 @@ class Simpli_Basev1c0_Loader {
 //echo '<br/>' . __LINE__ . ' ' . __METHOD__ . ' $plugin_class_match =  ' . $plugin_class_match;
 //   $base_class_match = strpos($class, $this->getClassNamespace()) !== false;
 //echo '<pre>';
-
 //echo '</pre>';
 //echo '<br/>' . __LINE__ . ' ' . __METHOD__ . ' $base_class_match =  ' . $base_class_match;
 // if (in_array($matches[0] . '_' . $matches[1], $namespaces)) {  // match[0]='Simpli' match[1]='Hello' match[2]='Plugin'
 //   if ($plugin_class_match || $base_class_match) {
-
 //switch ($class) {
 //        require('C:\wamp\www\wpdev.com\public_html\wp-content\plugins\simpli-framework/lib/Simpli\Hello/Plugin.php');
 //        require('C:\wamp\www\wpdev.com\public_html\wp-content\plugins\simpli-framework/lib/Simpli\Basev1c0/Plugin.php');
@@ -436,3 +449,5 @@ class Simpli_Basev1c0_Loader {
 //
 //}
 //}
+
+

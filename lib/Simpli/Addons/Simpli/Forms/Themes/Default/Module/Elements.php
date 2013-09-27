@@ -10,9 +10,7 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Addons_Simpli_Forms_Themes_Saratoga_Module_Elements extends Simpli_Addons_Simpli_Forms_Module_Elements {
-
-
+class Simpli_Addons_Simpli_Forms_Themes_Default_Module_Elements extends Simpli_Addons_Simpli_Forms_Module_Elements {
 
 }
 

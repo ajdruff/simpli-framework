@@ -1,6 +1,7 @@
-<label>
-    {LABEL}
+<div><label>
+        <strong>{LABEL}</strong>
 
-</label>
+    </label>
 
-<input name="{NAME}" type="text" id="{ID}" class="{CLASS}" value="{VALUE}" />
+    <input name="{NAME}" type="text" id="{ID}" class="{CLASS}" value="{VALUE}" />
+</div>

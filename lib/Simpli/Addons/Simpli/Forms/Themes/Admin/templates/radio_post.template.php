@@ -1,14 +1,14 @@
 <label>
-{LABEL}
+    <strong>{LABEL}</strong>
 </label>
 
+<div style="padding-right:0px 20px 0px 0px;">
+    {options_html}
+</div>
 
- {options_html}
 
-
-
-                            <p class="description" style="padding-left:10px;">
-{HINT}</p>
+<p class="description" style="padding-left:10px;">
+    {HINT}</p>
 
 
 

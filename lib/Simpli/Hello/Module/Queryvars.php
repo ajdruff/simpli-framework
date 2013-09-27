@@ -92,12 +92,12 @@ class Simpli_Hello_Module_QueryVars extends Simpli_Basev1c0_Plugin_Module {
          * add_action($this->_query_var . '_action' . '<ActionValuePassedInQuery>', array($this, '<Method>'));
 
 
-        add_action($this->_query_var_prefix . '_action' . '_sayHello', array($this, 'sayHello')); // Example 1: ?simpli_hello_action=sayHello
-        add_action($this->_query_var_prefix . '_action' . '_sayGoodbye', array($this, 'sayGoodbye')); //Example 2: ?simpli_hello_action=sayGoodbye
-        add_action($this->_query_var_prefix . '_action' . '_phpInfo', array($this, 'phpInfo')); // Example 3: ?simpli_hello_action=phpInfo
-        add_action($this->_query_var_prefix . '_action' . '_test', array($this, 'test')); // Example 3: ?simpli_hello_action=phpInfo
+          add_action($this->_query_var_prefix . '_action' . '_sayHello', array($this, 'sayHello')); // Example 1: ?simpli_hello_action=sayHello
+          add_action($this->_query_var_prefix . '_action' . '_sayGoodbye', array($this, 'sayGoodbye')); //Example 2: ?simpli_hello_action=sayGoodbye
+          add_action($this->_query_var_prefix . '_action' . '_phpInfo', array($this, 'phpInfo')); // Example 3: ?simpli_hello_action=phpInfo
+          add_action($this->_query_var_prefix . '_action' . '_test', array($this, 'test')); // Example 3: ?simpli_hello_action=phpInfo
 
-   */
+         */
         /*
          *
          * Add Pretty Url Hook
@@ -113,7 +113,7 @@ class Simpli_Hello_Module_QueryVars extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        $this->plugin()->addActivateAction(array($this, 'flushRewriteRules'));
+        //$this->plugin()->addActivateAction(array($this, 'flushRewriteRules'));
     }
 
     /**
@@ -152,8 +152,8 @@ class Simpli_Hello_Module_QueryVars extends Simpli_Basev1c0_Plugin_Module {
          */
 
         $this->_pages = array(
-            '1' => 'template1.php'   //e.g.: call this template by going to http://example.com?simpli_hello_page=1
-            , '2' => 'template2.php' //e.g.: call this template by going to http://example.com?simpli_hello_page=2
+            '1' => 'query_vars_template_example1.php'   //e.g.: call this template by going to http://example.com?simpli_hello_page=1
+            , '2' => 'query_vars_template_example2.php' //e.g.: call this template by going to http://example.com?simpli_hello_page=2
         );
 
         /*
@@ -188,8 +188,6 @@ class Simpli_Hello_Module_QueryVars extends Simpli_Basev1c0_Plugin_Module {
         );
     }
 
-
-
     /**
      * Action Example 2 - Method
      *
@@ -202,6 +200,7 @@ class Simpli_Hello_Module_QueryVars extends Simpli_Basev1c0_Plugin_Module {
 
         echo '<br> Hello';
     }
+
     /**
      * Test
      *
@@ -212,11 +211,9 @@ class Simpli_Hello_Module_QueryVars extends Simpli_Basev1c0_Plugin_Module {
      */
     public function test() {
 
-echo $this->plugin()->tools()->url2dir(admin_url());
-
-
-
+        echo $this->plugin()->tools()->url2dir(admin_url());
     }
+
     /**
      * Action Example 2 - Step 2 - Add the function
      *
@@ -255,10 +252,10 @@ echo $this->plugin()->tools()->url2dir(admin_url());
     function registerQueryVar($query_vars) {
         $this->debug()->t();
 
-/*
- * register the Plugin's Query Var
- */
-        array_push($query_vars, $this->_query_var_prefix );
+        /*
+         * register the Plugin's Query Var
+         */
+        array_push($query_vars, $this->_query_var_prefix);
 
         /*
          * Register query variables in the form:
@@ -378,24 +375,5 @@ echo $this->plugin()->tools()->url2dir(admin_url());
         return $newrules + $rules;
     }
 
-    /**
-     * Flush Rewrite Rules
-     *  Filter Hook Function for activation flushing rewrite rules
-     *
-     *
-     * @global type $pagenow
-     * @global type $wp_rewrite
-     */
-    function flushRewriteRules() {
-        $this->debug()->t();
-
-        global $wp_rewrite;
-
-        $wp_rewrite->flush_rules();
-
-        if ($this->debug()->isOn()) {
-            $this->debug()->log('<br> Activated flush rewrite rules');
-        }
-    }
-
 }
+

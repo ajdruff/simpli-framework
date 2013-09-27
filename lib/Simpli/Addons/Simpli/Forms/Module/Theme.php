@@ -69,7 +69,7 @@ class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Mod
         /*
          * set default template
          */
-        $this->setTheme('Saratoga');
+        $this->setTheme('SeattleOLD');
 
 
         //  $addon_modules = $this->addon()->getModules();

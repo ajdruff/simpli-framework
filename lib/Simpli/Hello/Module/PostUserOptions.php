@@ -181,37 +181,38 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
          */
         $this->metabox()->config(array($this, 'pageCheckEditor'));
 
-        /*
-         * add the metaboxes
-         */
-        if (true)
-            $this->metabox()->addMetaBox(
-                    $this->getSlug() . '_' . 'metabox_ajax_options'  //Meta Box DOM ID
-                    , __('Box 1 - Metabox added from within' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
-                    , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
-                    , $screen_id = null// post_type when you embed meta boxes into post edit pages
-                    , 'normal' //normal advanced or side The part of the page where the metabox should show
-                    , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                    , null //$metabox['args'] in callback function
-//,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
-            );
-        if (true)
-            $this->metabox()->addMetaBox(
-                    $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
-                    , __('Box 2 - Metabox added from within ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
-                    , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
-                    , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
-                    , 'normal' //normal advanced or side The part of the page where the metabox should show
-                    , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                    , null //$metabox['args'] in callback function
-            );
+        $post = $this->plugin()->tools()->getPost();
 
+        /*
+         * dont show the Meta Box for the Snippet
+         * post type,since that would cause recursion when
+         * viewing the snippet post type.
+         */
+        if (is_object($post) && $post->post_type !== 'simpli_hello_snippet') {
+
+
+            /*
+             * add the metaboxes
+             */
+            if (true)
+                $this->metabox()->addMetaBox(
+                        $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
+                        , __('Simpli Hello Options', $this->plugin()->getTextDomain()) //title of the metabox.
+                        , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
+                        , $screen_id = null// post_type when you embed meta boxes into post edit pages
+                        , 'normal' //normal advanced or side The part of the page where the metabox should show
+                        , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                        , null //$metabox['args'] in callback function
+//,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
+                );
+        }
 
         /*
          * set the metabox initial open/closes states
+         *
+         * You can force the Meta Box's initial state to close using the following:
+          $this->metabox()->setMetaboxOpenState($this->getSlug() . '_metabox_options', false, false);
          */
-        $this->metabox()->setMetaboxOpenState($this->getSlug() . '_metabox_ajax_options', true, false);
-
 
         /*
          * Set the Post Option defaults
@@ -402,7 +403,7 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         }
 
 
-        $this->debug()->logVar('$post->getUserOption(' . $name . ') = ', $result);
+        $this->debug()->logVar('$post_user_options[' . $name . '] = ', $result);
         return $result;
     }
 
@@ -708,110 +709,6 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
     }
 
     /**
-     * Add Meta Boxes
-     *
-     * Add any calls to add_meta_boxes here. This method will be called from within hookEditingScreen to add metaboxes for the editing screen. The hookEditingScreen does a pageCheckEditor() to ensure that its the correct editor before calling this method.
-     * @param none
-     * @return void
-     */
-    public function addMetaBoxesOLD() {
-        $this->debug()->t();
-
-//        /*
-//         * On top of the normal pageCheck, check to make sure that we arent on a custom post editor page. If we are, then add the metaboxes.
-//         */
-//        if (!$this->pageCheck()) {
-//
-//            $custom_edit_page = ((isset($_GET[$this->plugin()->QUERY_VAR]) && ($_GET[$this->plugin()->QUERY_VAR] === $this->plugin()->QV_EDIT_POST)) ? true : false);
-//            $custom_add_page = ((isset($_GET[$this->plugin()->QUERY_VAR]) && ($_GET[$this->plugin()->QUERY_VAR] === $this->plugin()->QV_ADD_POST)) ? true : false);
-//            /*
-//             * Check if on Custom Editor
-//             * If not on either the custom edit page or the custom add page, return
-//             */
-//            if (!$custom_edit_page && !$custom_add_page) {
-//                return;
-//            }
-//        }
-
-
-
-        $args = array(
-            'public' => true,
-        );
-        $post_types = get_post_types($args);
-        global $post;
-        $this->debug()->logVar('$post = ', $post);
-//    foreach ($post_types as $post_type) {
-
-        /*
-         * Add the options metabox, but only if the post type is not
-         * our custom post type This avoids possible recursion.
-         */
-        add_meta_box(
-                $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
-                , __('Box 1 - Metabox added from within ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
-                , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
-                , $screen_id = null// post_type when you embed meta boxes into post edit pages
-                , 'normal' //normal advanced or side The part of the page where the metabox should show
-                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , null //$metabox['args'] in callback function
-//,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
-        );
-
-        add_meta_box(
-                $this->getSlug() . '_' . 'metabox_test'  //Meta Box DOM ID
-                , __('Box 2 - Metabox added from within ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
-                , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
-                , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
-                , 'normal' //normal advanced or side The part of the page where the metabox should show
-                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , null //$metabox['args'] in callback function
-        );
-
-
-//  if ($post->post_type!=='simpli_hello_snippet') {
-        if (true) {
-
-
-            /*
-             * note if you want to reposition the metaboxes, chang ethe context from 'side' to 'normal' or vice versa
-             * if the change didn't work, then you need to delete the 'meta-box-order_post' meta data in the wp_usermeta table
-             * and try again.
-             * if you just need to change the location temporarily to make more room for troubleshooting messages, you can just select 'Number of columns' to 1 from the screen options on the post editor page.
-             */
-
-
-            add_meta_box(
-                    $this->getSlug() . '_' . 'metabox_options2'  //Meta Box DOM ID
-                    , __('Box 3  - Metabox added from within ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
-                    , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
-                    , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
-                    , 'normal' //normal advanced or side The part of the page where the metabox should show
-                    , 'high' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                    , null //$metabox['args'] in callback function
-//,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
-            );
-
-
-            add_meta_box(
-                    $this->getSlug() . '_' . 'metabox_ajax_options'  //Meta Box DOM ID
-                    , __('Box 4  - Metabox added from within ' . basename(__FILE__), $this->plugin()->getTextDomain()) //title of the metabox.
-                    , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
-                    , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
-                    , 'side' //normal advanced or side The part of the page where the metabox should show
-                    , 'high' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                    , null //$metabox['args'] in callback function
-//,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
-            );
-        }
-
-
-
-
-//  }
-    }
-
-    /**
      * Hook Enqueue Scripts
      *
      * Enqueue javascript and styles
@@ -1032,47 +929,6 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
         );
     }
 
-    /**
-     * Renders a meta box
-     *
-     * @param string $module
-     * @param array $metabox
-     * @return void
-     */
-    public function renderMetaBoxTemplateOLD($module, $metabox) {
-        $this->debug()->t();
-
-
-        /*
-         * If no template path provided, use the metabox id as the template name and /admin/templates/metabox as the path
-         */
-        $template_path = $this->plugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php';
-        if (isset($metabox['args']['path'])) {
-            $template_path = $metabox['args']['path'];
-        }
-        if (!file_exists($template_path)) {
-            _e('Not available at this time.', $this->plugin()->getTextDomain());
-            $this->plugin()->debug()->logcError($this->plugin()->getSlug() . ' : Meta Box ' . $metabox['id'] . ' error - template path does not exist ' . $template_path);
-            return;
-        }
-        include($template_path);
-    }
-
-    /**
-     * Renders a meta box using an Ajax Request
-     *
-     * @param string $module
-     * @param array $metabox
-     * @return void
-     */
-    public function renderMetaBoxAjaxOLD($module, $metabox) {
-        $this->debug()->t();
-
-
-
-        include($this->plugin()->getDirectory() . '/admin/templates/metabox/ajax.php');
-    }
-
     /*
      * Page Check Editor
      *
@@ -1142,50 +998,6 @@ class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module 
     protected function setUserOptionDefault($option_name, $option_value) {
 
         $this->_option_defaults[$option_name] = $option_value;
-    }
-
-    /**
-     * Get Metabox States
-     *
-     * @param none
-     * @return array $this->$_meta_box_open_states;
-     */
-    public function getMetaboxOpenStatesOLD() {
-        return $this->_meta_box_open_states;
-    }
-
-    /**
-     *
-     * @var array Meta Box Initial Open Closed States
-     */
-    protected $_meta_box_open_statesOLD = null;
-
-    /**
-     * Set Meta Box Open State
-     *
-     * Sets the intial open or closed state of a meta box. If persistance is set to 'true' ,
-     * the meta box will retain that state regardless of whether the user changes it.
-     * With this method you can :
-     * initially set the metabox to closed on first visit:
-     * force metabox to always be closed when the page is visited:
-     * force metabox to always be open when the page is visited:
-     *
-     * @param string $id The id of the meta box used in the add_meta_box method. Must be unique to the meta box.
-     * @param boolean $open  True for open, False for closed
-     * @param boolean $persist True will cause the meta box to keep the state indicated by the $open paramater value
-     * at next visit to the page, even if the user changed it (i.e.: it ignores saved changes)
-     * @return void
-     */
-    public function setMetaboxOpenStateOLD($id, $open = true, $persist = false) {
-
-        /*
-         * Apply defaults to array if not all the settings were provided
-         * This also ensures that if an element wasnt provided, it wont
-         * break while the array is accessed
-         */
-
-
-        $this->_meta_box_open_states[$id] = array('open' => $open, 'persist' => $persist);
     }
 
     protected $_meta_box_object = null;

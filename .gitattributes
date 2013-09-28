@@ -27,5 +27,5 @@
 .gitattributes export-ignore
 bump-simpli.sh export-ignore
 README.md export-ignore
-mbproject export-ignore
+nbproject export-ignore
 _project_notes export-ignore

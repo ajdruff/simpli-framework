@@ -24,7 +24,7 @@
  * @package SimpliFramework
  * @subpackage SimpliBase
  */
-class Simpli_Basev1c0_Phantom {
+class Simpli_Hello_Basev1c0_Phantom {
 
     public function __call($method, $args) {
         /*

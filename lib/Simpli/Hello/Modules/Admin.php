@@ -10,7 +10,7 @@
  * @subpackage SimpliHello
  *
  */
-class Simpli_Hello_Modules_Admin extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Hello_Modules_Admin extends Simpli_Hello_Basev1c0_Plugin_Module {
 
     private $_menu_position = '';
 

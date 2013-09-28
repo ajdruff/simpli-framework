@@ -27,7 +27,7 @@
  *
  *
  */
-class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface {
+class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Interface {
 
     /**
      * Plugin directory path
@@ -53,7 +53,7 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface {
 //    /**
 //     * Logger
 //     *
-//     * @var Simpli_Basev1c0_Logger_Interface
+//     * @var Simpli_Hello_Basev1c0_Logger_Interface
 //     */
 //    protected $_logger = null;
 
@@ -248,7 +248,7 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface {
 //         *
 //         */
 //
-//        $this->setLogger(Simpli_Basev1c0_Logger::getInstance());
+//        $this->setLogger(Simpli_Hello_Basev1c0_Logger::getInstance());
 //
 
         return $this;
@@ -281,13 +281,13 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface {
          */
 
         if (!$this->DEBUG) {
-            return (new Simpli_Basev1c0_Phantom()); //return a phantom object which will silently ignore each call to the debug class. To optimize further, you should comment out all calls to the $this->debug() object using a regex search and replace  in your final released code.
+            return (new Simpli_Hello_Basev1c0_Phantom()); //return a phantom object which will silently ignore each call to the debug class. To optimize further, you should comment out all calls to the $this->debug() object using a regex search and replace  in your final released code.
         }
         if (is_null($this->_debug)) {
             $class_namespace_parts = $this->getClassNamespaceParts();
             if (!file_exists($this->getDirectory() . '/lib/' . $class_namespace_parts[0] . '/' . $class_namespace_parts[1] . '/DebugConfig.php')) {
                 $this->setConfig('DEBUG', false); //switch Debug to off since phantom will not be accurate.
-                $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
+                $this->_debug = new Simpli_Hello_Basev1c0_Phantom(); //create a phantom
             } else {
                 try {
 
@@ -298,7 +298,7 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface {
                     $this->_debug->addHooks();
                 } catch (Exception $exc) {
                     echo $exc->getMessage();
-                    $this->_debug = new Simpli_Basev1c0_Phantom(); //create a phantom
+                    $this->_debug = new Simpli_Hello_Basev1c0_Phantom(); //create a phantom
                 }
             }
         }
@@ -911,13 +911,13 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface {
      *
      * Provides access to the library of methods in the Base Tools class
      * @param none
-     * @return Simpli_Basev1c0_Plugin_Tools Base Tools
+     * @return Simpli_Hello_Basev1c0_Plugin_Tools Base Tools
      */
     public function tools() {
 
         if (is_null($this->_tools)) {
 
-            $this->_tools = new Simpli_Basev1c0_Plugin_Tools($this);
+            $this->_tools = new Simpli_Hello_Basev1c0_Plugin_Tools($this);
         }
 
 

@@ -9,7 +9,7 @@
  * @package SimpliFramework
  * @subpackage SimpliBase
  */
-class Simpli_Basev1c0_Plugin_Module_Helper implements Simpli_Basev1c0_Plugin_Module_Helper_Interface {
+class Simpli_Hello_Basev1c0_Plugin_Module_Helper implements Simpli_Hello_Basev1c0_Plugin_Module_Helper_Interface {
 
     /**
      * Constructor
@@ -23,7 +23,7 @@ class Simpli_Basev1c0_Plugin_Module_Helper implements Simpli_Basev1c0_Plugin_Mod
     protected $_addon = null;
     protected $_plugin = null;
 
-    function __construct(Simpli_Basev1c0_Plugin_Module $module, Simpli_Basev1c0_Plugin_Addon $addon = null) {
+    function __construct(Simpli_Hello_Basev1c0_Plugin_Module $module, Simpli_Hello_Basev1c0_Plugin_Addon $addon = null) {
 
         if (is_null($addon)) {
             $this->_module = $module;

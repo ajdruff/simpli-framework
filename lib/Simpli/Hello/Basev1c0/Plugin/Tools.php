@@ -8,7 +8,7 @@
  * @package SimpliFramework
  * @subpackage SimpliBase
  */
-class Simpli_Basev1c0_Plugin_Tools extends Simpli_Basev1c0_Plugin_Helper {
+class Simpli_Hello_Basev1c0_Plugin_Tools extends Simpli_Hello_Basev1c0_Plugin_Helper {
 
     /**
      * Sort Dependent List

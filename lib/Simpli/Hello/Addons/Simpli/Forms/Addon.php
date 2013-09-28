@@ -12,7 +12,7 @@
  * @property string $MODULE_NAME_ELEMENTS  Root Name of the Module that holds the Form Element Definitions
  * @property string $MODULE_NAME_FILTERS   Name of the Module that holds the Filter Definitions
  */
-class Simpli_Hello_Addons_Simpli_Forms_Addon extends Simpli_Basev1c0_Plugin_Addon {
+class Simpli_Hello_Addons_Simpli_Forms_Addon extends Simpli_Hello_Basev1c0_Plugin_Addon {
 
     /**
      * Add Hooks

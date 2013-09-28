@@ -12,7 +12,7 @@
  * @subpackage SimpliHello
  * @property boolean $CUSTOM_POST_EDITOR_ENABLED Whether you want to redirect to a custom post editor
  */
-class Simpli_Basev1c0_Plugin_PostType extends Simpli_Basev1c0_Plugin_Menu {
+class Simpli_Hello_Basev1c0_Plugin_PostType extends Simpli_Hello_Basev1c0_Plugin_Menu {
 
     /**
      * Add Hooks

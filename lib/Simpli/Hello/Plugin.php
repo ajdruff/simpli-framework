@@ -7,7 +7,7 @@
  * @package SimpliFramework
  * @subpackage SimpliHello
  */
-class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
+class Simpli_Hello_Plugin extends Simpli_Hello_Basev1c0_Plugin {
 
     /**
      * Add Hooks

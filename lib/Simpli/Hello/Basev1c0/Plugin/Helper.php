@@ -10,7 +10,7 @@
  * @subpackage SimpliBase
  */
 
-class Simpli_Basev1c0_Plugin_Helper implements Simpli_Basev1c0_Plugin_Helper_Interface {
+class Simpli_Hello_Basev1c0_Plugin_Helper implements Simpli_Hello_Basev1c0_Plugin_Helper_Interface {
 
 
 /**
@@ -24,7 +24,7 @@ class Simpli_Basev1c0_Plugin_Helper implements Simpli_Basev1c0_Plugin_Helper_Int
 
     protected $_plugin = null;
 
-    function __construct(Simpli_Basev1c0_Plugin $plugin) {
+    function __construct(Simpli_Hello_Basev1c0_Plugin $plugin) {
 
 
             $this->_plugin = $plugin;

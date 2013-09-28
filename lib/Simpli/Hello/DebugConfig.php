@@ -16,7 +16,7 @@
  * @subpackage SimpliHello
  *
  */
-class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Plugin_Debug {
+class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
 
     /**
      * Configure Module
@@ -216,7 +216,7 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Plugin_Debug {
         $this->setMethodFilter('doPersistentAction', true);
         $this->setMethodFilter('addPersistentAction', true);
         $this->setMethodFilter('toggleActivationStatus', true);
-        $this->setMethodFilter('Simpli_Basev1c0_Plugin_PostType::config', true);
+        $this->setMethodFilter('Simpli_Hello_Basev1c0_Plugin_PostType::config', true);
 
         $this->setMethodFilter('_register_post_type', true);
 

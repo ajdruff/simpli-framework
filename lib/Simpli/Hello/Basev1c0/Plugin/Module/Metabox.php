@@ -24,7 +24,7 @@
  * @package SimpliFramework
  * @subpackage SimpliBase
  */
-class Simpli_Basev1c0_Plugin_Module_Metabox extends Simpli_Basev1c0_Plugin_Module_Helper {
+class Simpli_Hello_Basev1c0_Plugin_Module_Metabox extends Simpli_Hello_Basev1c0_Plugin_Module_Helper {
 
     /**
      *

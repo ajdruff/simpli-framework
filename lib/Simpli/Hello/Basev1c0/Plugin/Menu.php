@@ -34,7 +34,7 @@
  *
  *
  */
-class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Hello_Basev1c0_Plugin_Menu extends Simpli_Hello_Basev1c0_Plugin_Module {
 
     protected $_menu_page_hook_name;
 
@@ -430,7 +430,7 @@ class Simpli_Basev1c0_Plugin_Menu extends Simpli_Basev1c0_Plugin_Module {
     public function metabox() {
 
         if (is_null($this->_meta_box_object)) {
-            $this->_meta_box_object = new Simpli_Basev1c0_Plugin_Module_Metabox($this);
+            $this->_meta_box_object = new Simpli_Hello_Basev1c0_Plugin_Module_Metabox($this);
         }
         return $this->_meta_box_object;
     }

@@ -9,10 +9,10 @@
  * @package SimpliFramework
  * @subpackage SimpliBase
  */
-interface Simpli_Basev1c0_Plugin_Helper_Interface {
+interface Simpli_Hello_Basev1c0_Plugin_Helper_Interface {
 
 
-function __construct(Simpli_Basev1c0_Plugin $plugin);
+function __construct(Simpli_Hello_Basev1c0_Plugin $plugin);
 
     /**
      * Debug
@@ -30,7 +30,7 @@ function __construct(Simpli_Basev1c0_Plugin $plugin);
     /**
      * Get Plugin
      *
-     * @return Simpli_Basev1c0_Plugin
+     * @return Simpli_Hello_Basev1c0_Plugin
      */
     public function plugin() ;
 

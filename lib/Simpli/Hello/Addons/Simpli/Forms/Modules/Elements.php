@@ -10,7 +10,7 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Hello_Addons_Simpli_Forms_Modules_Elements extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Hello_Addons_Simpli_Forms_Modules_Elements extends Simpli_Hello_Basev1c0_Plugin_Module {
 
     protected $_form_module;
 

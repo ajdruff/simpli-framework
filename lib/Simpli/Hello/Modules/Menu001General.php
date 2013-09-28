@@ -9,7 +9,7 @@
  * @subpackage SimpliHello
  *
  */
-class Simpli_Hello_Modules_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
+class Simpli_Hello_Modules_Menu001General extends Simpli_Hello_Basev1c0_Plugin_Menu {
 
     /**
      * Add Hooks
@@ -128,7 +128,13 @@ class Simpli_Hello_Modules_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
                 , null //$metabox['args'] in callback function
         );
 
-
+        /*
+         * Ajax Meta Box Examples
+         *
+         * Examples of Meta Boxes that are rendered by pulling remote content using an ajax request
+         * Do *not* include these in your final plugin without changing the url to a remote site that you control.
+         *
+         */
 
         $this->metabox()->addMetaBox(
                 $this->getSlug() . '_' . 'metabox_updates'  //Meta Box DOM ID
@@ -137,10 +143,9 @@ class Simpli_Hello_Modules_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , array('url' => 'http://www.simpliwp.com/simpli-framework/metabox-updates-example/') //$metabox['args'] in callback function
+                , array('url' => $this->plugin()->getUrl() . '/admin/plugin-updates-example.html') // replace this with a url that points to your plugin's website
         );
-//
-//
+
 
         $this->metabox()->addMetaBox(
                 $this->getSlug() . '_' . 'metabox_support'  //Meta Box DOM ID
@@ -149,7 +154,7 @@ class Simpli_Hello_Modules_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , array('url' => 'http://www.simpliwp.com/simpli-framework/metabox-support-example/') //$metabox['args'] in callback function
+                , array('url' => $this->plugin()->getUrl() . '/admin/plugin-support-example.html') // replace this with a url that points to your plugin's website
         );
 //
         $this->metabox()->addMetaBox(
@@ -159,7 +164,7 @@ class Simpli_Hello_Modules_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , array('url' => 'http://www.simpliwp.com/simpli-framework/metabox-feedback-example/') //$metabox['args'] in callback function
+                , array('url' => $this->plugin()->getUrl() . '/admin/plugin-feedback-example.html') // replace this with a url that points to your plugin's website
         );
 
         $this->metabox()->addMetaBox(
@@ -169,7 +174,7 @@ class Simpli_Hello_Modules_Menu001General extends Simpli_Basev1c0_Plugin_Menu {
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
                 , 'side'//normal advanced or side The part of the page where the metabox should show
                 , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , array('url' => 'http://www.simpliwp.com/simpli-framework/metabox-donate-example/') //$metabox['args'] in callback function
+                , array('url' => $this->plugin()->getUrl() . '/admin/plugin-donate-example.html') // replace this with a url that points to your plugin's website
         );
 
 

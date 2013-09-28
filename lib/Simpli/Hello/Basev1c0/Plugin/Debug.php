@@ -44,8 +44,8 @@
  * @subpackage SimpliHello
  *
  */
-//class Simpli_Basev1c0_Plugin_Debug {//extends Simpli_Basev1c0_Plugin_Helper{
-class Simpli_Basev1c0_Plugin_Debug extends Simpli_Basev1c0_Plugin_Helper {
+//class Simpli_Hello_Basev1c0_Plugin_Debug {//extends Simpli_Hello_Basev1c0_Plugin_Helper{
+class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_Helper {
 //    function __construct($plugin) {
 //        $this->_plugin = $plugin;
 //    }

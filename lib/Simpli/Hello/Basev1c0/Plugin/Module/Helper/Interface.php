@@ -9,9 +9,9 @@
  * @package SimpliFramework
  * @subpackage SimpliBase
  */
-interface Simpli_Basev1c0_Plugin_Module_Helper_Interface {
+interface Simpli_Hello_Basev1c0_Plugin_Module_Helper_Interface {
 
-public function __construct(Simpli_Basev1c0_Plugin_Module $module, Simpli_Basev1c0_Plugin_Addon $addon = null);
+public function __construct(Simpli_Hello_Basev1c0_Plugin_Module $module, Simpli_Hello_Basev1c0_Plugin_Addon $addon = null);
 
     /**
      * Get Addon
@@ -40,7 +40,7 @@ public function __construct(Simpli_Basev1c0_Plugin_Module $module, Simpli_Basev1
     /**
      * Get Plugin
      *
-     * @return Simpli_Basev1c0_Plugin
+     * @return Simpli_Hello_Basev1c0_Plugin
      */
     public function plugin() ;
 

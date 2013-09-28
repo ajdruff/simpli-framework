@@ -10,7 +10,7 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Addons_Simpli_Forms_Themes_Default_Module_FilterAdmin extends Simpli_Addons_Simpli_Forms_Module_Filter {
+class Simpli_Hello_Addons_Simpli_Forms_Themes_Default_Module_FilterAdmin extends Simpli_Hello_Addons_Simpli_Forms_Module_Filter {
 
 }
 

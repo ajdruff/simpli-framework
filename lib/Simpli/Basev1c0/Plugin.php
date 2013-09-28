@@ -440,7 +440,7 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface {
      * @return object
      */
     public function getAddon($addon_name) {
-
+        $this->debug()->t();
 
         if (isset($this->_addons[$addon_name])) {
 
@@ -1048,18 +1048,24 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface {
     }
 
     /**
-     * Short Description
+     * Get Addons Directory
      *
-     * Long Description
+     * Get Addons Directory Path
      *
      * @param none
-     * @return void
+     * @return string
      */
     public function getAddonsDirectory() {
-
+        $this->debug()->t();
         if (is_null($this->_addons_directory)) {
+            //orig:
             $this->_addons_directory = $this->getDirectory() . '/' . $this->DIR_NAME_LIBS . '/' . str_replace('_', '/', $this->ADDON_NAMESPACE);
+            //  $this->_addons_directory = $this->getDirectory() . '/' . $this->DIR_NAME_LIBS . '/' . str_replace('_', '/', $this->getClassNamespace()) . '/' . str_replace('_', '/', $this->ADDON_NAMESPACE);
+            $this->debug()->logVar('$this->_addons_directory = ', $this->_addons_directory);
+            //  $this->_addons_directory = $this->getDirectory() . '/' . $this->DIR_NAME_LIBS . '/' . str_replace('_', '/', $this->getClassNamespace()) . '/' . str_replace('_', '/', $this->ADDON_NAMESPACE);
         }
+
+        $this->debug()->logVar('$this->_addons_directory = ', $this->_addons_directory);
         return $this->_addons_directory;
     }
 
@@ -1128,12 +1134,14 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface {
      * @return void
      */
     public function loadAddons() {
-
+        $this->debug()->t();
         $tools = $this->tools();
         /*
          * get all the add on files in the add on directory
          */
         $addon_files = $tools->getGlobFiles($this->getAddonsDirectory(), 'Addon.php');
+
+        $this->debug()->logVar('$addon_files = ', $addon_files);
         //echo '<br>add on files after return : ';
 //    const ADDON_BASE_FILE_NAME = 'Addon';
 //do a glob search to get add_on_files
@@ -1827,7 +1835,7 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface {
          */
         $this->setConfigDefault(
                 'ADDON_NAMESPACE'
-                , 'Simpli_Addons'
+                , $this->getClassNamespace() . '_Addons'
         );
 
         /*
@@ -1840,15 +1848,7 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface {
                 , 'Addon'
         );
 
-        /*
-         * FILE_NAME_ADDON
-         *
-         * Long Description
-         */
-        $this->setConfigDefault(
-                'FILE_NAME_ADDON'
-                , 'Addon'
-        );
+
 
         /*
          * DIR_NAME_MODULES
@@ -2097,11 +2097,11 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface {
 
             <div class="updated">
                 <p><strong>Unexpected Output generated during activation of plugin '<?php echo $this->getName(); ?>':</strong></p>
-            <?php
-            if ($this->DEBUG && $this->debug()->isOn()) {
-                echo '<p style="color:red" ><em>(Debugging is On and may be the reason you are seeing the \'unexpected output\' message.)</em></p>';
-            }
-            ?>
+                <?php
+                if ($this->DEBUG && $this->debug()->isOn()) {
+                    echo '<p style="color:red" ><em>(Debugging is On and may be the reason you are seeing the \'unexpected output\' message.)</em></p>';
+                }
+                ?>
                 <p style="border:gray solid 1px"><?php echo $activation_error; ?></p>
             </div>
             <?php

@@ -36,11 +36,19 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Plugin_Debug {
          * $this->debug()->turnOff();
          * Off by default
          */
-        $this->debug()->turnOff();
+        $this->debug()->turnOn();
 
 
         $this->setCommonOptions(); //sets most commonly used options (these are overrides of defaults. you may comment this out to get defaults, or edit setCommonOptions to provide your own set of favorite options)
+        //     $this->debug()->setMethodFilter('.*irectory.*', true);
 
+        $this->debug()->setMethodFilter('getAddonsDirectory', true);
+        $this->debug()->setMethodFilter('loadAddons', true);
+
+
+
+        $this->debug()->setMethodFilter('getAddon', true);
+        //     $this->debug()->setMethodFilter('.*ddon.*', true);
         /*
          * Call any custom debug methods. Examples below:
          *         $this->debugActivation(); //a set of filters and options that provides debugging information for plugin activation
@@ -253,7 +261,7 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Plugin_Debug {
         $this->setOption('error_template', '<div ><em style="color:red;"> Error ( Plugin {PLUGIN_SLUG} ) </em> {ERROR_MESSAGE}  <p>Calling method : {CALLING_CLASS}::{CALLING_METHOD}() </p>on Line {CALLING_LINE} in file {CALLING_FILE}</div>');
 
 
-        $this->debug()->setOption('trace_enabled', false);
+        $this->debug()->setOption('trace_enabled', true);
         $this->debug()->setOption('defined_vars_enabled', false);
         $this->debug()->setOption('backtrace_enabled', false);
         $this->debug()->setOption('visual_backtrace_enabled', false);

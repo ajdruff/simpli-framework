@@ -10,7 +10,7 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Hello_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Module {
 
     private $_templates = null;
     private $_template = null;

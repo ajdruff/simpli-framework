@@ -10,7 +10,10 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Hello_Addons_Simpli_Forms_Themes_Default_Module_Elements extends Simpli_Hello_Addons_Simpli_Forms_Module_Elements {
+class Simpli_Hello_Addons_Simpli_Forms_Themes_Admin_Modules_Elements extends Simpli_Hello_Addons_Simpli_Forms_Modules_Elements {
+
+
+
 
 }
 

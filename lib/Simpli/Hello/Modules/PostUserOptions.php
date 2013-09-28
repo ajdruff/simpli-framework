@@ -10,7 +10,7 @@
  * @subpackage SimpliHello
  *
  */
-class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Hello_Modules_PostUserOptions extends Simpli_Basev1c0_Plugin_Module {
 
     /**
      * Post option Defaults

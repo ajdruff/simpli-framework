@@ -1857,7 +1857,7 @@ class Simpli_Basev1c0_Plugin implements Simpli_Basev1c0_Plugin_Interface {
          */
         $this->setConfigDefault(
                 'DIR_NAME_MODULES'
-                , 'Module'
+                , 'Modules'
         );
 
         /*

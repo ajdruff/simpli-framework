@@ -9,7 +9,7 @@
  * @subpackage SimpliHello
  *
  */
-class Simpli_Hello_Module_Menu20Advanced extends Simpli_Basev1c0_Plugin_Menu {
+class Simpli_Hello_Modules_Menu20Advanced extends Simpli_Basev1c0_Plugin_Menu {
 
     /**
      * Add Hooks

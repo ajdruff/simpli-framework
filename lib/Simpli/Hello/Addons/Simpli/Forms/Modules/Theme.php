@@ -10,7 +10,7 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Hello_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Hello_Addons_Simpli_Forms_Modules_Theme extends Simpli_Basev1c0_Plugin_Module {
 
     private $_templates = null;
     private $_template = null;
@@ -18,8 +18,6 @@ class Simpli_Hello_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plug
     private $_theme_name = null;
 
     const DEFAULT_THEME = 'default';
-
-
 
     /**
      * Get Template
@@ -39,8 +37,6 @@ class Simpli_Hello_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plug
         return $result;
     }
 
-
-
     /**
      * Add Hooks
      *
@@ -54,8 +50,6 @@ class Simpli_Hello_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plug
 
         // add_action($this->addon()->_slug . '_init',array($this,'loadTheme'));
     }
-
-
 
     /**
      * Configure Module
@@ -109,16 +103,15 @@ class Simpli_Hello_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plug
 
 
         $template_path = $this->_getThemeDirectory() . '/templates/' . $template_id . '.template.php';
-        $default_template_path=$this->_getDefaultThemeDirectory() . '/templates/' . $template_id . '.template.php';
+        $default_template_path = $this->_getDefaultThemeDirectory() . '/templates/' . $template_id . '.template.php';
 
         if (!file_exists($template_path)) {
-            $template_path=$default_template_path;
+            $template_path = $default_template_path;
         }
         if (!file_exists($template_path)) {
 
-                $this->debug()->log('Checked template path '.$template_path.' No such template for ' . $template_id . ' , setting cache to null  ');
-                $this->_cached_templates[$template_id] = null;
-
+            $this->debug()->log('Checked template path ' . $template_path . ' No such template for ' . $template_id . ' , setting cache to null  ');
+            $this->_cached_templates[$template_id] = null;
         } else {
 
 
@@ -144,7 +137,6 @@ class Simpli_Hello_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plug
         $this->debug()->logVars(get_defined_vars());
         return $result;
     }
-
 
     /**
      * Set Theme Directory
@@ -233,7 +225,7 @@ class Simpli_Hello_Addons_Simpli_Forms_Module_Theme extends Simpli_Basev1c0_Plug
          * load theme modules
          */
 
-        $new_enabled_modules = $this->addon()->loadModules($this->_getThemeDirectory() . '/Module');
+        $new_enabled_modules = $this->addon()->loadModules($this->_getThemeDirectory() . '/' . $this->plugin()->DIR_NAME_MODULES);
 
 //        foreach ($new_enabled_modules as $module_name => $module_path) {
 //

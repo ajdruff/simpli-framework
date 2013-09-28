@@ -41,13 +41,12 @@ class Simpli_Hello_DebugConfig extends Simpli_Basev1c0_Plugin_Debug {
 
         $this->setCommonOptions(); //sets most commonly used options (these are overrides of defaults. you may comment this out to get defaults, or edit setCommonOptions to provide your own set of favorite options)
         //     $this->debug()->setMethodFilter('.*irectory.*', true);
-
-        $this->debug()->setMethodFilter('getAddonsDirectory', true);
-        $this->debug()->setMethodFilter('loadAddons', true);
-
-
-
-        $this->debug()->setMethodFilter('getAddon', true);
+//        $this->debug()->setMethodFilter('getAddonsDirectory', true);
+//        $this->debug()->setMethodFilter('loadAddons', true);
+//
+//
+//
+//        $this->debug()->setMethodFilter('getAddon', true);
         //     $this->debug()->setMethodFilter('.*ddon.*', true);
         /*
          * Call any custom debug methods. Examples below:

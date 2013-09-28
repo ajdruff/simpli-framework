@@ -10,7 +10,7 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Hello_Addons_Simpli_Forms_Themes_Admin_Module_FilterOptions extends Simpli_Hello_Addons_Simpli_Forms_Module_Filter {
+class Simpli_Hello_Addons_Simpli_Forms_Themes_Admin_Modules_FilterOptions extends Simpli_Hello_Addons_Simpli_Forms_Modules_Filter {
 
     /**
      * Common Filter
@@ -20,6 +20,7 @@ class Simpli_Hello_Addons_Simpli_Forms_Themes_Admin_Module_FilterOptions extends
      * @return string The parsed output of the form body tag
      */
     protected function _commonFilter($properties) {
+
         $this->debug()->t();
         $properties = parent::_commonFilter($properties);
         extract($properties);

@@ -8,7 +8,7 @@
  * @package SimpliFramework
  * @subpackage SimpliHello
  */
-class Simpli_Hello_Modules_Menu02Snippets extends Simpli_Basev1c0_Plugin_PostType {
+class Simpli_Hello_Module_Menu02Snippets extends Simpli_Basev1c0_Plugin_PostType {
 
     /**
      * Config

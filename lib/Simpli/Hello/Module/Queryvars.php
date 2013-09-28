@@ -38,7 +38,7 @@
 
 
 
-class Simpli_Hello_Modules_QueryVars extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Hello_Module_QueryVars extends Simpli_Basev1c0_Plugin_Module {
 
     private $_query_var_prefix;
     private $_query_var_suffixes = array();

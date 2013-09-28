@@ -10,7 +10,7 @@
  * @subpackage SimpliHello
  *
  */
-class Simpli_Hello_Modules_Core extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Hello_Module_Core extends Simpli_Basev1c0_Plugin_Module {
 
     /**
      * Configure Module
@@ -26,7 +26,7 @@ class Simpli_Hello_Modules_Core extends Simpli_Basev1c0_Plugin_Module {
      * Demo Debug
      *
      * Provides a few examples of how to use the functions in the debug module.
-     * To see this output, you must call this method somewhere in your code (place it in config())  and configure the debug module to setMethodFilter('_demoDebug') or setMethodFilter('Simpli_Hello_Modules_Core');
+     * To see this output, you must call this method somewhere in your code (place it in config())  and configure the debug module to setMethodFilter('_demoDebug') or setMethodFilter('Simpli_Hello_Module_Core');
      *
      * @param none
      * @return void

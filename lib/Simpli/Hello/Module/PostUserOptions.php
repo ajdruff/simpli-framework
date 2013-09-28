@@ -10,7 +10,7 @@
  * @subpackage SimpliHello
  *
  */
-class Simpli_Hello_Modules_PostUserOptions extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Hello_Module_PostUserOptions extends Simpli_Basev1c0_Plugin_Module {
 
     /**
      * Post option Defaults
@@ -852,7 +852,7 @@ class Simpli_Hello_Modules_PostUserOptions extends Simpli_Basev1c0_Plugin_Module
         /*
          * WordPress update_post_meta function does not give a true indication of
          * success or failure , so as a result, neither do we by default and by designso we choose here to always return a success message.
-         * If you want to override this behavior, you'll need to set the parameter $true_on_success to true in (Simpli_Hello_Modules_PostUserOptions::saveUserOptions)
+         * If you want to override this behavior, you'll need to set the parameter $true_on_success to true in (Simpli_Hello_Module_PostUserOptions::saveUserOptions)
          * If the user questions whether updating is occuring properly, they can turn on debugging.
          */
         $this->saveUserOptions($post_id);

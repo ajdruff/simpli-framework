@@ -15,47 +15,46 @@ class Simpli_Hello_Module_Shortcodes extends Simpli_Basev1c0_Plugin_Module {
 
 
     /**
-     * Initialize Module
+     * Add Hooks
      *
+     * Adds WordPress Hooks, triggered during module initialization
      * @param none
      * @return void
      */
-    public function init() {
+    public function addHooks() {
+        $this->debug()->t();
+
+add_filter('widget_text', 'do_shortcode');
+add_filter('the_content', 'do_shortcode', 11); // From shortcodes.php
 
 
-
-        /*
-         * Module base class requires
-         * setting Name first, then slug
-         */
-        $this->setName();
-        $this->setSlug();
-
-        add_shortcode($this->getPlugin()->getSlug(), array(&$this, 'sayHello'), 10);
+        add_shortcode($this->plugin()->getSlug(), array($this, 'sayHello'), 10);
 
         /**
          *
          *
          *  add scripts
-         * example: add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+         * example: add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
          *
          */
         /**
          *
          * Add custom ajax handlers
          *  Map Ajax Handlers to Ajax Actions passed to php by the ajax request
-         * example: add_action('wp_ajax_' . $this->getPlugin()->getSlug() . '_my_action', array(&$this, 'my_function'));
+         * example: add_action('wp_ajax_' . $this->plugin()->getSlug() . '_my_action', array($this, 'my_function'));
          * see http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
          */
-        /**
-         *
-         *
-         *  Add any other hooks you need to support this module
-         *
-         *
-         */
 
-                  $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName());
+    }
+
+    /**
+     * Configure Module
+     *
+     * @param none
+     * @return void
+     */
+    public function config() {
+        $this->debug()->t();
     }
 
     /**
@@ -66,7 +65,9 @@ class Simpli_Hello_Module_Shortcodes extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function enqueue_scripts() {
-//       wp_enqueue_style($this->getPlugin()->getSlug() . '-admin-page', $this->getPlugin()->getUrl() . '/admin/css/settings.css', array(), $this->getPlugin()->getVersion());
+        $this->debug()->t();
+
+//       wp_enqueue_style($this->plugin()->getSlug() . '-admin-page', $this->plugin()->getUrl() . '/admin/css/settings.css', array(), $this->plugin()->getVersion());
 //        wp_enqueue_script('jquery');
 //        wp_enqueue_script('jquery-form');
 //        wp_enqueue_script('post');
@@ -77,35 +78,17 @@ class Simpli_Hello_Module_Shortcodes extends Simpli_Basev1c0_Plugin_Module {
     }
 
     /**
-     * Gets the module name
-     * @return $_moduleName
-     *
-     *      */
-    public function getModuleName() {
-
-        return $this->_moduleName;
-    }
-
-    /**
-     * Gets the module slug
-     * @return $_moduleSlug
-     *
-     *      */
-    public function getModuleSlug() {
-
-        return $this->_moduleSlug;
-    }
-
-    /**
      *  Say Hello
      *
      *
      *  */
     public function sayHello() {
+        $this->debug()->t();
 
 
 
-        $result='<div>Hello World! , says the ' . $this->getPlugin()->getName() . ' plugin</div>';
+
+        $result = '<div>Hello World! , says the ' . $this->plugin()->getName() . ' plugin</div>';
 
         return $result;
     }

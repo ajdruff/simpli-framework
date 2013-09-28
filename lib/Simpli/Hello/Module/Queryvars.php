@@ -20,6 +20,9 @@
  * 'action' so with the prefix, the url would look like http://example.com?simpli_hello_action=value  : This query variable calls any method in this class by passing the appropriate value defined by your add_action () function. For example, If you passed ?simpli_hello_action=sayHello, you could create a method called sayHello that would echo 'Hello'
  * 'page , so with the prefix, the url would look like http://example.com?simpli_hello_page=value  : In this case, the url would redirect the page to a template that is mapped to the value
  *
+ * Note: query variable redirects work from the root of your site, not from a subdirectory:
+ * Example: http://wpdev.com/?simpli_hello_action=phpInfo
+ * They will also work within admin, but admin uses  a different way of checking for them ( it checks the $_GET paramaters instead of wp_query_vars).
  *
  * How to Use this Module
  *
@@ -28,14 +31,14 @@
  * 3) For every action you want to trigger, add an 'add_action' just like the examples given , and write a function that maps to it.
  * For example, I want to trigger wordpress do return a database query when I pass request ?simpli_hello_action=latest-products
  * So I would , add the action:
- * add_action($this->_query_var_prefix . '_action' . '_latest-products', array(&$this, 'latestProducts'));
+ * add_action($this->_query_var_prefix . '_action' . '_latest-products', array($this, 'latestProducts'));
  * and then write a method called 'latestProducts' to return the database result
  * 4) To access these 'ugly urls' , define a pretty_url_pattern and its target ugly_url_pattern and add these to the $this->$_rewrite_rules array as in the examples.
  */
 
 
 
-class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
+class Simpli_Hello_Module_QueryVars extends Simpli_Basev1c0_Plugin_Module {
 
     private $_query_var_prefix;
     private $_query_var_suffixes = array();
@@ -43,54 +46,39 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
     private $_rewrite_rules = array();
 
     /**
-     * Initialize Module
+     * Add Hooks
      *
+     * Adds WordPress Hooks, triggered during module initialization
      * @param none
      * @return void
      */
-    public function init() {
-
-        /*
-         * Module base class requires
-         * setting Name first, then slug
-         */
-        $this->setName();
-        $this->setSlug();
-
-
-        /*
-         * configure
-         *
-         */
-        $this->configure();
-
-
-
+    public function addHooks() {
+        $this->debug()->t();
 
 
 
 
 
         // Add global admin scripts
-        //  add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
+        //  add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
         /*
          *
          * Register query variables
          *
          */
-        add_filter('query_vars', array(&$this, 'registerQueryVar'));
+        add_filter('query_vars', array($this, 'registerQueryVar'));
 
         /*
          * check query variables for front end requests
          */
 
-        add_filter('template_redirect', array(&$this, 'checkQueryVars'));
+        add_filter('template_redirect', array($this, 'checkQueryVars'));
 
         /*
          * Check query variables for backend requests ( within admin)
          */
-        add_action('admin_init', array(&$this, 'checkQueryVars'));
+        add_action('admin_init', array($this, 'checkQueryVars'));
 
 
         /*
@@ -99,24 +87,24 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
          *
          *
          *
-         * Several Examples Follow, but you'll need to add your own
+         * Several Examples Follow (need to uncomment to use), but you'll need to add your own
          * Format:
-         * add_action($this->_query_var . '_action' . '<ActionValuePassedInQuery>', array(&$this, '<Method>'));
+         * add_action($this->_query_var . '_action' . '<ActionValuePassedInQuery>', array($this, '<Method>'));
+
+
+          add_action($this->_query_var_prefix . '_action' . '_sayHello', array($this, 'sayHello')); // Example 1: ?simpli_hello_action=sayHello
+          add_action($this->_query_var_prefix . '_action' . '_sayGoodbye', array($this, 'sayGoodbye')); //Example 2: ?simpli_hello_action=sayGoodbye
+          add_action($this->_query_var_prefix . '_action' . '_phpInfo', array($this, 'phpInfo')); // Example 3: ?simpli_hello_action=phpInfo
+          add_action($this->_query_var_prefix . '_action' . '_test', array($this, 'test')); // Example 3: ?simpli_hello_action=phpInfo
+
          */
-
-        add_action($this->_query_var_prefix . '_action' . '_sayHello', array(&$this, 'sayHello')); // Example 1: ?simpli_hello_action=sayHello
-        add_action($this->_query_var_prefix . '_action' . '_sayGoodbye', array(&$this, 'sayGoodbye')); //Example 2: ?simpli_hello_action=sayGoodbye
-        add_action($this->_query_var_prefix . '_action' . '_phpinfo', array(&$this, 'phpInfo')); // Example 3: ?simpli_hello_action=phpInfo
-
-
-
         /*
          *
          * Add Pretty Url Hook
          *
          */
 
-        add_filter('rewrite_rules_array', array(&$this, 'rewriteRules'));
+        add_filter('rewrite_rules_array', array($this, 'rewriteRules'));
 
         /*
          * Flush Rewrite Rules Upon plugin activation
@@ -125,29 +113,25 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
 
 
 
-        $this->getPlugin()->addActivateAction(array(&$this, 'flushRewriteRules'));
-        /*
-         * Logging
-         */
-
-        $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName() . ' Slug = ' . $this->getSlug());
+        //$this->plugin()->addActivateAction(array($this, 'flushRewriteRules'));
     }
 
     /**
-     * Short Description
+     * Configure Module
      *
-     * Long Description
-     * @param string $content The shortcode content
-     * @return string The parsed output of the form body tag
+     * @param none
+     * @return void
      */
-    function configure() {
+    function config() {
+        $this->debug()->t();
+
 
         /*
          * Query Variables
          *
          */
 
-        $this->_query_var_prefix = $this->getPlugin()->getSlug();
+        $this->_query_var_prefix = $this->plugin()->QUERY_VAR;
         $this->_query_var_suffixes = array('action', 'page');
 
         /*
@@ -156,7 +140,7 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
          *
          */
 
-        $this->_template_directory = $this->getPlugin()->getDirectory() . '/templates'; // no ending slash
+        $this->_template_directory = $this->plugin()->getDirectory() . '/templates'; // no ending slash
 
 
         /*
@@ -168,8 +152,8 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
          */
 
         $this->_pages = array(
-            '1' => 'template1.php'   //e.g.: call this template by going to http://example.com?simpli_hello_page=1
-            , '2' => 'template2.php' //e.g.: call this template by going to http://example.com?simpli_hello_page=2
+            '1' => 'query_vars_template_example1.php'   //e.g.: call this template by going to http://example.com?simpli_hello_page=1
+            , '2' => 'query_vars_template_example2.php' //e.g.: call this template by going to http://example.com?simpli_hello_page=2
         );
 
         /*
@@ -197,14 +181,10 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
                 'pretty_url_pattern' => 'awesome/?$'
                 , 'ugly_url_pattern' => 'index.php?simpli_hello_page=2'
             )
-     , array(//  http://example.com/phpinfo/
+            , array(//  http://example.com/phpinfo/
                 'pretty_url_pattern' => 'phpinfo/?$'
                 , 'ugly_url_pattern' => 'index.php?simpli_hello_action=phpinfo'
             )
-
-
-
-
         );
     }
 
@@ -216,7 +196,22 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @return string The parsed output of the form body tag
      */
     function sayHello() {
+        $this->debug()->t();
+
         echo '<br> Hello';
+    }
+
+    /**
+     * Test
+     *
+     * Code anything you want here. for testing
+     *
+     * @param none
+     * @return void
+     */
+    public function test() {
+
+        echo $this->plugin()->tools()->url2dir(admin_url());
     }
 
     /**
@@ -227,6 +222,8 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @return string The parsed output of the form body tag
      */
     function sayGoodbye() {
+        $this->debug()->t();
+
         echo '<br> Goodbye';
     }
 
@@ -238,6 +235,8 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @return string The parsed output of the form body tag
      */
     function phpInfo() {
+        $this->debug()->t();
+
         phpinfo();
     }
 
@@ -251,11 +250,18 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @return string $query_vars
      */
     function registerQueryVar($query_vars) {
+        $this->debug()->t();
+
+        /*
+         * register the Plugin's Query Var
+         */
+        array_push($query_vars, $this->_query_var_prefix);
 
         /*
          * Register query variables in the form:
          * Example: simpli_hello_action  , simpli_hello_page
          */
+
 
         foreach ($this->_query_var_suffixes as $suffix) {
             array_push($query_vars, $this->_query_var_prefix . '_' . $suffix);
@@ -277,12 +283,15 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     function checkQueryVars() {
+        $this->debug()->t();
+
 
         global $wp_query;
 
 
-
-
+        $this->debug()->logVar('$_GET = ', $_GET);
+        $this->debug()->logVar('$this->_query_var_suffixes = ', $this->_query_var_suffixes);
+        $this->debug()->logVar('$wp_query->query_vars = ', $wp_query->query_vars);
 
 
         $return = true;
@@ -298,9 +307,11 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
                     $return = false;
                 }
             }
-        } elseIf (!is_admin()) {  //admin requests dont care so just check if one of our variables are on $_GET
+        } else {  //admin requests dont care so just check if one of our variables are on $_GET
             foreach ($this->_query_var_suffixes as $suffix) {
+
                 if (isset($_GET[$this->_query_var_prefix . '_' . $suffix])) {
+
                     $query_var = $this->_query_var_prefix . '_' . $suffix;
                     $query_var_value = $_GET[$this->_query_var_prefix . '_' . $suffix];
                     $return = false;
@@ -333,13 +344,7 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
              * For example, ?simpli-framework-action=reactivate would trigger any functions that were mapped using:
              * add_action('simpli_framework_action_reactivate','my_function);
              * $query_vars['simpli-framework-action']
-             *             echo '<br>' . $query_var; echo '<br>query var value=' . $query_var_value;
-              echo '<pre>';
-              print_r($_GET);
-              echo '</pre>';
-              echo '<pre>';
-              print_r($wp_query->query_vars);
-              echo '</pre>';
+
              */
 
             do_action($query_var . '_' . $query_var_value); // instead of get? what happens in admin ?
@@ -357,6 +362,8 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
      * @return string The parsed output of the form body tag
      */
     function rewriteRules($rules) {
+        $this->debug()->t();
+
         $newrules['action/(.+)/?$'] = 'index.php?simpli_hello_action=' . '$matches[1]';
 
         foreach ($this->_rewrite_rules as $new_rule) {
@@ -368,22 +375,5 @@ class Simpli_Hello_Module_Queryvars extends Simpli_Basev1c0_Plugin_Module {
         return $newrules + $rules;
     }
 
-    /**
-     * Flush Rewrite Rules
-     *  Filter Hook Function for activation flushing rewrite rules
-     *
-     *
-     * @global type $pagenow
-     * @global type $wp_rewrite
-     */
-    function flushRewriteRules() {
-        global $wp_rewrite;
-
-        $wp_rewrite->flush_rules();
-
-        if ($this->getPlugin()->getLogger()->getLoggingState() === true) {
-            echo '<br> Logger: activated flush rewrite rules from ' . __METHOD__;
-        }
-    }
-
 }
+

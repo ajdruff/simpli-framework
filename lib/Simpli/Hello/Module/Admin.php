@@ -21,6 +21,10 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @return string
      */
     public function getMenuPosition() {
+        $this->debug()->t();
+
+
+
 
         /*
          * Provide a default menu position
@@ -31,7 +35,7 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
 
         if ($this->_menu_position === '') {
 
-            $this->_menu_position = '67.141592653597777777' . $this->getPlugin()->getSlug();
+            $this->_menu_position = '67.141592653597777777' . $this->plugin()->getSlug();
         }
 
 
@@ -45,29 +49,31 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @return object $this
      */
     public function setMenuPosition($menu_position) {
+        $this->debug()->t();
+
+
         $this->_menu_position = $menu_position;
         return $this;
     }
 
     /**
-     * Initialize Module
+     * Add Hooks
      *
+     * Adds WordPress Hooks, triggered during module initialization
      * @param none
      * @return void
      */
-    public function init() {
+    public function addHooks() {
+        $this->debug()->t();
+
+
 
         /*
-         * Module base class requires
-         * setting Name first, then slug
+         * exit if not admin
          */
-        $this->setName();
-        $this->setSlug();
-
-
-
-
-        // Load on plugins page
+        if (!is_admin()) {
+            return;
+        }
 
         /*
          * Only load the plugin action and row meta actions if you are on the plugins listing page
@@ -77,17 +83,15 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
         if (isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] == 'plugins.php') {
 
 
-            $plugin = plugin_basename($this->getPlugin()->getFilePath());
+            $plugin = plugin_basename($this->plugin()->getFilePath());
 
-            add_filter('plugin_action_links_' . $plugin, array(&$this, 'plugin_action_links'), 10, 2);
+            add_filter('plugin_action_links_' . $plugin, array($this, 'plugin_action_links'), 10, 2);
 
-            add_filter('plugin_row_meta', array(&$this, 'plugin_links'), 10, 2);
+            add_filter('plugin_row_meta', array($this, 'plugin_links'), 10, 2);
         }
 
         // Add global admin scripts
-        add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
-
-        $this->getPlugin()->getLogger()->log($this->getPlugin()->getSlug() . ': initialized  module ' . $this->getName() . ' Slug = ' . $this->getSlug());
+        add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
     }
 
     /**
@@ -98,7 +102,20 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @return void
      */
     public function admin_enqueue_scripts() {
-        wp_enqueue_style($this->getPlugin()->getSlug() . '-admin-global', $this->getPlugin()->getUrl() . '/admin/css/admin.css', array(), $this->getPlugin()->getVersion());
+        $this->debug()->t();
+
+
+        wp_enqueue_style($this->plugin()->getSlug() . '-admin-global', $this->plugin()->getUrl() . '/admin/css/admin.css', array(), $this->plugin()->getVersion());
+    }
+
+    /**
+     * Configure Module
+     *
+     * @param none
+     * @return void
+     */
+    public function config() {
+        $this->debug()->t();
     }
 
     /**
@@ -108,11 +125,13 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @param array $metabox
      * @return void
      */
-    public function meta_box_render($module,$metabox) {
+    public function meta_box_render($module, $metabox) {
+        $this->debug()->t();
 
 
-            include($this->getPlugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php');
 
+
+        include($this->plugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php');
     }
 
     /**
@@ -124,20 +143,23 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @return array $links
      */
     public function plugin_links($links, $file) {
+        $this->debug()->t();
+
+
 
         /* Stop and return if this isnt our plugin...
          * Do this by checking if $file ( in the form plugin_subdirectory/plugin_file) matches our plugin
          * $file for your plugin can be found by calling the wordpress api plugin_basename() on the __FILE__ of your main plugin file
          */
-        if (strpos($file, plugin_basename($this->getPlugin()->getFilePath())) === false) {
+        if (strpos($file, plugin_basename($this->plugin()->getFilePath())) === false) {
             return $links;
         }
 
-        $links[1] = 'Simpli Framework ' . $this->getPlugin()->getFrameworkVersion() . ' / ' . $this->getPlugin()->getBaseClassVersion();
+        $links[1] = 'Simpli Framework ' . $this->plugin()->getFrameworkVersion() . ' / ' . $this->plugin()->getBaseClassVersion();
 
-        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->getPlugin()->getSlug() . '_' . $this->getPlugin()->getModule('Menu10Settings')->getSlug() . '" title="' . $this->getPlugin()->getName() . ' Settings">Settings</a>';
-        $links[] = '<a href="http://wordpress.org/extend/plugins/' . $this->getPlugin()->getSlug() . '/faq/" title="Frequently Asked Questions">FAQ</a>';
-        $links[] = '<a href="http://wordpress.org/tags/' . $this->getPlugin()->getSlug() . '#postform" title="Support">Support</a>';
+        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->plugin()->getSlug() . '_' . $this->plugin()->getModule('Menu001General')->getSlug() . '" title="' . $this->plugin()->getName() . ' Settings">Settings</a>';
+        $links[] = '<a href="http://wordpress.org/extend/plugins/' . $this->plugin()->getSlug() . '/faq/" title="Frequently Asked Questions">FAQ</a>';
+        $links[] = '<a href="http://wordpress.org/tags/' . $this->plugin()->getSlug() . '#postform" title="Support">Support</a>';
         $links[] = '<a href="your paypal url here" title="Support this plugin\'s development with a donation!">Donate</a>';
         return $links;
     }
@@ -154,8 +176,12 @@ class Simpli_Hello_Module_Admin extends Simpli_Basev1c0_Plugin_Module {
      * @return array $links
      */
     public function plugin_action_links($links) {
-        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->getPlugin()->getSlug() . '_' . $this->getPlugin()->getModule('Menu10Settings')->getSlug() . '">Settings</a>';
+        $this->debug()->t();
+
+
+        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->plugin()->getSlug() . '_' . $this->plugin()->getModule('Menu001General')->getSlug() . '">Settings</a>';
         return $links;
     }
 
 }
+

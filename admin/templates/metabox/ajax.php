@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Gets Html for a metabox using ajax
  *
@@ -7,31 +8,25 @@
  * @package SimpliFramework
  * @subpackage SimpliHello
  */
-
-
 /*
  * Use the setLocalVars method to pass the
  * metabox url to the ajax script, which will retrieve the html
  * for the metabox content
  */
-$metaboxes=array(
-
-    'remote_metaboxes'=>array(
-        $metabox['id']=>$metabox['args']['url']
+$metaboxes = array(
+    'remote_metaboxes' => array(
+        $metabox['id'] => $metabox['args']['url']
     )
-
-
 );
 
-$this->getPlugin()->setLocalVars($metaboxes);
+$this->plugin()->setLocalVars($metaboxes);
 
 
 
 
-$handle=$this->getPlugin()->getSlug() . '_get-remote-metabox-html.js';
-$path=$this->getPlugin()->getDirectory(). '/admin/js/get-remote-metabox-html.js';
-$inline_deps=array();
-$external_deps=array('jquery');
-$this->getPlugin()->enqueueInlineScript($handle,$path,$inline_deps,$external_deps);
-
+$handle = $this->plugin()->getSlug() . '_get-remote-metabox-html.js';
+$path = $this->plugin()->getDirectory() . '/admin/js/get-remote-metabox-html.js';
+$inline_deps = array();
+$external_deps = array('jquery');
+$this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
 ?>

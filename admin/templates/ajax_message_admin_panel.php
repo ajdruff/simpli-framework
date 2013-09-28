@@ -1,0 +1,1 @@
+<div class="updated below-h2 fade" id="message"><p>{MESSAGE}</p></div>{RELOAD_SCRIPT}

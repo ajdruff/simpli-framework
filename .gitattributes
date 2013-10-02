@@ -20,3 +20,12 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+
+# Exclude the following files from git archive (release downloads)
+.gitignore export-ignore
+.gitattributes export-ignore
+bump-simpli.sh export-ignore
+README.md export-ignore
+nbproject export-ignore
+_project_notes export-ignore

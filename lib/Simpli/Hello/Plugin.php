@@ -7,7 +7,7 @@
  * @package SimpliFramework
  * @subpackage SimpliHello
  */
-class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
+class Simpli_Hello_Plugin extends Simpli_Hello_Basev1c0_Plugin {
 
     /**
      * Add Hooks
@@ -136,6 +136,15 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
                 'DISABLED_MODULES'
                 , array(
             'ExampleModule'
+//            , 'PostUserOptions'
+//            , 'Menu10General'
+//            , 'Menu20Snippets'
+//            , 'Menu30Advanced'
+//            , 'Admin'
+//            , 'Core'
+//            , 'Queryvars'
+//            , 'Shortcodes'
+                //   , 'Tools'
                 )
         );
 
@@ -173,16 +182,16 @@ class Simpli_Hello_Plugin extends Simpli_Basev1c0_Plugin {
                 , array()
         );
 
-
-        $this->setConfig(
-                'DEBUG'
-                , false
-        );
-
         $this->setConfig(
                 'ALLOW_SHORTCODES'
-                , false
+                , true
         );
+        $this->setConfig(
+                'DEBUG'
+                , true
+        );
+
+
 
         /*
          *

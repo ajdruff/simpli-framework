@@ -158,20 +158,21 @@ simpli.hello.ajaxSubmit = function(form, event, ajax_action_slug) {
 
         jQuery('#message-body').html(response).fadeOut(0).fadeIn().delay(5000).fadeOut();
         console.log('response = ' + response);
-        jQuery(form).find('.post-message-body').html(response).fadeOut(0).fadeIn().delay(2500).fadeOut();
-//        /*
-//         * Debugging only
-//         */
-//        if (jQuery('#debug-messages').length === 0) {
-//
-//
-//            jQuery(form).after('<div id="debug-messages"></div>');
-//        }
+        //  jQuery(form).find('.post-message-body').html(response).fadeOut(0).fadeIn().delay(2500).fadeOut();
+        /*
+         * Debugging only
+         */
+        if (true) {
+            if (jQuery('#debug-messages').length === 0) {
+
+
+                jQuery(form).after('<div id="debug-messages"></div>');
+            }
 
 
 
-        //   jQuery('#debug-messages').html(response);// dont fade out
-
+            jQuery('#debug-messages').html(response);// dont fade out
+        }
     });
 
     // });

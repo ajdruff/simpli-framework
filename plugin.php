@@ -76,7 +76,7 @@ $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include u
  * Debugging
  *
  * Debugging is handled by the Debug class.
- * To configure, go to Debug.php in your plugin directory (NOT the Base directory), and add
+ * To turn on debugging, go to: lib/Simpli
  * $this->turnOn();
  * to the config() method.
  * To turn it off, you can use turnOff() or simply rename Debug.php to _Debug.php . do not touch the base class which resides in the Simpli/BasevXcY directory.
@@ -91,9 +91,3 @@ $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include u
 $simpli_hello->init();
 
 
-
-
-
-
-
-//register_activation_hook(__FILE__, array('Simpli_Hello_Plugin', 'activatePlugin'));

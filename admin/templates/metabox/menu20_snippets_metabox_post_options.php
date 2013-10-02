@@ -9,29 +9,24 @@
 
 
 
-
-
+    /*
+     * nonce field is required since the hookPostSave method verifies it
+     *
+     */
+    //  wp_nonce_field('save_post', $this->plugin()->getSlug() . '_nonce');
     $f = $this->plugin()->getAddon('Simpli_Forms')->getModule('Form');
 
-    $f->formStart(array(
-        'name' => 'simpli_forms_post_options',
-        'theme' => 'Admin',
-        'ajax' => true,
-        'action' => null, //ignored if using ajax or using the Options filter of the Admin theme, otherwise should be the url to the form submission.
-        'method' => 'post',
-        'template' => 'formStart',
-        'filter' => 'Options' // Filter should be options, which will fill in the value with the value from the WordPress database
-            )
-    );
 
 
+    $f->getTheme()->setTheme('Admin');
+    $f->setFilter(array('Options'));
 
     $prefix = $this->plugin()->getSlug();
     $f->el(array(
         'el' => 'radio',
         'options' => array('enabled' => 'Yes', 'disabled' => 'No'),
         'name' => 'enabled',
-        'label' => 'Enabled for this post:<br>',
+        'label' => 'Enabled for this post:',
         'template' => 'radio_post',
         'template_option' => 'radio_post_option',
         'hint' => '',
@@ -42,7 +37,7 @@
         'el' => 'radio',
         'options' => array('before' => 'Before Content', 'after' => 'After Content', 'default' => 'Default'),
         'name' => 'placement',
-        'label' => 'Placement:',
+        'label' => 'Placement:<br>',
         'template' => 'radio_post',
         'template_option' => 'radio_post_option',
         'hint' => '',
@@ -50,12 +45,17 @@
             )
     );
 
-    $options = array('custom' => 'Custom', 'default' => 'Default', 'snippet' => 'Snippet');
+    if (!in_array('Menu15CustomPostType', $this->plugin()->DISABLED_MODULES)) {
+        $options = array('false' => 'Custom', 'true' => 'Default', 'snippet' => 'Snippet');
+    } else {
+        $options = array('false' => 'Custom', 'true' => 'Default', 'snippet' => 'Snippet');
+    }
+
     $f->el(array(
         'el' => 'radio',
         'options' => $options,
         'name' => 'use_global_text',
-        'label' => 'Text:',
+        'label' => 'Text',
         'template' => 'radio_post',
         'template_option' => 'radio_post_option',
         'hint' => '',
@@ -72,40 +72,35 @@
             )
     );
 
-
-
-
-
     /*
      *
      * Provide a dropdown with the Simpli Hello Snippets
      * if they are available.
      *
      */
+    if (!in_array('Menu15CustomPostType', $this->plugin()->DISABLED_MODULES)) {
 
 
-    $snippets = get_posts(
-            array('post_type' => $this->plugin()->getSlug() . '_snippet')
-    );
-    $options = array();
-    foreach ($snippets as $snippet) {
-        $options[$snippet->ID] = $snippet->post_name;
+        $snippets = get_posts(
+                array('post_type' => $this->plugin()->getSplug() . '_snippet')
+        );
+        $options = array();
+        foreach ($snippets as $snippet) {
+            $options[$snippet->ID] = $snippet->post_name;
+        }
+
+        $f->el(array(
+            'el' => 'dropdown',
+            'options' => $options,
+            'name' => 'snippet',
+            'label' => 'Simpli Hello Snippets:',
+            'hint' => '<a href="#' . admin_url() . '/wp-admin/edit.php?post_type=' . $this->plugin()->getSplug() . '_snippet' . '">View/Edit Snippets</a>',
+            'heading' => '',
+            'template' => 'dropdown_post1',
+            'template_option' => 'dropdown_post_option',
+                )
+        );
     }
-
-    $f->el(array(
-        'el' => 'dropdown',
-        'options' => $options,
-        'name' => 'snippet',
-        'label' => 'Simpli Hello Snippets:',
-        'hint' => '<a href=' . admin_url() . '/edit.php?post_type=' . $this->plugin()->getSlug() . '_snippet' . '>View/Edit Snippets</a>',
-        'heading' => '',
-        'template' => 'dropdown_post',
-        'template_option' => 'dropdown_post_option',
-            )
-    );
-
-    $f->formEnd(array('template' => 'formEndPostAjax'));
-
     /*
      * Example Checkbox
       $f->el(array(

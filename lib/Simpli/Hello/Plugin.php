@@ -136,6 +136,15 @@ class Simpli_Hello_Plugin extends Simpli_Hello_Basev1c0_Plugin {
                 'DISABLED_MODULES'
                 , array(
             'ExampleModule'
+//            , 'PostUserOptions'
+//            , 'Menu10General'
+//            , 'Menu20Snippets'
+//            , 'Menu30Advanced'
+//            , 'Admin'
+//            , 'Core'
+//            , 'Queryvars'
+//            , 'Shortcodes'
+                //   , 'Tools'
                 )
         );
 
@@ -173,16 +182,16 @@ class Simpli_Hello_Plugin extends Simpli_Hello_Basev1c0_Plugin {
                 , array()
         );
 
-
+        $this->setConfig(
+                'ALLOW_SHORTCODES'
+                , true
+        );
         $this->setConfig(
                 'DEBUG'
                 , true
         );
 
-        $this->setConfig(
-                'ALLOW_SHORTCODES'
-                , false
-        );
+
 
         /*
          *

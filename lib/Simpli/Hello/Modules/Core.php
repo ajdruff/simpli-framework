@@ -137,15 +137,14 @@ class Simpli_Hello_Modules_Core extends Simpli_Hello_Basev1c0_Plugin_Module {
      */
     public function hookEnqueueScripts() {
         $this->debug()->t();
-        // Example
-//       wp_enqueue_style($this->plugin()->getSlug() . '-admin-page', $this->plugin()->getUrl() . '/admin/css/settings.css', array(), $this->plugin()->getVersion());
-//        wp_enqueue_script('jquery');
-//        wp_enqueue_script('jquery-form');
-//        wp_enqueue_script('post');
-//
-//        if (function_exists('add_thickbox')) {
-//            add_thickbox();
-//        }
+        /* Example
+          wp_enqueue_style($this->plugin()->getSlug() . '-admin-page', $this->plugin()->getAdminUrl() . '/css/settings.css', array(), $this->plugin()->getVersion());
+          wp_enqueue_script('jquery');
+          wp_enqueue_script('jquery-form');
+          wp_enqueue_script('post');
+         *
+         */
+
         /* Example
           $handle = $this->plugin()->getSlug() . '_core.js';
           $src = $this->plugin()->getUrl() . '/js/' . $this->plugin()->getSlug() . '_core.js';
@@ -162,7 +161,6 @@ class Simpli_Hello_Modules_Core extends Simpli_Hello_Basev1c0_Plugin_Module {
      * Say Hello - Adds Text at the start or end of a post
      * WordPress Hook Filter Function for 'content'
      *
-     * @uses is_single()
      */
     public function addTextToPost($content) {
 
@@ -181,14 +179,14 @@ class Simpli_Hello_Modules_Core extends Simpli_Hello_Basev1c0_Plugin_Module {
          * add the hello text
          */
 
-        $post_object = $this->plugin()->tools()->getPost();
+        $post_object = $this->plugin()->post()->getPost();
 
         /*
          * dont show the Meta Box for the Snippet
          * post type,since that would cause recursion when
          * viewing the snippet post type.
          */
-        if (is_object($post_object) && $post_object->post_type === 'simpli_hello_snippet') {
+        if (is_object($post_object) && $post_object->post_type === $this->plugin()->getSlug() . '_snippet') {
             return($content);
         }
 
@@ -243,12 +241,7 @@ class Simpli_Hello_Modules_Core extends Simpli_Hello_Basev1c0_Plugin_Module {
 
         if (is_single()) {
             $this->debug()->log('Modifying Content of Single Post...');
-            // welcome message
-//        $content .= sprintf(
-//            '<img class="post-icon" src="%s/images/post_icon.png" alt="Post icon" title=""/>%s',
-//            get_bloginfo( 'stylesheet_directory' ),
-//            $content
-//        );
+
             if ($placement == 'before') {
                 $content = $text . $content;
             } else {

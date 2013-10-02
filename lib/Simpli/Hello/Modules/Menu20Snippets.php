@@ -8,7 +8,7 @@
  * @package SimpliFramework
  * @subpackage SimpliHello
  */
-class Simpli_Hello_Modules_Menu02Snippets extends Simpli_Hello_Basev1c0_Plugin_PostType {
+class Simpli_Hello_Modules_Menu20Snippets extends Simpli_Hello_Basev1c0_Plugin_PostType {
 
     /**
      * Config
@@ -82,7 +82,7 @@ class Simpli_Hello_Modules_Menu02Snippets extends Simpli_Hello_Basev1c0_Plugin_P
          * If false, you'll get the regular editor.
          */
 
-        $this->setConfig('CUSTOM_POST_EDITOR_ENABLED', false);
+        $this->setConfig('CUSTOM_POST_EDITOR_ENABLED', true);
 
 
 
@@ -92,7 +92,7 @@ class Simpli_Hello_Modules_Menu02Snippets extends Simpli_Hello_Basev1c0_Plugin_P
 
         $this->addCustomPostEditor(
                 $page_title = $this->plugin()->getName() . ' - Editor'
-                , $menu_title = 'Edit My Custom Post Type'
+                , $menu_title = 'Editor'
                 , $capability = 'edit_published_posts'
         );
 
@@ -105,7 +105,7 @@ class Simpli_Hello_Modules_Menu02Snippets extends Simpli_Hello_Basev1c0_Plugin_P
          *
          *
          */
-        if (false)
+        if (false)//set to true to show the meta box
             $this->metabox()->addMetaBox(
                     $this->getSlug() . '_' . 'metabox_post_ajax_options'  //Meta Box DOM ID
                     , __('Custom Editor Metabox added from within ' . $this->getName(), $this->plugin()->getTextDomain()) //title of the metabox.

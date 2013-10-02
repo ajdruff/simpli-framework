@@ -20,10 +20,11 @@
  * @property string $QV_ACTION_EDIT_POST The query variable's value that indicates the editing of a post by a custom post editor
  * @property string $QV_ACTION_ADD_POST The query variable's value that indicates the adding of a post by a custom post editor
  * @property boolean $COMPRESS Ajax Compression Set to false if server does not support zlib. True is default
- * @property boolean $ALLOW_SHORTCODES Processes includes files ( like templates ) for shortcodes. Default is true. Disabling improves performance.
- *
- *
- *
+ * @property boolean $ALLOW_SHORTCODES Processes includes files ( like templates ) for shortcodes. Default is true.
+ * @property string $MENU_POSITION_DEFAULT Provides the default menu position when a menu page is added.
+ * @property string $REL_PATH_ADMIN Relative path to the admin directory.
+ * @property string $REL_PATH_RESOURCES Relative path to the resources directory that holds images, css,etc.
+
  *
  *
  */
@@ -293,9 +294,8 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
 
                     $debug_class = $this->getClassNamespace() . '_DebugConfig';
                     $this->_debug = new $debug_class($this);
-
-                    $this->_debug->config();
-                    $this->_debug->addHooks();
+                    //   $this->_debug->config();
+                    //   $this->_debug->addHooks();
                 } catch (Exception $exc) {
                     echo $exc->getMessage();
                     $this->_debug = new Simpli_Hello_Basev1c0_Phantom(); //create a phantom
@@ -429,8 +429,12 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
             }
             $this->_available_modules = $available_modules;
         }
-
-        return $this->_available_modules[$filter];
+        if (!isset($this->_available_modules[$filter])) {
+            $result = array(); //if all modules are disable, make sure you send back an empty array, else you'll get an error here
+        } else {
+            $result = $this->_available_modules[$filter];
+        }
+        return $result;
     }
 
     /**
@@ -983,6 +987,7 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
 
 
 
+
         $this->config();
 
         /*
@@ -1043,6 +1048,7 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
         if (isset($this->_slug)) {
             do_action($this->_slug . '_init');
         }
+
 
         $this->debug()->log('Completed Initialization for Plugin ' . $this->getName());
     }
@@ -1282,8 +1288,6 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
 
 
 
-        $this->debug()->logVars(get_defined_vars());
-
         return $module_object;
     }
 
@@ -1378,7 +1382,7 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
      * In this way , we are able to cycle through the actions
      * Usage:
      * To add an action
-     *  $this->plugin()->addActivateAction(array($this, 'my_method'));
+     *  $this->addActivateAction(array($this, 'my_method'));
      * see the Plugin::install method for an example of how to cycle through all the activate actions.
      *
      *
@@ -1457,7 +1461,7 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
     /**
      * Print Inline Header Scripts (Wrapper/Hook Function)
      *
-     * Hook Function for admin_print_scripts or wp_print_scripts and is a wrapper around _printInlineScripts so as to provide the correct $footer paramater.
+     * Hook Function for admin_print_scripts or wp_print_scripts and is a wrapper around _printInlineScripts so as to provide the correct $footer parameter.
      * @param none
      * @return void
      */
@@ -1469,7 +1473,7 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
     /**
      * Print Inline Footer Scripts (Wrapper/Hook Function)
      *
-     * Hook Function for admin_print_footer_scripts or wp_print_footer_scripts and is a wrapper around _printInlineScripts so as to provide the correct $footer paramater.
+     * Hook Function for admin_print_footer_scripts or wp_print_footer_scripts and is a wrapper around _printInlineScripts so as to provide the correct $footer parameter.
      * @param none
      * @return void
      */
@@ -1531,7 +1535,7 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
             $script = $script_queue['scripts'][$handle]; /* get the script queue properties from the script_queue */
             $footer_flag = $script_queue['footer'][$handle];
             /*
-             * Skip printing the script if the footer paramater doesnt match the location of printing
+             * Skip printing the script if the footer parameter doesnt match the location of printing
              */
             if ($footer !== $footer_flag) {
                 continue;
@@ -1973,6 +1977,38 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
                 'ALLOW_SHORTCODES'
                 , true
         );
+
+
+        /*
+         * Default Menu Position
+         *
+         * Provides a unique menu position
+         */
+        $this->setConfigDefault(
+                'MENU_POSITION_DEFAULT'
+                , '67.141592653597777777' . $this->getSlug()
+        );
+
+        /*
+         * Relative Path Resources
+         *
+         * Path to the
+         */
+        $this->setConfigDefault(
+                'DIR_NAME_RESOURCES'
+                , '' //empty string for root directory of the plugin
+        );
+
+        /*
+         * Relative Path Admin
+         *
+         * Path to the
+         * relative paths never start with a slash, but always end with one
+         */
+        $this->setConfigDefault(
+                'DIR_NAME_ADMIN'
+                , 'admin' //root directory of the plugin
+        );
     }
 
     /**
@@ -2106,6 +2142,91 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
             </div>
             <?php
         }
+    }
+
+    /**
+     * Get Admin Url
+     *
+     * Gets the url to the plugin's admin directory
+     * Should never end in a slash to be consistent with WordPress
+     *
+     * @param none
+     * @return string
+     */
+    public function getAdminUrl() {
+        $dir_name = trim($this->DIR_NAME_ADMIN);
+        if ($dir_name !== '') {
+            $dir_name = '/' . $dir_name;
+        }
+        return ($this->getUrl() . $dir_name );
+    }
+
+    /**
+     * Get Resource Url
+     *
+     * Gets the url to the plugin's resource directory
+     * Should never end in a slash to be consistent with WordPress
+     *
+     * @param none
+     * @return string
+     */
+    public function getResourceUrl() {
+        $dir_name = trim($this->DIR_NAME_RESOURCES);
+        if ($dir_name !== '') {
+            $dir_name = '/' . $dir_name;
+        }
+        return ($this->getUrl() . $dir_name );
+    }
+
+    /**
+     * Get Admin Directory
+     *
+     * Gets the absolute directory path to the plugin's admin directory
+     * Should never end in a slash to be consistent with WordPress
+     *
+     * @param none
+     * @return string
+     */
+    public function getAdminDirectory() {
+        $dir_name = trim($this->DIR_NAME_ADMIN);
+        if ($dir_name !== '') {
+            $dir_name = '/' . $dir_name;
+        }
+        return ($this->getDirectory() . $dir_name );
+    }
+
+    /**
+     * Get Resource Directory
+     *
+     * Gets the absolute directory path to the plugin's resource directory
+     * Should never end in a slash to be consistent with WordPress
+     *
+     * @param none
+     * @return string
+     */
+    public function getResourceDirectory() {
+        $dir_name = trim($this->DIR_NAME_RESOURCE);
+        if ($dir_name !== '') {
+            $dir_name = '/' . $dir_name;
+        }
+        return ($this->getDirectory() . $dir_name );
+    }
+
+    protected $_post_helper;
+
+    /**
+     * Post Helper
+     *
+     * Provides access to the library of methods in the Post Helper class
+     * @param none
+     * @return Simpli_Hello_Basev1c0_Plugin_Module_Post
+     */
+    public function post() {
+
+        if (is_null($this->_post_helper)) {
+            $this->_post_helper = new Simpli_Hello_Basev1c0_Plugin_Post($this);
+        }
+        return $this->_post_helper;
     }
 
 }

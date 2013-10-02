@@ -153,7 +153,7 @@ class Simpli_Hello_Basev1c0_Plugin_Tools extends Simpli_Hello_Basev1c0_Plugin_He
     /**
      * Rebuild Url
      *
-     * Returns the current or provided url, adding new or, replacing existing, $_GET url paramaters
+     * Returns the current or provided url, adding new or, replacing existing, $_GET url parameters
      *
      * @param array new values for $_GET . Existing values will remain
      * @return string $url The url
@@ -201,7 +201,7 @@ class Simpli_Hello_Basev1c0_Plugin_Tools extends Simpli_Hello_Basev1c0_Plugin_He
 
 
 
-        $get_args = array_merge($existing_get_vars, $get_args); //merge existing GET paramaters
+        $get_args = array_merge($existing_get_vars, $get_args); //merge existing GET parameters
 
 
 
@@ -759,11 +759,14 @@ class Simpli_Hello_Basev1c0_Plugin_Tools extends Simpli_Hello_Basev1c0_Plugin_He
         $result = false;
 
         /*
-         * Each screen has certain paramaters ( base,id,action) that change depending on the admin page. check them against
+         * Each screen has certain parameters ( base,id,action) that change depending on the admin page. check them against
          * known values and return result. If no post type is provided, then set the post type check to always be true, and remove the post_type check for isEdit and isAdd
          */
 
-
+        if (!function_exists('get_current_screen')) {
+            $this->debug()->logError('Current Screen isnt available, so cant use isScreen(), returning false');
+            return false;
+        }
         $current_screen = get_current_screen();
 
 
@@ -773,7 +776,7 @@ class Simpli_Hello_Basev1c0_Plugin_Tools extends Simpli_Hello_Basev1c0_Plugin_He
         $this->debug()->logVar('$current_screen = ', $current_screen);
 
         /*
-         * if post type paramater is null, just set it to the same as the screen.
+         * if post type parameter is null, just set it to the same as the screen.
          * that way, our checks will still work for all post types
          */
         if (is_null($post_type)) {
@@ -782,14 +785,14 @@ class Simpli_Hello_Basev1c0_Plugin_Tools extends Simpli_Hello_Basev1c0_Plugin_He
             $debug_message_post_types = ' any post type ';
         } else {
             /*
-             * if our post type paramater is not null, we check the current_screen post type to see if it matches
+             * if our post type parameter is not null, we check the current_screen post type to see if it matches
              *
              * If the current_screen is not defined (as in the event of a custom editor) , check to see if there is a post type within the url by using get{pstTypeQueryVar
              */
 
             if (is_null($current_screen->post_type)) {
 
-                $isPostType = $this->getPostTypeQueryVar() === $post_type;
+                $isPostType = $this->plugin()->post()->getPostTypeRequestVar() === $post_type;
             } else {
                 $isPostType = $current_screen->post_type === $post_type;
             }
@@ -907,170 +910,176 @@ class Simpli_Hello_Basev1c0_Plugin_Tools extends Simpli_Hello_Basev1c0_Plugin_He
         return((bool) $combined_result);
     }
 
-    /**
-     * Get Post
-     *
-     * Gets the Post object from a wordpress request. if no object available,
-     * returns null. although you can try to use global $post, there are times
-     * when the post is only available by create the object from the post id, passed
-     * as a $_GET variable.
-     *
-     *
-     * @param none
-     * @return void
-     */
-    public function getPost() {
-        global $post;
-
-
-
-        if (is_object($post)) {
-            $this->debug()->log('Post already in global $post object');
-            return $post;
-        }
-
-        /*
-         * attempt to get post id from the GET variables or, if its an editor, get it via the getEditPostID method
-         */
-        $post_id_query_var = (isset($_GET['post'])) ? $_GET['post'] : $this->plugin()->tools()->getEditPostID();
-
-
-        if (!is_null($post_id_query_var)) {
-            $this->debug()->log('Post taken from query var');
-            return get_post($post_id_query_var);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Get Edit Post ID
-     *
-     * Returns the post id being edited or created. Checks all the most common places the the $post->id is provided
-     * during a post editor form submission
-     *
-     * @param none
-     * @return string The id of the post being edited or created.
-     */
-    public function getEditPostID() {
-
-
-        #init
-        $post_id = null;
-
-
-        /*
-         * Check $_POST['post_ID']
-         * When editing a WordPress Post, the editor submits post_id using
-         * the $_POST form field post_ID
-         *
-         */
-
-        $post_id = (isset($_POST['post_ID'])) ? $_POST['post_ID'] : null;
-
-        if (!is_null($post_id)) {
-            $this->debug()->logVar('Found $_POST[\'post_ID\'], $post_id=', $post_id);
-            return $post_id;
-        }
-
-
-        /*
-         * Check $_GET['post]
-         * The WordPress Post Editing page embeds the post id in the $_GET request during an edit,
-         * and the Custom Post Editor also embeds the post id in the $_GET request during the 'Add New' redirect to the Editor a
-         *
-         */
-        $post_id = $this->getRequestVar('post');
-
-        if (!is_null($post_id)) {
-            $this->debug()->logVar('Found post_id in $_GET, $post_id=', $post_id);
-            return $post_id;
-        }
-        /*
-         * Check $_POST['_wp_http_referer']
-         * Ajax requests have access to the _wp_referer $_POST variable
-         * Which represents the $_GET variables contained in the Editor page
-         * from which the ajax request was made from
-         *
-         * Use the getQueryVarFromUrl method to retrieve the query variable from the _wp_http_referer string
-         */
-
-        $post_id = (isset($_POST['_wp_http_referer'])) ? $this->plugin()->tools()->getQueryVarFromUrl('post', $_POST['_wp_http_referer']) : null;
-        if (!is_null($post_id)) {
-            $this->debug()->logVar('Found post_id in _wp_http_referer, $post_id=', $post_id);
-            return $post_id;
-        }
-        /*
-         * if still null, then its probably a custom edit page, which embeds it in the _ajax_referer_url
-         *
-         * _ajax_referer_url
-         */
-
-        $post_id = (isset($_POST['_ajax_referer_url'])) ? $this->plugin()->tools()->getQueryVarFromUrl('post', $_POST['_ajax_referer_url']) : null;
-        if (!is_null($post_id)) {
-            $this->debug()->logVar('Found post_id in _ajax_referal_url, $post_id=', $post_id);
-            return $post_id;
-        }
-        /*
-         *
-         */
-        $this->debug()->log('Couldnt find post id anywhere, setting it to null');
-        return $post_id;
-
-        /*
-         * You can get rid of the remaining when you've tested everything.
-         */
-
-
-        /*
-         * if the post_id is in the $_GET query string of the editing page,
-         * an ajax request can find it in _wp_http_referer
-         */
-        if (!isset($_POST['_wp_http_referer'])) {
-            $this->debug()->log('Cant save post options with ajax - _wp_http_referer does not exist, so can\'t determine post id.');
-            $success = false;
-        } else {
-
-
-            /*
-             * If saving the option from a new post page, WordPress sends
-             * the new post_id in $_POST['post_ID'])
-             * Check for $_POST['post_ID'])
-             * attempt to get the $post_id from the post paramaters. $post_id is set if its a new post...
-             */
-            $post_id = (isset($_POST['post_ID'])) ? $_POST['post_ID'] : null;
-
-            /*
-             * If that didnt work, then assume its an edit page and get it from the referrer
-             */
-            if (is_null($post_id)) {
-                /*
-                 * split the referer by the question mark so we get the query variables
-                 *
-                 */
-
-
-
-
-                //     $wp_http_referer_query_array = explode('?', $_POST['_wp_http_referer'], 2);
-
-                /*
-                 * if no question mark, then make sure we don't error out with a 'no index' error
-                 */
-                //   $wp_http_referer_query_string = (isset($wp_http_referer_query_array[1])) ? $wp_http_referer_query_array[1] : $wp_http_referer_query_array[0];
-
-                /*
-                 * use our parse_str method to get an array of name value pairs
-                 */
-                //   $wp_http_referer = $this->plugin()->tools()->parse_str($wp_http_referer_query_string);
-                ///   $this->debug()->logVar('$wp_http_referer = ', $wp_http_referer);
-                //   $post_id = $wp_http_referer['post'];
-
-                $post_id = $this->plugin()->tools()->getQueryVarFromUrl('post', $_POST['_wp_http_referer']);
-            }
-        }
-    }
-
+//    /**
+//     * Get Post
+//     *
+//     * Gets the Post object from a wordpress request. if no object available,
+//     * returns null. although you can try to use global $post, there are times
+//     * when the post is only available by create the object from the post id, passed
+//     * as a $_GET variable.
+//     *
+//     *
+//     * @param none
+//     * @return void
+//     */
+//    public function getPost() {
+//        $this->debug()->t();
+//        global $post;
+//
+//
+//
+//        if (is_object($post)) {
+//            $this->debug()->log('Post already in global $post object');
+//            return $post;
+//        }
+//
+//        /*
+//         * attempt to get post id from the GET variables or, if its an editor, get it via the getEditPostID method
+//         */
+//        $post_id_query_var = (isset($_GET['post'])) ? $_GET['post'] : null;
+//
+//
+//        if (!is_null($post_id_query_var)) {
+//            $this->debug()->log('Post taken from query var');
+//            return get_post($post_id_query_var);
+//        } elseif (!is_null($post_id = $this->plugin()->tools()->getEditPostID())) {
+//            $this->debug()->log('Found post Id using getEditPostID()');
+//            $post = get_post($post_id);
+//            return $post;
+//        } else {
+//
+//            $this->debug()->log('Checked query and post vars, still not found, returning null');
+//            return null;
+//        }
+//        return $post;
+//    }
+//    /**
+//     * Get Edit Post ID
+//     *
+//     * Returns the post id being edited or created. Checks all the most common places the the $post->id is provided
+//     * during a post editor form submission
+//     *
+//     * @param none
+//     * @return string The id of the post being edited or created.
+//     */
+//    public function getEditPostID() {
+//        $this->debug()->t();
+//
+//        #init
+//        $post_id = null;
+//
+//
+//        /*
+//         * Check $_POST['post_ID']
+//         * When editing a WordPress Post, the editor submits post_id using
+//         * the $_POST form field post_ID
+//         *
+//         */
+//
+//        $post_id = (isset($_POST['post_ID'])) ? $_POST['post_ID'] : null;
+//
+//        if (!is_null($post_id)) {
+//            $this->debug()->logVar('Found $_POST[\'post_ID\'], $post_id=', $post_id);
+//            return $post_id;
+//        }
+//
+//
+//        /*
+//         * Check $_GET['post]
+//         * The WordPress Post Editing page embeds the post id in the $_GET request during an edit,
+//         * and the Custom Post Editor also embeds the post id in the $_GET request during the 'Add New' redirect to the Editor a
+//         *
+//         */
+//        $post_id = $this->getRequestVar('post');
+//
+//        if (!is_null($post_id)) {
+//            $this->debug()->logVar('Found post_id in $_GET, $post_id=', $post_id);
+//            return $post_id;
+//        }
+//        /*
+//         * Check $_POST['_wp_http_referer']
+//         * Ajax requests have access to the _wp_referer $_POST variable
+//         * Which represents the $_GET variables contained in the Editor page
+//         * from which the ajax request was made from
+//         *
+//         * Use the getQueryVarFromUrl method to retrieve the query variable from the _wp_http_referer string
+//         */
+//
+//        $post_id = (isset($_POST['_wp_http_referer'])) ? $this->plugin()->tools()->getQueryVarFromUrl('post', $_POST['_wp_http_referer']) : null;
+//        if (!is_null($post_id)) {
+//            $this->debug()->logVar('Found post_id in _wp_http_referer, $post_id=', $post_id);
+//            return $post_id;
+//        }
+//        /*
+//         * if still null, then its probably a custom edit page, which embeds it in the _ajax_referer_url
+//         *
+//         * _ajax_referer_url
+//         */
+//
+//        $post_id = (isset($_POST['_ajax_referer_url'])) ? $this->plugin()->tools()->getQueryVarFromUrl('post', $_POST['_ajax_referer_url']) : null;
+//        if (!is_null($post_id)) {
+//            $this->debug()->logVar('Found post_id in _ajax_referal_url, $post_id=', $post_id);
+//            return $post_id;
+//        }
+//
+//
+//
+//        $this->debug()->log('Couldnt find post id anywhere, setting it to null');
+//        return $post_id;
+//
+//        /*
+//         * You can get rid of the remaining when you've tested everything.
+//         */
+//
+//
+//        /*
+//         * if the post_id is in the $_GET query string of the editing page,
+//         * an ajax request can find it in _wp_http_referer
+//         */
+//        if (!isset($_POST['_wp_http_referer'])) {
+//            $this->debug()->log('Cant save post options with ajax - _wp_http_referer does not exist, so can\'t determine post id.');
+//            $success = false;
+//        } else {
+//
+//
+//            /*
+//             * If saving the option from a new post page, WordPress sends
+//             * the new post_id in $_POST['post_ID'])
+//             * Check for $_POST['post_ID'])
+//             * attempt to get the $post_id from the post parameters. $post_id is set if its a new post...
+//             */
+//            $post_id = (isset($_POST['post_ID'])) ? $_POST['post_ID'] : null;
+//
+//            /*
+//             * If that didnt work, then assume its an edit page and get it from the referrer
+//             */
+//            if (is_null($post_id)) {
+//                /*
+//                 * split the referer by the question mark so we get the query variables
+//                 *
+//                 */
+//
+//
+//
+//
+//                //     $wp_http_referer_query_array = explode('?', $_POST['_wp_http_referer'], 2);
+//
+//                /*
+//                 * if no question mark, then make sure we don't error out with a 'no index' error
+//                 */
+//                //   $wp_http_referer_query_string = (isset($wp_http_referer_query_array[1])) ? $wp_http_referer_query_array[1] : $wp_http_referer_query_array[0];
+//
+//                /*
+//                 * use our parse_str method to get an array of name value pairs
+//                 */
+//                //   $wp_http_referer = $this->plugin()->tools()->parse_str($wp_http_referer_query_string);
+//                ///   $this->debug()->logVar('$wp_http_referer = ', $wp_http_referer);
+//                //   $post_id = $wp_http_referer['post'];
+//
+//                $post_id = $this->plugin()->tools()->getQueryVarFromUrl('post', $_POST['_wp_http_referer']);
+//            }
+//        }
+//    }
 //    /**
 //     * Get Query Var
 //     *
@@ -1173,40 +1182,6 @@ class Simpli_Hello_Basev1c0_Plugin_Tools extends Simpli_Hello_Basev1c0_Plugin_He
         } else {
             return null;
         }
-    }
-
-    /**
-     * Get Post Type Query Variable
-     *
-     * When called with no argument, it will return the post_type query variable that is in $_GET, but removes a preceeding obfuscation string if one exists. This obfuscation is sometimes added to prevent wordpress from erroring out in the event we are using a custom edit page. WordPress will not load a custom edit page  if it sees that the post_type is a query variable and its value is a registered post type.
-     *
-     * Usage:
-     * assume we are on a page with url : ?post_type=___my_post_type&simpli_hello=edit_post
-     * $post_type=getPostTypeQueryVar() // returns 'my_post_type'
-     *
-     * Now assume we need to build a url that will redirect to a custom edit page, and we need to pass the post type
-     * $url='http://example.com?post_type='.getPostTypeQueryVar('my_post_type').'&simpli_hello=edit_post // will result in $url = http://example.com?post_type=___my_post_type&simpli_hello=edit_post
-     *
-     *
-     *
-     *
-     * When called with an argument, it will return the input string but 'obfuscated' , so it can then be used in the query string.
-     *
-     * @param string $post_type The post type value that needs to be obfuscated e.g.: 'my_custom_post_type'
-     * @return string The obfuscated string if a $post_type paramater was passed, otherwise, the value of the $_GET['post_type'] without the obfuscation if it has it.
-     */
-    public function getPostTypeQueryVar($post_type = null) {
-
-        $obfuscation = '___';
-        if (!is_null($post_type)) {
-            return $obfuscation . $post_type;
-        }
-        $post_type = $this->getRequestVar('post_type');
-
-        if (substr($post_type, 0, strlen($obfuscation)) === $obfuscation) {
-            $post_type = str_replace($obfuscation, '', $post_type);
-        }
-        return $post_type;
     }
 
     /**

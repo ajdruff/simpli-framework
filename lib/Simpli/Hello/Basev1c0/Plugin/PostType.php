@@ -364,7 +364,7 @@ class Simpli_Hello_Basev1c0_Plugin_PostType extends Simpli_Hello_Basev1c0_Plugin
             /*
              * if the custom post type is a top level menu page, redirect using its top level slug, which includes the post type
              */
-            $post_type = $this->plugin()->tools()->getQueryVarFromUrl('post_type', $menu_tracker[$top_menu]['top_level_slug']);
+            $post_type = $this->plugin()->tools()->getQueryVarFromUrl('post_type', $menu_tracker[$top_menu]['top_level_slug']); //extracts the post_type paramater from the top level slug, which includes the post type
 
             $redirect_url = admin_url() . $menu_tracker[$top_menu]['top_level_slug'] . '&' . $this->plugin()->QUERY_VAR . '=' . $this->plugin()->QV_ADD_POST . '&page=' . $this->getMenuSlug();
 
@@ -375,11 +375,17 @@ class Simpli_Hello_Basev1c0_Plugin_PostType extends Simpli_Hello_Basev1c0_Plugin
         } else {
 
             /*
-             * Otherwise, redirect using admin.php and the known post type previously set when we registered it.
+             * Otherwise, redirect using admin.php
+             * Obfuscate the post type since we are sending it in a url using a custom post editor page, and without obfuscation, WordPress will freak out (see getPostTypeRequestVar() for detauls
              */
-            $post_type = $this->plugin()->tools()->getPostTypeQueryVar($this->getPostType());
+            $post_type = $this->getPostType();
+            $obfuscated_post_type = $this->plugin()->post()->getPostTypeRequestVar($this->getPostType());
+            $this->debug()->logVar('$this->getPostType() = ', $this->getPostType());
+            $this->debug()->logVar('$post_type = ', $post_type);
 
-            $redirect_url = admin_url() . 'admin.php?' . $this->plugin()->QUERY_VAR . '=' . $this->plugin()->QV_ADD_POST . '&post_type=' . $post_type . '&page=' . $this->getMenuSlug();
+
+
+            $redirect_url = admin_url() . 'admin.php?' . $this->plugin()->QUERY_VAR . '=' . $this->plugin()->QV_ADD_POST . '&post_type=' . $obfuscated_post_type . '&page=' . $this->getMenuSlug();
 
 
             $this->debug()->logVar('$redirect_url = ', $redirect_url);
@@ -423,13 +429,13 @@ class Simpli_Hello_Basev1c0_Plugin_PostType extends Simpli_Hello_Basev1c0_Plugin
         global $post;
         /*
          * if no post object, create one from the get
-         * paramaters if they exist.
+         * parameters if they exist.
          */
         if (is_null($post)) {
             if (isset($_GET['post'])) {
                 $post = get_post($_GET['post']);
 
-                $this->debug()->log('Used $_GET Paramater \'post\' to create post object of type \'' . $post->post_type . '\'');
+                $this->debug()->log('Used $_GET parameter \'post\' to create post object of type \'' . $post->post_type . '\'');
                 $this->debug()->logVar('$post = ', $post);
             } else {
                 $post = null;
@@ -581,7 +587,7 @@ class Simpli_Hello_Basev1c0_Plugin_PostType extends Simpli_Hello_Basev1c0_Plugin
      * @return void
      */
     public function hookCreateNewPost() {
-
+        $this->debug()->t();
         $tools = $this->plugin()->tools();
 
         /*
@@ -593,14 +599,17 @@ class Simpli_Hello_Basev1c0_Plugin_PostType extends Simpli_Hello_Basev1c0_Plugin
             // Create post object
             /*
              * get post type,
-             * We use the getPostTypeQueryVar() because it will be able to retrieve
+             * We use the getPostTypeRequestVar() because it will be able to retrieve
              * the post_type even if its been obfuscated due to using a custom post editor.
              * post_type value will be obfuscated so WordPress doesnt recognize it as a valid registered post type.
              * if it did, it would throw an error (cannot load page) since it doesnt recognize it as a valid edit page.
              */
 
-            $post_type = $this->plugin()->tools()->getPostTypeQueryVar();
+            $post_type = $this->plugin()->post()->getPostTypeRequestVar();
 
+            $this->debug()->logVar('$post_type = ', $post_type);
+
+            $this->debug()->stop(true);
             global $post;
             global $current_user;
             $new_post_values = array(

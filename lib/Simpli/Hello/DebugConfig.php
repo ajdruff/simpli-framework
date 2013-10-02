@@ -21,7 +21,7 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
     /**
      * Configure Module
      *
-     * Set any configuration option for the debug module here. You can switch on or off the entire module by using $this->debug()->turnOn or debug()->turnOff() , remove the module altogether ( which will not cause any errors since there is a 'phantom' class created that silently handles any debug requests, or comment out all debug() methods.
+     * Set any configuration option for the debug module here. You can switch on or off the entire module by using $this->turnOn or debug()->turnOff() , remove the module altogether ( which will not cause any errors since there is a 'phantom' class created that silently handles any debug requests, or comment out all debug() methods.
      * For a full explanation of all debug options, see the _setDefaultOptions() method in the base class, which explains all the options.
      *
      * @param none
@@ -30,32 +30,42 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
     public function config() {
 
 
+
         /*
          * turn debugging on/off
-         * $this->debug()->turnOn();
-         * $this->debug()->turnOff();
+         * $this->turnOn();
+         * $this->turnOff();
          * Off by default
          */
         $this->debug()->turnOn();
 
 
-        $this->setCommonOptions(); //sets most commonly used options (these are overrides of defaults. you may comment this out to get defaults, or edit setCommonOptions to provide your own set of favorite options)
-        //     $this->debug()->setMethodFilter('.*irectory.*', true);
-//        $this->debug()->setMethodFilter('getAddonsDirectory', true);
-//        $this->debug()->setMethodFilter('loadAddons', true);
-//
-//
-//
-//        $this->debug()->setMethodFilter('getAddon', true);
-        //     $this->debug()->setMethodFilter('.*ddon.*', true);
+
         /*
-         * Call any custom debug methods. Examples below:
+         * Call any Debug methods here.
+         *
+         * Examples:
+         *
+         * $this->debugHello();// a set of filters and options that provides debugging information for the core module
          *         $this->debugActivation(); //a set of filters and options that provides debugging information for plugin activation
          * $this->debugNonces();// a set of filters and options that provides debugging information about nonce creation and verification
          * $this->debugJavascriptLoading(); // a set of filters and options that provides debugging information on javascript loading
          * $this->debugSavePost(); // a set of filters and options that provides debugging information when saving a post
+         *
+         *
+         *
+         * Note: if you receive an error similar to: 'Fatal error: Maximum execution time of 30 seconds exceeded in ...'
+         * It simply means your debug options are configured too liberally and you need to throttle down the amount of output
+         * One option is to use the reduceExectionTime() option which drastically reduces the amount of output. You can then layer additional options
+         * after you've added that like this :
+
+          $this->setCommonOptions();
+          $this->reduceExecutionTime();
+          $this->setOption('method_filters_enabled', false);
          */
-        // $this->debugHello();// a set of filters and options that provides debugging information for the core module
+
+        $this->setCommonOptions();
+
 
 
         /*
@@ -65,10 +75,10 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
          *
           Some Filter Examples
 
-          $this->debug()->setMethodFilter('hookSavePost', true);//by method
-          $this->debug()->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Form', true);//by class
-          $this->debug()->setMethodFilter('Simpli_Hello_Module_Core::config', true);//by class and method
-          $this->debug()->setMethodFilter('hook.*', true); //by regex
+          $this->setMethodFilter('hookSavePost', true);//by method
+          $this->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Form', true);//by class
+          $this->setMethodFilter('Simpli_Hello_Module_Core::config', true);//by class and method
+          $this->setMethodFilter('hook.*', true); //by regex
 
          *
          *
@@ -76,7 +86,7 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
     }
 
     /*
-     * Custom Filtering Methods
+     * Debug Methods
      *
      * Group commonly used filters and options under a
      * single method call
@@ -90,10 +100,14 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
      * @param none
      * @return void
      */
-    public function debugJavascriptLoading() {
+    public function debugJavascriptLoading($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+        $this->setCommonOptions();
 
-        $this->debug()->setMethodFilter('hookEnqueue.*', true);
-        $this->debug()->setMethodFilter('hookEdit.*', true);
+        $this->setMethodFilter('hookEnqueue.*', true);
+        $this->setMethodFilter('hookEdit.*', true);
 
         $this->setOption('debug_post_only', false); //block all but post , block all but ajax, block all but
     }
@@ -106,19 +120,20 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
      * @param none
      * @return void
      */
-    public function debugNonces() {
+    public function debugNonces($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+        $this->setCommonOptions();
+        $this->setMethodFilter('.*_createNonces.*', true);
+        $this->setMethodFilter('wpVerifyNonce', true);
 
 
+        $this->setMethodFilter('.*_jax.*', true);
 
-        $this->debug()->setMethodFilter('.*_createNonces.*', true);
-        $this->debug()->setMethodFilter('wpVerifyNonce', true);
+        $this->setMethodFilter('.*once.*', true); //nonces
 
-
-        $this->debug()->setMethodFilter('.*_jax.*', true);
-
-        $this->debug()->setMethodFilter('.*once.*', true); //nonces
-
-        $this->debug()->setMethodFilter('.*ave.*', true); //savePost,etc
+        $this->setMethodFilter('.*ave.*', true); //savePost,etc
         /*
          * Only output debugging information if a form has posted
          * @todo: add this to defaults as false
@@ -135,16 +150,20 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
      * @param none
      * @return void
      */
-    public function debugSavePost() {
+    public function debugSavePost($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+        $this->setCommonOptions();
 
+        $this->setMethodFilter('hookAjaxSavePost', true);
+        $this->setMethodFilter('hookSavePost', true);
+        $this->setMethodFilter('setUserOption', true);
+        $this->setMethodFilter('Simpli_Hello_Basev1c0_Plugin_Post', true);
 
-
-        $this->debug()->setMethodFilter('hookSavePost', true);
-        $this->debug()->setMethodFilter('setUserOption', true);
-
-        $this->debug()->setMethodFilter('_savePost', true);
-        $this->debug()->setMethodFilter('saveUserOptions', true);
-        $this->setOption('debug_post_only', true); //block all but post , block all but ajax, block all but
+        $this->setMethodFilter('_savePost', true);
+        $this->setMethodFilter('saveUserOptions', true);
+        $this->setOption('debug_post_only', true); //block all but post so it doesnt provide debug output until you submit
     }
 
     /**
@@ -155,15 +174,18 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
      * @param none
      * @return void
      */
-    public function debugHello() {
+    public function debugHello($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+        $this->setCommonOptions();
 
 
-
-        $this->debug()->setMethodFilter('addTextToPost', true);
-        $this->debug()->setMethodFilter('Core', true);
-        $this->debug()->setOption('trace_enabled', true);
-        $this->debug()->setOption('defined_vars_enabled', true);
-        $this->debug()->setOption('backtrace_enabled', true);
+        $this->setMethodFilter('addTextToPost', true);
+        $this->setMethodFilter('Core', true);
+        $this->setOption('trace_enabled', true);
+        $this->setOption('defined_vars_enabled', true);
+        $this->setOption('backtrace_enabled', true);
         $this->setOption('expand_on_click', true);
     }
 
@@ -175,7 +197,12 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
      * @param none
      * @return void
      */
-    public function debugActivation() {
+    public function debugActivation($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+
+        $this->setCommonOptions();
         /*
          * options
          */
@@ -189,17 +216,17 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
         $this->setOption('output_to_file', true);
         $this->setOption('action_inclusion_filter', array_merge(
                         $this->getOption('action_inclusion_filter'), array(
-            //    'pre_get_posts',
-            //   'parse_query'
-            //  ,'send_headers'
-            //   ,'wp_headers'
-            //   ,'parse_request'
-            //  ,'query_vars'
-            //     'simpli_hello_simpli_hello_menu.*'
-            //     , 'current_screen'
+//    'pre_get_posts',
+//   'parse_query'
+//  ,'send_headers'
+//   ,'wp_headers'
+//   ,'parse_request'
+//  ,'query_vars'
+//     'simpli_hello_simpli_hello_menu.*'
+//     , 'current_screen'
             $this->plugin()->getSlug() . '_flush_rewrite_rules'
             , $this->plugin()->getSlug() . '_activated'
-                        //   'wp_ajax.*'
+//   'wp_ajax.*'
                         )
         ));
 
@@ -238,7 +265,7 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
     /**
      * Set Common Options
      *
-     * Sets common options for debug
+     * Sets most commonly used options (these are overrides of defaults. Edit as desired..)
      *
      * @param none
      * @return void
@@ -253,27 +280,35 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
          */
         $this->setOption('method_filters_enabled', true);
 
-        $this->setOption('log_all_actions', true);
+
+        $this->setOption('log_all_actions', false);
+
         $this->setOption('logging_enabled', true);
+
         $this->setOption('always_show_errors', true); /* always show errors, regardless of filtering */
 
         $this->setOption('error_template', '<div ><em style="color:red;"> Error ( Plugin {PLUGIN_SLUG} ) </em> {ERROR_MESSAGE}  <p>Calling method : {CALLING_CLASS}::{CALLING_METHOD}() </p>on Line {CALLING_LINE} in file {CALLING_FILE}</div>');
 
 
-        $this->debug()->setOption('trace_enabled', true);
-        $this->debug()->setOption('defined_vars_enabled', false);
-        $this->debug()->setOption('backtrace_enabled', false);
-        $this->debug()->setOption('visual_backtrace_enabled', false);
+        $this->setOption('trace_enabled', true);
+
+        $this->setOption('defined_vars_enabled', false);
+
+        $this->setOption('backtrace_enabled', false);
+
+        $this->setOption('visual_backtrace_enabled', false);
+
 
         $this->setOption('trace_output_format', 'normal');  //options are 'normal'(default), 'text' and 'simple'
 
 
 
 
-        $this->debug()->setOption('show_arrays', false);
-        $this->debug()->setOption('show_objects', false);
+        $this->setOption('show_arrays', false);
+        $this->setOption('show_objects', false);
 
         $this->setOption('ajax_debugging_enabled', true);
+
         $this->setOption('ajax_debugging_only', false); // NOT ADDED TO DEFAULTS !only outputs debugging if the request is ajax. this helps in preventing debug output when you are only interested in the response during an ajax request (and not , for example, a page refresh).
 
         $this->setOption('expand_on_click', true);
@@ -283,6 +318,7 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
          * Where you want to send the log output
          */
         $this->setOption('output_to_inline', true);
+
         $this->setOption('output_to_footer', false);
         $this->setOption('output_to_file', false);
         $this->setOption('output_to_console', false);
@@ -339,19 +375,213 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
         $this->setOption('action_inclusion_filter_enabled', true);
         $this->setOption('action_inclusion_filter', array_merge(
                         $this->getOption('action_inclusion_filter'), array(
-                        //    'pre_get_posts',
-                        //   'parse_query'
-                        //  ,'send_headers'
-                        //   ,'wp_headers'
-                        //   ,'parse_request'
-                        //  ,'query_vars'
-                        //     'simpli_hello_simpli_hello_menu.*'
-                        //     , 'current_screen'
-                        // $this->plugin()->getSlug() . '_flush_rewrite_rules'
-                        //   'wp_ajax.*'
+//    'pre_get_posts',
+//   'parse_query'
+//  ,'send_headers'
+//   ,'wp_headers'
+//   ,'parse_request'
+//  ,'query_vars'
+//     'simpli_hello_simpli_hello_menu.*'
+//     , 'current_screen'
+// $this->plugin()->getSlug() . '_flush_rewrite_rules'
+//   'wp_ajax.*'
                         )
                 )
         );
+    }
+
+    /**
+     * Debug Post Metaboxes
+     *
+     * Shows debug messages for displaying a post's metaboxes.
+     *
+     * @param none
+     * @return void
+     */
+    public function debugPostMetaboxes($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+
+        $this->setCommonOptions();
+
+        $this->setOption('method_filters_enabled', true);
+
+        $this->setOption('trace_enabled', true);
+
+        $this->setMethodFilter('renderMetaBox.*', true);
+//$this->setMethodFilter('.*_Module_Metabox::addMetaBox', true);
+        $this->setMethodFilter('.*addMetaBox', true);
+        $this->setMethodFilter('.*hookAddMetaBoxes', true);
+        $this->setMethodFilter('pageCheckEditor', true);
+        $this->setMethodFilter('hookEditingScreen', true);
+
+        $this->setMethodFilter('Simpli_Hello_Basev1c0_Plugin_Module_Post', true);
+
+
+
+        $this->setMethodFilter('.*_Metabox::config', true);
+        $this->setMethodFilter('Simpli_Hello_Modules_PostUserOptions::config', true);
+        $this->setMethodFilter('getPost', true);
+        $this->setMethodFilter('getEditPostID', true);
+
+        $this->setMethodFilter('Simpli_Hello_Basev1c0_Plugin_Module_Post', true);
+        $this->setMethodFilter('_hookNewPost', true);
+
+
+
+        $this->setOption('log_all_actions', true);
+        $this->setOption('action_inclusion_filter_enabled', true);
+        $this->setOption('action_inclusion_filter', array_merge(
+                        $this->getOption('action_inclusion_filter'), array(
+            'wp_insert_post',
+            'save_post'
+                        )
+                )
+        );
+
+        $this->setOption('trace_output_format', 'text');  //options are 'normal'(default), 'text' and 'simple'
+    }
+
+    /**
+     * Reduce Execution Time
+     *
+     * Implements tweaks to reduce the risk of a max excution time error.
+     * If this removes any options you want, simply add them back in after you call this option.
+     *
+     * @param none
+     * @return void
+     */
+    public function reduceExecutionTime($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+
+        $this->setOption('defined_vars_enabled', false);
+        $this->setOption('method_filters_enabled', true);
+
+        $this->setOption('action_inclusion_filter_enabled', true);
+        $this->setOption('show_arrays', false);
+        $this->setOption('show_objects', false);
+
+
+        $this->setOption('trace_enabled', true);
+
+
+        $this->setOption('backtrace_enabled', false);
+
+        $this->setOption('visual_backtrace_enabled', false);
+
+
+        $this->setOption('trace_output_format', 'text');  //options are 'normal'(default), 'text' and 'simple'
+
+
+
+        $this->setOption('expand_on_click', false);
+
+        /*
+         * Debug Output
+         * Where you want to send the log output
+         */
+        $this->setOption('output_to_inline', true);
+
+        $this->setOption('output_to_footer', false);
+        $this->setOption('output_to_file', false);
+        $this->setOption('output_to_console', false);
+    }
+
+    /**
+     * Debug the Form Addon Shortcode
+     *
+     * Debugs the shortcode provoded by the simpli_forms addon.
+     *
+     * @param none
+     * @return void
+     */
+    public function debugShortcode($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+
+        $this->setOption('method_filters_enabled', true);
+
+        $this->setMethodFilter('renderMetaBoxTemplate', true);
+        $this->setMethodFilter('renderMenuPage', true);
+
+
+
+
+
+        $this->setMethodFilter('hookShortcodeElementWithoutContent', true);
+        $this->setMethodFilter('hookShortcodeElementWithContent', true);
+    }
+
+    /**
+     * Debug Post Type
+     *
+     * Debugs the Post Type method
+     *
+     * @param none
+     * @return void
+     */
+    public function debugPostType($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+        $this->setMethodFilter('getPost', true);
+        $this->setMethodFilter('getPostType', true);
+        $this->setMethodFilter('_getEditorPostID', true);
+        $this->setMethodFilter('getPostTypeRequestVar', true);
+        $this->setMethodFilter('hookCreateNewPost', true);
+    }
+
+    /**
+     * Short Description
+     *
+     * Filters debug messages for the rendering of the postEditor element (which provides the tinyMCE editor WordPress uses)
+     *
+     * @param none
+     * @return void
+     */
+    public function debugPostEditor($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+//$this->setMethodFilter('.*_Addons_Simpli_Forms_Modules_Form::addHooks', true); //fix bug
+        $this->setMethodFilter('filterPostEditor', true);
+    }
+
+    /**
+     * Debug Simpli Forms Elements
+     *
+     * Filters debug messages for the rendering of form elements when using the Simpli Forms addon
+     *
+     * @param none
+     * @return void
+     */
+    public function debugSimpliFormsElements($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+        $this->setMethodFilter('renderElement', true);
+        $this->setMethodFilter('.*filter.*', true);
+        $this->setMethodFilter('getTemplate', true);
+        $this->setMethodFilter('_setCachedTemplate', true);
+    }
+
+    /**
+     * Debug Redirects
+     *
+     * Long Description
+     *
+     * @param none
+     * @return void
+     */
+    public function debugRedirect($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+        $this->setMethodFilter('hookRedirect.*', true);
     }
 
 }

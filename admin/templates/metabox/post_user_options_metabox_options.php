@@ -85,7 +85,7 @@
 
 
     $snippets = get_posts(
-            array('post_type' => 'simpli_hello_snippet')
+            array('post_type' => $this->plugin()->getSlug() . '_snippet')
     );
     $options = array();
     foreach ($snippets as $snippet) {
@@ -97,7 +97,7 @@
         'options' => $options,
         'name' => 'snippet',
         'label' => 'Simpli Hello Snippets:',
-        'hint' => '<a href=' . admin_url() . '/edit.php?post_type=simpli_hello_snippet' . '>View/Edit Snippets</a>',
+        'hint' => '<a href=' . admin_url() . '/edit.php?post_type=' . $this->plugin()->getSlug() . '_snippet' . '>View/Edit Snippets</a>',
         'heading' => '',
         'template' => 'dropdown_post',
         'template_option' => 'dropdown_post_option',

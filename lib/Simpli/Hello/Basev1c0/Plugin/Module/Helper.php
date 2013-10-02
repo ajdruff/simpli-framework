@@ -80,4 +80,5 @@ class Simpli_Hello_Basev1c0_Plugin_Module_Helper implements Simpli_Hello_Basev1c
     }
 
 }
+
 ?>

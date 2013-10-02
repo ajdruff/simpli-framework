@@ -20,13 +20,13 @@
  *
  *
  * @example
- *         $this->debug()->t(); //trace provides a information about the method and arguments, and provides a backtrace in an expandable box. A visual trace is also provided if graphiviz is enabled.
+ *         $this->t(); //trace provides a information about the method and arguments, and provides a backtrace in an expandable box. A visual trace is also provided if graphiviz is enabled.
 
-  $this->debug()->log('log gets logged to browser, javascript console, and file');
-  $this->debug()->logb('logb gets logged only to the browser');
-  $this->debug()->logc('logc gets logged only to the javascript console');
-  $this->debug()->logf('logf to the log file');
-  $this->debug()->logcError('logcError logs an error in red to the javascript console');
+  $this->log('log gets logged to browser, javascript console, and file');
+  $this->logb('logb gets logged only to the browser');
+  $this->logc('logc gets logged only to the javascript console');
+  $this->logf('logf to the log file');
+  $this->logcError('logcError logs an error in red to the javascript console');
 
   $my_array = array(
   'element1' => 1,
@@ -35,10 +35,10 @@
   );
 
 
-  $this->debug()->logExtract($my_array); //logExtract logs each element of an array as its own variable and value pair. Output is to the browser
+  $this->logExtract($my_array); //logExtract logs each element of an array as its own variable and value pair. Output is to the browser
 
-  $this->debug()->logVar('$my_array = ', $my_array); //logVar logs variables or arrays to the browser. Variables are nicely formatted in a vertical format
-  $this->debug()->logVars(get_defined_vars()); //logVars is designed to format the output of get_defined_vars
+  $this->logVar('$my_array = ', $my_array); //logVar logs variables or arrays to the browser. Variables are nicely formatted in a vertical format
+  $this->logVars(get_defined_vars()); //logVars is designed to format the output of get_defined_vars
  * @author Andrew Druffner
  * @package SimpliFramework
  * @subpackage SimpliHello
@@ -46,22 +46,24 @@
  */
 //class Simpli_Hello_Basev1c0_Plugin_Debug {//extends Simpli_Hello_Basev1c0_Plugin_Helper{
 class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_Helper {
+//
 //    function __construct($plugin) {
 //        $this->_plugin = $plugin;
 //    }
 //
 //    protected $_plugin;
-    /**
-     * Short Description
-     *
-     * Long Description
-     *
-     * @param none
-     * @return void
-     */
-    // public function plugin() {
-    //        return $this->_plugin;
-    // }
+//
+//    /**
+//     * Short Description
+//     *
+//     * Long Description
+//     *
+//     * @param none
+//     * @return void
+//     */
+//    public function plugin() {
+//        return $this->_plugin;
+//    }
 
     /**
      * Debug
@@ -74,6 +76,19 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
     //  public function debug() {
     //      return $this;
     //  }
+
+    /**
+     * Debug
+     *
+     * Required to overide base class debug() method or you'll get circular references
+     *
+     * @param none
+     * @return void
+     */
+    public function debug() {
+
+        return ($this);
+    }
 
     /**
      * Configure Module
@@ -110,6 +125,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
 
 
         if ($this->getOption('log_all_actions')) {
+
             add_action('all', array($this, 'hookLogAllActions'));
         }
 
@@ -236,7 +252,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
         if (!$this->_inFilters($props, $type = 'info', $force_output)) {
             return;
         }
-        $template = ' <div style="color:red">Debug Stop - to continue script, remove the $this->debug()->stop() call on line {DS_LINE} in file {BASENAME_FILE} <br/><span style="color:black;">( {FILE} )</span></div>';
+        $template = ' <div style="color:red">Debug Stop - to continue script, remove the $this->stop() call on line {DS_LINE} in file {BASENAME_FILE} <br/><span style="color:black;">( {FILE} )</span></div>';
         $basename_file = basename($file);
         $tags = (compact('ds_line', 'line', 'file', 'basename_file'));
         $stop_message = $this->plugin()->tools()->crunchTpl($tags, $template);
@@ -470,6 +486,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
         $props = $this->_getMethodProperties();
 
 
+
         /*
          * check filters and debug state
          */
@@ -590,9 +607,9 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
 
 
                     if ((!$show_objects) && (is_object($value))) {
-                        $value_string = 'Objects are not expandable. To debug an object, use $this->debug()->logVar()';
+                        $value_string = 'Objects are not expandable. To debug an object, use $this->logVar()';
                     } elseif ((!$show_arrays) && (is_array($value))) {
-                        $value_string = 'Arrays are not expandable. To debug an array, use $this->debug()->logVar()';
+                        $value_string = 'Arrays are not expandable. To debug an array, use $this->logVar()';
                     } else {
                         try {
 
@@ -668,7 +685,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
      * Debug Backtrace
      *
      * Provides the array from the php function debug_backtrace. Useful since
-     * it requires no paramaters
+     * it requires no parameters
      *
      * @param boolean $wrapper True if called by another *private* method that is in turn called by a puble method.
      * This helps determine to remove another layer from the backtrace
@@ -866,7 +883,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
      *
      * Usage:
      *
-     * @example   $this->debug()->logVars(get_defined_vars());
+     * @example   $this->logVars(get_defined_vars());
      *
      * @param array $arr_defined_vars Must be get_defined_vars()
      * @return void
@@ -875,10 +892,21 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
         /*
          * dont bother if defined variables is not enabled
          */
-        if (!$this->debug()->getOption('defined_vars_enabled')) {
+        if (!$this->getOption('defined_vars_enabled')) {
             return;
         }
 
+
+        $props = $this->_getMethodProperties();
+
+
+
+        /*
+         * check filters and debug state
+         */
+        if (!$this->_inFilters($props, $type = 'info', $force_output)) {
+            return;
+        }
 
         /*
          * Check each element of the array, and output in the format $<index_name> = $value , using
@@ -1060,7 +1088,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
         /*
          * dont bother if trace is not enabled
          */
-        if (!$this->debug()->getOption('trace_enabled')) {
+        if (!$this->getOption('trace_enabled')) {
             return;
         }
 
@@ -1098,7 +1126,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
         /*
          * dont bother if trace is not enabled
          */
-        if (!$this->debug()->getOption('trace_enabled')) {
+        if (!$this->getOption('trace_enabled')) {
             return;
         }
 
@@ -1745,6 +1773,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
      * @return mixed
      */
     public function getOption($option_name) {
+
         $options = $this->getOptions();
 
         if (!isset($options[$option_name])) {
@@ -2030,13 +2059,12 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
 
 
 
-
         /*
          * If logging disabled, then let only errors and traces through
          */
         if (!$this->getOption('logging_enabled')) {
             if ($type !== 'trace' || 'error' !== $type) {
-                return;
+                return false; //must return false or it will for some reason go into an endless loop and timeout
             }
         }
 
@@ -2292,6 +2320,8 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
         /*
          * Show only posted form debugging if enabled
          */
+
+
         if ($this->getOption('debug_post_only') === true) {
 
             if (!isset($_POST) || empty($_POST)) {
@@ -2315,6 +2345,8 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
                 return false;
             };
         }
+
+
         /*
          * Always Show Errors
          */
@@ -2401,7 +2433,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
          * if enabled, but not configured properly, return an error message
          */
 
-        $is_graphviz_enabled = $this->debug()->getOption('visual_backtrace_enabled');
+        $is_graphviz_enabled = $this->getOption('visual_backtrace_enabled');
 
         if ($is_graphviz_enabled) {
 
@@ -2414,7 +2446,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
             if ($this->plugin()->tools()->inIncludePath($graphviz_include_path)) {
                 include_once $graphviz_include_path; //
             } else {
-                die('<br> [Simpli Framework Debug Module] Error: Attempted to include \'' . $graphviz_include_path . '\' , but it could not be found. Graphviz is either not installed properly, or you need to set the include path for your installation. <br>You can set the Graphviz include path by adding the following line to the config() method in the Debug module: $this->debug()->setOption(\'graphviz_include_path\',\'path/to/GraphViz.php\' ( The default include path =\'Image/GraphViz.php\')<br> If you don\'t want to use graphviz to visually trace your debug backtraces, just add the following line to the config() method in the debug module; $this->setOption(\'graphviz\',false);');
+                die('<br> [Simpli Framework Debug Module] Error: Attempted to include \'' . $graphviz_include_path . '\' , but it could not be found. Graphviz is either not installed properly, or you need to set the include path for your installation. <br>You can set the Graphviz include path by adding the following line to the config() method in the Debug module: $this->setOption(\'graphviz_include_path\',\'path/to/GraphViz.php\' ( The default include path =\'Image/GraphViz.php\')<br> If you don\'t want to use graphviz to visually trace your debug backtraces, just add the following line to the config() method in the debug module; $this->setOption(\'graphviz\',false);');
             }
         } else {
 
@@ -2722,6 +2754,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
         if (is_null($this->_default_options)) {
             $this->_setDefaultOptions();
         }
+
         if (!isset($this->_default_options[$option_name])) {
             return null;
         }
@@ -2761,7 +2794,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
          *
          * Outputs information about each called method or function, including a link
          * to view a backtrace and a visual backtrace.
-         * A method will show only if within the filter and if the $this->debug()->t() method is called.
+         * A method will show only if within the filter and if the $this->t() method is called.
          * Because trace can produce a lot of output, you can disable it if all you
          * are interested in is logs.
          */
@@ -2782,7 +2815,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
          * the trace html
          */
 
-        $this->debug()->_setDefaultOption('backtrace_enabled', true);
+        $this->_setDefaultOption('backtrace_enabled', true);
 
 
         /*
@@ -2897,7 +2930,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
          * Typical debug output thatis hidden are: arrays, backtraces, visual traces, and objects.
          * Occassionally, you may be troubleshooting code that breaks javascript or breaks before
          * the javascript is loaded. IN this case, the expansion wont work, and you'll need to set
-         * this paramater to false while you troubleshoot. With it set to false, all output is shown on
+         * this parameter to false while you troubleshoot. With it set to false, all output is shown on
          * initial display, without requiring a click.
          *
          */
@@ -3504,6 +3537,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
      *
      */
     public function hookLogAllActions() {
+
         $props = $this->_getMethodProperties();
         static $hook_count;
         $hook_count++;
@@ -3548,6 +3582,7 @@ class Simpli_Hello_Basev1c0_Plugin_Debug extends Simpli_Hello_Basev1c0_Plugin_He
                 }
             }
         }
+
 
 
         /*

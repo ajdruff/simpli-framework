@@ -12,8 +12,6 @@
  */
 class Simpli_Hello_Modules_Shortcodes extends Simpli_Hello_Basev1c0_Plugin_Module {
 
-
-
     /**
      * Add Hooks
      *
@@ -24,8 +22,8 @@ class Simpli_Hello_Modules_Shortcodes extends Simpli_Hello_Basev1c0_Plugin_Modul
     public function addHooks() {
         $this->debug()->t();
 
-add_filter('widget_text', 'do_shortcode');
-add_filter('the_content', 'do_shortcode', 11); // From shortcodes.php
+        add_filter('widget_text', 'do_shortcode');
+        add_filter('the_content', 'do_shortcode', 11); // From shortcodes.php
 
 
         add_shortcode($this->plugin()->getSlug(), array($this, 'sayHello'), 10);
@@ -44,7 +42,6 @@ add_filter('the_content', 'do_shortcode', 11); // From shortcodes.php
          * example: add_action('wp_ajax_' . $this->plugin()->getSlug() . '_my_action', array($this, 'my_function'));
          * see http://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
          */
-
     }
 
     /**
@@ -67,7 +64,7 @@ add_filter('the_content', 'do_shortcode', 11); // From shortcodes.php
     public function enqueue_scripts() {
         $this->debug()->t();
 
-//       wp_enqueue_style($this->plugin()->getSlug() . '-admin-page', $this->plugin()->getUrl() . '/admin/css/settings.css', array(), $this->plugin()->getVersion());
+//       wp_enqueue_style($this->plugin()->getSlug() . '-admin-page', $this->plugin()->getAdminUrl() . '/css/settings.css', array(), $this->plugin()->getVersion());
 //        wp_enqueue_script('jquery');
 //        wp_enqueue_script('jquery-form');
 //        wp_enqueue_script('post');
@@ -94,3 +91,4 @@ add_filter('the_content', 'do_shortcode', 11); // From shortcodes.php
     }
 
 }
+

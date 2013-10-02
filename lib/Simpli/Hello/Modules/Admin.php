@@ -35,7 +35,7 @@ class Simpli_Hello_Modules_Admin extends Simpli_Hello_Basev1c0_Plugin_Module {
 
         if ($this->_menu_position === '') {
 
-            $this->_menu_position = '67.141592653597777777' . $this->plugin()->getSlug();
+            $this->_menu_position = $this->plugin()->MENU_POSITION_DEFAULT;
         }
 
 
@@ -105,7 +105,7 @@ class Simpli_Hello_Modules_Admin extends Simpli_Hello_Basev1c0_Plugin_Module {
         $this->debug()->t();
 
 
-        wp_enqueue_style($this->plugin()->getSlug() . '-admin-global', $this->plugin()->getUrl() . '/admin/css/admin.css', array(), $this->plugin()->getVersion());
+        wp_enqueue_style($this->plugin()->getSlug() . '-admin-global', $this->plugin()->getAdminUrl() . '/css/admin.css', array(), $this->plugin()->getVersion());
     }
 
     /**
@@ -131,7 +131,7 @@ class Simpli_Hello_Modules_Admin extends Simpli_Hello_Basev1c0_Plugin_Module {
 
 
 
-        include($this->plugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php');
+        include($this->plugin()->getAdminDirectory() . '/templates/metabox/' . $metabox['id'] . '.php');
     }
 
     /**
@@ -157,7 +157,7 @@ class Simpli_Hello_Modules_Admin extends Simpli_Hello_Basev1c0_Plugin_Module {
 
         $links[1] = 'Simpli Framework ' . $this->plugin()->getFrameworkVersion() . ' / ' . $this->plugin()->getBaseClassVersion();
 
-        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->plugin()->getSlug() . '_' . $this->plugin()->getModule('Menu001General')->getSlug() . '" title="' . $this->plugin()->getName() . ' Settings">Settings</a>';
+        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->plugin()->getSlug() . '_' . $this->plugin()->getModule('Menu10General')->getSlug() . '" title="' . $this->plugin()->getName() . ' Settings">Settings</a>';
         $links[] = '<a href="http://wordpress.org/extend/plugins/' . $this->plugin()->getSlug() . '/faq/" title="Frequently Asked Questions">FAQ</a>';
         $links[] = '<a href="http://wordpress.org/tags/' . $this->plugin()->getSlug() . '#postform" title="Support">Support</a>';
         $links[] = '<a href="your paypal url here" title="Support this plugin\'s development with a donation!">Donate</a>';
@@ -179,7 +179,7 @@ class Simpli_Hello_Modules_Admin extends Simpli_Hello_Basev1c0_Plugin_Module {
         $this->debug()->t();
 
 
-        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->plugin()->getSlug() . '_' . $this->plugin()->getModule('Menu001General')->getSlug() . '">Settings</a>';
+        $links[] = '<a href="' . get_admin_url() . "admin.php?page=" . $this->plugin()->getSlug() . '_' . $this->plugin()->getModule('Menu10General')->getSlug() . '">Settings</a>';
         return $links;
     }
 

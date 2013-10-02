@@ -22,7 +22,7 @@
  *
  * Note: query variable redirects work from the root of your site, not from a subdirectory:
  * Example: http://wpdev.com/?simpli_hello_action=phpInfo
- * They will also work within admin, but admin uses  a different way of checking for them ( it checks the $_GET paramaters instead of wp_query_vars).
+ * They will also work within admin, but admin uses  a different way of checking for them ( it checks the $_GET parameters instead of wp_query_vars).
  *
  * How to Use this Module
  *
@@ -140,7 +140,7 @@ class Simpli_Hello_Modules_QueryVars extends Simpli_Hello_Basev1c0_Plugin_Module
          *
          */
 
-        $this->_template_directory = $this->plugin()->getDirectory() . '/templates'; // no ending slash
+        $this->_template_directory = $this->plugin()->getAdminDirectory() . '/templates'; // no ending slash
 
 
         /*
@@ -167,23 +167,23 @@ class Simpli_Hello_Modules_QueryVars extends Simpli_Hello_Basev1c0_Plugin_Module
              */
             array(//  http://example.com/action/sayHello/
                 'pretty_url_pattern' => 'action/(.+)/?$'
-                , 'ugly_url_pattern' => 'index.php?simpli_hello_action=' . '$matches[1]'
+                , 'ugly_url_pattern' => 'index.php?' . $this->plugin()->getSlug() . '_action=' . '$matches[1]'
             )
             , array(//  http://example.com/mytemplate/1/
                 'pretty_url_pattern' => 'mytemplate/(.+)/?$'
-                , 'ugly_url_pattern' => 'index.php?simpli_hello_page=' . '$matches[1]'
+                , 'ugly_url_pattern' => 'index.php?' . $this->plugin()->getSlug() . '_page=' . '$matches[1]'
             )
             , array(//  http://example.com/mytemplate1/
                 'pretty_url_pattern' => 'mytemplate1/?$'
-                , 'ugly_url_pattern' => 'index.php?simpli_hello_page=1'
+                , 'ugly_url_pattern' => 'index.php' . $this->plugin()->getSlug() . '_page=1'
             )
             , array(//  http://example.com/awesome/
                 'pretty_url_pattern' => 'awesome/?$'
-                , 'ugly_url_pattern' => 'index.php?simpli_hello_page=2'
+                , 'ugly_url_pattern' => 'index.php?' . $this->plugin()->getSlug() . '_page=2'
             )
             , array(//  http://example.com/phpinfo/
                 'pretty_url_pattern' => 'phpinfo/?$'
-                , 'ugly_url_pattern' => 'index.php?simpli_hello_action=phpinfo'
+                , 'ugly_url_pattern' => 'index.php?' . $this->plugin()->getSlug() . '_action=phpinfo'
             )
         );
     }
@@ -244,7 +244,7 @@ class Simpli_Hello_Modules_QueryVars extends Simpli_Hello_Basev1c0_Plugin_Module
      * Register A Query Variable
      *
      * Filter Hook Function for action query_vars
-     * White lists a query variable so we can have our plugin respond to query paramaters
+     * White lists a query variable so we can have our plugin respond to query parameters
      *
      * @param string $query_vars
      * @return string $query_vars
@@ -364,7 +364,7 @@ class Simpli_Hello_Modules_QueryVars extends Simpli_Hello_Basev1c0_Plugin_Module
     function rewriteRules($rules) {
         $this->debug()->t();
 
-        $newrules['action/(.+)/?$'] = 'index.php?simpli_hello_action=' . '$matches[1]';
+        $newrules['action/(.+)/?$'] = 'index.php?' . $this->plugin()->getSlug() . '_action=' . '$matches[1]';
 
         foreach ($this->_rewrite_rules as $new_rule) {
 

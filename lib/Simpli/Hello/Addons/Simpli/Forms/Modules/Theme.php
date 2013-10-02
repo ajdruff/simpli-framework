@@ -33,7 +33,7 @@ class Simpli_Hello_Addons_Simpli_Forms_Modules_Theme extends Simpli_Hello_Basev1
 
 
 
-        $this->debug()->logVars(get_defined_vars());
+
         return $result;
     }
 
@@ -81,6 +81,7 @@ class Simpli_Hello_Addons_Simpli_Forms_Modules_Theme extends Simpli_Hello_Basev1
      */
     private function _getCachedTemplate($template_id) {
         $this->debug()->t();
+        $this->debug()->logVar('Getting Cached template for $template_id = ', $template_id);
         if (!isset($this->_cached_templates[$template_id])) {
             $this->_setCachedTemplate($template_id);
         }
@@ -98,22 +99,33 @@ class Simpli_Hello_Addons_Simpli_Forms_Modules_Theme extends Simpli_Hello_Basev1
      * @return void
      */
     private function _setCachedTemplate($template_id) {
+        $this->debug()->logVar('Setting cached template for $template_id = ', $template_id);
 
+        /*
+         * Take template from set Theme directory, but if no template exists there, take it from the default theme directory
+         */
 
+        $untested_template_path = $this->_getThemeDirectory() . '/templates/' . $template_id . '.template.php';
 
+        if (!file_exists($untested_template_path)) {
 
-        $template_path = $this->_getThemeDirectory() . '/templates/' . $template_id . '.template.php';
-        $default_template_path = $this->_getDefaultThemeDirectory() . '/templates/' . $template_id . '.template.php';
-
-        if (!file_exists($template_path)) {
+            $default_template_path = $this->_getDefaultThemeDirectory() . '/templates/' . $template_id . '.template.php';
+            $this->debug()->log('Couldnt find template path in theme directory, path = , ' . $untested_template_path . ' <br> , so will try to find it in the default theme path of  ' . $default_template_path);
             $template_path = $default_template_path;
+        } else {
+
+            $template_path = $untested_template_path;
         }
+
+
+
         if (!file_exists($template_path)) {
 
             $this->debug()->log('Checked template path ' . $template_path . ' No such template for ' . $template_id . ' , setting cache to null  ');
             $this->_cached_templates[$template_id] = null;
         } else {
 
+            $this->debug()->log('Found template with path = ' . $template_path);
 
 
             ob_start();
@@ -123,7 +135,15 @@ class Simpli_Hello_Addons_Simpli_Forms_Modules_Theme extends Simpli_Hello_Basev1
              */
 
             include($template_path);
-            $template = ob_get_clean();
+
+            if ($this->plugin()->ALLOW_SHORTCODES) {
+                $this->debug()->log('Including element template, executing shortcodes');
+                $template = do_shortcode(ob_get_clean());
+            } else {
+                $this->debug()->log('Including element template, but ignoring shortcodes since ALLOW_SHORTCODES is false');
+                $template = ob_get_clean();
+            }
+
             $this->_cached_templates[$template_id] = $template;
         }
 

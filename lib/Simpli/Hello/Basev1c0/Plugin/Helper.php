@@ -9,11 +9,9 @@
  * @package SimpliFramework
  * @subpackage SimpliBase
  */
-
 class Simpli_Hello_Basev1c0_Plugin_Helper implements Simpli_Hello_Basev1c0_Plugin_Helper_Interface {
 
-
-/**
+    /**
      * Constructor
      *
      * Creates the object instance and sets dependencies
@@ -21,13 +19,43 @@ class Simpli_Hello_Basev1c0_Plugin_Helper implements Simpli_Hello_Basev1c0_Plugi
      * @param none
      * @return void
      */
-
     protected $_plugin = null;
 
     function __construct(Simpli_Hello_Basev1c0_Plugin $plugin) {
+//        static $count = 0;
+//        $count++;
+//        if ($count > 2) {
+//
+//
+//            $backtrace = debug_backtrace();
+//            echo '<pre>', print_r($backtrace[0], true), '</pre>';
+//            die('exiting ' . __LINE__ . __FILE__);
+//        }
+        $this->_plugin = $plugin;
 
+        $this->config();
+        $this->addHooks();
+    }
 
-            $this->_plugin = $plugin;
+    /**
+     * Config
+     *
+     * @param none
+     * @return void
+     */
+    public function config() {
+
+    }
+
+    /**
+     * Add Hooks
+     *
+     * Add any WordPress action and filter hooks here
+     *
+     * @param none
+     * @return void
+     */
+    public function addHooks() {
 
     }
 
@@ -41,8 +69,7 @@ class Simpli_Hello_Basev1c0_Plugin_Helper implements Simpli_Hello_Basev1c0_Plugi
         return $this->_plugin;
     }
 
-
-        /**
+    /**
      * Debug
      *
      * Returns the debug() method from the calling plugin object
@@ -55,4 +82,5 @@ class Simpli_Hello_Basev1c0_Plugin_Helper implements Simpli_Hello_Basev1c0_Plugi
     }
 
 }
+
 ?>

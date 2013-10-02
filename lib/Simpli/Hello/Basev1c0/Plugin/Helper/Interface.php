@@ -11,8 +11,7 @@
  */
 interface Simpli_Hello_Basev1c0_Plugin_Helper_Interface {
 
-
-function __construct(Simpli_Hello_Basev1c0_Plugin $plugin);
+    function __construct(Simpli_Hello_Basev1c0_Plugin $plugin);
 
     /**
      * Debug
@@ -22,19 +21,31 @@ function __construct(Simpli_Hello_Basev1c0_Plugin $plugin);
      * @param none
      * @return void
      */
-    public function debug() ;
-
-
-
+    public function debug();
 
     /**
      * Get Plugin
      *
      * @return Simpli_Hello_Basev1c0_Plugin
      */
-    public function plugin() ;
+    public function plugin();
 
 
+    /*
+     * Config
+     *
+     * @param none
+     * @return void
+     */
 
+    public function config();
+    /*
+     * Add Hooks
+     * 
+     * @param none
+     * @return void
+     */
 
+    public function addHooks();
 }
+

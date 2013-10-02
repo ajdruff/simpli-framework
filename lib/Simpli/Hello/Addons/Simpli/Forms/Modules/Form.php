@@ -29,7 +29,7 @@ class Simpli_Hello_Addons_Simpli_Forms_Modules_Form extends Simpli_Hello_Basev1c
 
     public function addHooks() {
         $this->debug()->t();
-
+        $this->debug()->log('Adding Form hooks');
         /*
          * Add Shortcodes
          */
@@ -179,6 +179,7 @@ class Simpli_Hello_Addons_Simpli_Forms_Modules_Form extends Simpli_Hello_Basev1c
      * @return string The output of the shortcode
      */
     public function hookShortcodeElementWithoutContent($atts, $content, $tag) {
+        $this->debug()->t();
         /*
          * the add_shortcode will always pass $content and $tag to us.
          * in the case of a non-enclosed shortcode, such as this, $content should be null,
@@ -198,6 +199,8 @@ class Simpli_Hello_Addons_Simpli_Forms_Modules_Form extends Simpli_Hello_Basev1c
 
             $atts['el'] = $atts[0];
         }
+
+        $this->debug()->logVar('$atts = ', $atts);
 
         return($this->_el($atts));
     }
@@ -286,7 +289,7 @@ class Simpli_Hello_Addons_Simpli_Forms_Modules_Form extends Simpli_Hello_Basev1c
      *
      * The purpose of this method is to provide a public interface to the user as an alternative to using a shortcode for rendering an element. It is a wrapper around _el(), which is shared code used by both this function and the shortcodes. The internal element method _el() handles the rendering of each of the form elements.
      *
-     * The difference between using this function and using the shortcode callback functions directly, is that this function echos its output. A previous implementation was less reliable as it attempted to distringish whether a shortcode was calling it, before deciding whether to echo out its contents. As a consequence, frequently, the output failed, since something would inevitably interfere with the paramaters that indiciated whether it was being called by a shortcode. Using a separate function is much more stable and does not require conditionals.
+     * The difference between using this function and using the shortcode callback functions directly, is that this function echos its output. A previous implementation was less reliable as it attempted to distringish whether a shortcode was calling it, before deciding whether to echo out its contents. As a consequence, frequently, the output failed, since something would inevitably interfere with the parameters that indiciated whether it was being called by a shortcode. Using a separate function is much more stable and does not require conditionals.
      *
      * @param string $properties The properties provided by the user
      * @return string The output of the element method
@@ -318,7 +321,7 @@ class Simpli_Hello_Addons_Simpli_Forms_Modules_Form extends Simpli_Hello_Basev1c
 
         unset($properties['el']); //remove the element id since we dont want it part of atts, and it served its only purpose
 
-        $this->debug()->logVars(get_defined_vars());
+        $this->debug()->logVar('$this->getElementsModule()->$method($properties)', get_class($this->getElementsModule()) . '::' . $method . '()');
         if (method_exists($this->getElementsModule(), $method)) {
             return($this->getElementsModule()->$method($properties));
         } else {
@@ -434,7 +437,7 @@ class Simpli_Hello_Addons_Simpli_Forms_Modules_Form extends Simpli_Hello_Basev1c
         if (isset($atts['content_override']) &&
                 !is_null($atts['content_override'])
         ) {
-
+            $this->debug()->logVar('Content override is set, returning content_override value of ', $atts['content_override']);
             return $atts['content_override'];
         }
 
@@ -453,7 +456,7 @@ class Simpli_Hello_Addons_Simpli_Forms_Modules_Form extends Simpli_Hello_Basev1c
 
         if ((isset($atts['_error'])) && (!is_null($atts['_error']))) {
 
-
+            $this->debug()->logVar('Returning with errors = ', $atts['_error']);
             return ($this->getElementErrorMessages($scid, $atts['_error']));
         }
 

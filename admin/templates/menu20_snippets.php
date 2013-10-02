@@ -20,7 +20,7 @@ require_once('includes/template.php'); // WordPress Dashboard Functions
 
 
 
-$post = $this->plugin()->tools()->getPost();
+$post = $this->plugin()->post()->getPost();
 $this->debug()->logVar('$post = ', $post);
 /*
  * If the user accesses this page using a link to this menu page (instead of via a redirect after they clicked the edit link, there wont be any post object, and errors will result.
@@ -63,6 +63,25 @@ if (!is_object($post)) {
 
             <div class="postbox-container column-primary">
 
+
+
+
+
+
+
+
+
+
+
+                <?php
+                do_meta_boxes($this->getScreenId(), 'advanced', $this);
+                ?>
+
+                <?php
+                do_meta_boxes($this->getScreenId(), 'normal', $this);
+                ?>
+
+
                 <!-- Start Editor -->
                 <?php
                 $f = $this->plugin()->getAddon('Simpli_Forms')->getModule('Form');
@@ -71,42 +90,25 @@ if (!is_object($post)) {
 
                 $f->getTheme()->setTheme('Admin');
 
+                $f->el(array(
+                    'el' => 'postEditor',
+                    'name' => 'MyCustomPostEditor',
+                    'label' => '',
+                    'hint' => '',
+                        )
+                );
+                /*
+                 *   alternately use the shortcode [simpli_hello_form el='postEditor']
+                 *   DO NOT PLACE MORE THAN ONE postEditor on the page at one time or they will not work unless you give
+                 * them unique ids
+                  Remember that even if you comment out the shortcode in html, it will still be parsed!
 
-
-//    $f->el(array(
-//        'el' => 'postEditor',
-//        'name' => 'MyCustomPostEditor',
-//        'label' => '',
-//        'hint' => '',
-//            )
-//    );
+                 */
                 ?>
-
-
-                <!-- alternately, use the shortcode: simpli_hello_form el='postEditor'
-                DO NOT PLACE MORE THAN ONE postEditor on the page at one time or they will not work.
-                Remember that even if you comment out the shortcode, it will still be parsed!
-                shortcode format (place in brackets and move outside of comments to see it parsed ):
-                simpli_hello_form el='postEditor'
-
-                ->
 
 
                 <!-- End Editor -->
 
-
-
-
-
-
-<?php
-do_meta_boxes($this->getScreenId(), 'advanced', $this);
-?>
-                <?php
-                do_meta_boxes($this->getScreenId(), 'normal', $this);
-                ?>
-
-                [simpli_hello_form el='postEditor']
             </div>
 
 

@@ -401,12 +401,15 @@ class Simpli_Hello_Addons_Simpli_Forms_Modules_Filter extends Simpli_Hello_Basev
         $this->debug()->t();
 
         extract($properties);
-        $post = $this->plugin()->tools()->getPost();
+        $post = $this->plugin()->post()->getPost();
         $post_type = $post->post_type;
-
+        $this->debug()->logVar('$post_type = ', $post_type);
         $post_ID = $post->ID;
+        $this->debug()->logVar('$post_ID = ', $post_ID);
 
         if (post_type_supports($post_type, 'editor')) {
+            $this->debug()->log('Post type ' . $post_type . ' supports editor, displaying editor');
+
             /*
              * capture the output of wp_editor so
              * we can assign it to a tag
@@ -433,6 +436,8 @@ class Simpli_Hello_Addons_Simpli_Forms_Modules_Filter extends Simpli_Hello_Basev
                 $tags['last_edit'].= '</span>';
             }
         } else {
+            $this->debug()->logError('Post type ' . $post_type . ' doesnt support editor, not showing editor');
+
             /*
              * If Editor Not supported
              * Output nothing

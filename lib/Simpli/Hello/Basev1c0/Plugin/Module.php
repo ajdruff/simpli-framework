@@ -6,7 +6,7 @@
  * Each Module in the project will extend this base Module class.
  * Modules can be treated as independent plugins. Think of them as sub-plugins.
  *
- * @author Mike Ems
+ * @author Andrew Druffner
  * @package SimpliFramework
  * @subpackage SimpliBase
  */

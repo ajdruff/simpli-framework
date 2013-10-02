@@ -132,7 +132,7 @@ class Simpli_Hello_Basev1c0_Plugin_Menu extends Simpli_Hello_Basev1c0_Plugin_Mod
      *
      * @param string $id The id of the meta box used in the add_meta_box method. Must be unique to the meta box.
      * @param boolean $open  True for open, False for closed
-     * @param boolean $persist True will cause the meta box to keep the state indicated by the $open paramater value
+     * @param boolean $persist True will cause the meta box to keep the state indicated by the $open parameter value
      * at next visit to the page, even if the user changed it (i.e.: it ignores saved changes)
      * @return void
      */
@@ -569,7 +569,7 @@ class Simpli_Hello_Basev1c0_Plugin_Menu extends Simpli_Hello_Basev1c0_Plugin_Mod
     /**
      * Add Menu Page (Wrapper)
      *
-     * Simply adds the Add Menu Page paramaters to an array which is later used in a hook to add the menu page
+     * Simply adds the Add Menu Page parameters to an array which is later used in a hook to add the menu page
      *
      * @param string $page_title The title of the menu page
      * @param array $menu_titles An array of titles
@@ -593,7 +593,7 @@ class Simpli_Hello_Basev1c0_Plugin_Menu extends Simpli_Hello_Basev1c0_Plugin_Mod
     /**
      * Add  Custom Post Editor (Wrapper)
      *
-     * Simply adds the add Custom Post Editor paramaters to an array which is later used in a hook to add the editor page
+     * Simply adds the add Custom Post Editor parameters to an array which is later used in a hook to add the editor page
      *
      * @param string $page_title The title of the menu page
      * @param array $menu_titles An array of titles
@@ -627,7 +627,7 @@ class Simpli_Hello_Basev1c0_Plugin_Menu extends Simpli_Hello_Basev1c0_Plugin_Mod
 
         /*
          * Call the internal method that actually does the work within the hook
-         * Use the paramaters provided by the public addMenuPage() method
+         * Use the parameters provided by the public addMenuPage() method
          */
 
         $this->_addCustomPostEditor
@@ -835,7 +835,7 @@ class Simpli_Hello_Basev1c0_Plugin_Menu extends Simpli_Hello_Basev1c0_Plugin_Mod
     /**
      * Add a Custom Post Editor Page
      *
-     * This is very similar to addMenuPage but forces parent to be edit.php and hardcodes some other paramaters, as well
+     * This is very similar to addMenuPage but forces parent to be edit.php and hardcodes some other parameters, as well
      * as immediately removing the page from the menu. This allows you to use the page added as an editor by redirecting
      * the edit action to it.
      * the page can be accessed at : /wp-admin/edit.php?page=simpli_hello_post_editor
@@ -1004,7 +1004,7 @@ class Simpli_Hello_Basev1c0_Plugin_Menu extends Simpli_Hello_Basev1c0_Plugin_Mod
             return;
         }
 
-        wp_enqueue_style($this->plugin()->getSlug() . '-admin-page', $this->plugin()->getUrl() . '/admin/css/settings.css', array(), $this->plugin()->getVersion());
+        wp_enqueue_style($this->plugin()->getSlug() . '-admin-page', $this->plugin()->getAdminUrl() . '/css/settings.css', array(), $this->plugin()->getVersion());
         wp_enqueue_script('jquery');
         wp_enqueue_script('post');
         /* by enqueuing post, you are enqueuing all the following scripts required to handle metaboxes (except save-metabox-state, which is enqueued in the next step):
@@ -1117,7 +1117,7 @@ class Simpli_Hello_Basev1c0_Plugin_Menu extends Simpli_Hello_Basev1c0_Plugin_Mod
              *                *
              * $action_slug  e.g.:  'settings_save' . The 'action slug', which is the short name for the action (without the module slug prefix)
              *
-             * $action_long  e.g.: simpli_hello_menu001_general_settings_save The 'long name' of the action
+             * $action_long  e.g.: simpli_hello_Menu010_general_settings_save The 'long name' of the action
              *
              *
              */
@@ -1178,13 +1178,31 @@ class Simpli_Hello_Basev1c0_Plugin_Menu extends Simpli_Hello_Basev1c0_Plugin_Mod
             $template_path = $this->plugin()->getDirectory() . '/admin/templates/menu_settings_default.php';
         }
 
-        ob_start();
-        require($template_path);
-        $output = ob_get_clean();
+        $this->debug()->logVar('$template_path = ', $template_path);
+        $this->debug()->logVar('$this->plugin()->ALLOW_SHORTCODES = ', $this->plugin()->ALLOW_SHORTCODES);
+        if ($this->plugin()->ALLOW_SHORTCODES) {
 
-        echo do_shortcode($output);
+            $this->debug()->log('Including template and executing shortcodes');
+            ob_start();
+            include($template_path);
+            $template = do_shortcode(ob_get_clean());
+            // $template = ob_get_clean();
+            //   $this->debug()->logVar('$template = ', $template);
+            // echo $template;
+            echo $template;
+            //$this->debug()->stop(true);
+        } else {
+            $this->debug()->log('Not executing shortcodes since they are turned off');
+            include($template_path);
+        }
     }
 
+//            ob_start();
+//            include($template_path);
+//
+//            $template = do_shortcode(ob_get_clean());
+//            $this->debug()->logVar('$template = ', $template);
+//            echo $template;
     /**
      * Hook -Ajax Settings Reset
      *
@@ -1236,7 +1254,7 @@ class Simpli_Hello_Basev1c0_Plugin_Menu extends Simpli_Hello_Basev1c0_Plugin_Mod
     /**
      * Verify WordPress Nonce
      *
-     * Verifies the WordPress Nonce , using either a unique action name (derived from the $function_name paramater) or from the default $this->NONCE_ACTION action.
+     * Verifies the WordPress Nonce , using either a unique action name (derived from the $function_name parameter) or from the default $this->NONCE_ACTION action.
      *
      * The simpli framework automatically handles WordPress Nonces for you for any settings saved by this module. The default configuration is to use a 'one nonce' for each menu, regardless of how many ajax actions are created. This is the easiest to implement, and the least performance heavy, and one that does not require any adherence to method naming conventions for it to work.
      * Alternately, If you wish to use a unique nonce for each action, this is also easily done but is a bit more performance heavy and requires additional understanding if you are to create your own ajax actions.

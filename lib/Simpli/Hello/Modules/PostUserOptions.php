@@ -101,6 +101,8 @@ class Simpli_Hello_Modules_PostUserOptions extends Simpli_Hello_Basev1c0_Plugin_
             return;
         }
         $this->debug()->logVar('current_screen = ', get_current_screen());
+        global $post;
+        $this->debug()->logVar('$post = ', $post);
         $this->debug()->log('Passed pageCheckEditor test');
         /*
          * Hook our save method into the post's save action
@@ -169,11 +171,6 @@ class Simpli_Hello_Modules_PostUserOptions extends Simpli_Hello_Basev1c0_Plugin_
 
 
 
-
-
-
-
-
         /*
          * Configure the metabox object
          * Pass the optional pageCheck callback method to
@@ -181,31 +178,32 @@ class Simpli_Hello_Modules_PostUserOptions extends Simpli_Hello_Basev1c0_Plugin_
          */
         $this->metabox()->config(array($this, 'pageCheckEditor'));
 
-        $post = $this->plugin()->tools()->getPost();
+
+
+
 
         /*
          * dont show the Meta Box for the Snippet
          * post type,since that would cause recursion when
          * viewing the snippet post type.
          */
-        if (is_object($post) && $post->post_type !== 'simpli_hello_snippet') {
 
-
-            /*
-             * add the metaboxes
-             */
-            if (true)
-                $this->metabox()->addMetaBox(
-                        $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
-                        , __('Simpli Hello Options', $this->plugin()->getTextDomain()) //title of the metabox.
-                        , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
-                        , $screen_id = null// post_type when you embed meta boxes into post edit pages
-                        , 'normal' //normal advanced or side The part of the page where the metabox should show
-                        , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                        , null //$metabox['args'] in callback function
+        /*
+         * add the metaboxes
+         */
+        if (true)
+            $this->metabox()->addMetaBox(
+                    $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
+                    , __('Simpli Hello Options', $this->plugin()->getTextDomain()) //title of the metabox.
+                    , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
+                    , array('exclude' => $this->plugin()->getSlug() . '_snippet')//  string|object|array $screen Optional. The screen on which to show the box (post, page, link). Defaults to current screen. If you pass an array, the meta box will be added to the current screen, for the post types specified. To exclude the meta box from being added to post types, use this format: array('exclude'=>array('post','custom_post_type'). to limit to only certain post types, use this format array('include'=>array('post','custom_post_type'))
+                    , 'normal' //normal advanced or side The part of the page where the metabox should show
+                    , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
+                    , null //$metabox['args'] in callback function
 //,  array('path' => $this->plugin()->getDirectory() . '/admin/templates/metabox/post.php') //$metabox['args'] in callback function
-                );
-        }
+            );
+        $this->debug()->log('adding meta box with id =  ' . $this->getSlug() . '_' . 'metabox_options');
+
 
         /*
          * set the metabox initial open/closes states
@@ -242,11 +240,14 @@ class Simpli_Hello_Modules_PostUserOptions extends Simpli_Hello_Basev1c0_Plugin_
         );
         /*
          * Use Global Text
-         * true or false. Use global text instead of this post's text
+         * 'custom_text','default', or 'snippet'.
+         * 'custom_text' - will use the custom text from the 'text' post option
+         * 'default' - will use the text provided in the plugin's admin settings
+         * 'snippet' - will use the text provided by the snippet custom post type using the post_id of the snippet from the snippet dropdown.
          *
          */
         $this->setUserOptionDefault(
-                'use_global_text', 'snippet'
+                'use_global_text', 'default' //'custom_text','default', or snippet.
         );
 
 
@@ -871,7 +872,7 @@ class Simpli_Hello_Modules_PostUserOptions extends Simpli_Hello_Basev1c0_Plugin_
      * @return void
      */
     public function hookAjaxSavePost() {
-
+        $this->debug()->t();
         /*
          * No pageCheck needed since this is ajax, so the method wouldnt even be called unless it was on the right page
          */
@@ -905,8 +906,10 @@ class Simpli_Hello_Modules_PostUserOptions extends Simpli_Hello_Basev1c0_Plugin_
          * be located , depending on whether its a new or existeing post, and
          * whether you are using a custom post editor
          */
+        $post = $this->plugin()->post()->getPost();
 
-        $post_id = $this->plugin()->tools()->getEditPostID();
+        $this->debug()->logVar('$post = ', $post);
+        $post_id = $post->ID;
 
         /*
          * Now that we know the post id, we can save the options
@@ -960,14 +963,23 @@ class Simpli_Hello_Modules_PostUserOptions extends Simpli_Hello_Basev1c0_Plugin_
             } else {
 
                 $this->_page_check_editor = $this->plugin()->tools()->isScreen(array('edit', 'add'), null, false);
-                if (!$this->_page_check_editor) {
+                if ($this->_page_check_editor) {
+                    $this->debug()->logVar('Page is either an add or an edit page. Result = ', $this->_page_check_editor);
+                } else {
                     /*
                      * if pageCheck failed, check to see if we are on a custom edit or add screen
                      */
                     $this->debug()->log('Not a standard edit or add page, checking to see if its a CustomEdit or CustomAdd screen');
                     $this->_page_check_editor = $this->plugin()->tools()->isScreen(array('custom_edit', 'custom_add'), null, false);
+                    if (!$this->_page_check_editor) {
+                        $this->debug()->log('Page is not an edit, custom edit, add, or custom add page, returning false.');
+                    } else {
+                        $this->debug()->logVar('Page a custom add or custom edit page', $this->_page_check_editor);
+                    }
                 }
             }
+        } else {
+            $this->debug()->logVar('Page check already done, so returning cached result of : ', $this->_page_check_editor);
         }
 
 
@@ -979,7 +991,7 @@ class Simpli_Hello_Modules_PostUserOptions extends Simpli_Hello_Basev1c0_Plugin_
 
 
 
-        $this->debug()->logVar('$this->_page_check_editor  = ', $this->_page_check_editor);
+
 
         return ($this->_page_check_editor);
     }

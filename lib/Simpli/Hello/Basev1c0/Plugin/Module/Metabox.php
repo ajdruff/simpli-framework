@@ -11,7 +11,7 @@
  *
  * Usage:
   1) Add the following line to your config() method :
-  $this->metabox()->config(array($this,'pageCheckMenu'));
+  $this->metabox()->config(array($this,'pageCheck'));
  * pageCheck should be a method that returns true or false indicating whether
  * you are on the page on which you want the metaboxes to be managed
  *
@@ -81,6 +81,7 @@ class Simpli_Hello_Basev1c0_Plugin_Module_Metabox extends Simpli_Hello_Basev1c0_
      */
     protected function _addHooks() {
         $this->debug()->t();
+
         add_action('current_screen', array($this, 'hookCurrentScreen'));
 
         // add ajax action
@@ -362,7 +363,7 @@ class Simpli_Hello_Basev1c0_Plugin_Module_Metabox extends Simpli_Hello_Basev1c0_
      *
      * @param string $id The id of the meta box used in the add_meta_box method. Must be unique to the meta box.
      * @param boolean $open  True for open, False for closed
-     * @param boolean $persist True will cause the meta box to keep the state indicated by the $open paramater value
+     * @param boolean $persist True will cause the meta box to keep the state indicated by the $open parameter value
      * at next visit to the page, even if the user changed it (i.e.: it ignores saved changes)
      * @uses setMetaboxOpenState()
      * @return void
@@ -460,12 +461,17 @@ class Simpli_Hello_Basev1c0_Plugin_Module_Metabox extends Simpli_Hello_Basev1c0_
      * @return void
      */
     public function hookAddMetaBoxes() {
+        $this->debug()->t();
 
-        $this->plugin()->debug()->t();
+
         if (is_null($this->_meta_boxes_args)) {
             $this->plugin()->debug()->log('Exiting ' . __FUNCTION__ . ' since $_meta_boxes_args is null');
             return;
+        } else {
+
+            $this->debug()->logVar('Adding Meta Box , Meta Box arguments are: = ', $this->_meta_boxes_args);
         }
+        $post_type = $this->plugin()->post()->getPostType();
 
         foreach ($this->_meta_boxes_args as $meta_box_args) {
 
@@ -474,24 +480,46 @@ class Simpli_Hello_Basev1c0_Plugin_Module_Metabox extends Simpli_Hello_Basev1c0_
              * extract the array of arguments
              * provided by the public addMenuPage() method
              */
-            extract($meta_box_args);
+
 
             /*
              * Now call the internal method that actually does the work within the hook
              */
+            /*
+             * Do not add meta box if post type is not included or is excluded
+             */
+            $skip = false;
+            $screen_id = $meta_box_args['screen_id'];
+            $meta_box_args['callback_args']['template_file_name'] = $meta_box_args['id']; //make the template name equal to the metabox id.
+            if (is_array($meta_box_args['screen_id'])) {
+
+                $post_types = $meta_box_args['screen_id'];
+                $screen_id = null;
+                if (isset($post_types['exclude'])) {
+                    if (in_array($post_type, $post_types)) {
+                        $skip = true;
+                    }
+                }
+                if (isset($post_types['include'])) {
+                    if (!in_array($post_type, $post_types)) {
+                        $skip = true;
+                    }
+                }
+            }
+
+            if (!$skip) {
 
 
-
-
-            add_meta_box(
-                    $id  // Meta Box DOM ID , the HTML 'id' attribute of the edit screen section
-                    , $title  // Title of the edit screen section, visible to user
-                    , $callback //Function that prints out the HTML for the edit screen section. The function name as a string, or, within a class, an array to call one of the class's methods. The callback can accept up to two arguments, see Callback args.
-                    , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
-                    , $context //normal advanced or side The part of the page where the metabox should show This just allows you to separate out the metaboxes into groups , so that when you call do_metaboxes on a page template, it knows which group to process.
-                    , $priority // 'high' , 'core','default', 'low' The priority within the context where the box should show.
-                    , $callback_args// Arguments to pass into your callback function. The callback will receive the $post object and whatever parameters are passed through this variable. Get to these args in your callback function by using $metabox['args']
-            );
+                add_meta_box(
+                        $this->plugin()->getSlug() . '_' . $meta_box_args['id']  // Meta Box DOM ID , the HTML 'id' attribute of the edit screen section
+                        , $meta_box_args['title']  // Title of the edit screen section, visible to user
+                        , $meta_box_args['callback']  //Function that prints out the HTML for the edit screen section. The function name as a string, or, within a class, an array to call one of the class's methods. The callback can accept up to two arguments, see Callback args.
+                        , $screen_id // string|object The screen on which to show the box (post, page, link). Null defaults to current screen.
+                        , $meta_box_args['context']  //normal advanced or side The part of the page where the metabox should show This just allows you to separate out the metaboxes into groups , so that when you call do_metaboxes on a page template, it knows which group to process.
+                        , $meta_box_args['priority']  // 'high' , 'core','default', 'low' The priority within the context where the box should show.
+                        , $meta_box_args['callback_args'] // Arguments to pass into your callback function. The callback will receive the $post object and whatever parameters are passed through this variable. Get to these args in your callback function by using $metabox['args']
+                );
+            }
         }
     }
 
@@ -500,7 +528,7 @@ class Simpli_Hello_Basev1c0_Plugin_Module_Metabox extends Simpli_Hello_Basev1c0_
     /**
      * Add Meta Box (Wrapper)
      *
-     * Stores the paramater values to an array for later retrieval by a hook that will make a call to the WordPress method add_meta_box.
+     * Stores the parameter values to an array for later retrieval by a hook that will make a call to the WordPress method add_meta_box.
      *
      * @param string $id Meta Box DOM ID , the HTML 'id' attribute of the edit screen section
      * @param string $title Title of the edit screen section, visible to user
@@ -634,11 +662,15 @@ class Simpli_Hello_Basev1c0_Plugin_Module_Metabox extends Simpli_Hello_Basev1c0_
 
 
 
+        $this->debug()->logVar('$metabox[\'id\'] = ', $metabox['id']);
+        $this->debug()->logVar('$metabox[\'args\'][\'template_file_name\'] = ', $metabox['args']['template_file_name']);
+
+
 
         /*
          * If no template path provided, use the metabox id as the template name and /admin/templates/metabox as the path
          */
-        $template_path = $this->plugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['id'] . '.php';
+        $template_path = $this->plugin()->getDirectory() . '/admin/templates/metabox/' . $metabox['args']['template_file_name'] . '.php';
         if (isset($metabox['args']['path'])) {
             $template_path = $metabox['args']['path'];
         }
@@ -647,13 +679,19 @@ class Simpli_Hello_Basev1c0_Plugin_Module_Metabox extends Simpli_Hello_Basev1c0_
             $this->plugin()->debug()->logcError($this->plugin()->getSlug() . ' : Meta Box ' . $metabox['id'] . ' error - template path does not exist ' . $template_path);
             return;
         }
-
+        $this->debug()->logVar('$this->plugin()->ALLOW_SHORTCODES = ', $this->plugin()->ALLOW_SHORTCODES);
         if ($this->plugin()->ALLOW_SHORTCODES) {
+            $this->debug()->log('Executing shortcodes and including path');
+
             ob_start();
             include($template_path);
-            $template = ob_get_clean();
+
+            $template = do_shortcode(ob_get_clean());
+            //  $this->debug()->log('$template = ' . $template);//note that if $template has debug statements in it, its better to use 'log' not logVar , since logVar will turn everything into htmlspecialchars, which will obscure the output
             echo $template;
         } else {
+            $this->debug()->log('Including the template path without execurting the shortcodes since ALLOW_SHORTCODES is false');
+
             include($template_path);
 
             return;
@@ -754,7 +792,7 @@ class Simpli_Hello_Basev1c0_Plugin_Module_Metabox extends Simpli_Hello_Basev1c0_
              *                *
              * $action_slug  e.g.:  'settings_save' . The 'action slug', which is the short name for the action (without the module slug prefix)
              *
-             * $action_long  e.g.: simpli_hello_menu001_general_settings_save The 'long name' of the action
+             * $action_long  e.g.: simpli_hello_Menu010_general_settings_save The 'long name' of the action
              *
              *
              */
@@ -789,7 +827,7 @@ class Simpli_Hello_Basev1c0_Plugin_Module_Metabox extends Simpli_Hello_Basev1c0_
     /**
      * Verify WordPress Nonce
      *
-     * Verifies the WordPress Nonce , using either a unique action name (derived from the $function_name paramater) or from the default $this->NONCE_ACTION action.
+     * Verifies the WordPress Nonce , using either a unique action name (derived from the $function_name parameter) or from the default $this->NONCE_ACTION action.
      *
      * The simpli framework automatically handles WordPress Nonces for you for any settings saved by this module. The default configuration is to use a 'one nonce' for each menu, regardless of how many ajax actions are created. This is the easiest to implement, and the least performance heavy, and one that does not require any adherence to method naming conventions for it to work.
      * Alternately, If you wish to use a unique nonce for each action, this is also easily done but is a bit more performance heavy and requires additional understanding if you are to create your own ajax actions.

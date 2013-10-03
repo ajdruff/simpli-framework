@@ -16,7 +16,7 @@
  * @subpackage SimpliHello
  *
  */
-class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
+class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c2_Plugin_Debug {
 
     /**
      * Configure Module
@@ -159,7 +159,7 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
         $this->setMethodFilter('hookAjaxSavePost', true);
         $this->setMethodFilter('hookSavePost', true);
         $this->setMethodFilter('setUserOption', true);
-        $this->setMethodFilter('Simpli_Hello_Basev1c0_Plugin_Post', true);
+        $this->setMethodFilter('Simpli_Hello_Basev1c2_Plugin_Post', true);
 
         $this->setMethodFilter('_savePost', true);
         $this->setMethodFilter('saveUserOptions', true);
@@ -243,7 +243,7 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
         $this->setMethodFilter('doPersistentAction', true);
         $this->setMethodFilter('addPersistentAction', true);
         $this->setMethodFilter('toggleActivationStatus', true);
-        $this->setMethodFilter('Simpli_Hello_Basev1c0_Plugin_PostType::config', true);
+        $this->setMethodFilter('Simpli_Hello_Basev1c2_Plugin_PostType::config', true);
 
         $this->setMethodFilter('_register_post_type', true);
 
@@ -416,7 +416,7 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
         $this->setMethodFilter('pageCheckEditor', true);
         $this->setMethodFilter('hookEditingScreen', true);
 
-        $this->setMethodFilter('Simpli_Hello_Basev1c0_Plugin_Module_Post', true);
+        $this->setMethodFilter('Simpli_Hello_Basev1c2_Plugin_Module_Post', true);
 
 
 
@@ -425,7 +425,7 @@ class Simpli_Hello_DebugConfig extends Simpli_Hello_Basev1c0_Plugin_Debug {
         $this->setMethodFilter('getPost', true);
         $this->setMethodFilter('getEditPostID', true);
 
-        $this->setMethodFilter('Simpli_Hello_Basev1c0_Plugin_Module_Post', true);
+        $this->setMethodFilter('Simpli_Hello_Basev1c2_Plugin_Module_Post', true);
         $this->setMethodFilter('_hookNewPost', true);
 
 

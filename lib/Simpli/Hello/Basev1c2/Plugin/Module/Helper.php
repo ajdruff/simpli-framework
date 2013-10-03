@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Plugin Helper Base class
+ * Plugin Helper Basev1c2 class
  *
  * Helper classes that are dependent on the plugin to create them.
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * @subpackage SimpliBase
+ * @subpackage SimpliBasev1c2
  */
-class Simpli_Hello_Basev1c0_Plugin_Module_Helper implements Simpli_Hello_Basev1c0_Plugin_Module_Helper_Interface {
+class Simpli_Hello_Basev1c2_Plugin_Module_Helper implements Simpli_Hello_Basev1c2_Plugin_Module_Helper_Interface {
 
     /**
      * Constructor
@@ -23,7 +23,7 @@ class Simpli_Hello_Basev1c0_Plugin_Module_Helper implements Simpli_Hello_Basev1c
     protected $_addon = null;
     protected $_plugin = null;
 
-    function __construct(Simpli_Hello_Basev1c0_Plugin_Module $module, Simpli_Hello_Basev1c0_Plugin_Addon $addon = null) {
+    function __construct(Simpli_Hello_Basev1c2_Plugin_Module $module, Simpli_Hello_Basev1c2_Plugin_Addon $addon = null) {
 
         if (is_null($addon)) {
             $this->_module = $module;

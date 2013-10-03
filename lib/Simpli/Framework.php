@@ -34,7 +34,7 @@ class Simpli_Framework {
         $simpli_data = get_file_data($plugin_file_path, array(), 'simpli');
 
         $base_class_version = $simpli_data['Simpli Base Class Version']; // X.Y
-
+        // echo '<br>base class version = ' . $base_class_version;
         /*
          * build the base class versioned namespace vXcY
          * by adding v and c so we have vXcY
@@ -64,6 +64,7 @@ class Simpli_Framework {
          */
 
         $base_loader_class_path = dirname($plugin_file_path) . '/lib/' . $slug_ucprefix . '/' . $slug_ucsuffix . '/Base' . $vxcy . '/Loader.php';
+
 
         require($base_loader_class_path);
 

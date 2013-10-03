@@ -8,7 +8,7 @@
  * @package SimpliFramework
  * @subpackage SimpliHello
  */
-class Simpli_Hello_Modules_Menu20Snippets extends Simpli_Hello_Basev1c0_Plugin_PostType {
+class Simpli_Hello_Modules_Menu20Snippets extends Simpli_Hello_Basev1c2_Plugin_PostType {
 
     /**
      * Config
@@ -82,7 +82,7 @@ class Simpli_Hello_Modules_Menu20Snippets extends Simpli_Hello_Basev1c0_Plugin_P
          * If false, you'll get the regular editor.
          */
 
-        $this->setConfig('CUSTOM_POST_EDITOR_ENABLED', true);
+        $this->setConfig('CUSTOM_POST_EDITOR_ENABLED', false);
 
 
 

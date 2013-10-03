@@ -7,14 +7,14 @@
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * @subpackage SimpliBase
+ * @subpackage SimpliBasev1c2
  */
 // Check that the class exists before attempting to declare it again. its possible another plugin loaded it.
-if (class_exists('Simpli_Hello_Basev1c0_Loader')) {
+if (class_exists('Simpli_Hello_Basev1c2_Loader')) {
     return;
 }
 
-class Simpli_Hello_Basev1c0_Loader {
+class Simpli_Hello_Basev1c2_Loader {
 
     /**
      * Plugin Name
@@ -49,7 +49,8 @@ class Simpli_Hello_Basev1c0_Loader {
 
 
 
-        $this->setBaseClassVersion($base_class_version);
+        $this->setBasev1c2ClassVersion($base_class_version);
+
 
 
         /*
@@ -117,17 +118,17 @@ class Simpli_Hello_Basev1c0_Loader {
     }
 
     /**
-     * Set Base Class Version
+     * Set Basev1c2 Class Version
      *
      * @param string $base_class_version
      * @return void;
      */
-    private function setBaseClassVersion($base_class_version) {
+    private function setBasev1c2ClassVersion($base_class_version) {
         $this->_base_class_version = $base_class_version;
     }
 
     /**
-     * Get Base Class Version
+     * Get Basev1c2 Class Version
      *
      * @param none
      * @return string
@@ -232,8 +233,14 @@ class Simpli_Hello_Basev1c0_Loader {
      * @return void;
      */
     public function autoloader($class) { //e.g. class= 'Simpli_Hello_Plugin'
+        $base_class_version = $this->getBaseClassVersion('v{major}c{minor}');
+        //  echo('<br>$base_class_version = ' . $base_class_version );
+
+
+
+
         $namespaces = array(
-            $this->getClassNamespace() . '_' . $this->getBaseClassVersion('v{major}c{minor}') //base class namespace
+            $this->getClassNamespace() . '_' . $base_class_version //base class namespace
             , $this->getClassNamespace() //core class namespace
         );
 
@@ -260,11 +267,13 @@ class Simpli_Hello_Basev1c0_Loader {
             $filename = array_pop($matches) . '.php'; // get the last part of $class and use it as the name of the file
 
 
+
             $subdirectory_path = implode('/', $matches); // each part of the remaining string is the name of a subdirectory
 // do not use the slower 'require_once' since autoload tracks loading.
             $file = dirname($this->getPluginFilePath()) . '/lib/' . $subdirectory_path . '/' . $filename;
             $file = $path = str_replace('\\', '/', $file); //quick and dirty normalize path
-
+            //  echo '<br> $file path = ' . $file;
+            // die('<br>exiting ' . __LINE__ . __FILE__);
             $require_result = require $file; // do not use file_exists for performance reasons
 
             if (!class_exists($class) && (stripos($class, 'Interface') === false)) {

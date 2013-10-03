@@ -6,10 +6,10 @@
 
  * @author Andrew Druffner
  * @package SimpliFramework
- * @subpackage SimpliBase
+ * @subpackage SimpliBasev1c2
   * @property string $DISABLED_MODULES An array of Module Names of the Addon that you don't want to have loaded
  */
-Interface Simpli_Hello_Basev1c0_Plugin_Addon_Interface {
+Interface Simpli_Hello_Basev1c2_Plugin_Addon_Interface {
 
    public  function __construct($plugin) ;
 
@@ -20,7 +20,7 @@ Interface Simpli_Hello_Basev1c0_Plugin_Addon_Interface {
      * Get Plugin
      *
      * @param none
-     * @return Simpli_Hello_Basev1c0_Plugin
+     * @return Simpli_Hello_Basev1c2_Plugin
      */
     public function plugin() ;
 

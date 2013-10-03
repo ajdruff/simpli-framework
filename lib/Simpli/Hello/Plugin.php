@@ -7,7 +7,7 @@
  * @package SimpliFramework
  * @subpackage SimpliHello
  */
-class Simpli_Hello_Plugin extends Simpli_Hello_Basev1c0_Plugin {
+class Simpli_Hello_Plugin extends Simpli_Hello_Basev1c2_Plugin {
 
     /**
      * Add Hooks
@@ -188,7 +188,7 @@ class Simpli_Hello_Plugin extends Simpli_Hello_Basev1c0_Plugin {
         );
         $this->setConfig(
                 'DEBUG'
-                , true
+                , false
         );
 
 

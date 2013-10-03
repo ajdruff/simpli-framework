@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Utility Base Class
+ * Utility Basev1c2 Class
  *
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * @subpackage SimpliBase
+ * @subpackage SimpliBasev1c2
  */
-class Simpli_Hello_Basev1c0_Plugin_Tools extends Simpli_Hello_Basev1c0_Plugin_Helper {
+class Simpli_Hello_Basev1c2_Plugin_Tools extends Simpli_Hello_Basev1c2_Plugin_Helper {
 
     /**
      * Sort Dependent List

@@ -8,14 +8,14 @@
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * @subpackage SimpliBase
+ * @subpackage SimpliBasev1c2
  */
-class Simpli_Hello_Basev1c0_Plugin_Module implements Simpli_Hello_Basev1c0_Plugin_Module_Interface {
+class Simpli_Hello_Basev1c2_Plugin_Module implements Simpli_Hello_Basev1c2_Plugin_Module_Interface {
 
     /**
      * Plugin object that this module extends
      *
-     * @var Simpli_Hello_Basev1c0_Plugin
+     * @var Simpli_Hello_Basev1c2_Plugin
      */
     protected $_plugin;
 
@@ -34,7 +34,7 @@ class Simpli_Hello_Basev1c0_Plugin_Module implements Simpli_Hello_Basev1c0_Plugi
     protected $_name;
     protected $_addon = null;
 
-    function __construct(Simpli_Hello_Basev1c0_Plugin $plugin, Simpli_Hello_Basev1c0_Plugin_Addon $addon = null) {
+    function __construct(Simpli_Hello_Basev1c2_Plugin $plugin, Simpli_Hello_Basev1c2_Plugin_Addon $addon = null) {
 
         if (is_null($addon)) {
             $this->_plugin = $plugin;
@@ -186,7 +186,7 @@ class Simpli_Hello_Basev1c0_Plugin_Module implements Simpli_Hello_Basev1c0_Plugi
      * Returns the plugin object that created the module
      *
      * @param none
-     * @return Simpli_Hello_Basev1c0_Plugin
+     * @return Simpli_Hello_Basev1c2_Plugin
      */
     public function plugin() {
 

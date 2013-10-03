@@ -22,9 +22,9 @@
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * @subpackage SimpliBase
+ * @subpackage SimpliBasev1c2
  */
-class Simpli_Hello_Basev1c0_Plugin_Module_Metabox extends Simpli_Hello_Basev1c0_Plugin_Module_Helper {
+class Simpli_Hello_Basev1c2_Plugin_Module_Metabox extends Simpli_Hello_Basev1c2_Plugin_Module_Helper {
 
     /**
      *

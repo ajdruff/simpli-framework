@@ -4,21 +4,20 @@
   Plugin Name:   Simpli Hello
   Plugin URI:    http://simpliwp/simpli-framework
   Description:   The Simpli Hello plugin is a template for WordPress plugin developers to create WordPress plugins using the Simpli Framework. The Simpli framework is a WordPress Plugin Framework that makes building object oriented WordPress plugins just a bit easier.
-  Author:        Andrew Druffner
-  Version:       1.2.1
-  Author URI:    http://simpliwp/about
+  Author:       Andrew Druffner
+  Version:      1.3.0
+  Author URI:   http://simpliwp/about
 
-  Text Domain:   simpli-hello
-  Domain Path:   /languages/
-  Simpli Framework Version: 1.2.0
-  Simpli Base Class Version: 1.0
+  Text Domain:  simpli-hello
+  Domain Path:  /languages/
+  Simpli Framework Version:     1.3.0
+  Simpli Base Class Version: 1.2
  *
  */
 /*
   Simpli Framework Copyright 2013  Andrew Druffner  (email :andrew@nomstock.com)
- * The Simpli framework was originally based on the WordPress plugin wordpress-https developed by Mike Ems Copyright 2012  Mike Ems  (email : mike@mvied.com).
- * Since 1.2.1, the code has been significantly re-written so as to make it virtually unrecognizable except for the basic module architecture, whose
- * implementation was included in the re-write.
+ * The Simpli framework was originally based on the WordPress plugin wordpress-https developed by Mike Ems.
+ * Since 1.2.1, the code has been significantly re-written so as to make it virtually unrecognizable except for the basic module architecture.
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -79,7 +78,7 @@ $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include u
  * To turn on debugging, go to: lib/Simpli
  * $this->turnOn();
  * to the config() method.
- * To turn it off, you can use turnOff() or simply rename Debug.php to _Debug.php . do not touch the base class which resides in the Simpli/BasevXcY directory.
+ * To turn it off, you can use turnOff() or simply rename Debug.php to _Debug.php . do not touch the base class which resides in the Simpli/Basev1c2XcY directory.
  */
 
 
@@ -89,5 +88,3 @@ $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include u
  * (Loads modules and settings)
  */
 $simpli_hello->init();
-
-

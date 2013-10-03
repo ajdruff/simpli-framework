@@ -212,7 +212,7 @@ class Simpli_Frames_Basev1c2_Loader {
         $namespace = $this->getPluginSlug();
 
         /*
-         * Convert to Title Case 'Simpli_Hello'
+         * Convert slug to Title Case 'Mycompany_Myplugin'
          */
         $array_namespace = explode('_', $namespace);
         $namespace = ucwords($array_namespace[0]) . '_' . ucwords($array_namespace[1]);

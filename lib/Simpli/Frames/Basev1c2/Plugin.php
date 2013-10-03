@@ -332,15 +332,10 @@ class Simpli_Frames_Basev1c2_Plugin implements Simpli_Frames_Basev1c2_Plugin_Int
 
         if (is_null($this->_module_directory)) {
 
-            /* Since the Module directory will always be 'Module' under the plugin's lib directory,
-             * then we can use the namespace of the plugin class to derive the subdirectory
-             * A class name of 'Simpli_Hello' will result in a concatenation of:
-             * $this->getDirectory() ,i.e, the plugin dir, e.g.: /home/username/public_html/wp-content/plugins/simpli-framework
-             * the lib subdirectory, always /lib
-             * the conversion of the class namespace : e.g.: /simpli/hello
-             * a directory named 'Module'
+            /* We use the namespace of the plugin class to derive the subdirectory
+             * A class name of 'Mycompany_Myplugin' will result in something like:
              *
-             * e.g: /home/username/public_html/wp-content/plugins/simpli-framework/lib/simpli/hello/Module
+             * e.g: /home/username/public_html/wp-content/plugins/simpli-framework/lib/Mycompany/Myplugin
              */
             $class_namespace_parts = $this->getClassNamespaceParts();
 

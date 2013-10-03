@@ -1,16 +1,16 @@
 <?php
 
 /**
-Plugin Name:   Simpli Frames 
- Plugin URI:    http://example.com 
- Description:   The Simpli Frames plugin does some amazing stuff and was built upon the Simpli framework, a WordPress Plugin development framework that makes building WordPress plugins just a bit easier. 
- Author:        Author 
- Version:       1.0.0 
- Author URI:    http://example.com 
- Text Domain:   simpli_frames 
- Domain Path:   /languages/ 
+  Plugin Name:   Simpli Framework Plugin
+  Plugin URI:    http://simpliwp/simpli-framework
+  Description:   The Simpli Framework is a WordPress Plugin Framework that makes building object oriented WordPress plugins just a bit easier. The Simpli Framework plugin defines the framework and is used by the Simpli Framework Builder plugin as a template to produce the new plugin. This plugin should never be used directly by the end user.
+  Author:        Andrew Druffner
+  Version:       1.4.0
+  Author URI:    http://simpliwp/about
+  Text Domain:   simpli_frames
+  Domain Path:   /languages/
 
-  Simpli Framework Version:     1.3.1
+  Simpli Framework Version:     1.4.0
   Simpli Base Class Version: 1.2
  *
  */

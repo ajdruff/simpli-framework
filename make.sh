@@ -35,7 +35,7 @@ SELF_PARENT_DIR_NAME=$(basename "$(echo $(dirname "${SELF_PATH}"))")
 excluded_files=".*\.\(zip\|png\|jpg\|gif\)"
 
 #the slug of the framework demonstration plugin that will act as the template
-simpli_hello='simpli_hello';
+simpli_frames='simpli_frames';
 
 default_target_dir=$(dirname "${SELF_PARENT_DIR_PATH}")
 
@@ -139,18 +139,18 @@ mycompany_myplugin=$(echo ${input_slug} | awk '{print tolower($0)}')  # mycompan
 
 
 #use for constant replacements
-SIMPLI_HELLO=$(echo $simpli_hello | awk '{print toupper($0)}') # SIMPLI_HELLO
+SIMPLI_FRAMES=$(echo $simpli_frames | awk '{print toupper($0)}') # SIMPLI_FRAMES
 MYCOMPANY_MYPLUGIN=$(echo $mycompany_myplugin | awk '{print toupper($0)}') # COMPANY_SHORTNAME
 
 
 
 
 #text domains
-simpliDASHhello=$(echo $simpli_hello | tr '_' '-') # simpli-hello
+simpliDASHframes=$(echo $simpli_frames | tr '_' '-') # simpli-frames
 mycompanyDASHmyplugin=$(echo $mycompany_myplugin | tr '_' '-') # mycompany-myplugin
 
 #prefixes
-simpli=$(echo ${simpli_hello} | cut -d _ -f 1) # simpli
+simpli=$(echo ${simpli_frames} | cut -d _ -f 1) # simpli
 mycompany=$(echo ${mycompany_myplugin} | cut -d _ -f 1) # mycompany
 
 
@@ -159,31 +159,31 @@ Simpli=${simpli^} # Simpli
 Mycompany=${mycompany^} # Mycompany
 
 #suffixes
-hello=$(echo ${simpli_hello} | cut -d _ -f 2) # hello
+frames=$(echo ${simpli_frames} | cut -d _ -f 2) # frames
 myplugin=$(echo ${mycompany_myplugin} | cut -d _ -f 2) # myplugin
 
 #suffixes - Title Case
-Hello=${hello^} # Hello
+Frames=${frames^} # Frames
 Myplugin=${myplugin^} # Myplugin
 
-Simpli_Hello="${Simpli}""_""${Hello}"
+Simpli_Frames="${Simpli}""_""${Frames}"
 Mycompany_Myplugin="${Mycompany}""_""${Myplugin}"
 
 
 #prefix_dot_suffix format
-simpli_dot_hello="${simpli}"".""${hello}"
+simpli_dot_frames="${simpli}"".""${frames}"
 mycompany_dot_myplugin="${mycompany}"".""${myplugin}"
-Simpli_dot_Hello="${Simpli}"".""${Hello}"
+Simpli_dot_Frames="${Simpli}"".""${Frames}"
 Mycompany_dot_Myplugin="${Mycompany}"".""${Myplugin}"
 
-#echo "simpli_dot_hello=""${simpli_dot_hello}"
+#echo "simpli_dot_frames=""${simpli_dot_frames}"
 #echo "mycompany_dot_myplugin=""${mycompany_dot_myplugin}"
-#echo "Simpli_dot_Hello=""${Simpli_dot_Hello}"
+#echo "Simpli_dot_Frames=""${Simpli_dot_Frames}"
 #echo "Mycompany_dot_Myplugin=""${Mycompany_dot_Myplugin}"
 #exit 1
 
 #Plugin Name
-old_plugin_name="${Simpli}"" ""${Hello}" # Simpli Hello
+old_plugin_name="${Simpli}"" ""${Frames}" # Simpli Frames
 new_plugin_name="${Mycompany}"" ""${Myplugin}" # Mycompany Myplugin
 
 
@@ -338,15 +338,15 @@ framework_version=`echo $framework_version` #trims result of any whitespaces
 #########################
 #rename files
 
-#rename Simpli/Hello to Mycompany/Myplugin
+#rename Simpli/Frames to Mycompany/Myplugin
 
 # make the new directories first
 mkdir -p "${target_dir}""/lib/""${Mycompany}";
 #move the company directory
-mv "${target_dir}""/lib/""${Simpli}""/""${Hello}" "${target_dir}""/lib/""${Mycompany}"
+mv "${target_dir}""/lib/""${Simpli}""/""${Frames}" "${target_dir}""/lib/""${Mycompany}"
 wait
-#now rename the hello directory
-mv "${target_dir}""/lib/""${Mycompany}""/""${Hello}" "${target_dir}""/lib/""${Mycompany}""/""${Myplugin}"
+#now rename the frames directory
+mv "${target_dir}""/lib/""${Mycompany}""/""${Frames}" "${target_dir}""/lib/""${Mycompany}""/""${Myplugin}"
 
 
 #########################
@@ -368,34 +368,34 @@ find "${target_dir}"/plugin.php -type f | xargs -n 1 sed -i -e "/Plugin\s*Name:/
 #########################
 # Slugs
 #########################
-#replace simpli_hello with mycompany_myplugin
+#replace simpli_frames with mycompany_myplugin
 echo 'converting slugs...'
-find "${target_dir}/" -not -regex "${excluded_files}" -type f |  xargs -n 1 sed -i -e "s|${simpli_hello}|${mycompany_myplugin}|g"
+find "${target_dir}/" -not -regex "${excluded_files}" -type f |  xargs -n 1 sed -i -e "s|${simpli_frames}|${mycompany_myplugin}|g"
 
 
 
 #########################
 # Text Domain Style
 #########################
-#replace simpli-hello with mycompany-myplugin
-find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${simpliDASHhello}|${mycompanyDASHmyplugin}|g"
+#replace simpli-frames with mycompany-myplugin
+find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${simpliDASHframes}|${mycompanyDASHmyplugin}|g"
 
 
 #########################
 # Constants
 #########################
-#replace SIMPLI_HELLO with MYCOMPANY_MYPLUGIN
+#replace SIMPLI_FRAMES with MYCOMPANY_MYPLUGIN
 echo 'converting constants...'
-find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${SIMPLI_HELLO}|${MYCOMPANY_MYPLUGIN}|g"
+find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${SIMPLI_FRAMES}|${MYCOMPANY_MYPLUGIN}|g"
 
 
 #########################
-# Javascript variables (simpli.hello)
+# Javascript variables (simpli.frames)
 #########################
-#replace simpli.hello with mycompany.myplugin and Simpli.Hello with Mycompany.Myplugin
+#replace simpli.frames with mycompany.myplugin and Simpli.Frames with Mycompany.Myplugin
 echo 'converting javascript variables...'
-find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${Simpli}\.${Hello}|${MyCompany_dot_Myplugin}|g"
-find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${simpli}\.${hello}|${mycompany_dot_myplugin}|g"
+find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${Simpli}\.${Frames}|${MyCompany_dot_Myplugin}|g"
+find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${simpli}\.${frames}|${mycompany_dot_myplugin}|g"
 
 
 
@@ -403,9 +403,9 @@ find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -
 #########################
 # Class Namespaces
 #########################
-# replace Simpli_Hello_ with Mycompany_Myplugin
+# replace Simpli_Frames_ with Mycompany_Myplugin
 echo 'converting class namespaces'
-find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${Simpli_Hello}_|${Mycompany_Myplugin}_|g"
+find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${Simpli_Frames}_|${Mycompany_Myplugin}_|g"
 
 
 
@@ -416,7 +416,7 @@ find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -
 #replace documentation tokens in phpdoc blocks
 #todo: limit this only to the non-framework directories
 echo 'converting doc block tokens ...' #deletes subpackage references and renames package
-find "${target_dir}""/lib/""${Mycompany}"/"${Myplugin}""/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#@subpackage\\s*${Simpli}${Hello}##"
+find "${target_dir}""/lib/""${Mycompany}"/"${Myplugin}""/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#@subpackage\\s*${Simpli}${Frames}##"
 find "${target_dir}""/lib/""${Mycompany}"/"${Myplugin}""/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s#@package\\s*'SimpliFramework#@package ${Mycompany}${Myplugin}#"
 
 
@@ -426,7 +426,7 @@ find "${target_dir}""/lib/""${Mycompany}"/"${Myplugin}""/" -not -regex "${exclud
 #########################
 
 #echo 'stopping before plugin replacements so you can look at it' ; exit 1;
-#replace 'Simpli Hello' with 'Mycompany Myplugin'
+#replace 'Simpli Frames' with 'Mycompany Myplugin'
 echo 'converting plugin names...'
 find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${old_plugin_name}|${new_plugin_name}|g"
 

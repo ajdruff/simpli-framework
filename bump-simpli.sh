@@ -151,8 +151,8 @@ fi
 #
 #######
 
-# list the lib/Simpli/Hello directory and look for a directory name that starts with Simpli
-base_old_version=$(ls "${lib_dir}""/Simpli/Hello/" | grep "Basev" | sed -e 's/Base\([vc0-9]*\)/\1/g')  #returns the full version number 1-0-0
+# list the lib/Simpli/Frames directory and look for a directory name that starts with Simpli
+base_old_version=$(ls "${lib_dir}""/Simpli/Frames/" | grep "Basev" | sed -e 's/Base\([vc0-9]*\)/\1/g')  #returns the full version number 1-0-0
 
 
 
@@ -337,7 +337,7 @@ echo 'Bumping Simpli Framework Base Class Library to new version ' "${base_new_v
 echo 'please wait ...'
 #first, rename the directory name. What happens of a permission denied error? then kill explorer and try again
 #rename lib/Simpli_X_Y_Z directory to one with new version
-mv "${lib_dir}""/Simpli/Hello/""${old_directory_name}" "${lib_dir}""/Simpli/Hello/""${new_directory_name}"
+mv "${lib_dir}""/Simpli/Frames/""${old_directory_name}" "${lib_dir}""/Simpli/Frames/""${new_directory_name}"
 
 
 #check error . if 1 then assume permission denied error

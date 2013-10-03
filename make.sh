@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 
 
+
 #add some stdout and help instructions
 #create php form script
 
@@ -280,31 +281,26 @@ fi
 
 #########################
 # Copy Template to New Directory
+#rsync is used so we can esily exclude multiple files and directories
+#alternatively, use copy, but cant exclude: cp -r ./* "${target_dir}"
+
 #########################
 
-#copy the simpli framework folder to the new plugin directory
-cp -r ./* "${target_dir}" 2>/dev/null
+
+rsync -a --exclude=".*" --exclude="*.sh" --exclude="README.md" --exclude="debug.log.txt" --exclude="nbproject"  ./* "${target_dir}" 2>/dev/null
+
+
 
 #########################
 # Remove unnecessary files
+# DEPRECATED but left for reference
+# not needed since we can exclude with rsync (above)
 #########################
 # remove unneccessary files before replacements start
 
 #remove git directory or it will take forever to complete
-rm -rf  "${target_dir}"/.git 2>/dev/null
+#rm -rf  "${target_dir}"/.git 2>/dev/null
 
-#remove netbeans project directory
-rm -rf  "${target_dir}"/nbproject 2>/dev/null
-
-
-
-
-#remove framework documentation
-rm  "${target_dir}"/*.html 2>/dev/null
-
-
-#remove scripts since scripts should only be included in the framework
-rm  "${target_dir}"/*.sh 2>/dev/null
 
 #############
 # start testing
@@ -444,6 +440,14 @@ echo "Adding Framework Version Number"
 find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|\"__SIMPLI_FRAMEWORK_VERSION__\"|\"${framework_version}\"|g"
 
 
+#########################
+# Permissions
+# Ensure that the proper permissions are set or
+# you'll recieve permission denied errors.
+#########################
+echo "Updating Permissions";
+find "${target_dir}/" -type d -exec chmod 755 {} \;
+find "${target_dir}/" -type f -exec chmod 644 {} \;
 
 
 

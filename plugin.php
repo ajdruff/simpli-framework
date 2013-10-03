@@ -88,3 +88,4 @@ $simpli_frames->setTextDomain('simpli-frames'); // TextDomain must *not* include
  * (Loads modules and settings)
  */
 $simpli_frames->init();
+?>

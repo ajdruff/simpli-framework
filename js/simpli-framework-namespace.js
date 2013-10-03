@@ -49,25 +49,25 @@ if (typeof simpli_namespace !== 'function') {
 
 
 //this to be replaced by the plugin company and plugin name
-simpli_namespace('simpli.hello');
+simpli_namespace('simpli.frames');
 
 /*
  *  usage :
-simpli.hello.message = function(message)
+simpli.frames.message = function(message)
 {
     alert( message );
 };
 
-simpli.hello.message('hello world!');
+simpli.frames.message('hello world!');
 
 
  */
 
-simpli.hello.log = function(message)
+simpli.frames.log = function(message)
 {
 
-    if (typeof simpli_hello != 'undefined') { //check if simpli_hello namespace is available . if it is, variables are also available
-        if (simpli_hello.plugin.debug === true) { //if variables are available, we can check preferences
+    if (typeof simpli_frames != 'undefined') { //check if simpli_frames namespace is available . if it is, variables are also available
+        if (simpli_frames.plugin.debug === true) { //if variables are available, we can check preferences
 
     console.log( message );
         } else {

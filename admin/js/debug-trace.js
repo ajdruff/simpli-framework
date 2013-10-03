@@ -29,7 +29,7 @@
  * @return string The parsed output of the form body tag
  */
 
-simpli.hello.debug_bind_collapse_expand_events =
+simpli.frames.debug_bind_collapse_expand_events =
 function()
         {
 
@@ -81,7 +81,7 @@ function()
 
 
 
-simpli.hello.debug_bind_collapse_expand_events();
+simpli.frames.debug_bind_collapse_expand_events();
 
 
 /**
@@ -91,7 +91,7 @@ simpli.hello.debug_bind_collapse_expand_events();
  * This works , but the click events do not, so I am no longer using the multi-select
 
 
-simpli.hello.multiselect2side =
+simpli.frames.multiselect2side =
 function()
         {
 
@@ -104,7 +104,7 @@ function()
 
 // Create the multi select boxes for the debug module
 
-        simpli.hello.multiselect2side();
+        simpli.frames.multiselect2side();
 
 
          */

@@ -18,7 +18,7 @@ jQuery(document).ready(function(jQuery) {
      */
 
 
-    simpli.hello.bind_ajax_actions_menu();
+    simpli.frames.bind_ajax_actions_menu();
 
 })
 
@@ -26,9 +26,9 @@ jQuery(document).ready(function(jQuery) {
 
 
 
-simpli.hello.bind_ajax_actions_menu = function()
+simpli.frames.bind_ajax_actions_menu = function()
 {
-    //   var form = jQuery('#'+simpli_hello.plugin.slug + '_' + simpli_hello.metabox_forms[metabox_id].form_name).first();
+    //   var form = jQuery('#'+simpli_frames.plugin.slug + '_' + simpli_frames.metabox_forms[metabox_id].form_name).first();
     var form;
 
 
@@ -41,8 +41,8 @@ simpli.hello.bind_ajax_actions_menu = function()
         form = jQuery(this).closest('form')[0];
 
 
-        simpli.hello.prepare_form(form); //adds nonce and hidden form elements
-        simpli.hello.ajaxSubmit(form, event, ajax_action_slug); //executes the ajax submission
+        simpli.frames.prepare_form(form); //adds nonce and hidden form elements
+        simpli.frames.ajaxSubmit(form, event, ajax_action_slug); //executes the ajax submission
 
     });
 
@@ -55,8 +55,8 @@ simpli.hello.bind_ajax_actions_menu = function()
         form = jQuery(this).closest('form')[0];
 
 
-        simpli.hello.prepare_form(form); //adds nonce and hidden form elements
-        simpli.hello.ajaxSubmit(form, event, ajax_action_slug); //executes the ajax submission
+        simpli.frames.prepare_form(form); //adds nonce and hidden form elements
+        simpli.frames.ajaxSubmit(form, event, ajax_action_slug); //executes the ajax submission
 
     });
 
@@ -73,10 +73,10 @@ simpli.hello.bind_ajax_actions_menu = function()
 
         form = jQuery(this).closest('form')[0];
 
-        if (!confirm(simpli_hello.metabox_forms.reset_message)) {
+        if (!confirm(simpli_frames.metabox_forms.reset_message)) {
             return false;
         }
-        simpli.hello.ajaxSubmit(form, event, ajax_action_slug);
+        simpli.frames.ajaxSubmit(form, event, ajax_action_slug);
     });
 
     /*
@@ -88,11 +88,11 @@ simpli.hello.bind_ajax_actions_menu = function()
 
         form = jQuery(this).closest('form')[0];
 
-        if (!confirm(simpli_hello.metabox_forms.reset_message)) {
+        if (!confirm(simpli_frames.metabox_forms.reset_message)) {
 
             return false;
         }
-        simpli.hello.ajaxSubmit(form, event, ajax_action_slug);
+        simpli.frames.ajaxSubmit(form, event, ajax_action_slug);
     });
 
 
@@ -107,10 +107,10 @@ simpli.hello.bind_ajax_actions_menu = function()
         form = jQuery(this).closest('form')[0];
 
 
-        if (!confirm(simpli_hello.metabox_forms.reset_all_message)) {
+        if (!confirm(simpli_frames.metabox_forms.reset_all_message)) {
             return false;
         }
-        simpli.hello.ajaxSubmit(form, event, ajax_action_slug);
+        simpli.frames.ajaxSubmit(form, event, ajax_action_slug);
     });
 
     /*
@@ -123,7 +123,7 @@ simpli.hello.bind_ajax_actions_menu = function()
 
         form = jQuery(this).closest('form')[0];
 
-        simpli.hello.ajaxSubmit(form, event, ajax_action_slug);
+        simpli.frames.ajaxSubmit(form, event, ajax_action_slug);
 
     });
 

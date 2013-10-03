@@ -18,7 +18,7 @@ jQuery(document).ready(function(jQuery) {
      */
 
 
-    simpli.hello.bind_ajax_actions_post();
+    simpli.frames.bind_ajax_actions_post();
 
 })
 
@@ -26,9 +26,9 @@ jQuery(document).ready(function(jQuery) {
 
 
 
-simpli.hello.bind_ajax_actions_post = function()
+simpli.frames.bind_ajax_actions_post = function()
 {
-    //   var form = jQuery('#'+simpli_hello.plugin.slug + '_' + simpli_hello.metabox_forms[metabox_id].form_name).first();
+    //   var form = jQuery('#'+simpli_frames.plugin.slug + '_' + simpli_frames.metabox_forms[metabox_id].form_name).first();
     var form;
     /*
      * Publish button
@@ -44,7 +44,7 @@ simpli.hello.bind_ajax_actions_post = function()
          * Remove all the hidden fields holding
          * the unchecked checkboxes values
          */
-        simpli.hello.reset_checkboxes(form);
+        simpli.frames.reset_checkboxes(form);
 
 
         /*
@@ -54,7 +54,7 @@ simpli.hello.bind_ajax_actions_post = function()
 
         jQuery('#publish,#save-post').click(function(event) {
             console.log('submitting via publish button');
-            simpli.hello.prepare_form(form);
+            simpli.frames.prepare_form(form);
         });
 
     });
@@ -68,8 +68,8 @@ simpli.hello.bind_ajax_actions_post = function()
         form = jQuery(this).closest('form')[0];
 
 
-        simpli.hello.prepare_form(form); //adds nonce and hidden form elements
-        simpli.hello.ajaxSubmit(form, event, ajax_action_slug); //executes the ajax submission
+        simpli.frames.prepare_form(form); //adds nonce and hidden form elements
+        simpli.frames.ajaxSubmit(form, event, ajax_action_slug); //executes the ajax submission
 
     });
 

@@ -13,15 +13,15 @@
 
 jQuery(document).ready(function($) {
 
-    simpli.hello.log('the menu slug is ' + simpli_hello.menu_slug);
-    simpli.hello.log('the screen_id is ' + simpli_hello.screen_id);
-    simpli.hello.log('the plugin name is ' + simpli_hello.plugin.name);
+    simpli.frames.log('the menu slug is ' + simpli_frames.menu_slug);
+    simpli.frames.log('the screen_id is ' + simpli_frames.screen_id);
+    simpli.frames.log('the plugin name is ' + simpli_frames.plugin.name);
 
 
     $(".if-js-closed").removeClass("if-js-closed").addClass("closed");
 
-    postboxes.add_postbox_toggles(simpli_hello.menu_slug);  //e.g.: 'simpli_hello_menu10_settings'
-    postboxes.add_postbox_toggles(simpli_hello.screen_id); //e.g.
+    postboxes.add_postbox_toggles(simpli_frames.menu_slug);  //e.g.: 'simpli_frames_menu10_settings'
+    postboxes.add_postbox_toggles(simpli_frames.screen_id); //e.g.
 
 
 

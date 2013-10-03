@@ -17,7 +17,7 @@ To add a metabox, you must add the do_metaboxes line as in the examples below, a
 
 
 ?>
-<div class="simpli-hello">
+<div class="simpli-frames">
 <div class="simpli-message-wrap" id="message-wrap"><div id="message-body">
 
 

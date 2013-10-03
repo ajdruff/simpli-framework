@@ -1,4 +1,4 @@
-<div id="simpli-hello">
+<div id="simpli-frames">
     <?php
 //echo '<pre>';
 //echo '<pre>';
@@ -78,7 +78,7 @@
 
     /*
      *
-     * Provide a dropdown with the Simpli Hello Snippets
+     * Provide a dropdown with the Simpli Frames Snippets
      * if they are available.
      *
      */
@@ -96,7 +96,7 @@
         'el' => 'dropdown',
         'options' => $options,
         'name' => 'snippet',
-        'label' => 'Simpli Hello Snippets:',
+        'label' => 'Simpli Frames Snippets:',
         'hint' => '<a href=' . admin_url() . '/edit.php?post_type=' . $this->plugin()->getSlug() . '_snippet' . '>View/Edit Snippets</a>',
         'heading' => '',
         'template' => 'dropdown_post',

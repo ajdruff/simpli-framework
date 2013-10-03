@@ -1,15 +1,15 @@
 <?php
 
 /**
-  Plugin Name:   Simpli Hello
-  Plugin URI:    http://simpliwp/simpli-framework
-  Description:   The Simpli Hello plugin is a template for WordPress plugin developers to create WordPress plugins using the Simpli Framework. The Simpli framework is a WordPress Plugin Framework that makes building object oriented WordPress plugins just a bit easier.
-  Author:       Andrew Druffner
-  Version:      1.3.1
-  Author URI:   http://simpliwp/about
+Plugin Name:   Simpli Frames 
+ Plugin URI:    http://example.com 
+ Description:   The Simpli Frames plugin does some amazing stuff and was built upon the Simpli framework, a WordPress Plugin development framework that makes building WordPress plugins just a bit easier. 
+ Author:        Author 
+ Version:       1.0.0 
+ Author URI:    http://example.com 
+ Text Domain:   simpli_frames 
+ Domain Path:   /languages/ 
 
-  Text Domain:  simpli-hello
-  Domain Path:  /languages/
   Simpli Framework Version:     1.3.1
   Simpli Base Class Version: 1.2
  *
@@ -58,7 +58,7 @@ require(dirname(__FILE__) . '/lib/Simpli/Framework.php');
  * $plugin_file_path should always be __FILE__
  */
 
-$simpli_hello = Simpli_Framework::load('simpli_hello', __FILE__);
+$simpli_frames = Simpli_Framework::load('simpli_frames', __FILE__);
 
 
 /*
@@ -67,8 +67,8 @@ $simpli_hello = Simpli_Framework::load('simpli_hello', __FILE__);
  */
 
 
-$simpli_hello->setName('Simpli Hello'); // Name should match the value of 'Plugin Name' in the comments at the top of this file);
-$simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include underscores and uniquely identifies the language domain for your plugin
+$simpli_frames->setName('Simpli Frames'); // Name should match the value of 'Plugin Name' in the comments at the top of this file);
+$simpli_frames->setTextDomain('simpli-frames'); // TextDomain must *not* include underscores and uniquely identifies the language domain for your plugin
 
 
 /*
@@ -87,4 +87,4 @@ $simpli_hello->setTextDomain('simpli-hello'); // TextDomain must *not* include u
  * Initialize Plugin
  * (Loads modules and settings)
  */
-$simpli_hello->init();
+$simpli_frames->init();

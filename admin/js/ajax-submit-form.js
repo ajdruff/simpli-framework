@@ -23,7 +23,7 @@
 
 
 
-simpli.hello.prepare_form = function(form)
+simpli.frames.prepare_form = function(form)
 {
 
 
@@ -31,7 +31,7 @@ simpli.hello.prepare_form = function(form)
     /*
      * add the nonce for our post options
      */
-//    $nonce_element = '<input type="hidden" name="' + simpli_hello.plugin.slug + '_nonce" value="' + simpli_hello.save_post_option_nonce + '">';
+//    $nonce_element = '<input type="hidden" name="' + simpli_frames.plugin.slug + '_nonce" value="' + simpli_frames.save_post_option_nonce + '">';
 //
 //    jQuery(form).append($nonce_element);
 
@@ -40,12 +40,12 @@ simpli.hello.prepare_form = function(form)
      * Get all the unchecked checkboxes
      *
      * Explanation of selector:
-     * input[id^='" + simpli_hello.plugin.slug + "']  //find all inputs that begin with simpli_hello or whatever your plugin slug is
+     * input[id^='" + simpli_frames.plugin.slug + "']  //find all inputs that begin with simpli_frames or whatever your plugin slug is
      *
      * :checkbox:not(:checked)   //of those, get all checkboxes that are not checked
      */
 
-    $unchecked_checkboxes = jQuery(form).find("input[id^='" + simpli_hello.plugin.slug + "']:checkbox:not(:checked)");
+    $unchecked_checkboxes = jQuery(form).find("input[id^='" + simpli_frames.plugin.slug + "']:checkbox:not(:checked)");
     //jQuery('.hidden-checkbox').get(0).type = 'hidden'; // bug in jquery prevents you from using attr http://stackoverflow.com/a/7634737
     /*
      * Insert a hidden input field containing the unchecked checkbox's value
@@ -67,7 +67,7 @@ simpli.hello.prepare_form = function(form)
  * @param {type} form
  * @returns {undefined}
  */
-simpli.hello.reset_checkboxes = function(form) {
+simpli.frames.reset_checkboxes = function(form) {
     /*
      * remove any temporary hidden fields that were previously added.
      */
@@ -84,20 +84,20 @@ simpli.hello.reset_checkboxes = function(form) {
  * @returns {undefined}
  */
 
-simpli.hello.ajaxSubmit = function(form, event, ajax_action_slug) {
+simpli.frames.ajaxSubmit = function(form, event, ajax_action_slug) {
     console.log('ajax_action_slug=' + ajax_action_slug);
     event.preventDefault();
-    ajax_action = simpli_hello.plugin.slug + '_' + ajax_action_slug; //set the ajax action for WordPress
+    ajax_action = simpli_frames.plugin.slug + '_' + ajax_action_slug; //set the ajax action for WordPress
 
     /*
      * if unique nonces are not configured, then use the default
      */
-    if (!simpli_hello.forms.unique_action_nonces) {
+    if (!simpli_frames.forms.unique_action_nonces) {
 
         ajax_action_slug = 'default';
 
     }
-    nonce_value = simpli_hello.forms.nonce_values[ajax_action_slug];
+    nonce_value = simpli_frames.forms.nonce_values[ajax_action_slug];
     console.log('ajax form submitted, used nonce value for \'' + ajax_action + '\' = ' + nonce_value);
 
     /*
@@ -142,7 +142,7 @@ simpli.hello.ajaxSubmit = function(form, event, ajax_action_slug) {
              * add it in the templates
              * you can find the localized statements where this script is enqueued.
              */
-            + '&' + simpli_hello.forms.nonce_field_name + '=' + nonce_value
+            + '&' + simpli_frames.forms.nonce_field_name + '=' + nonce_value
 
 
             , function(response) {
@@ -152,7 +152,7 @@ simpli.hello.ajaxSubmit = function(form, event, ajax_action_slug) {
         }
 
 
-        simpli.hello.reset_checkboxes(form);
+        simpli.frames.reset_checkboxes(form);
 
         jQuery(form).find('.submit-waiting').hide();
 

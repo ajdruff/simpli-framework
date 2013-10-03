@@ -25,7 +25,7 @@ jQuery(document).ready(function() {
      * Remove all the hidden fields holding
      * the unchecked checkboxes values
      */
-    simpli.hello.reset_checkboxes(form);
+    simpli.frames.reset_checkboxes(form);
 
 
     /*
@@ -35,7 +35,7 @@ jQuery(document).ready(function() {
 
     jQuery('#publish,#save-post').click(function(event) {
         console.log('submitting via publish button');
-        simpli.hello.prepare_form(form);
+        simpli.frames.prepare_form(form);
     });
 
 });

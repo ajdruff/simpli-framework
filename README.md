@@ -17,14 +17,14 @@ Since then, the code has been significantly re-written with very few remnants of
 
 The current codebase ( as of 1.2.1 ) is a complete re-write of Mike's code. After stripping out the WordPress HTTPS specific code, I rebuilt the  save/reset/setting handling, rebuilt the module loading routines, created the debug module, replaced the logging module with the debug module (providing deep debugging features with robust filtering and tracing capabilities), re-wrote all the major interfaces, re-wrote all javascript, created an 'Addon' capability that allows the creation of sub-plugins that allow you to easily copy functionality from one plugin to another (  the Simpli_Forms Addon is one example, providing a complete form handling and templating system ), added 'helper' classes such as the metabox class, and many other changes and additions. The significant contribution from the original code remains the basic concept of loading modules within a larger plugin architecture.
 
-A useful and necessary addition was the creation of the bump and make shell scripts, which manage the creation of new plugins , using the Simpli Hello plugin as a template. This allows the ability of anyone to download the Simpli Hello plugin, run the scripts, and be able to immediately activate the newly created plugin to run along side the original Simpli Hello plugin from which it derived.
+A useful and necessary addition was the creation of the bump and make shell scripts, which manage the creation of new plugins , using the Simpli Frames plugin as a template. This allows the ability of anyone to download the Simpli Frames plugin, run the scripts, and be able to immediately activate the newly created plugin to run along side the original Simpli Frames plugin from which it derived.
 
 Some ideas being kicked around are the creation of development menus that will provide an easier user interface for the most common housekeeping activities while developing the plugin, including make, bump, and debug functionality.
 
 
 ## Installation
 
-The framework installs as the 'Simpli Hello' WordPress Plugin, which is a demonstration WordPress plugin that you
+The framework installs as the 'Simpli Frames' WordPress Plugin, which is a demonstration WordPress plugin that you
 can then modify and build off to create your plugin.
 
 Therefore, install it as you would any other WordPress plugin.

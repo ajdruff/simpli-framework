@@ -7,11 +7,11 @@
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * @subpackage SimpliBase
+ * @subpackage SimpliBasev1c2
  */
-interface Simpli_Hello_Basev1c0_Plugin_Helper_Interface {
+interface Simpli_Hello_Basev1c2_Plugin_Helper_Interface {
 
-    function __construct(Simpli_Hello_Basev1c0_Plugin $plugin);
+    function __construct(Simpli_Hello_Basev1c2_Plugin $plugin);
 
     /**
      * Debug
@@ -26,7 +26,7 @@ interface Simpli_Hello_Basev1c0_Plugin_Helper_Interface {
     /**
      * Get Plugin
      *
-     * @return Simpli_Hello_Basev1c0_Plugin
+     * @return Simpli_Hello_Basev1c2_Plugin
      */
     public function plugin();
 

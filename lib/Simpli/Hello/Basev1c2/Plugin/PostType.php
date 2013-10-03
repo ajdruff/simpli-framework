@@ -12,7 +12,7 @@
  * @subpackage SimpliHello
  * @property boolean $CUSTOM_POST_EDITOR_ENABLED Whether you want to redirect to a custom post editor
  */
-class Simpli_Hello_Basev1c0_Plugin_PostType extends Simpli_Hello_Basev1c0_Plugin_Menu {
+class Simpli_Hello_Basev1c2_Plugin_PostType extends Simpli_Hello_Basev1c2_Plugin_Menu {
 
     /**
      * Add Hooks
@@ -657,7 +657,7 @@ class Simpli_Hello_Basev1c0_Plugin_PostType extends Simpli_Hello_Basev1c0_Plugin
         $this->metabox()->hookAddMetaBoxes();
         //  add_action('current_screen', array($this, 'addMetaBoxes')); //action must be 'current_screen' so screen object can be accessed by the add_meta_boxes function
         // Add scripts
-        add_action('admin_enqueue_scripts', array($this, 'hookEnqueueBaseClassScripts'));
+        add_action('admin_enqueue_scripts', array($this, 'hookEnqueueBasev1c2ClassScripts'));
     }
 
     /**

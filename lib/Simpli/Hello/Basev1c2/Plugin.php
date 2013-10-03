@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Base class for a WordPress plugin.
+ * Basev1c2 class for a WordPress plugin.
  *
 
  * @author Andrew Druffner
  * @package SimpliFramework
- * @subpackage SimpliBase
+ * @subpackage SimpliBasev1c2
  * @property string $ADDON_NAMESPACE The class namespace used for the Addons, e.g.: 'Simpli_Addons'
  * @property string $FILE_NAME_ADDON The file name for the addon , e.g.: 'Addon'
  * @property string $DIR_NAME_MODULES The directory name containing modules , e.g.: 'Module'
@@ -28,7 +28,7 @@
  *
  *
  */
-class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Interface {
+class Simpli_Hello_Basev1c2_Plugin implements Simpli_Hello_Basev1c2_Plugin_Interface {
 
     /**
      * Plugin directory path
@@ -54,7 +54,7 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
 //    /**
 //     * Logger
 //     *
-//     * @var Simpli_Hello_Basev1c0_Logger_Interface
+//     * @var Simpli_Hello_Basev1c2_Logger_Interface
 //     */
 //    protected $_logger = null;
 
@@ -249,7 +249,7 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
 //         *
 //         */
 //
-//        $this->setLogger(Simpli_Hello_Basev1c0_Logger::getInstance());
+//        $this->setLogger(Simpli_Hello_Basev1c2_Logger::getInstance());
 //
 
         return $this;
@@ -282,13 +282,13 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
          */
 
         if (!$this->DEBUG) {
-            return (new Simpli_Hello_Basev1c0_Phantom()); //return a phantom object which will silently ignore each call to the debug class. To optimize further, you should comment out all calls to the $this->debug() object using a regex search and replace  in your final released code.
+            return (new Simpli_Hello_Basev1c2_Phantom()); //return a phantom object which will silently ignore each call to the debug class. To optimize further, you should comment out all calls to the $this->debug() object using a regex search and replace  in your final released code.
         }
         if (is_null($this->_debug)) {
             $class_namespace_parts = $this->getClassNamespaceParts();
             if (!file_exists($this->getDirectory() . '/lib/' . $class_namespace_parts[0] . '/' . $class_namespace_parts[1] . '/DebugConfig.php')) {
                 $this->setConfig('DEBUG', false); //switch Debug to off since phantom will not be accurate.
-                $this->_debug = new Simpli_Hello_Basev1c0_Phantom(); //create a phantom
+                $this->_debug = new Simpli_Hello_Basev1c2_Phantom(); //create a phantom
             } else {
                 try {
 
@@ -298,7 +298,7 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
                     //   $this->_debug->addHooks();
                 } catch (Exception $exc) {
                     echo $exc->getMessage();
-                    $this->_debug = new Simpli_Hello_Basev1c0_Phantom(); //create a phantom
+                    $this->_debug = new Simpli_Hello_Basev1c2_Phantom(); //create a phantom
                 }
             }
         }
@@ -913,15 +913,15 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
     /**
      * Tools
      *
-     * Provides access to the library of methods in the Base Tools class
+     * Provides access to the library of methods in the Basev1c2 Tools class
      * @param none
-     * @return Simpli_Hello_Basev1c0_Plugin_Tools Base Tools
+     * @return Simpli_Hello_Basev1c2_Plugin_Tools Basev1c2 Tools
      */
     public function tools() {
 
         if (is_null($this->_tools)) {
 
-            $this->_tools = new Simpli_Hello_Basev1c0_Plugin_Tools($this);
+            $this->_tools = new Simpli_Hello_Basev1c2_Plugin_Tools($this);
         }
 
 
@@ -973,7 +973,7 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
 
         $this->debug()->log('Starting Debug Log for Plugin ' . $this->getName());
 
-        $this->debug()->log('Plugin Version: ' . $this->getVersion() . ' Framework Version: ' . $this->getFrameworkVersion() . 'Base Class Version: ' . $this->getBaseClassVersion());
+        $this->debug()->log('Plugin Version: ' . $this->getVersion() . ' Framework Version: ' . $this->getFrameworkVersion() . 'Basev1c2 Class Version: ' . $this->getBaseClassVersion());
 
 
 
@@ -1015,7 +1015,7 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
 
 
 
-        $this->debug()->log('Loaded Base Class Library ' . ' from ' . dirname(__FILE__));
+        $this->debug()->log('Loaded Basev1c2 Class Library ' . ' from ' . dirname(__FILE__));
 
 
 //        /*
@@ -2219,12 +2219,12 @@ class Simpli_Hello_Basev1c0_Plugin implements Simpli_Hello_Basev1c0_Plugin_Inter
      *
      * Provides access to the library of methods in the Post Helper class
      * @param none
-     * @return Simpli_Hello_Basev1c0_Plugin_Module_Post
+     * @return Simpli_Hello_Basev1c2_Plugin_Module_Post
      */
     public function post() {
 
         if (is_null($this->_post_helper)) {
-            $this->_post_helper = new Simpli_Hello_Basev1c0_Plugin_Post($this);
+            $this->_post_helper = new Simpli_Hello_Basev1c2_Plugin_Post($this);
         }
         return $this->_post_helper;
     }

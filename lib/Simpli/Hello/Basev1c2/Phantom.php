@@ -22,9 +22,9 @@
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * @subpackage SimpliBase
+ * @subpackage SimpliBasev1c2
  */
-class Simpli_Hello_Basev1c0_Phantom {
+class Simpli_Hello_Basev1c2_Phantom {
 
     public function __call($method, $args) {
         /*

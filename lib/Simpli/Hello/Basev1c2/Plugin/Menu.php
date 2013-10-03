@@ -34,7 +34,7 @@
  *
  *
  */
-class Simpli_Hello_Basev1c0_Plugin_Menu extends Simpli_Hello_Basev1c0_Plugin_Module {
+class Simpli_Hello_Basev1c2_Plugin_Menu extends Simpli_Hello_Basev1c2_Plugin_Module {
 
     protected $_menu_page_hook_name;
 
@@ -430,7 +430,7 @@ class Simpli_Hello_Basev1c0_Plugin_Menu extends Simpli_Hello_Basev1c0_Plugin_Mod
     public function metabox() {
 
         if (is_null($this->_meta_box_object)) {
-            $this->_meta_box_object = new Simpli_Hello_Basev1c0_Plugin_Module_Metabox($this);
+            $this->_meta_box_object = new Simpli_Hello_Basev1c2_Plugin_Module_Metabox($this);
         }
         return $this->_meta_box_object;
     }
@@ -490,7 +490,7 @@ class Simpli_Hello_Basev1c0_Plugin_Menu extends Simpli_Hello_Basev1c0_Plugin_Mod
          */
 
 // Add scripts
-        add_action('admin_enqueue_scripts', array($this, 'hookEnqueueBaseClassScripts'));
+        add_action('admin_enqueue_scripts', array($this, 'hookEnqueueBasev1c2ClassScripts'));
 
         /*
          * Add our meta boxes using a direct call, which will work
@@ -990,7 +990,7 @@ class Simpli_Hello_Basev1c0_Plugin_Menu extends Simpli_Hello_Basev1c0_Plugin_Mod
     }
 
     /**
-     * Enqueue Base Class Scripts ( Hook Function )
+     * Enqueue Basev1c2 Class Scripts ( Hook Function )
      *
      * Adds javascript and stylesheets to settings page in the admin panel.
      * WordPress Hook - admin_enqueue_scripts
@@ -998,7 +998,7 @@ class Simpli_Hello_Basev1c0_Plugin_Menu extends Simpli_Hello_Basev1c0_Plugin_Mod
      * @param none
      * @return void
      */
-    public function hookEnqueueBaseClassScripts() {
+    public function hookEnqueueBasev1c2ClassScripts() {
         $this->debug()->t();
         if (!$this->pageCheckMenu()) {
             return;

@@ -10,7 +10,7 @@
  * @subpackage SimpliHello
  *
  */
-class Simpli_Hello_Modules_PostUserOptions extends Simpli_Hello_Basev1c0_Plugin_Module {
+class Simpli_Hello_Modules_PostUserOptions extends Simpli_Hello_Basev1c2_Plugin_Module {
 
     /**
      * Post option Defaults
@@ -1025,7 +1025,7 @@ class Simpli_Hello_Modules_PostUserOptions extends Simpli_Hello_Basev1c0_Plugin_
     public function metabox() {
 
         if (is_null($this->_meta_box_object)) {
-            $this->_meta_box_object = new Simpli_Hello_Basev1c0_Plugin_Module_Metabox($this);
+            $this->_meta_box_object = new Simpli_Hello_Basev1c2_Plugin_Module_Metabox($this);
         }
         return $this->_meta_box_object;
     }

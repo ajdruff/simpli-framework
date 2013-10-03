@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Addon Base Class
+ * Addon Basev1c2 Class
  *
 
  * @author Andrew Druffner
  * @package SimpliFramework
- * @subpackage SimpliBase
+ * @subpackage SimpliBasev1c2
   * @property string $DISABLED_MODULES An array of Module Names of the Addon that you don't want to have loaded
  */
-class Simpli_Hello_Basev1c0_Plugin_Addon implements  Simpli_Hello_Basev1c0_Plugin_Addon_Interface,Simpli_Hello_Basev1c0_Plugin_Interface{
+class Simpli_Hello_Basev1c2_Plugin_Addon implements  Simpli_Hello_Basev1c2_Plugin_Addon_Interface,Simpli_Hello_Basev1c2_Plugin_Interface{
 
     /**
      * Plugin directory path
@@ -127,7 +127,7 @@ class Simpli_Hello_Basev1c0_Plugin_Addon implements  Simpli_Hello_Basev1c0_Plugi
      * Get Plugin
      *
      * @param none
-     * @return Simpli_Hello_Basev1c0_Plugin
+     * @return Simpli_Hello_Basev1c2_Plugin
      */
     public function plugin() {
 

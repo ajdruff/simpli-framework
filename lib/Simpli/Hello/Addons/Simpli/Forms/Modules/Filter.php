@@ -10,7 +10,7 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Hello_Addons_Simpli_Forms_Modules_Filter extends Simpli_Hello_Basev1c0_Plugin_Module {
+class Simpli_Hello_Addons_Simpli_Forms_Modules_Filter extends Simpli_Hello_Basev1c2_Plugin_Module {
 
     /**
      * Add Hooks

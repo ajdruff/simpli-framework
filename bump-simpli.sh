@@ -38,7 +38,7 @@ excluded_files=".*\.\(zip\|png\|jpg\|gif\|git\|gitignore\|gitattributes\|sh\)"
 
 
 # set override_version = 0, and then set base_major and base_minor to the versions that you want if you want a specific version (good for reversing a bump)
-override_version=1; # default=0
+override_version=0; # default=0
 
 override_base_major=1;
 override_base_minor=2;
@@ -207,7 +207,7 @@ let framework_minor="${framework_minor}"+1;
 fi
 
 if [[  "$2" = "bug" ]] ; then
-let base_minor="${bug_bug}"+1
+let base_minor="${base_bug}"+1
 let framework_bug="${framework_bug}"+1
 fi
 

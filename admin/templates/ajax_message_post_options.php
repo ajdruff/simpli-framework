@@ -1,0 +1,1 @@
+<span style="background:#FFFBCC" id="message">{MESSAGE}</span>{RELOAD_SCRIPT}

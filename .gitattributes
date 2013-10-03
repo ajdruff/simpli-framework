@@ -22,9 +22,20 @@
 *.RTF	 diff=astextplain
 
 
+# Exclude the following files from git archive (release downloads)
+.gitignore export-ignore
+.gitattributes export-ignore
+bump-simpli.sh export-ignore
+README.md export-ignore
+nbproject export-ignore
+*.rtf	 diff=astextplain
+*.RTF	 diff=astextplain
+
+
 bump-simpli.sh export-ignore
 .gitignore export-ignore
 .gitattributes export-ignore
 error.log.txt export-ignore
 make_zip.sh export-ignore
 /*.html export-ignore
+_project_notes export-ignore

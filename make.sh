@@ -138,7 +138,6 @@ mycompany_myplugin=$(echo ${input_slug} | awk '{print tolower($0)}')  # mycompan
 
 
 
-
 #use for constant replacements
 SIMPLI_HELLO=$(echo $simpli_hello | awk '{print toupper($0)}') # SIMPLI_HELLO
 MYCOMPANY_MYPLUGIN=$(echo $mycompany_myplugin | awk '{print toupper($0)}') # COMPANY_SHORTNAME
@@ -170,6 +169,18 @@ Myplugin=${myplugin^} # Myplugin
 Simpli_Hello="${Simpli}""_""${Hello}"
 Mycompany_Myplugin="${Mycompany}""_""${Myplugin}"
 
+
+#prefix_dot_suffix format
+simpli_dot_hello="${simpli}"".""${hello}"
+mycompany_dot_myplugin="${mycompany}"".""${myplugin}"
+Simpli_dot_Hello="${Simpli}"".""${Hello}"
+Mycompany_dot_Myplugin="${Mycompany}"".""${Myplugin}"
+
+#echo "simpli_dot_hello=""${simpli_dot_hello}"
+#echo "mycompany_dot_myplugin=""${mycompany_dot_myplugin}"
+#echo "Simpli_dot_Hello=""${Simpli_dot_Hello}"
+#echo "Mycompany_dot_Myplugin=""${Mycompany_dot_Myplugin}"
+#exit 1
 
 #Plugin Name
 old_plugin_name="${Simpli}"" ""${Hello}" # Simpli Hello
@@ -211,6 +222,7 @@ target_dir_parent=$(realpath "${input_dir}")
 
 
 
+
 # if the destination directory is invalid, exit
 if [[ ! -d "${target_dir_parent}" && ! -L "${target_dir_parent}" ]]
 then
@@ -221,7 +233,21 @@ fi
 
 
 
+
+
+
+
 target_dir=$(realpath "$target_dir_parent")"/${mycompanyDASHmyplugin}"
+
+# if the destination directory already exists, exit
+if [[  -d "${target_dir}"  ]]
+then
+die "
+ERROR: Target directory ${target_dir} already exists!
+Please delete existing directory, rename slug, or specify
+a different target directory.
+"
+fi
 
 
 
@@ -265,16 +291,20 @@ cp -r ./* "${target_dir}" 2>/dev/null
 # remove unneccessary files before replacements start
 
 #remove git directory or it will take forever to complete
-rm -rf  "${target_dir}"/.git
+rm -rf  "${target_dir}"/.git 2>/dev/null
+
+#remove netbeans project directory
+rm -rf  "${target_dir}"/nbproject 2>/dev/null
+
 
 
 
 #remove framework documentation
-rm  "${target_dir}"/*.html
+rm  "${target_dir}"/*.html 2>/dev/null
 
 
 #remove scripts since scripts should only be included in the framework
-rm  "${target_dir}"/*.sh
+rm  "${target_dir}"/*.sh 2>/dev/null
 
 #############
 # start testing
@@ -344,7 +374,6 @@ find "${target_dir}/" -not -regex "${excluded_files}" -type f |  xargs -n 1 sed 
 
 
 
-
 #########################
 # Text Domain Style
 #########################
@@ -358,6 +387,16 @@ find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -
 #replace SIMPLI_HELLO with MYCOMPANY_MYPLUGIN
 echo 'converting constants...'
 find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${SIMPLI_HELLO}|${MYCOMPANY_MYPLUGIN}|g"
+
+
+#########################
+# Javascript variables (simpli.hello)
+#########################
+#replace simpli.hello with mycompany.myplugin and Simpli.Hello with Mycompany.Myplugin
+echo 'converting javascript variables...'
+find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${Simpli}\.${Hello}|${MyCompany_dot_Myplugin}|g"
+find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${simpli}\.${hello}|${mycompany_dot_myplugin}|g"
+
 
 
 

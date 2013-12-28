@@ -124,38 +124,10 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
           add_action($this->_query_var_prefix . '_action' . '_test', array($this, 'test')); // Example 3: ?nomstock_com_action=phpInfo
 
          */
-        $core = $this->plugin()->getModule( 'Core' );
-        add_action( $this->_query_var_prefix . '_action' . '_listDomains', array( $core, 'listDomains' ) ); // Example 1: ?nomstock_com_action=sayHello
-        add_action( $this->_query_var_prefix . '_action' . '_sayHello', array( $this, 'sayHello' ) ); // Example 1: ?nomstock_com_action=sayHello
 
-        /*
-         *
-         * Add a sales page
-         *
-         */
-
-        add_action( $this->_query_var_prefix . '_action' . '_showDomainLandingPage', array( $this->plugin()->getModule( 'Core' ), 'showDomainLandingPage' ) );
-
-
-        add_action( $this->_query_var_prefix . '_action' . '_showParkingPage', array( $this->plugin()->getModule( 'Core' ), 'showParkingPage' ) );
-
-        
-        
-                add_action( $this->_query_var_prefix . '_action' . '_showContactSellerPage', array( $this->plugin()->getModule( 'Core' ), 'showContactSellerPage' ) );
-                
-                                add_action( $this->_query_var_prefix . '_action' . '_showUserInventory', array( $this->plugin()->getModule( 'Core' ), 'showUserInventory' ) );
-                                
+                           
                                 
 
-        
-        /*
-         * Add an image creation script
-         */
-
-        add_action( $this->_query_var_prefix . '_action' . '_makeListingImage', array( $this->plugin()->getModule( 'Core' ), 'makeListingImage' ) );
-
-
-        add_action( $this->_query_var_prefix . '_action' . '_text2imgr', array( $this->plugin()->getModule( 'Core' ), 'text2imgr' ) );
 
 
 //
@@ -204,12 +176,14 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
          * the target url.
          * This will actually write to the htaccess file, so be sure you have access.
          * RewriteRule ^txt2imgr/(.*)$ /wp-content/plugins/nomstock-com/lib/txt2imgr/$1 [QSA,L]
-         */
+      
         $this->addHtAccessRewriteRule(
                 'txt2imgr/(.*)$' //$match_pattern - will match everything that starts with subscribe. WordPress automatically adds a starting caret
                 , $this->plugin()->tools()->getRelativePath(ABSPATH,$this->plugin()->getDirectory() . '/lib/txt2imgr/$1')//'wp-content/plugins/nomstock-com/lib/txt2imgr/$1' //$target_pattern - this will take everything in the first parens in the pattern and add it to where $1 is. WordPress Automatically adds a leading slash, so dont add one.
         );
-
+   */
+        
+        
 //echo $this->plugin()->tools()->getRelativePath(ABSPATH,$this->plugin()->getDirectory() . '/lib/txt2imgr/$1');
         /*
          * Query Variables
@@ -226,11 +200,14 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
          * Add other query variables here that you need white listed, meaning that WordPress
          * will return them when using get_query_var() method and are accessible within actions
          * that are called using a wp rewrite rules redirect
-         */
+       
         $this->setConfig(
                 'QUERY_VARS'
                 , array( 'domain_name','user' )
         );
+         * 
+         * 
+         */
         /*
          * Template Directory
          *

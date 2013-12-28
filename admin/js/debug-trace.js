@@ -1,10 +1,12 @@
 /**
  * Debug Trace
  *
+ *
+ * debug-trace.js
  * Functions supporting the Debug module trace method
  * Always load this in the header
  * @package SimpliFramework
- * @subpackage SimpliHello
+ * @subpackage SimpliFrames
  */
 
 
@@ -25,52 +27,52 @@
  * @package MintForms
  * @since 0.1.1
  * @uses
- * @param string $content The shortcode content
- * @return string The parsed output of the form body tag
+ ** @param none
+ * @return void
  */
 
 simpli.frames.debug_bind_collapse_expand_events =
-function()
+        function()
         {
 
 
 
 
-    jQuery("a.simpli_debug_citem").click(function(e) {
-        e.preventDefault();
+            jQuery("a.simpli_debug_citem").click(function(e) {
+                e.preventDefault();
 
 
-        el = jQuery(this).parent().find('div:first');//get the child div of the parent div of the <a> tag >
-        anchor_text_expand_element = jQuery(this).find('span:first');//.html();
+                el = jQuery(this).parent().find('div:first');//get the child div of the parent div of the <a> tag >
+                anchor_text_expand_element = jQuery(this).find('span:first');//.html();
 
-        anchor_text_collapse_element = anchor_text_expand_element.next('span');
-
-
+                anchor_text_collapse_element = anchor_text_expand_element.next('span');
 
 
-        if (el.css('visibility') === 'visible') {
-            /*
-             * If already visible, hide it and update the anchor text
-             */
-            el.css('visibility', 'hidden').css('display', 'none');
-            anchor_text_collapse_element.css('visibility', 'hidden').css('display', 'none');
-            anchor_text_expand_element.css('visibility', 'visible').css('display', 'inline');
+
+
+                if (el.css('visibility') === 'visible') {
+                    /*
+                     * If already visible, hide it and update the anchor text
+                     */
+                    el.css('visibility', 'hidden').css('display', 'none');
+                    anchor_text_collapse_element.css('visibility', 'hidden').css('display', 'none');
+                    anchor_text_expand_element.css('visibility', 'visible').css('display', 'inline');
+                }
+                else {
+                    /*
+                     * If not visible, make it visible and update the anchor text
+                     */
+
+
+                    el.css('visibility', 'visible').css('display', 'block')
+
+                    anchor_text_collapse_element.css('visibility', 'visible').css('display', 'inline');
+                    anchor_text_expand_element.css('visibility', 'hidden').css('display', 'none');
+                }
+
+            });
+
         }
-        else {
-            /*
-             * If not visible, make it visible and update the anchor text
-             */
-
-
-            el.css('visibility', 'visible').css('display', 'block')
-
-            anchor_text_collapse_element.css('visibility', 'visible').css('display', 'inline');
-            anchor_text_expand_element.css('visibility', 'hidden').css('display', 'none');
-        }
-
-    });
-
-}
 
 
 
@@ -91,20 +93,20 @@ simpli.frames.debug_bind_collapse_expand_events();
  * This works , but the click events do not, so I am no longer using the multi-select
 
 
-simpli.frames.multiselect2side =
-function()
-        {
+ simpli.frames.multiselect2side =
+ function()
+ {
 
-			jQuery('#first').multiselect2side({
-				optGroupSearch: "Group: ",
-				search: "<img src='/img/search.gif' />"
-			});
-        }
-
-
-// Create the multi select boxes for the debug module
-
-        simpli.frames.multiselect2side();
+ jQuery('#first').multiselect2side({
+ optGroupSearch: "Group: ",
+ search: "<img src='/img/search.gif' />"
+ });
+ }
 
 
-         */
+ // Create the multi select boxes for the debug module
+
+ simpli.frames.multiselect2side();
+
+
+ */

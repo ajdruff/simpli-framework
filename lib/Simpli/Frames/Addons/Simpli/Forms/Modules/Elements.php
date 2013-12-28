@@ -10,7 +10,7 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Frames_Addons_Simpli_Forms_Modules_Elements extends Simpli_Frames_Basev1c2_Plugin_Module {
+class Simpli_Frames_Addons_Simpli_Forms_Modules_Elements extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     protected $_form_module;
 
@@ -77,6 +77,33 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Elements extends Simpli_Frames_B
      * @return void
      */
     public function text($atts) {
+        $this->debug()->t();
+
+
+
+        $defaults = array(
+            'name' => null  //the name of the form field.
+            , 'class' => null
+            , 'value' => null //value of the field
+            , 'heading' => null
+            , 'label' => null
+            , 'hint' => null
+            , 'help' => null
+            , 'template' => __FUNCTION__
+        );
+
+
+        return($this->addon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
+    }
+
+    /**
+     * File Field
+     *
+     * Returns HTML for a file input field
+     * @param array $atts Shortcode attributes
+     * @return void
+     */
+    public function file($atts) {
         $this->debug()->t();
 
 
@@ -207,6 +234,29 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Elements extends Simpli_Frames_B
     }
 
     /**
+     * Response
+     *
+     * Fires the do_action('simpli_forms_response') event
+     * @param array $atts Shortcode attributes
+     * @return void
+     */
+    public function response($atts) {
+        $this->debug()->t();
+
+
+        $defaults = array(
+            'name' => 'response', //the name of the form field.
+            //  'content_override' => null,
+            'template' => __FUNCTION__
+        );
+
+
+
+
+        return($this->addon()->getModule('Form')->renderElement(__FUNCTION__, $atts, $defaults));
+    }
+
+    /**
      * Form Start
      *
      * Adds the <form> tag
@@ -223,6 +273,7 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Elements extends Simpli_Frames_B
             'ajax' => null, //whether to submit form via ajax.
             'action' => null, //the action of the form
             'method' => null, //the method of the form , 'post' or 'get'
+            'enctype' => null,
             'template' => __FUNCTION__
         );
 

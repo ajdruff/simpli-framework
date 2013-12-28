@@ -10,7 +10,7 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Frames_Addons_Simpli_Forms_Modules_Form extends Simpli_Frames_Basev1c2_Plugin_Module {
+class Simpli_Frames_Addons_Simpli_Forms_Modules_Form extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     private $_form_theme;
     private $_field_prefix;
@@ -545,8 +545,8 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Form extends Simpli_Frames_Basev
      * Get Default Field Label
      *
      * Uses name to derive a label
-     * @param string $content The shortcode content
-     * @return string The parsed output of the form body tag
+     * * @param none
+     * @return void
      */
     function getDefaultFieldLabel($name) {
         $this->debug()->t();
@@ -676,7 +676,8 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Form extends Simpli_Frames_Basev
             'name' => 'simpli_forms',
             'theme' => 'Admin',
             'ajax' => null,
-            'action' => $_SERVER['REQUEST_URI'],
+            'enctype' => null,
+            'action' => null,
             'method' => 'post',
             'template' => __FUNCTION__,
             'filter' => null

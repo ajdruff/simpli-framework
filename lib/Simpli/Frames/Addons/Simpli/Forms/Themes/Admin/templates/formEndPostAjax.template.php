@@ -15,7 +15,7 @@
 
 <p class="button-controls">
 
-    <input type="submit" id="{form_name}_{form_counter}_post_options_save" class="button-primary" value="Save" name="{form_name}_{form_counter}_post_options_save"> <span  class="post-message-body"></span>
+    <input type="submit" id="{form_name}_{form_counter}_save_post" class="button-primary" value="Save" name="{form_name}_{form_counter}_save_post"> <span  class="simpli_forms_response"></span>
     <img alt="<?php _e('Waiting...', $this->plugin()->getTextDomain()); ?>" src="<?php echo admin_url('/images/wpspin_light.gif'); ?>" class="waiting submit-waiting" />
 </p>
 

@@ -5,9 +5,9 @@
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * 
+ *
  */
-class Simpli_Frames_Plugin extends Simpli_Frames_Basev1c2_Plugin {
+class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
 
     /**
      * Add Hooks
@@ -137,11 +137,11 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Basev1c2_Plugin {
                 , array(
             'ExampleModule'
 //            , 'PostUserOptions'
-//            , 'Menu10General'
-//            , 'Menu20Snippets'
+//            , 'Menu10DevGetStarted'
+//            , 'Menu20DevManage'
 //            , 'Menu30Advanced'
-//            , 'Admin'
-//            , 'Core'
+//            , 'PostUserOptions'
+//            , 'Tools'
 //            , 'Queryvars'
 //            , 'Shortcodes'
                 //   , 'Tools'
@@ -188,7 +188,7 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Basev1c2_Plugin {
         );
         $this->setConfig(
                 'DEBUG'
-                , false
+                , true
         );
 
 
@@ -205,32 +205,10 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Basev1c2_Plugin {
          */
 
 
-        /*
-         *
-         * Hello World Settings
-         *
-         */
 
-        /*
-         * Hello World Text
-         * The text to insert into the post
-         */
-        $this->setUserOptionDefault(
-                'hello_global_default_text', 'Global Hello World!'
-        );
-        /*
-         * Text Placement - 'before' or 'after'
-         */
-        $this->setUserOptionDefault(
-                'hello_global_default_placement', 'after'
-        );
 
-        /*
-         * Global Enable - 'enabled' or 'disabled'
-         */
-        $this->setUserOptionDefault(
-                'hello_global_default_enabled', 'enabled'
-        );
+
+
         /*
          *
          * Defaults for Example Settings in 'Example Settings Metabox'

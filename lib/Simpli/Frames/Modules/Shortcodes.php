@@ -10,7 +10,7 @@
  * 
  *
  */
-class Simpli_Frames_Modules_Shortcodes extends Simpli_Frames_Basev1c2_Plugin_Module {
+class Simpli_Frames_Modules_Shortcodes extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     /**
      * Add Hooks

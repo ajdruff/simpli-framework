@@ -51,6 +51,22 @@ if (!is_object($post)) {
 
 
         <div id="poststuff" class="columns metabox-holder">
+            <?php
+            /*
+             *
+             * Add Metabox nonces
+             *
+             * The
+             * wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false);
+             * and
+             * wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false);
+             *
+             * function calls must be placed in their own form outside of the metaboxes.
+             *
+             * They are required so that WordPress remembers metabox closed and order settings
+             *
+             */
+            ?>
 
             <form action="" method="">
 
@@ -120,9 +136,9 @@ if (!is_object($post)) {
             <div class="postbox-container column-secondary">
 
 
-<?php
-do_meta_boxes($this->getScreenId(), 'side', $this);
-?>
+                <?php
+                do_meta_boxes($this->getScreenId(), 'side', $this);
+                ?>
 
             </div>
 

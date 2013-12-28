@@ -1,80 +1,118 @@
 /**
  * Simpli Framework namespace
  *
- * Creates a Javascript namespace for the current plugin
+ * Creates a Javascript namespace for the current plugin and provides a few
+ * common methods that are attached to the root namespace.
  * Always load this in the header and do not make dependent on jQuery or anything else.
- * Ref: http://www.zachleat.com/web/namespacing-outside-of-the-yahoo-namespace/
+ *
  * @package SimpliFramework
- * @subpackage SimpliHello
+ * @subpackage SimpliFrames
+ */
+
+
+/*
+ * create the plugin's namespace
+ */
+if (typeof simpli === 'undefined') {
+    simpli = {};
+}
+if (typeof simpli.frames === 'undefined') {
+    simpli.frames = {};
+}
+
+/**
+ * Log
+ *
+ * Logs to the javascript console
+ * @param string message The text to be logged
+ * @return void
  */
 
 
 
-//
-//if(typeof jQuery.namespace !== 'function'){
-//
-//    jQuery.namespace = function() {
-//    var a=arguments, o=null, i, j, d;
-//    for (i=0; i<a.length; i=i+1) {
-//        d=a[i].split(".");
-//        o=window;
-//        for (j=0; j<d.length; j=j+1) {
-//            o[d[j]]=o[d[j]] || {};
-//            o=o[d[j]];
-//        }
-//    }
-//    return o;
-//};
-//
-//
-//}
+simpli.frames.log = function(message)
+{
 
-if (typeof simpli_namespace !== 'function') {
+    if (typeof simpli.frames !== 'undefined') { //check if simpli_frames namespace is available . if it is, variables are also available
+        if (simpli.frames.vars.plugin.debug === true) { //if variables are available, we can check preferences
 
-    simpli_namespace = function() {
-        var a = arguments, o = null, i, j, d;
-        for (i = 0; i < a.length; i = i + 1) {
-            d = a[i].split(".");
-            o = window;
-            for (j = 0; j < d.length; j = j + 1) {
-                o[d[j]] = o[d[j]] || {};
-                o = o[d[j]];
-            }
+            console.log(message);
         }
-        return o;
-    };
+    }
+
+};
+simpli.frames.logError = function(message)
+{
+
+    if (typeof simpli.frames !== 'undefined') { //check if simpli_frames namespace is available . if it is, variables are also available
+        if (simpli.frames.vars.plugin.debug === true) { //if variables are available, we can check preferences
+
+            console.error(message);
+        }
+    }
+
+};
+
+simpli.frames.logWarn = function(message)
+{
+
+    if (typeof simpli.frames !== 'undefined') { //check if simpli_frames namespace is available . if it is, variables are also available
+        if (simpli.frames.vars.plugin.debug === true) { //if variables are available, we can check preferences
+
+            console.warn(message);
+        }
+    }
+
+};
+
+/**
+ * do_action
+ *
+ * Wrapper around trigger, so jQuery trigger interface is WordPress Developer friendly.
+ * Ref:http://codex.wordpress.org/Function_Reference/do_action
+ * Instead of doing this :
+ *  jQuery(document).trigger('simpli_forms_submit_prompt_' + form_action_slug, form_action_slug);
+ *
+ *  You can do this :
+ *  simpli.frames.do_action('simpli_forms_submit_prompt_' + form_action_slug,form_action_slug);
+ *
+ * @param string $tag The name of the hook you wish to execute.
+ * @param string $arg The list of arguments to send to this hook.
+ */
+
+simpli.frames.do_action = function(tag, arg)
+{
+    return  (jQuery(document).triggerHandler(tag, arg));
+
+}
+
+/**
+ * add_action
+ *
+ *  Wrapper around bind, so jQuery bind interface is WordPress Developer friendly.
+ * Ref:http://codex.wordpress.org/Function_Reference/add_action
+ *
+ * Instead of doing this :
+ *  jQuery(document).bind('simpli_forms_submit_prompt_' + 'upload_addon', uploadActionPrompt);
+ *
+ *  You can do this :
+ *  simpli.frames.add_action('simpli_forms_submit_prompt_' + 'upload_addon', uploadActionPrompt);
+ *
+ *
+ * @param string $tag The name of the action to which $function_to_add is hooked
+ * @param string $function_to_add The function object you wish to be hooked
+ */
+simpli.frames.add_action = function(trigger, function_object) {
+    jQuery(document).bind(trigger, function_object);
 
 
 }
 
 
-//this to be replaced by the plugin company and plugin name
-simpli_namespace('simpli.frames');
-
-/*
- *  usage :
-simpli.frames.message = function(message)
-{
-    alert( message );
-};
-
-simpli.frames.message('hello world!');
 
 
- */
 
-simpli.frames.log = function(message)
-{
 
-    if (typeof simpli_frames != 'undefined') { //check if simpli_frames namespace is available . if it is, variables are also available
-        if (simpli_frames.plugin.debug === true) { //if variables are available, we can check preferences
 
-    console.log( message );
-        } else {
-            console.log(message); //output to log anyway if there are no footer variables. this is in event of a fatal php error where localvars will not be printed.
-        }
-    }
-
-};
 
 

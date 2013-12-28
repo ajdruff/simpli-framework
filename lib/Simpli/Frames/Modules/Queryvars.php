@@ -7,7 +7,7 @@
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * 
+ *
  *
  */
 /*
@@ -38,9 +38,9 @@
 
 
 
-class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Basev1c2_Plugin_Module {
+class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
-    private $_query_var_prefix;
+    public $_query_var_prefix;
     private $_query_var_suffixes = array();
     private $_pages = array();
     private $_rewrite_rules = array();
@@ -98,6 +98,12 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Basev1c2_Plugin_Modu
           add_action($this->_query_var_prefix . '_action' . '_test', array($this, 'test')); // Example 3: ?simpli_frames_action=phpInfo
 
          */
+
+        //      add_action($this->_query_var_prefix . '_action' . '_upload_addon', array($this->plugin()->getModule('Menu20DevManage'), 'hookFormActionUploadAddon')); // ?simpli_frames_action=upload_addon
+
+
+
+
         /*
          *
          * Add Pretty Url Hook
@@ -192,8 +198,8 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Basev1c2_Plugin_Modu
      * Action Example 2 - Method
      *
      * Long Description
-     * @param string $content The shortcode content
-     * @return string The parsed output of the form body tag
+     * * @param none
+     * @return void
      */
     function sayHello() {
         $this->debug()->t();
@@ -218,8 +224,8 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Basev1c2_Plugin_Modu
      * Action Example 2 - Step 2 - Add the function
      *
      * This is the method that will fire when http://example.com/?simpli_frames_action=sayGoodbye is called.
-     * @param string $content The shortcode content
-     * @return string The parsed output of the form body tag
+     * * @param none
+     * @return void
      */
     function sayGoodbye() {
         $this->debug()->t();
@@ -231,8 +237,8 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Basev1c2_Plugin_Modu
      * Action Example 3 - Method
      *
      * Long Description
-     * @param string $content The shortcode content
-     * @return string The parsed output of the form body tag
+     * * @param none
+     * @return void
      */
     function phpInfo() {
         $this->debug()->t();
@@ -319,7 +325,9 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Basev1c2_Plugin_Modu
             }
         }
 
-
+        /*
+         * if our query variables are not detected, return
+         */
 
 
         if ($return) {
@@ -332,7 +340,7 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Basev1c2_Plugin_Modu
         if (stripos($query_var, 'page') !== false) {
 
             require($this->_template_directory . '/' . $this->_pages[$query_var_value]);
-            die();
+            exit();
         } else {
 
 
@@ -347,7 +355,7 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Basev1c2_Plugin_Modu
 
              */
 
-            do_action($query_var . '_' . $query_var_value); // instead of get? what happens in admin ?
+            do_action($query_var . '_' . $query_var_value);
         }
     }
 
@@ -358,8 +366,8 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Basev1c2_Plugin_Modu
      *
      * Note that this does not actually write anything to htaccess. The rule
      * is instead stored in the WordPress database
-     * @param string $content The shortcode content
-     * @return string The parsed output of the form body tag
+     * * @param none
+     * @return void
      */
     function rewriteRules($rules) {
         $this->debug()->t();

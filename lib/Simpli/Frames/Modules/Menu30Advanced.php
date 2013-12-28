@@ -6,10 +6,10 @@
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * 
+ *
  *
  */
-class Simpli_Frames_Modules_Menu30Advanced extends Simpli_Frames_Basev1c2_Plugin_Menu {
+class Simpli_Frames_Modules_Menu30Advanced extends Simpli_Frames_Base_v1c2_Plugin_Menu {
 
     /**
      * Add Hooks
@@ -49,8 +49,8 @@ class Simpli_Frames_Modules_Menu30Advanced extends Simpli_Frames_Basev1c2_Plugin
      * Config
      *
      * Long Description
-     * @param string $content The shortcode content
-     * @return string The parsed output of the form body tag
+     * * @param none
+     * @return void
      */
     public function config() {
         $this->debug()->t();
@@ -61,7 +61,7 @@ class Simpli_Frames_Modules_Menu30Advanced extends Simpli_Frames_Basev1c2_Plugin
         parent::config();
 
 
-        $this->metabox()->setMetaboxOpenState('menu20_advanced_metabox_maintain', $open = false, $persist = false);
+        $this->metabox()->setOpenState('metabox_maintain', $open = false, $persist = false);
 
         $this->addMenuPage
                 (
@@ -73,7 +73,7 @@ class Simpli_Frames_Modules_Menu30Advanced extends Simpli_Frames_Basev1c2_Plugin
         );
 
         $this->metabox()->addMetaBox(
-                $this->getSlug() . '_' . 'metabox_maintain'  //Meta Box DOM ID
+                'metabox_maintain'  //Meta Box DOM ID
                 , __('Maintenance', $this->plugin()->getTextDomain()) //title of the metabox.
                 , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.

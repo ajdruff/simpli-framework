@@ -16,8 +16,8 @@ class Simpli_Frames_Addons_Simpli_Forms_Themes_Admin_Modules_FilterOptions exten
      * Common Filter
      *
      * All Fields are subject to this filter
-     * @param string $content The shortcode content
-     * @return string The parsed output of the form body tag
+     ** @param none
+     * @return void
      */
     protected function _commonFilter($properties) {
 
@@ -98,7 +98,7 @@ class Simpli_Frames_Addons_Simpli_Forms_Themes_Admin_Modules_FilterOptions exten
          */
         if ($atts['ajax'] === true) {
 
-            // $atts['content_override'] = '<div style="color:red">CONTENT OVERRIDE - FORM START AJAX</div>';
+
             if ($atts['template'] === 'formStart') {
                 $atts['template'] === 'formStartPostAjax'; //if there is ajax, we need to use the correct template
             };

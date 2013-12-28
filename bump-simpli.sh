@@ -1,6 +1,19 @@
 #!/usr/bin/bash
 
 
+#######################
+#
+# This script increases the Base Class Version number
+# of both the Base Class Version and the Framework Version
+#
+# It determines Base Class Version from the highest numbered directory name
+# in /Simpli/Frames/Base/
+# Caution in running this script: This script modifies all the files within the
+# project directory its contained in ! Be sure to have a good backup before running it!
+################
+
+
+
 ## define die function
 die () {
 echo >&2 "$@"
@@ -38,6 +51,7 @@ excluded_files=".*\.\(zip\|png\|jpg\|gif\|git\|gitignore\|gitattributes\|sh\)"
 
 
 # set override_version = 0, and then set base_major and base_minor to the versions that you want if you want a specific version (good for reversing a bump)
+
 override_version=0; # default=0
 
 override_base_major=1;
@@ -62,8 +76,8 @@ Bumps the version of the Simpli Framework base classes.
 Example: bump ./ base_major
 
 DIR is the path to the Simpli Framework plugin directory
-PART base_major, base_minor, or bug indicating which part of version MAJOR.MINOR.BUG should be bumped
-SCOPE options include 'Base', 'Framework', and 'all'.
+PART major, minor, or bug indicating which part of version MAJOR.MINOR.BUG should be bumped
+SCOPE options include 'Base', 'Framework', and 'All'.
 'Framework' only changes the Simpli Framework version number in plugin.php .
 'Base' bumps the Simpli Framework Base Class version number and does a search
     and replace for all the BasecXcY version strings.
@@ -152,8 +166,7 @@ fi
 #######
 
 # list the lib/Simpli/Frames directory and look for a directory name that starts with Simpli
-base_old_version=$(ls "${lib_dir}""/Simpli/Frames/" | grep "Basev" | sed -e 's/Base\([vc0-9]*\)/\1/g')  #returns the full version number 1-0-0
-
+base_old_version=$(ls "${lib_dir}""/Simpli/Frames/Base/" | grep "v" | tail -1| sed -e 's/\([vc0-9]*\)/\1/g')  #returns the full version number 1-0-0
 
 
 
@@ -167,7 +180,7 @@ base_minor=$(echo "${base_old_version}" | sed -e 's/v[0-9]*c\([0-9]*\)/\1/g')  #
 
 
 
-old_directory_name=Basev"${base_major}"c"${base_minor}"
+old_directory_name=v"${base_major}"c"${base_minor}"
 
 
 #################################
@@ -240,7 +253,7 @@ base_new_version=v"${base_major}"c"${base_minor}"
 framework_new_version="${framework_major}"."${framework_minor}"."${framework_bug}"
 
 
-new_directory_name=Base"${base_new_version}"
+new_directory_name="${base_new_version}"
 
 
 
@@ -287,7 +300,7 @@ echo 'framework_new_version='"${framework_new_version}"
 
 
 
-echo 'finished debug output, exiting the script without changing anything' ;
+echo 'finished debug output, exiting the script without modifying any files' ;
 
 exit 1;
 
@@ -337,7 +350,7 @@ echo 'Bumping Simpli Framework Base Class Library to new version ' "${base_new_v
 echo 'please wait ...'
 #first, rename the directory name. What happens of a permission denied error? then kill explorer and try again
 #rename lib/Simpli_X_Y_Z directory to one with new version
-mv "${lib_dir}""/Simpli/Frames/""${old_directory_name}" "${lib_dir}""/Simpli/Frames/""${new_directory_name}"
+mv "${lib_dir}""/Simpli/Frames/Base/""${old_directory_name}" "${lib_dir}""/Simpli/Frames/Base/""${new_directory_name}"
 
 
 #check error . if 1 then assume permission denied error
@@ -351,10 +364,14 @@ fi
 
 
 
-#search and replace patterns like 'Basev1c1_' to the newer versions
+#search and replace patterns like 'Base_v1c1_' to the newer versions
+# Its important to restrict the replacements to Modules and to root directory
+# only, since we do not want to modify the addons directory or we'd ruin all the addons
+## first modify only the files in the Modules directory recursively
+find "${plugin_dir}/lib/Simpli/Frames/Modules/"  -not -regex "${excluded_files}" -type f | grep -v '.git' | xargs -n 1 sed -i -e 's#Base_v[0-9]\+c[0-9]\+#Base_'"${base_new_version}"'#g'
 
-find "${plugin_dir}"  -not -regex "${excluded_files}" -type f | grep -v '.git' | xargs -n 1 sed -i -e 's#Basev[0-9]\+c[0-9]\+#Base'"${base_new_version}"'#g'
-
+#then modify only the files within the /lib/Simpli/Frames directory, non-recursively.
+find "${plugin_dir}/lib/Simpli/Frames/"* -prune -not -regex "${excluded_files}" -type f | grep -v '.git' | xargs -n 1 sed -i -e 's#Base_v[0-9]\+c[0-9]\+#Base_'"${base_new_version}"'#g'
 
 #################
 # Update  'Simpli Base Class Version: x.y'  in the WordPress Header in plugin.php

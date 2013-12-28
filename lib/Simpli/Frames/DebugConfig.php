@@ -13,10 +13,10 @@
  * For a more complete description of this module's methods, see the base class's comments.
  * @author Andrew Druffner
  * @package SimpliFramework
- * 
+ *
  *
  */
-class Simpli_Frames_DebugConfig extends Simpli_Frames_Basev1c2_Plugin_Debug {
+class Simpli_Frames_DebugConfig extends Simpli_Frames_Base_v1c2_Plugin_Debug {
 
     /**
      * Configure Module
@@ -31,6 +31,9 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Basev1c2_Plugin_Debug {
 
 
 
+
+
+
         /*
          * turn debugging on/off
          * $this->turnOn();
@@ -40,7 +43,29 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Basev1c2_Plugin_Debug {
         $this->debug()->turnOn();
 
 
+        $this->debugCustomPostType(false);
+//$this->setMethodFilter('hookSavePost', true);//by method
 
+        $this->debugNonces(false);
+
+        $this->debugUploadAddon(false);
+        $this->debugMetaboxState(false);
+
+        $this->debug()->debugAll(false);
+
+        $this->setCommonOptions(false);
+        //
+        //
+
+
+        // $this->setMethodFilter('includeit', true); //by method
+
+        $this->setMethodFilter('hookShowResponseMessageAfterRedirect', false); //by method
+        $this->setMethodFilter('showResponseMessage', false); //by method
+
+        $this->setMethodFilter('_showResponseMessage', false);
+        /* javsascript loading */
+        $this->debugJavascriptLoading(false);
         /*
          * Call any Debug methods here.
          *
@@ -64,7 +89,7 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Basev1c2_Plugin_Debug {
           $this->setOption('method_filters_enabled', false);
          */
 
-        $this->setCommonOptions();
+
 
 
 
@@ -156,10 +181,10 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Basev1c2_Plugin_Debug {
         }
         $this->setCommonOptions();
 
-        $this->setMethodFilter('hookAjaxSavePost', true);
+        $this->setMethodFilter('hookFormActionSavePost', true);
         $this->setMethodFilter('hookSavePost', true);
         $this->setMethodFilter('setUserOption', true);
-        $this->setMethodFilter('Simpli_Frames_Basev1c2_Plugin_Post', true);
+        $this->setMethodFilter('Simpli_Frames_Base_v1c2_Plugin_Post', true);
 
         $this->setMethodFilter('_savePost', true);
         $this->setMethodFilter('saveUserOptions', true);
@@ -243,7 +268,7 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Basev1c2_Plugin_Debug {
         $this->setMethodFilter('doPersistentAction', true);
         $this->setMethodFilter('addPersistentAction', true);
         $this->setMethodFilter('toggleActivationStatus', true);
-        $this->setMethodFilter('Simpli_Frames_Basev1c2_Plugin_PostType::config', true);
+        $this->setMethodFilter('Simpli_Frames_Base_v1c2_Plugin_PostType::config', true);
 
         $this->setMethodFilter('_register_post_type', true);
 
@@ -304,8 +329,8 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Basev1c2_Plugin_Debug {
 
 
 
-        $this->setOption('show_arrays', false);
-        $this->setOption('show_objects', false);
+        $this->setOption('show_arrays', true);
+        $this->setOption('show_objects', true);
 
         $this->setOption('ajax_debugging_enabled', true);
 
@@ -391,6 +416,24 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Basev1c2_Plugin_Debug {
     }
 
     /**
+     * Short Description
+     *
+     * Long Description
+     *
+     * @param none
+     * @return void
+     */
+    public function debugMetaboxState($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+
+        $this->setCommonOptions();
+        $this->setMethodFilter('hookClose.*', true);
+        $this->setMethodFilter('setOpenState', false);
+    }
+
+    /**
      * Debug Post Metaboxes
      *
      * Shows debug messages for displaying a post's metaboxes.
@@ -416,7 +459,7 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Basev1c2_Plugin_Debug {
         $this->setMethodFilter('pageCheckEditor', true);
         $this->setMethodFilter('hookEditingScreen', true);
 
-        $this->setMethodFilter('Simpli_Frames_Basev1c2_Plugin_Module_Post', true);
+        $this->setMethodFilter('Simpli_Frames_Base_v1c2_Plugin_Module_Post', true);
 
 
 
@@ -425,7 +468,7 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Basev1c2_Plugin_Debug {
         $this->setMethodFilter('getPost', true);
         $this->setMethodFilter('getEditPostID', true);
 
-        $this->setMethodFilter('Simpli_Frames_Basev1c2_Plugin_Module_Post', true);
+        $this->setMethodFilter('Simpli_Frames_Base_v1c2_Plugin_Module_Post', true);
         $this->setMethodFilter('_hookNewPost', true);
 
 
@@ -477,7 +520,7 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Basev1c2_Plugin_Debug {
 
 
 
-        $this->setOption('expand_on_click', false);
+        $this->setOption('expand_on_click', true);
 
         /*
          * Debug Output
@@ -572,7 +615,7 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Basev1c2_Plugin_Debug {
     /**
      * Debug Redirects
      *
-     * Long Description
+     * Filters debug messages for Redirects
      *
      * @param none
      * @return void
@@ -582,6 +625,73 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Basev1c2_Plugin_Debug {
             return;
         }
         $this->setMethodFilter('hookRedirect.*', true);
+    }
+
+    /**
+     * Debug Custom Post Type
+     *
+     * Filters debug messages for post type
+     *
+     * @param none
+     * @return void
+     */
+    public function debugCustomPostType($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+        $this->setMethodFilter('.*_Modules_Menu001Snippets.*', true);
+        $this->setMethodFilter('.*_Plugin_PostType.*', true);
+        $this->setMethodFilter('.*_Plugin_Menu.*', true);
+        $this->setOption('show_arrays', true);
+        $this->setOption('show_objects', false);
+        $this->setOption('expand_on_click', false);
+        //$this->setMethodFilter('.*_Menu.*', true);
+    }
+
+    /**
+     * Debug Upload Addon
+     *
+     * Debug Upload Addon
+     *
+     * @param none
+     * @return void
+     */
+    public function debugUploadAddon($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+        $this->setCommonOptions(true);
+        $this->setMethodFilter('installAddon', true);
+        $this->setMethodFilter('hookFormActionUploadAddon', true);
+        $this->setMethodFilter('include', true); //by method
+        $this->setMethodFilter('deleteTempAddonsDirectory', false); //by method
+        $this->setMethodFilter('getRelativePath', false); //by method
+        $this->setMethodFilter('connect', true); //by method
+        $this->setOption('output_to_inline', false);
+
+        $this->setMethodFilter('getNormalizedFilesystemPath', false); //by method
+        $this->setOption('output_to_footer', true);
+    }
+
+    /**
+     * Debug All
+     *
+     * Ignores all filters so shows all debug messages, reduces execution time
+     * to minimum since there will be a lot of output and will likely timeout.
+     *
+     * @param none
+     * @return void
+     */
+    public function debugAll($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+
+
+
+
+        $this->reduceExecutionTime();
+        $this->setOption('method_filters_enabled', false);
     }
 
 }

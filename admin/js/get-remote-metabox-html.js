@@ -4,7 +4,7 @@
  * Mechanism:
  * An add_meta_box () function within a settings module includes a call to $this->getPlugin()->getModule('Admin'), 'meta_box_render') , which in turn includes  admin/templates/metabox/ajax.php script, which enqueues this script and passes onto it a $remote_metaboxes variable from which the urls are taken.
  * @package SimpliFramework
- * @subpackage SimpliHello
+ * @subpackage SimpliFrames
  */
 
 
@@ -12,7 +12,7 @@ jQuery(document).ready(function(jQuery) {
 
 
     /*
-     * Retrieve any metaboxes that have been added to the simpli_frames.remote_metaboxes array
+     * Retrieve any metaboxes that have been added to the simpli.frames.vars.remote_metaboxes array
      * See the end of this code for an example of how to add a metabox that uses a ajax call to get its html
      */
 
@@ -25,9 +25,9 @@ jQuery(document).ready(function(jQuery) {
  * Define the function outside of the jquery ready loop or you'll receive reference errors.
  */
     simpli.frames.get_remote_meta_boxes = function() {
-        for (var metabox_id in simpli_frames.remote_metaboxes) {
+        for (var metabox_id in simpli.frames.vars.remote_metaboxes) {
 
-            var spinner_image = jQuery('<img alt="Loading..." src="' + simpli_frames.plugin.admin_url + '/images/wpspin_light.gif" class="spinner_image_class" />'); // this has to be inside the loop or the image will keep moving from metabox to metabox because you would be referencing the same spinner.
+            var spinner_image = jQuery('<img alt="Loading..." src="' + simpli.frames.vars.plugin.admin_url + '/images/wpspin_light.gif" class="spinner_image_class" />'); // this has to be inside the loop or the image will keep moving from metabox to metabox because you would be referencing the same spinner.
 
 
             jQuery('#' + metabox_id + ' .handlediv').append(spinner_image); // appends the spinner iamge to the metabox
@@ -37,11 +37,11 @@ jQuery(document).ready(function(jQuery) {
              * Note that the cache action is used.
              */
             jQuery.getJSON(ajaxurl, {
-                action: simpli_frames.plugin.slug + '_ajax_metabox_cache',
+                action: simpli.frames.vars.plugin.slug + '_ajax_metabox_cache',
                 ifModified: true, //required for caching to work correctly
                 id: metabox_id,
-                url: simpli_frames.remote_metaboxes[metabox_id],
-                _nonce: simpli_frames.plugin.nonce,
+                url: simpli.frames.vars.remote_metaboxes[metabox_id],
+                _nonce: simpli.frames.vars.plugin.nonce,
             }, function(response) {
                 jQuery('#' + response.metabox_id + ' .inside').html(response.html);
                 jQuery('#' + response.metabox_id + ' .handlediv .spinner_image_class').fadeIn(0).fadeOut('fast');

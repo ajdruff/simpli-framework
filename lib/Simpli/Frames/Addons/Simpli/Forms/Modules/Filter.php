@@ -10,7 +10,7 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Basev1c2_Plugin_Module {
+class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     /**
      * Add Hooks
@@ -88,8 +88,8 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
      * Common Filter
      *
      * All Fields are subject to this filter
-     * @param string $content The shortcode content
-     * @return string The parsed output of the form body tag
+     * * @param none
+     * @return void
      */
     protected function _commonFilter($properties) {
         $this->debug()->t();
@@ -103,6 +103,8 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
 
             $atts ['_error'][] = 'Name attribute is required';
         }
+
+
 
 
 
@@ -156,6 +158,38 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
     }
 
     /**
+     * Filter Response
+     *
+     * Filters the Response tag Attributers
+     * @param string $atts The attributes of the tag
+     * @return string $atts
+     */
+    protected function filterResponse($properties) {
+        $this->debug()->t();
+
+        extract($properties);
+        $tags['response_html'] = apply_filters('simpli_forms_response', '');
+
+        return (compact('scid', 'atts', 'tags'));
+    }
+
+    /**
+     * Filter File
+     *
+     * Filters the File Tag Attributers
+     * @param string $atts The attributes of the tag
+     * @return string $atts
+     */
+    protected function filterFile($properties) {
+        $this->debug()->t();
+
+        extract($properties);
+
+
+        return (compact('scid', 'atts', 'tags'));
+    }
+
+    /**
      * Filter Dropdown
      *
      * Filters the Dropdown Attributes
@@ -192,10 +226,10 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
         foreach ($atts['options'] as $option_value => $option_text) {
 
 
-            $tokens['selected_html'] = (($atts['selected'] == $option_value) ? ' selected="selected"' : '');
+            $tokens['selected_html'] = (($atts['selected'] == $option_value) ? ' selected = "selected"' : '');
             $tokens['option_value'] = $option_value;
             $tokens['option_text'] = $option_text;
-            $option_template = '<option {selected_html} value="{option_value}">{option_text}</option>';
+            $option_template = '<option {selected_html} value = "{option_value}">{option_text}</option>';
             $options_html.=$this->plugin()->tools()->crunchTpl($tokens, $option_template);
         }
 
@@ -255,16 +289,16 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
         foreach ($atts['options'] as $option_value => $option_text) {
 
 
-            $tokens['checked_html'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked"  selected="selected" ' : '');
+            $tokens['checked_html'] = (($atts['selected'][$option_value] == 'yes') ? ' checked = "checked" selected = "selected" ' : '');
             $tokens['option_value'] = $option_value;
             $tokens['option_text'] = $option_text;
-            $option_template = '                            <p>
-                         <label style="padding: 18px 2px 5px;" for="checkbox_settings_{OPTION_VALUE}"><span style="padding-left:5px" >{OPTION_TEXT}</span>
-                        <input type="checkbox" name="checkbox_settings[{OPTION_VALUE}]"  id="checkbox_settings_{OPTION_VALUE}"  value="yes" {CHECKED_HTML} >
+            $option_template = ' <p>
+<label style = "padding: 18px 2px 5px;" for = "checkbox_settings_{OPTION_VALUE}"><span style = "padding-left:5px" >{OPTION_TEXT}</span>
+<input type = "checkbox" name = "checkbox_settings[{OPTION_VALUE}]" id = "checkbox_settings_{OPTION_VALUE}" value = "yes" {CHECKED_HTML} >
 
 
 </label>
-                        </p>';
+</p>';
 
             $options_html.=$this->plugin()->tools()->crunchTpl($tokens, $option_template);
         }
@@ -293,9 +327,9 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
 
         extract($properties);
 //dropdown
-        //$tokens['selected_html'] = (($atts['selected'] == $option_value) ? ' selected="selected"' : '');
-        //checkbox
-        //$tokens['checked_html'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked"  selected="selected" ' : '');
+//$tokens['selected_html'] = (($atts['selected'] == $option_value) ? ' selected="selected"' : '');
+//checkbox
+//$tokens['checked_html'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked"  selected="selected" ' : '');
 
 
         /*
@@ -306,13 +340,13 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
         $tokens = $atts;
         foreach ($atts['options'] as $option_value => $option_text) {
             $tokens = $atts; //need to reset to original atts for each iteration, since we change the value of the tokens during the loop.
-            //  $tokens['checked'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked"' : '');
-            //  $tokens['selected'] = (($atts['selected'][$option_value] == $option_value) ? ' selected="selected" ' : '');
-            //radio and checkbox
-            //        $tokens['checked'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked" ' : '');
-            //$tokens['checked'] = (($atts['selected'][$option_value] == $option_value) ? ' checked="checked" ' : '');
-            //
- //
+//  $tokens['checked'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked"' : '');
+//  $tokens['selected'] = (($atts['selected'][$option_value] == $option_value) ? ' selected="selected" ' : '');
+//radio and checkbox
+//        $tokens['checked'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked" ' : '');
+//$tokens['checked'] = (($atts['selected'][$option_value] == $option_value) ? ' checked="checked" ' : '');
+//
+//
             //radio - works but only if not filtered
 //$tokens['checked'] = (($atts['selected'] == $option_value) ? ' checked="checked"' : '');
 
@@ -349,8 +383,8 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
                 $tokens['selected'] = (($atts['selected'] == $option_value) ? ' selected="selected" ' : '');
             }
 
-            //dropdown - works
-            //     $tokens['selected'] = (($atts['selected'] == $option_value) ? ' selected="selected" ' : '');
+//dropdown - works
+//     $tokens['selected'] = (($atts['selected'] == $option_value) ? ' selected="selected" ' : '');
 
             $tokens['option_value'] = $option_value;
             $tokens['option_text'] = $option_text;
@@ -475,14 +509,77 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
 
             $atts['name'] = 'simpli_forms';
         }
-        if (array_key_exists('action', $atts) && is_null($atts['action'])) {
-            $atts['action'] = $_SERVER['REQUEST_URI'];
+
+
+        /*
+         * Make Ajax the default form behavior ( if no 'ajax' attribute is provided)
+         */
+
+        if (
+                !array_key_exists('ajax', $atts)  //if ajax is not provided ( default is true)
+                || array_key_exists('ajax', $atts) && $atts['ajax'] !== false  // or if ajax is true
+        ) {
+
+            $atts['ajax'] === true;
         }
+
+        /*
+         *
+         * For ajax forms, make the form action attribute an empty string
+         * This will allow javascript to use an empty action attribute as a flag
+         * to tell it to use an ajax script to submit the form
+         */
+        if (array_key_exists('ajax', $atts) && $atts['ajax'] === true) {
+
+            $atts['action'] = ''; //form action attribute must be empty string if ajax
+        } elseif (array_key_exists('ajax', $atts) && $atts['ajax'] === false) {
+
+            /*
+             *
+             *  if ajax is false, but no action
+             *  is given, the action should be set to the
+             * $_SERVER['REQUEST_URI']&queryvar_action={action}. this will tell the ajax script to
+             * replace the {action} token with the action
+             * provided by the button.
+             */
+
+            if (
+            /*
+             * if  a form action attribute is not provided ...
+             *
+             */
+
+                    array_key_exists('action', $atts) && is_null($atts['action']) //if no action property provided
+                    || trim($atts['action']) === ''
+            ) {
+                /*
+                 *  ...then set the action attribute
+                 * to the query variable action url pattern
+                 * which can be later completed by the javascript
+                 * when it knows which button is pressed, giving it the action.
+                 * the final url will look like
+                 * <current_url>?mycompany_myplugin_action=save_settings , which will trigger a post action on submission
+                 */
+
+
+                /*
+                 * Use the current URL as the submission url, and add the query action variable onto it.
+                 */
+                $atts['action'] = $this->plugin()->tools()->rebuildUrl(array($this->plugin()->QUERY_VAR . '_action' => '{action}'));
+            }
+        }
+
+
 
         if (array_key_exists('method', $atts) && is_null($atts['method'])) {
             $atts['method'] = 'post';
         }
 
+        if (array_key_exists('enctype', $atts) && is_null($atts['enctype'])) {
+            $tags['enctype_html'] = '';
+        } else {
+            $tags['enctype_html'] = 'enctype = ' . $atts['enctype'];
+        }
 
 
 
@@ -493,8 +590,8 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
      * Get Default Field Label
      *
      * Uses name to derive a label
-     * @param string $content The shortcode content
-     * @return string The parsed output of the form body tag
+     * * @param none
+     * @return void
      */
     function getDefaultFieldLabel($name) {
         $this->debug()->t();

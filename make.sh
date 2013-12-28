@@ -392,6 +392,7 @@ find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -
 echo 'converting javascript variables...'
 find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${Simpli}\.${Frames}|${MyCompany_dot_Myplugin}|g"
 find "${target_dir}/" -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${simpli}\.${frames}|${mycompany_dot_myplugin}|g"
+find "${target_dir}/" -name *.js -not -regex "${excluded_files}" -type f | xargs -n 1 sed -i -e "s|${simpli}|${mycompany}|g"
 
 
 

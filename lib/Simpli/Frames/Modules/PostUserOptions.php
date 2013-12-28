@@ -7,10 +7,10 @@
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * 
+ *
  *
  */
-class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Basev1c2_Plugin_Module {
+class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     /**
      * Post option Defaults
@@ -53,7 +53,7 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Basev1c2_Plugi
         /*
          * Must add any wp_ajax actions to addHooks
          */
-        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_save_post', array($this, 'hookAjaxSavePost'));
+        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_save_post', array($this, 'hookFormActionSavePost'));
     }
 
     /**
@@ -132,30 +132,40 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Basev1c2_Plugi
          * Note: You cannot add wp_ajax actions here or they wont fire. You must add them to the addHooks method
          */
 
+        add_action('admin_enqueue_scripts', array($this, 'hookEnqueueFormScripts'));
+    }
 
-
-
-// Add scripts
+    /**
+     * Short Description
+     *
+     * Long Description
+     *
+     * @param none
+     * @return void
+     */
+    public function hookEnqueueFormScripts() {
         /*
-         * Add javascript for Ajax form submission
-         *
+         * add javascript hooks for the post submission
          */
-        $handle = $this->plugin()->getSlug() . '_ajax-actions-post.js';
-        $path = $this->plugin()->getDirectory() . '/admin/js/ajax-actions-post.js';
+
+        $handle = $this->plugin()->getSlug() . '_form-post-hooks.js';
+        $path = $this->plugin()->getDirectory() . '/admin/js/form-post-hooks.js';
         $inline_deps = array();
         $external_deps = array('jquery');
         $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+        $this->debug()->logVar('Loaded script: $handle = ', $handle);
 
+// Add scripts
         /*
-         * Add javascript for non-ajax form submission
+         *
          *
          */
-        $handle = $this->plugin()->getSlug() . '_publish-post-actions.js';
-        $path = $this->plugin()->getDirectory() . '/admin/js/publish-post-actions.js';
+        $handle = $this->plugin()->getSlug() . '_form-post-events.js';
+        $path = $this->plugin()->getDirectory() . '/admin/js/form-post-events.js';
         $inline_deps = array();
         $external_deps = array('jquery');
-        //  $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
-        //  add_action('admin_enqueue_scripts', array($this, 'hookEnqueueScripts'));
+        $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+        $this->debug()->logVar('Loaded script: $handle = ', $handle);
     }
 
     /**
@@ -193,7 +203,7 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Basev1c2_Plugi
          */
         if (true)
             $this->metabox()->addMetaBox(
-                    $this->getSlug() . '_' . 'metabox_options'  //Meta Box DOM ID
+                    'metabox_options'  //Meta Box DOM ID
                     , __('Simpli Frames Options', $this->plugin()->getTextDomain()) //title of the metabox.
                     , array($this->metabox(), 'renderMetaBoxTemplate')//function that prints the html
                     , array('exclude' => $this->plugin()->getSlug() . '_snippet')//  string|object|array $screen Optional. The screen on which to show the box (post, page, link). Defaults to current screen. If you pass an array, the meta box will be added to the current screen, for the post types specified. To exclude the meta box from being added to post types, use this format: array('exclude'=>array('post','custom_post_type'). to limit to only certain post types, use this format array('include'=>array('post','custom_post_type'))
@@ -209,8 +219,13 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Basev1c2_Plugi
          * set the metabox initial open/closes states
          *
          * You can force the Meta Box's initial state to close using the following:
-          $this->metabox()->setMetaboxOpenState($this->getSlug() . '_metabox_options', false, false);
+          $this->metabox()->setOpenState($this->getSlug() . '_metabox_options', false, false);
          */
+        $this->metabox()->setOpenState(
+                'metabox_options', //metabox id
+                'open', //false is closed, true is open
+                false //persist? if persists, then it will always revert to the set state when you return to the page. if not, it will act normally.
+        );
 
         /*
          * Set the Post Option defaults
@@ -337,7 +352,7 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Basev1c2_Plugi
 //     * @param string $label The field label
 //     * @param string $hint Text that displays on the form to guide the user on how to fill in the field
 //     * @param string $help More detailed text on what the field is and how it should be used.
-//     * @return string The parsed output of the form body tag
+//     * @return void
 //     */
 //    function textOLD($option_id, $label = null, $hint = null, $help = null, $template_id = null) {
 //        $this->debug()->t();
@@ -352,8 +367,8 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Basev1c2_Plugi
 //     * Template Tag - Post Option
 //     *
 //     * Echos out the result of getUserOption()
-//     * @param string $content The shortcode content
-//     * @return string The parsed output of the form body tag
+//     ** @param none
+//     * @return void
 //     */
 //    function postOptionOld($name) {
 //        $this->debug()->t();
@@ -724,8 +739,8 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Basev1c2_Plugi
 //         * Add javascript for form submission
 //         *
 //         */
-//        $handle = $this->plugin()->getSlug() . '_ajax-actions-post.js';
-//        $path = $this->plugin()->getDirectory() . '/admin/js/ajax-actions-post.js';
+//        $handle = $this->plugin()->getSlug() . '_form-actions-post.js';
+//        $path = $this->plugin()->getDirectory() . '/admin/js/form-actions-post.js';
 //        $inline_deps = array();
 //        $external_deps = array('jquery');
 //        $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
@@ -772,8 +787,8 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Basev1c2_Plugi
             return;
         }
 
-        $post_id = $this->plugin()->tools()->getEditPostId();
-        $this->_savePost($post_id);
+        $post = $this->plugin()->post()->getPost();
+        $this->_savePost($post->ID);
     }
 
     /**
@@ -871,7 +886,7 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Basev1c2_Plugi
      * @param none
      * @return void
      */
-    public function hookAjaxSavePost() {
+    public function hookFormActionSavePost() {
         $this->debug()->t();
         /*
          * No pageCheck needed since this is ajax, so the method wouldnt even be called unless it was on the right page
@@ -885,7 +900,7 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Basev1c2_Plugi
         if (!$this->metabox()->wpVerifyNonce(__FUNCTION__)) {
 
             $message = $this->MESSAGE_NONCE_FAILED;
-            $this->metabox()->displayAjaxMessage(
+            $this->metabox()->showResponseMessage(
                     $this->plugin()->getDirectory() . '/admin/templates/ajax_message_post_options.php', //string $template The path to the template to be used
                     $message, // string $message The html or text message to be displayed to the user
                     array(), //$errors Any error messages to display
@@ -923,7 +938,7 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Basev1c2_Plugi
         }
 
 
-        $this->metabox()->displayAjaxMessage(
+        $this->metabox()->showResponseMessage(
                 $this->plugin()->getDirectory() . '/admin/templates/ajax_message_post_options.php', //string $template The path to the template to be used
                 $message, // string $message The html or text message to be displayed to the user
                 array(), //$errors Any error messages to display
@@ -1025,7 +1040,7 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Basev1c2_Plugi
     public function metabox() {
 
         if (is_null($this->_meta_box_object)) {
-            $this->_meta_box_object = new Simpli_Frames_Basev1c2_Plugin_Module_Metabox($this);
+            $this->_meta_box_object = new Simpli_Frames_Base_v1c2_Plugin_Module_Metabox($this);
         }
         return $this->_meta_box_object;
     }

@@ -1,6 +1,18 @@
 <?php
 
 /**
+ * Addon Name: Simpli Forms
+ * Addon URI: http://simpliwp.com/simpli-framework/simpli-forms/
+ * Addon Slug: simpli_forms
+ * Simpli Base Class Version: 1.2
+ * Description: Simpli Forms provides an API, shortcodes, and a templating system that makes creating forms for the Simpli Framework easy.
+ * Version: 1.1
+ * Author: Andrew Druffner
+ * Author URI: http://simpliwp.com/about
+ * License: GPL2
+ */
+
+/**
  * Simpli Forms Addon
  *
 
@@ -12,7 +24,7 @@
  * @property string $MODULE_NAME_ELEMENTS  Root Name of the Module that holds the Form Element Definitions
  * @property string $MODULE_NAME_FILTERS   Name of the Module that holds the Filter Definitions
  */
-class Simpli_Frames_Addons_Simpli_Forms_Addon extends Simpli_Frames_Basev1c2_Plugin_Addon {
+class Simpli_Frames_Addons_Simpli_Forms_Addon extends Simpli_Frames_Base_v1c2_Plugin_Addon {
 
     /**
      * Add Hooks
@@ -138,7 +150,6 @@ class Simpli_Frames_Addons_Simpli_Forms_Addon extends Simpli_Frames_Basev1c2_Plu
                 , 'Filter'
         );
     }
-
 
 }
 

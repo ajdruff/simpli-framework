@@ -3,7 +3,7 @@
 /**
   Plugin Name:   Simpli Framework Plugin
   Plugin URI:    http://simpliwp/simpli-framework
-  Description:   The Simpli Framework is a WordPress Plugin Framework that makes building object oriented WordPress plugins just a bit easier. The Simpli Framework plugin defines the framework and is used by the Simpli Framework Builder plugin as a template to produce the new plugin. This plugin should never be used directly by the end user.
+  Description:   The Simpli Framework is a WordPress Plugin Framework that makes building object oriented WordPress plugins just a bit easier. The Simpli Framework plugin defines the framework and is used by the Simpli WP Plugin Builder plugin as a template to produce new plugins. This plugin is not intended to be used directly by developers or end users.
   Author:        Andrew Druffner
   Version:       1.4.0
   Author URI:    http://simpliwp/about

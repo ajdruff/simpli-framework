@@ -6,7 +6,7 @@
  * This script is included by the admin module's render method,which is called by an add_meta_box() call
  *
  * @package SimpliFramework
- * @subpackage SimpliHello
+ * @subpackage SimpliFrames
  */
 /*
  * Use the setLocalVars method to pass the

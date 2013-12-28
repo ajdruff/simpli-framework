@@ -6,10 +6,10 @@
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- * 
+ *
  *
  */
-class Simpli_Frames_Modules_Menu10General extends Simpli_Frames_Basev1c2_Plugin_Menu {
+class Simpli_Frames_Modules_Menu10General extends Simpli_Frames_Base_v1c2_Plugin_Menu {
 
     /**
      * Add Hooks
@@ -56,8 +56,8 @@ class Simpli_Frames_Modules_Menu10General extends Simpli_Frames_Basev1c2_Plugin_
      * Config
      *
      * Long Description
-     * @param string $content The shortcode content
-     * @return string The parsed output of the form body tag
+     * * @param none
+     * @return void
      */
     public function config() {
         $this->debug()->t();
@@ -72,8 +72,9 @@ class Simpli_Frames_Modules_Menu10General extends Simpli_Frames_Basev1c2_Plugin_
         /*
          * Set the Meta Box Initial Open/Close state
          */
-        $this->metabox()->setMetaboxOpenState
-                ($this->getSlug() . '_metabox_about'
+        $this->metabox()->setOpenState
+                (
+                'metabox_about'
                 , false
                 , true
         );
@@ -92,24 +93,10 @@ class Simpli_Frames_Modules_Menu10General extends Simpli_Frames_Basev1c2_Plugin_
         );
 
 
-        $this->metabox()->addMetaBox(
-                $this->getSlug() . '_' . 'metabox_about'  //Meta Box DOM ID
-                , __('About Simpli Frames and the Simpli Framework', $this->plugin()->getTextDomain()) //title of the metabox.
-                , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
-                , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
-                , 'normal' //normal advanced or side The part of the page where the metabox should show
-                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , null //$metabox['args'] in callback function
-        );
-////
-////
-//
-//
-
 
         $this->metabox()->addMetaBox(
-                $this->getSlug() . '_' . 'metabox_hellosettings'  //Meta Box DOM ID
-                , __('Simpli Frames Plugin Settings', $this->plugin()->getTextDomain()) //title of the metabox.
+                'metabox_settings'  //Meta Box DOM ID
+                , __('Plugin Settings', $this->plugin()->getTextDomain()) //title of the metabox.
                 , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
                 , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
                 , 'normal' //normal advanced or side The part of the page where the metabox should show
@@ -117,16 +104,6 @@ class Simpli_Frames_Modules_Menu10General extends Simpli_Frames_Basev1c2_Plugin_
                 , null //$metabox['args'] in callback function
         );
 
-
-        $this->metabox()->addMetaBox(
-                $this->getSlug() . '_' . 'metabox_example'  //Meta Box DOM ID
-                , __('Example Metabox with different input types', $this->plugin()->getTextDomain()) //title of the metabox.
-                , array($this->metabox(), 'renderMetaBoxTemplate') //function that prints the html
-                , $screen_id = null// must be null so WordPress uses current screen id as default. mistakenly called $post_type in the codex. See Source Code.
-                , 'normal' //normal advanced or side The part of the page where the metabox should show
-                , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
-                , null //$metabox['args'] in callback function
-        );
 
         /*
          * Ajax Meta Box Examples
@@ -137,7 +114,7 @@ class Simpli_Frames_Modules_Menu10General extends Simpli_Frames_Basev1c2_Plugin_
          */
 
         $this->metabox()->addMetaBox(
-                $this->getSlug() . '_' . 'metabox_updates'  //Meta Box DOM ID
+                'metabox_updates'  //Meta Box DOM ID
                 , __('Plugin Updates', $this->plugin()->getTextDomain()) //title of the metabox
                 , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
@@ -148,7 +125,7 @@ class Simpli_Frames_Modules_Menu10General extends Simpli_Frames_Basev1c2_Plugin_
 
 
         $this->metabox()->addMetaBox(
-                $this->getSlug() . '_' . 'metabox_support'  //Meta Box DOM ID
+                'metabox_support'  //Meta Box DOM ID
                 , __('Support', $this->plugin()->getTextDomain()) //title of the metabox
                 , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
@@ -158,7 +135,7 @@ class Simpli_Frames_Modules_Menu10General extends Simpli_Frames_Basev1c2_Plugin_
         );
 //
         $this->metabox()->addMetaBox(
-                $this->getSlug() . '_' . 'metabox_feedback'  //Meta Box DOM ID
+                'metabox_feedback'  //Meta Box DOM ID
                 , __('Feedback', $this->plugin()->getTextDomain()) //title of the metabox
                 , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
@@ -168,7 +145,7 @@ class Simpli_Frames_Modules_Menu10General extends Simpli_Frames_Basev1c2_Plugin_
         );
 
         $this->metabox()->addMetaBox(
-                $this->getSlug() . '_' . 'metabox_donate'  //Meta Box DOM ID
+                'metabox_donate'  //Meta Box DOM ID
                 , __('Donate', $this->plugin()->getTextDomain()) //title of the metabox
                 , array($this->metabox(), 'renderMetaBoxAjax') //function that prints the html
                 , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
@@ -179,7 +156,7 @@ class Simpli_Frames_Modules_Menu10General extends Simpli_Frames_Basev1c2_Plugin_
 
 
         /*
-         * Lets use unique nonces for extra security :)
+         * Set Unique Nonces if desired (for increased security, slightly slower)
          */
         $this->setConfig('UNIQUE_ACTION_NONCES', false);
     }
@@ -212,6 +189,33 @@ class Simpli_Frames_Modules_Menu10General extends Simpli_Frames_Basev1c2_Plugin_
         </div>
 
         <?php
+    }
+
+    /**
+     * Hook - Enqueue Scripts
+     *
+     * Adds javascript and stylesheets to settings page in the admin panel.
+     * WordPress Hook - admin_enqueue_scripts
+     *
+     * @param none
+     * @return void
+     */
+    public function hookEnqueueScripts() {
+        $this->debug()->t();
+        if (!$this->pageCheckMenu()) {
+            return;
+        }
+
+        /*
+         * Add Javascript Hooks
+         */
+        $handle = $this->plugin()->getSlug() . '_form-menu-hooks.js';
+
+        $path = $this->plugin()->getDirectory() . '/admin/js/form-menu-hooks.js';
+        $inline_deps = array();
+        $external_deps = array('jquery');
+        $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+        $this->debug()->log('loaded script ' . $handle);
     }
 
 }

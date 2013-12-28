@@ -63,7 +63,7 @@ class Simpli_Framework {
          * require the base loader so we can use it to bootstrap the base classes
          */
 
-        $base_loader_class_path = dirname($plugin_file_path) . '/lib/' . $slug_ucprefix . '/' . $slug_ucsuffix . '/Base' . $vxcy . '/Loader.php';
+        $base_loader_class_path = dirname($plugin_file_path) . '/lib/' . $slug_ucprefix . '/' . $slug_ucsuffix . '/Base/' . $vxcy . '/Loader.php';
 
 
         require($base_loader_class_path);
@@ -75,7 +75,7 @@ class Simpli_Framework {
 
 
 
-        $loader_class = self::getClassNamespace($plugin_slug) . '_Base' . $vxcy . '_Loader';
+        $loader_class = self::getClassNamespace($plugin_slug) . '_Base_' . $vxcy . '_Loader';
 
 
         $loader = new $loader_class();

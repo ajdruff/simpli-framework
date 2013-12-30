@@ -1,4 +1,6 @@
-<form id="{form_name}_{form_counter}" action="{action}" method="{method}">
+<form id="{form_name}_{form_counter}" class="{CLASS}" action="{action}" method="{method}">
+    
+   
     <?php
     // wp_nonce_field($this->plugin()->getSlug()); //this causes a misdirect.
     //  wp_nonce_field('save_post_options', $this->plugin()->getSlug() . '_nonce');

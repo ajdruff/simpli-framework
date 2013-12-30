@@ -98,6 +98,20 @@ simpli.frames.submit.ajaxSubmit = function(form, event, ajax_action_slug) {
 
 
     var output_element = {};
+    
+    /*
+     * WordPress normally makes ajaxurl available within Admin.
+     * If it hasn't been defined, we are likely trying to make
+     * an ajax request outside of admin. In that case,
+     * we can use the localized version
+     */
+    if (typeof ajaxurl ==='undefined') {
+        ajaxurl=simpli.frames.vars.forms['ajaxurl'];
+        simpli.frames.log('ajaxurl = ' + ajaxurl);
+
+    }
+    
+    
     /*
      * if unique nonces are not configured, then use the default
      */
@@ -167,48 +181,66 @@ simpli.frames.submit.ajaxSubmit = function(form, event, ajax_action_slug) {
 
         simpli.frames.log('debug is ' + 'on');
         simpli.frames.log('simpli.frames.vars.plugin.debug =  ' + simpli.frames.vars.plugin.debug);
-        if (!simpli.frames.vars.plugin.debug) {
-            simpli.frames.log('response = ' + response);
-            /*
-             * If an element exists within the form with class ='.simpli_forms_response',
-             * then use it. otherwise, use the popup if available.
-             */
-            if (jQuery(form).find('.simpli_forms_response').length > 0) {
-                output_element = jQuery(form).find('.simpli_forms_response');
-            } else {
 
-                if (jQuery('#message-body').length > 0) {
-                    output_element = jQuery('#message-body');
-                }
 
-            }
 
-            output_element.html(response).fadeOut(0).fadeIn().delay(5000).fadeOut();
-            //  jQuery(form).find('.simpli_forms_response').html(response).fadeOut(0).fadeIn().delay(2500).fadeOut();
+        /*
+         * If an element exists within the form with class ='.simpli_forms_response',
+         * then use it. otherwise, use the popup if available.
+         */
 
+        if (typeof simpli.frames.vars.forms['target'] !== 'undefined') {
+            output_element = jQuery('#' + simpli.frames.vars.forms['target']);
+        }
+        else if (jQuery(form).find('.simpli_forms_response').length > 0) {
+            output_element = jQuery(form).find('.simpli_forms_response');
         } else {
 
+            if (jQuery('#message-body').length > 0) {
+                output_element = jQuery('#message-body');
+                if (simpli.frames.vars.plugin.debug) {
+                    /*
+                     * don't use message-body if debugging since it floats and is difficult to read. instead add a debugging container.
+                     */
+                    if (jQuery('#debug-messages').length === 0) {//if a debug message container doesnt exist
 
-            /*
-             * If debugging, then don't clear the response message
-             * once its displayed. This is because the response may be
-             * quite long and the user will need time to analyze it
-             */
-            if (jQuery('#debug-messages').length === 0) {
+                        /*
+                         * then add it
+                         */
+                        jQuery(form).after('<div id="debug-messages"></div>');
+                    }
 
-                /*
-                 * add a container for the debug messages to be displayed of it doesnt already exist
-                 */
-                jQuery(form).after('<div id="debug-messages"></div>');
+                    output_element = jQuery('#debug-messages');
+                    output_element = jQuery('#message-body');
+                }
+            } else {// if there is no other target found, replace the form itself with the message
+
+                output_element = jQuery(form);
+
             }
 
+        }
 
+        simpli.frames.log('output element = ' + jQuery(output_element).html());
+        /*
+         * If debugging, then don't clear the response message
+         * once its displayed. This is because the response may be
+         * quite long and the user will need time to analyze it
+         */
+        if (simpli.frames.vars.plugin.debug) {
 
-            jQuery('#debug-messages').html(response); // dont fade out
+            output_element.html(response).fadeOut(0).fadeIn().delay(5000);
+        }
+
+        else {
+
+            output_element.html(response).fadeOut(0).fadeIn().delay(5000).fadeOut();
+
         }
 
 
-        return (false);
+
+        return false;
     }
 
 
@@ -234,102 +266,6 @@ simpli.frames.submit.ajaxSubmit = function(form, event, ajax_action_slug) {
 
 
 
-    if (false) //old deprecated method
-    {
-        jQuery.post(ajaxurl, //ajaxurl is a localized variable that WordPress inserts that is the url to admin-ajax.php
-                /*
-                 * Form Fields
-                 *
-                 * Serialize is used to turn all the form's fields
-                 * into a query string that is ready for posting
-                 */
-                jQuery(form).serialize()
-                /*
-                 * Ajax Action
-                 *
-                 * This will tell WordPress ajax script which hook to call
-                 */
-                + '&action=' + ajax_action
-                /*
-                 * HTTP Referer URL
-                 *
-                 * Pass the current page relative url as the referring url
-                 * This uses escape() so the string wont be interpreted as fields
-                 * jQuery(location).attr('search') is the query string
-                 */
-                + '&_simpli_forms_referer_url=' + escape(jQuery(location).attr('pathname') + jQuery(location).attr('search'))
-
-                /*
-                 * Form Nonce
-                 *
-                 * Pass the nonce that was created when we Enqueued the script
-                 * We pass it here so the user doesnt need to remember to
-                 * add it in the templates
-                 * you can find the localized statements where this script is enqueued.
-                 */
-                + '&' + simpli.frames.vars.forms.nonce_field_name + '=' + nonce_value
-
-
-                , function(response) {
-
-
-
-
-            simpli.frames.submit.reset_checkboxes(form);
-            jQuery(form).find('.submit-waiting').hide();
-            /*
-             * display the response differently, depending
-             * on whether we are debugging
-             *
-             */
-
-            simpli.frames.log('debug is ' + 'on');
-            simpli.frames.log('simpli.frames.vars.plugin.debug =  ' + simpli.frames.vars.plugin.debug);
-            if (!simpli.frames.vars.plugin.debug) {
-                simpli.frames.log('response = ' + response);
-                /*
-                 * If an element exists within the form with class ='.simpli_forms_response',
-                 * then use it. otherwise, use the popup if available.
-                 */
-                if (jQuery(form).find('.simpli_forms_response').length > 0) {
-                    output_element = jQuery(form).find('.simpli_forms_response');
-                } else {
-
-                    if (jQuery('#message-body').length > 0) {
-                        output_element = jQuery('#message-body');
-                    }
-
-                }
-
-                output_element.html(response).fadeOut(0).fadeIn().delay(5000).fadeOut();
-                //  jQuery(form).find('.simpli_forms_response').html(response).fadeOut(0).fadeIn().delay(2500).fadeOut();
-
-            } else {
-
-
-                /*
-                 * If debugging, then don't clear the response message
-                 * once its displayed. This is because the response may be
-                 * quite long and the user will need time to analyze it
-                 */
-                if (jQuery('#debug-messages').length === 0) {
-
-                    /*
-                     * add a container for the debug messages to be displayed of it doesnt already exist
-                     */
-                    jQuery(form).after('<div id="debug-messages"></div>');
-                }
-
-
-
-                jQuery('#debug-messages').html(response); // dont fade out
-            }
-
-
-            return (false);
-        });
-    }
-    return (false);
 
 
 }; //end of the definition of ajaxSubmit
@@ -416,6 +352,14 @@ simpli.frames.submit.nonAjaxSubmit = function(form, event, form_action_slug) {
      * append the id of the form
      */
     jQuery(form).append('<input type="hidden" name="simpli_forms_id" value="' + jQuery(form).attr('id') + '">');
+    
+    
+    /*
+     * submit the form
+     */
+    form.submit();
+    
+    
     /*
      * Add the nonce value to the form , if not already added.
      */

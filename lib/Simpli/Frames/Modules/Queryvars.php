@@ -364,7 +364,7 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
 
 
 
-        $this->addExternalRedirect( '^/imageme', '/wp-content/plugins/nomstock-com/lib/txt2imgr' );#target must begin with a slash
+        $this->addExternalRedirect( '^/imageme', '/wp-content/plugins/simpli-frames/lib/txt2imgr' );#target must begin with a slash
 
 $this->addExternalRedirect( '^/google', 'http://google.com' );#target must begin with a slash
     }
@@ -399,7 +399,7 @@ $this->addExternalRedirect( '^/google', 'http://google.com' );#target must begin
     /**
      * Action Example 2 - Step 2 - Add the function
      *
-     * This is the method that will fire when http://example.com/?nomstock_com_action=sayGoodbye is called.
+     * This is the method that will fire when http://example.com/?simpli_frames_action=sayGoodbye is called.
      * * @param none
      * @return void
      */
@@ -451,7 +451,7 @@ $this->addExternalRedirect( '^/google', 'http://google.com' );#target must begin
 
         /*
          * Register query variables in the form:
-         * Example: nomstock_com_action  , nomstock_com_page
+         * Example: simpli_frames_action  , simpli_frames_page
          */
 
 

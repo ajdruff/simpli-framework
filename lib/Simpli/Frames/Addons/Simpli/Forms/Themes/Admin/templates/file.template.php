@@ -15,7 +15,7 @@
                     <label>
                         <label>
 
-                            <input name="{NAME}" type="file" class="{CLASS}" value="{VALUE}" />
+                            <input name="{NAME}" accept="{accept}" type="file" class="{CLASS}" value="{VALUE}" />
 
                         </label>
 

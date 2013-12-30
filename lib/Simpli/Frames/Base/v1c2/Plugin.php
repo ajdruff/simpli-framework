@@ -1605,8 +1605,8 @@ class Simpli_Frames_Base_v1c2_Plugin implements Simpli_Frames_Base_v1c2_Plugin_I
 
                     $this->debug()->log('end load inline script: ' . $handle);
                 } else {
-                    $this->debug()->log('couldnt load script: ' . $handle . ' due to missing script file');
-                    echo 'jQuery(document).ready(function() { console.error (\' WordPrsss Plugin ' . $this->getSlug() . ' attempted to enqueue ' . ' Missing Script File ' . str_replace('\\', '\\\\', $script['path']) . '\')});';
+                    $this->debug()->logError('couldnt load script: ' . $handle . ' due to missing script file ' . $script['path']);
+                    echo '<script type="text/javascript">jQuery(document).ready(function() { console.error (\' WordPrsss Plugin ' . $this->getSlug() . ' attempted to enqueue ' . ' Missing Script File ' . str_replace('\\', '\\\\', $script['path']) . '\')});</script>';
                 }
             } else {
                 $this->debug()->log($handle . ' not loaded, missing dependency ' . $ext_handle);
@@ -1636,16 +1636,7 @@ class Simpli_Frames_Base_v1c2_Plugin implements Simpli_Frames_Base_v1c2_Plugin_I
 //
 //        wp_enqueue_script('underscore');
 
-        /*
-         * Purl - a url parser required for form submission
-         */
 
-        $handle = 'purl';
-        $src = $this->getUrl() . '/js/purl/purl.js';
-        $deps = array();
-        $ver = null;
-        $in_footer = false;
-        wp_enqueue_script($handle, $src, $deps, $ver, $in_footer);
 
 
         /*

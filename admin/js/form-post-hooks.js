@@ -57,8 +57,13 @@ simpli.frames.post.addHooks = function()
     /*
      * prompt the user
      */
+/*
+ * To add a javascript prompt , just add an action like this : 
+ *     simpli.frames.add_action(simpli.frames.vars.plugin.slug + '_save_post', simpli.frames.post.savePost);
+ *     
+ *     That will fire the simpli.frames.post.savePost event.
+ */
 
-    simpli.frames.add_action(simpli.frames.vars.plugin.slug + '_save_post', simpli.frames.post.savePost);
 
 }
 

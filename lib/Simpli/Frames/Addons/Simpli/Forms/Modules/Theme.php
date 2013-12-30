@@ -30,9 +30,9 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Theme extends Simpli_Frames_Base
         $this->debug()->t();
 
         $result = $this->_getCachedTemplate($template_id);
+        $this->debug()->logVar( '$template_id = ', $template_id);
 
-
-
+        
 
         return $result;
     }
@@ -105,12 +105,12 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Theme extends Simpli_Frames_Base
          * Take template from set Theme directory, but if no template exists there, take it from the default theme directory
          */
 
-        $untested_template_path = $this->_getThemeDirectory() . '/templates/' . $template_id . '.template.php';
+        $untested_template_path = $this->getThemeDirectory() . '/templates/' . $template_id . '.template.php';
 
         if (!file_exists($untested_template_path)) {
 
             $default_template_path = $this->_getDefaultThemeDirectory() . '/templates/' . $template_id . '.template.php';
-            $this->debug()->log('Couldnt find template path in theme directory, path = , ' . $untested_template_path . ' <br> , so will try to find it in the default theme path of  ' . $default_template_path);
+            $this->debug()->logError('Couldn\'t find template path in theme directory, path = , ' . $untested_template_path . ' <br> , so will try to find it in the default theme path of  ' . $default_template_path);
             $template_path = $default_template_path;
         } else {
 
@@ -180,7 +180,7 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Theme extends Simpli_Frames_Base
      * @param none
      * @return string $_theme_directory
      */
-    private function _getThemeDirectory() {
+    public function getThemeDirectory() {
         $this->debug()->t();
         //if theme directory wasnt set yet, set it now with whatever theme name exists
         if (is_null($this->_theme_directory)) {
@@ -239,13 +239,13 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Theme extends Simpli_Frames_Base
          * set theme directory
          */
         $this->_setThemeDirectory($this->addon()->getDirectory() . '/' . $this->addon()->DIR_NAME_THEMES . '/' . $this->getThemeName());
-        $this->debug()->log('Set theme directory to ' . $this->_getThemeDirectory());
+        $this->debug()->log('Set theme directory to ' . $this->getThemeDirectory());
 
         /*
          * load theme modules
          */
 
-        $new_enabled_modules = $this->addon()->loadModules($this->_getThemeDirectory() . '/' . $this->plugin()->DIR_NAME_MODULES);
+        $new_enabled_modules = $this->addon()->loadModules($this->getThemeDirectory() . '/' . $this->plugin()->DIR_NAME_MODULES);
 
 //        foreach ($new_enabled_modules as $module_name => $module_path) {
 //

@@ -252,13 +252,20 @@ class Simpli_Frames_Base_v1c2_Loader {
 
         try {
             if (!isset($matches[1]) || (empty($matches))) {
-                echo ' offset 1  not found for $class = ' . $class;
+                /*
+                 * return since all this means is that no matches
+                 *  were found for the Simpli Framework' namespaces, and it is assumed
+                 * that the class will be loaded by another plugin's or theme's
+                 * autoloader or include statement.
+                 */
+
                 return;
             }
 
             $class_namespace = $matches[0] . '_' . $matches[1];
         } catch (Exception $exc) {
-            die('exiting, class = ' . $class_namespace);
+            die('Plugin . ' . $this->getClassNamespace() . ' .  experienced an exception
+                while attempting to load the class ' . $class_namespace);
             echo $exc->getTraceAsString();
         }
 

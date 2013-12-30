@@ -56,11 +56,11 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
      * @param string $atts The attributes of the tag
      * @return string $atts
      */
-    public function filter($properties) {
+    public function filter( $properties ) {
         $this->debug()->t();
-        $this->debug()->logVars(get_defined_vars());
-        $this->debug()->log('Filtering using filter method in base class');
-        $method = 'filter' . ucwords($properties['scid']);
+        $this->debug()->logVars( get_defined_vars() );
+        $this->debug()->log( 'Filtering using filter method in base class' );
+        $method = 'filter' . ucwords( $properties[ 'scid' ] );
 
 
 
@@ -68,16 +68,16 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
         /*
          * apply the common filter
          */
-        $properties = $this->_commonFilter($properties);
+        $properties = $this->_commonFilter( $properties );
 
         /*
          * apply the element filter
          */
-        if (method_exists($this, $method)) {
-            $this->debug()->log('base class is calling filter for ' . $method);
-            $properties = $this->$method($properties);
+        if ( method_exists( $this, $method ) ) {
+            $this->debug()->log( 'base class is calling filter for ' . $method );
+            $properties = $this->$method( $properties );
         } else {
-            $this->debug()->log('No filter for ' . $method . ' exists');
+            $this->debug()->log( 'No filter for ' . $method . ' exists' );
         }
 
 
@@ -91,20 +91,59 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
      * * @param none
      * @return void
      */
-    protected function _commonFilter($properties) {
+    protected function _commonFilter( $properties ) {
         $this->debug()->t();
-        $this->debug()->log('applying the common filters of the base class');
+        $this->debug()->log( 'applying the common filters of the base class' );
 
-        extract($properties);
+        extract( $properties );
+
+
+        /*
+         * Template
+         * First, check to see if a template type is defined, and if so, add it as a suffix
+         * then check to see if the template incorporating type exists, and if so, use it
+         */
+
+        $theme = $this->addon()->getModule( 'Form' )->getTheme();
+        $this->debug()->logVar( '$theme = ', $theme->getThemeName() );
+
+        $template_type = $this->plugin()->getAddon( 'Simpli_Forms' )->getModule( 'Form' )->form[ 'form' ][ 'template_type' ];
+        $this->debug()->logVar( '$template_type = ', $template_type );
+
+        if ( (!is_null( $template_type )) && $template_type !== '' ) {
+            $template_modified_with_type = $atts[ 'template' ] . '_' . $template_type;
+            /*
+             * if the template is not null, replace the template with the new modified template that
+             * incorporates the type
+             */
+
+            if ( !is_null( $template_modified_with_type ) ) {
+                $atts[ 'template' ] = $template_modified_with_type;
+}
+}
+
+        /*
+         * Template Option
+         */
+        if ( array_key_exists( 'template_option', $atts ) && is_null( $atts[ 'template_option' ] ) || $atts[ 'template_option' ] === '' ) {
+
+            $atts[ 'template_option' ] = $atts[ 'template' ] . '_option';
+}
+
+
+        $this->debug()->logVar( '$atts = ', $atts );
         /*
          * Return error if required arguments are not found
          */
-        if (array_key_exists('name', $atts) && is_null($atts['name'])) {
+        if ( array_key_exists( 'name', $atts ) && is_null( $atts[ 'name' ] ) ) {
 
-            $atts ['_error'][] = 'Name attribute is required';
+            $atts [ '_error' ][] = 'Name attribute is required';
+
+
+
+        } else{
+            $tags[ 'id' ] = $atts[ 'name' ] . '_' . $this->addon()->getModule( 'Form' )->form_counter;
         }
-
-
 
 
 
@@ -113,8 +152,8 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
          * Add a unique prefix to the name so we dont conflict with other plugins that might be on the same form
          */
 
-        if (array_key_exists('name', $atts) && is_null($atts['name'])) {
-            $atts['name'] = $this->getFieldPrefix() . $atts['name'];
+        if ( array_key_exists( 'name', $atts ) && is_null( $atts[ 'name' ] ) ) {
+            $atts[ 'name' ] = $this->getFieldPrefix() . $atts[ 'name' ];
         }
 
 
@@ -124,21 +163,37 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
          */
 
 
-        if (array_key_exists('label', $atts) && is_null($atts['label'])) {
+        if ( array_key_exists( 'label', $atts ) && is_null( $atts[ 'label' ] ) ) {
 
-            $atts['label'] = $this->getDefaultFieldLabel($atts['name']);
+            $atts[ 'label' ] = $this->getDefaultFieldLabel( $atts[ 'name' ] );
         }
 
-        $this->debug()->logVar('$atts = ', $atts);
+        $this->debug()->logVar( '$atts = ', $atts );
 
-        $tags['form_counter'] = $this->addon()->getModule('Form')->form_counter;
-        if (isset($this->addon()->getModule('Form')->form['form']['name'])) {
-            $tags['form_name'] = $this->addon()->getModule('Form')->form['form']['name'];
+        $tags[ 'form_counter' ] = $this->addon()->getModule( 'Form' )->form_counter;
+        if ( isset( $this->addon()->getModule( 'Form' )->form[ 'form' ][ 'name' ] ) ) {
+            $tags[ 'form_name' ] = $this->addon()->getModule( 'Form' )->form[ 'form' ][ 'name' ];
         }
 
 
 
-        return (compact('scid', 'atts', 'tags'));
+        return (compact( 'scid', 'atts', 'tags' ));
+    }
+
+    /**
+     * Filter Password
+     *
+     * Filters the Tag Attributes
+     * @param string $atts The attributes of the tag
+     * @return string $atts
+     */
+    protected function filterPassword( $properties ) {
+        $this->debug()->t();
+
+        extract( $properties );
+
+
+        return (compact( 'scid', 'atts', 'tags' ));
     }
 
     /**
@@ -148,13 +203,13 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
      * @param string $atts The attributes of the tag
      * @return string $atts
      */
-    protected function filterText($properties) {
+    protected function filterText( $properties ) {
         $this->debug()->t();
 
-        extract($properties);
+        extract( $properties );
 
 
-        return (compact('scid', 'atts', 'tags'));
+        return (compact( 'scid', 'atts', 'tags' ));
     }
 
     /**
@@ -164,13 +219,13 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
      * @param string $atts The attributes of the tag
      * @return string $atts
      */
-    protected function filterResponse($properties) {
+    protected function filterResponse( $properties ) {
         $this->debug()->t();
 
-        extract($properties);
-        $tags['response_html'] = apply_filters('simpli_forms_response', '');
+        extract( $properties );
+        $tags[ 'response_html' ] = apply_filters( 'simpli_forms_response', '' );
 
-        return (compact('scid', 'atts', 'tags'));
+        return (compact( 'scid', 'atts', 'tags' ));
     }
 
     /**
@@ -180,13 +235,13 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
      * @param string $atts The attributes of the tag
      * @return string $atts
      */
-    protected function filterFile($properties) {
+    protected function filterFile( $properties ) {
         $this->debug()->t();
 
-        extract($properties);
+        extract( $properties );
 
 
-        return (compact('scid', 'atts', 'tags'));
+        return (compact( 'scid', 'atts', 'tags' ));
     }
 
     /**
@@ -196,21 +251,21 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
      * @param string $atts The attributes of the tag
      * @return string $atts
      */
-    protected function filterDropdown($properties) {
+    protected function filterDropdown( $properties ) {
         $this->debug()->t();
 
-        extract($properties);
+        extract( $properties );
 
         /*
          * use the shared code for radio,dropdown, and checkbox elements
          */
-        return($this->_filterOptions($properties));
+        return($this->_filterOptions( $properties ));
     }
 
-    protected function filterDropdownOld($properties) {
+    protected function filterDropdownOld( $properties ) {
         $this->debug()->t();
 
-        extract($properties);
+        extract( $properties );
 
 
 
@@ -223,24 +278,24 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
 
 
 
-        foreach ($atts['options'] as $option_value => $option_text) {
+        foreach ( $atts[ 'options' ] as $option_value => $option_text ) {
 
 
-            $tokens['selected_html'] = (($atts['selected'] == $option_value) ? ' selected = "selected"' : '');
-            $tokens['option_value'] = $option_value;
-            $tokens['option_text'] = $option_text;
+            $tokens[ 'selected_html' ] = (($atts[ 'selected' ] == $option_value) ? ' selected = "selected"' : '');
+            $tokens[ 'option_value' ] = $option_value;
+            $tokens[ 'option_text' ] = $option_text;
             $option_template = '<option {selected_html} value = "{option_value}">{option_text}</option>';
-            $options_html.=$this->plugin()->tools()->crunchTpl($tokens, $option_template);
+            $options_html.=$this->plugin()->tools()->crunchTpl( $tokens, $option_template );
         }
 
 
-        $tags['options_html'] = $options_html;
+        $tags[ 'options_html' ] = $options_html;
 
 
 
 
 
-        return (compact('scid', 'atts', 'tags'));
+        return (compact( 'scid', 'atts', 'tags' ));
     }
 
     /**
@@ -259,21 +314,21 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
      * @param string $atts The attributes of the tag
      * @return string $atts
      */
-    protected function filterCheckbox($properties) {
+    protected function filterCheckbox( $properties ) {
         $this->debug()->t();
 
-        extract($properties);
+        extract( $properties );
 
         /*
          * use the shared code for radio,dropdown, and checkbox elements
          */
-        return($this->_filterOptions($properties));
+        return($this->_filterOptions( $properties ));
     }
 
-    protected function filterCheckboxOld($properties) {
+    protected function filterCheckboxOld( $properties ) {
         $this->debug()->t();
 
-        extract($properties);
+        extract( $properties );
 
 
 
@@ -284,14 +339,14 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
         $options_html = '';
         $tokens = $atts;
 
-        $this->debug()->logVar('$atts = ', $atts);
+        $this->debug()->logVar( '$atts = ', $atts );
 
-        foreach ($atts['options'] as $option_value => $option_text) {
+        foreach ( $atts[ 'options' ] as $option_value => $option_text ) {
 
 
-            $tokens['checked_html'] = (($atts['selected'][$option_value] == 'yes') ? ' checked = "checked" selected = "selected" ' : '');
-            $tokens['option_value'] = $option_value;
-            $tokens['option_text'] = $option_text;
+            $tokens[ 'checked_html' ] = (($atts[ 'selected' ][ $option_value ] == 'yes') ? ' checked = "checked" selected = "selected" ' : '');
+            $tokens[ 'option_value' ] = $option_value;
+            $tokens[ 'option_text' ] = $option_text;
             $option_template = ' <p>
 <label style = "padding: 18px 2px 5px;" for = "checkbox_settings_{OPTION_VALUE}"><span style = "padding-left:5px" >{OPTION_TEXT}</span>
 <input type = "checkbox" name = "checkbox_settings[{OPTION_VALUE}]" id = "checkbox_settings_{OPTION_VALUE}" value = "yes" {CHECKED_HTML} >
@@ -300,15 +355,15 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
 </label>
 </p>';
 
-            $options_html.=$this->plugin()->tools()->crunchTpl($tokens, $option_template);
+            $options_html.=$this->plugin()->tools()->crunchTpl( $tokens, $option_template );
         }
 
 
-        $tags['options_html'] = $options_html;
+        $tags[ 'options_html' ] = $options_html;
 
 
-        $properties = compact('scid', 'atts', 'tags');
-        $this->debug()->logVar('$properties = ', $properties);
+        $properties = compact( 'scid', 'atts', 'tags' );
+        $this->debug()->logVar( '$properties = ', $properties );
 
         return ($properties);
     }
@@ -321,11 +376,11 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
      * @param $properties The element's properties (shortcode attributes)
      * @return The html to be rendered
      */
-    private function _filterOptions($properties) {
+    protected function _filterOptions( $properties ) {
 
         $this->debug()->t();
 
-        extract($properties);
+        extract( $properties );
 //dropdown
 //$tokens['selected_html'] = (($atts['selected'] == $option_value) ? ' selected="selected"' : '');
 //checkbox
@@ -333,12 +388,20 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
 
 
         /*
+         * template_option
+         */
+
+        if ( is_null( $atts[ 'template_option' ] ) ) {
+            $atts[ 'template_option' ] = $atts[ 'template' ] . '_' . 'option';
+}
+
+        /*
          * Create the options_html
          *
          */
         $options_html = '';
         $tokens = $atts;
-        foreach ($atts['options'] as $option_value => $option_text) {
+        foreach ( $atts[ 'options' ] as $option_value => $option_text ) {
             $tokens = $atts; //need to reset to original atts for each iteration, since we change the value of the tokens during the loop.
 //  $tokens['checked'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked"' : '');
 //  $tokens['selected'] = (($atts['selected'][$option_value] == $option_value) ? ' selected="selected" ' : '');
@@ -353,56 +416,56 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
             /*
              * works for radio and checkbox
              */
-            if (is_array($atts['selected'])) {
-                if (isset($atts['selected'][$option_value])) {
+            if ( is_array( $atts[ 'selected' ] ) ) {
+                if ( isset( $atts[ 'selected' ][ $option_value ] ) ) {
 
 
-                    $tokens['checked'] = (($atts['selected'][$option_value] == 'yes') ? ' checked="checked"' : '');
+                    $tokens[ 'checked' ] = (($atts[ 'selected' ][ $option_value ] == 'yes') ? ' checked="checked"' : '');
                 } else {
-                    $tokens['checked'] = '';
+                    $tokens[ 'checked' ] = '';
                 }
             } else {
 
-                $tokens['checked'] = (($atts['selected'] == $option_value) ? ' checked="checked"' : '');
+                $tokens[ 'checked' ] = (($atts[ 'selected' ] == $option_value) ? ' checked="checked"' : '');
             }
 
             /*
              * dropdown
              */
-            if (is_array($atts['selected'])) {
-                if (isset($atts['selected'][$option_value])) {
-                    $tokens['selected'] = (($atts['selected'][$option_value] == 'yes') ? ' selected="selected" ' : '');
-                    $this->debug()->logVar('$option_value = ', $option_value);
-                    $this->debug()->logVar('$selected[$option_value] = ', $atts['selected'][$option_value]);
-                    $this->debug()->logVar('$tokens[selected] = ', $tokens['selected']);
+            if ( is_array( $atts[ 'selected' ] ) ) {
+                if ( isset( $atts[ 'selected' ][ $option_value ] ) ) {
+                    $tokens[ 'selected' ] = (($atts[ 'selected' ][ $option_value ] == 'yes') ? ' selected="selected" ' : '');
+                    $this->debug()->logVar( '$option_value = ', $option_value );
+                    $this->debug()->logVar( '$selected[$option_value] = ', $atts[ 'selected' ][ $option_value ] );
+                    $this->debug()->logVar( '$tokens[selected] = ', $tokens[ 'selected' ] );
                 } else {
-                    $tokens['selected'] = '';
+                    $tokens[ 'selected' ] = '';
                 }
             } else {
 
-                $tokens['selected'] = (($atts['selected'] == $option_value) ? ' selected="selected" ' : '');
+                $tokens[ 'selected' ] = (($atts[ 'selected' ] == $option_value) ? ' selected="selected" ' : '');
             }
 
 //dropdown - works
 //     $tokens['selected'] = (($atts['selected'] == $option_value) ? ' selected="selected" ' : '');
 
-            $tokens['option_value'] = $option_value;
-            $tokens['option_text'] = $option_text;
-            $option_template = $this->addon()->getModule('Form')->getTheme()->getTemplate($atts['template_option']);
+            $tokens[ 'option_value' ] = $option_value;
+            $tokens[ 'option_text' ] = $option_text;
+            $option_template = $this->addon()->getModule( 'Form' )->getTheme()->getTemplate( $atts[ 'template_option' ] );
 
-            $options_html.=$this->plugin()->tools()->crunchTpl($tokens, $option_template);
-            $this->debug()->logVar('$tokens = ', $tokens);
+            $options_html.=$this->plugin()->tools()->crunchTpl( $tokens, $option_template );
+            $this->debug()->logVar( '$tokens = ', $tokens );
         }
 
-        $this->debug()->logVar('$options_html = ', $options_html);
+        $this->debug()->logVar( '$options_html = ', $options_html );
 
-        $tags['options_html'] = $options_html;
-
-
+        $tags[ 'options_html' ] = $options_html;
 
 
 
-        return (compact('scid', 'atts', 'tags'));
+
+
+        return (compact( 'scid', 'atts', 'tags' ));
     }
 
     /**
@@ -412,15 +475,15 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
      * @param string $atts The attributes of the tag
      * @return string $atts
      */
-    protected function filterRadio($properties) {
+    protected function filterRadio( $properties ) {
         $this->debug()->t();
 
-        extract($properties);
+        extract( $properties );
 
         /*
          * use the shared code for radio,dropdown, and checkbox elements
          */
-        return($this->_filterOptions($properties));
+        return($this->_filterOptions( $properties ));
     }
 
     /**
@@ -431,63 +494,63 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
      * @param none
      * @return void
      */
-    public function filterPostEditor($properties) {
+    public function filterPostEditor( $properties ) {
         $this->debug()->t();
 
-        extract($properties);
+        extract( $properties );
         $post = $this->plugin()->post()->getPost();
         $post_type = $post->post_type;
-        $this->debug()->logVar('$post_type = ', $post_type);
+        $this->debug()->logVar( '$post_type = ', $post_type );
         $post_ID = $post->ID;
-        $this->debug()->logVar('$post_ID = ', $post_ID);
+        $this->debug()->logVar( '$post_ID = ', $post_ID );
 
-        if (post_type_supports($post_type, 'editor')) {
-            $this->debug()->log('Post type ' . $post_type . ' supports editor, displaying editor');
+        if ( post_type_supports( $post_type, 'editor' ) ) {
+            $this->debug()->log( 'Post type ' . $post_type . ' supports editor, displaying editor' );
 
             /*
              * capture the output of wp_editor so
              * we can assign it to a tag
              */
             ob_start();
-            wp_editor($post->post_content, 'content', array('dfw' => true, 'tabindex' => 1));
-            $tags['wp_editor'] = ob_get_clean();
+            wp_editor( $post->post_content, 'content', array( 'dfw' => true, 'tabindex' => 1 ) );
+            $tags[ 'wp_editor' ] = ob_get_clean();
 
 
-            $tags['word_count'] = sprintf(__('Word count: %s'), '<span class="word-count">0</span>');
-            $tags['last_edit'] = '';
-            if ('auto-draft' != $post->post_status) {
-                $this->debug()->log('not an auto draft');
-                $this->debug()->log('adding last edit');
-                $tags['last_edit'].= '<span id="last-edit">';
-                if ($last_id = get_post_meta($post_ID, '_edit_last', true)) {
-                    $last_user = get_userdata($last_id);
-                    $tags['last_edit'].=sprintf(__('Last edited by %1$s on %2$s at %3$s'), esc_html($last_user->display_name), mysql2date(get_option('date_format'), $post->post_modified), mysql2date(get_option('time_format'), $post->post_modified));
+            $tags[ 'word_count' ] = sprintf( __( 'Word count: %s' ), '<span class="word-count">0</span>' );
+            $tags[ 'last_edit' ] = '';
+            if ( 'auto-draft' != $post->post_status ) {
+                $this->debug()->log( 'not an auto draft' );
+                $this->debug()->log( 'adding last edit' );
+                $tags[ 'last_edit' ].= '<span id="last-edit">';
+                if ( $last_id = get_post_meta( $post_ID, '_edit_last', true ) ) {
+                    $last_user = get_userdata( $last_id );
+                    $tags[ 'last_edit' ].=sprintf( __( 'Last edited by %1$s on %2$s at %3$s' ), esc_html( $last_user->display_name ), mysql2date( get_option( 'date_format' ), $post->post_modified ), mysql2date( get_option( 'time_format' ), $post->post_modified ) );
                 } else {
-                    $this->debug()->log('auto draft');
-                    $this->debug()->log('adding last edit');
-                    $tags['last_edit'].=sprintf(__('Last edited on %1$s at %2$s'), mysql2date(get_option('date_format'), $post->post_modified), mysql2date(get_option('time_format'), $post->post_modified));
+                    $this->debug()->log( 'auto draft' );
+                    $this->debug()->log( 'adding last edit' );
+                    $tags[ 'last_edit' ].=sprintf( __( 'Last edited on %1$s at %2$s' ), mysql2date( get_option( 'date_format' ), $post->post_modified ), mysql2date( get_option( 'time_format' ), $post->post_modified ) );
                 }
-                $tags['last_edit'].= '</span>';
+                $tags[ 'last_edit' ].= '</span>';
             }
         } else {
-            $this->debug()->logError('Post type ' . $post_type . ' doesnt support editor, not showing editor');
+            $this->debug()->logError( 'Post type ' . $post_type . ' doesnt support editor, not showing editor' );
 
             /*
              * If Editor Not supported
              * Output nothing
              */
-            $atts['content_override'] = '';
+            $atts[ 'content_override' ] = '';
         }
         /*
          * Ensure default editor id.
          * if id is duplicate, the editor wont display
          */
-        if (is_null($atts['id'])) {
-            $atts['id'] = 'postdivrich';
+        if ( is_null( $atts[ 'id' ] ) ) {
+            $atts[ 'id' ] = 'postdivrich';
         }
 
 
-        $properties = compact('scid', 'atts', 'tags');
+        $properties = compact( 'scid', 'atts', 'tags' );
 
         return ($properties);
     }
@@ -499,15 +562,15 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
      * @param string $atts The attributes of the tag
      * @return string $atts
      */
-    protected function filterFormStart($properties) {
+    protected function filterFormStart( $properties ) {
         $this->debug()->t();
 
-        extract($properties);
+        extract( $properties );
 
 
-        if (array_key_exists('name', $atts) && is_null($atts['name'])) {
+        if ( array_key_exists( 'name', $atts ) && is_null( $atts[ 'name' ] ) ) {
 
-            $atts['name'] = 'simpli_forms';
+            $atts[ 'name' ] = 'simpli_forms';
         }
 
 
@@ -516,12 +579,30 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
          */
 
         if (
-                !array_key_exists('ajax', $atts)  //if ajax is not provided ( default is true)
-                || array_key_exists('ajax', $atts) && $atts['ajax'] !== false  // or if ajax is true
+                !array_key_exists( 'ajax', $atts )  //if ajax is not provided ( default is true)
+                || array_key_exists( 'ajax', $atts ) && $atts[ 'ajax' ] !== false  // or if ajax is true
         ) {
 
-            $atts['ajax'] === true;
+            $atts[ 'ajax' ] === true;
         }
+        /*
+         * Localize the Target attribute, which tells the form where to place the response
+         */
+
+        if ( array_key_exists( 'target', $atts ) && !is_null( $atts[ 'target' ] ) ) {
+
+            /*
+             * Localize Success Message
+             */
+            $local_vars = array( 'forms' => array( 'target' => $atts[ 'target' ] ) );
+
+
+
+
+            $this->plugin()->setLocalVars( $local_vars );
+        }
+
+
 
         /*
          *
@@ -529,10 +610,10 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
          * This will allow javascript to use an empty action attribute as a flag
          * to tell it to use an ajax script to submit the form
          */
-        if (array_key_exists('ajax', $atts) && $atts['ajax'] === true) {
+        if ( array_key_exists( 'ajax', $atts ) && $atts[ 'ajax' ] === true ) {
 
-            $atts['action'] = ''; //form action attribute must be empty string if ajax
-        } elseif (array_key_exists('ajax', $atts) && $atts['ajax'] === false) {
+            $atts[ 'action' ] = ''; //form action attribute must be empty string if ajax
+        } elseif ( array_key_exists( 'ajax', $atts ) && $atts[ 'ajax' ] === false ) {
 
             /*
              *
@@ -549,8 +630,8 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
              *
              */
 
-                    array_key_exists('action', $atts) && is_null($atts['action']) //if no action property provided
-                    || trim($atts['action']) === ''
+                    array_key_exists( 'action', $atts ) && is_null( $atts[ 'action' ] ) //if no action property provided
+                    || trim( $atts[ 'action' ] ) === ''
             ) {
                 /*
                  *  ...then set the action attribute
@@ -565,25 +646,25 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
                 /*
                  * Use the current URL as the submission url, and add the query action variable onto it.
                  */
-                $atts['action'] = $this->plugin()->tools()->rebuildUrl(array($this->plugin()->QUERY_VAR . '_action' => '{action}'));
+                $atts[ 'action' ] = $this->plugin()->tools()->rebuildUrl( array( $this->plugin()->QUERY_VAR . '_action' => '{action}' ) );
             }
         }
 
 
 
-        if (array_key_exists('method', $atts) && is_null($atts['method'])) {
-            $atts['method'] = 'post';
+        if ( array_key_exists( 'method', $atts ) && is_null( $atts[ 'method' ] ) ) {
+            $atts[ 'method' ] = 'post';
         }
 
-        if (array_key_exists('enctype', $atts) && is_null($atts['enctype'])) {
-            $tags['enctype_html'] = '';
+        if ( array_key_exists( 'enctype', $atts ) && is_null( $atts[ 'enctype' ] ) ) {
+            $tags[ 'enctype_html' ] = '';
         } else {
-            $tags['enctype_html'] = 'enctype = ' . $atts['enctype'];
+            $tags[ 'enctype_html' ] = 'enctype = ' . $atts[ 'enctype' ];
         }
 
+        $this->debug()->logVar( '$atts = ', $atts );
 
-
-        return (compact('scid', 'atts', 'tags'));
+        return (compact( 'scid', 'atts', 'tags' ));
     }
 
     /**
@@ -593,15 +674,15 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
      * * @param none
      * @return void
      */
-    function getDefaultFieldLabel($name) {
+    function getDefaultFieldLabel( $name ) {
         $this->debug()->t();
 
 
 
-        $label = str_replace($this->getFieldPrefix(), '', $name);
-        $label = strtolower($label);
-        $label = str_replace('_', ' ', $label);
-        $label = ucwords($label);
+        $label = str_replace( $this->getFieldPrefix(), '', $name );
+        $label = strtolower( $label );
+        $label = str_replace( '_', ' ', $label );
+        $label = ucwords( $label );
         return $label;
     }
 
@@ -619,4 +700,3 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
     }
 
 }
-

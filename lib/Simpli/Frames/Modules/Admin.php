@@ -106,6 +106,29 @@ class Simpli_Frames_Modules_Admin extends Simpli_Frames_Base_v1c2_Plugin_Module 
 
 
         wp_enqueue_style($this->plugin()->getSlug() . '-admin-global', $this->plugin()->getAdminUrl() . '/css/admin.css', array(), $this->plugin()->getVersion());
+        
+  /*
+   * 
+   * If you want to load the bootstrap CSS, this is how to do it.
+   * No need to load if you are only using it for forms, since you can use the
+   * bootstrap theme for that.
+   * 
+   */
+            
+         wp_enqueue_style(
+                        
+                        $this->plugin()->getSlug() . '-bootstrap', 
+                        $this->plugin()->URL_CSS . '/bootstrap-3.0.1/css/bootstrap.min.css', 
+                        array(), //dependents
+                        '3.0.1'
+                        );
+        
+
+       
+        
+        
+        
+        
     }
 
     /**

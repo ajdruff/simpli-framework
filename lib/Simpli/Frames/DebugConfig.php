@@ -27,8 +27,12 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Base_v1c2_Plugin_Debug {
      * @param none
      * @return void
      */
-    public function config() {
+    
+    
 
+        
+        
+    public function config() {
 
 
 
@@ -39,74 +43,34 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Base_v1c2_Plugin_Debug {
          * $this->turnOn();
          * $this->turnOff();
          * Off by default
+         * 
          */
         $this->debug()->turnOn();
+ $this->setCommonOptions(false);
 
+ 
 
-        $this->debugCustomPostType(false);
-//$this->setMethodFilter('hookSavePost', true);//by method
+ 
+      $this->setMethodFilter('crunchTpl', false);   
+         $this->setOption('expand_on_click', false);
+        $this->setMethodFilter('showDomainLandingPage', false);
+ 
+        $this->setMethodFilter('.*start.*', false);
 
-        $this->debugNonces(false);
-
-        $this->debugUploadAddon(false);
-        $this->debugMetaboxState(false);
-
-        $this->debug()->debugAll(false);
-
-        $this->setCommonOptions(false);
-        //
-        //
-
-
-        // $this->setMethodFilter('includeit', true); //by method
-
-        $this->setMethodFilter('hookShowResponseMessageAfterRedirect', false); //by method
-        $this->setMethodFilter('showResponseMessage', false); //by method
-
-        $this->setMethodFilter('_showResponseMessage', false);
-        /* javsascript loading */
-        $this->debugJavascriptLoading(false);
-        /*
-         * Call any Debug methods here.
-         *
-         * Examples:
-         *
-         * $this->debugHello();// a set of filters and options that provides debugging information for the core module
-         *         $this->debugActivation(); //a set of filters and options that provides debugging information for plugin activation
-         * $this->debugNonces();// a set of filters and options that provides debugging information about nonce creation and verification
-         * $this->debugJavascriptLoading(); // a set of filters and options that provides debugging information on javascript loading
-         * $this->debugSavePost(); // a set of filters and options that provides debugging information when saving a post
-         *
-         *
-         *
-         * Note: if you receive an error similar to: 'Fatal error: Maximum execution time of 30 seconds exceeded in ...'
-         * It simply means your debug options are configured too liberally and you need to throttle down the amount of output
-         * One option is to use the reduceExectionTime() option which drastically reduces the amount of output. You can then layer additional options
-         * after you've added that like this :
-
-          $this->setCommonOptions();
-          $this->reduceExecutionTime();
-          $this->setOption('method_filters_enabled', false);
-         */
-
-
-
-
-
-        /*
-         *
-         * Add additional Filters
-         *
-         *
-          Some Filter Examples
-
-          $this->setMethodFilter('hookSavePost', true);//by method
-          $this->setMethodFilter('Simpli_Addons_Simpli_Forms_Module_Form', true);//by class
-          $this->setMethodFilter('Simpli_Frames_Module_Core::config', true);//by class and method
-          $this->setMethodFilter('hook.*', true); //by regex
-
-         *
-         *
+        $this->setOption('trace_output_format', 'text');
+        $this->setOption('expand_on_click', false);
+        $this->setOption('trace_enabled', false);
+        
+        
+        
+        
+ 
+$this->debugAll(false);
+ $this->reduceExecutionTime(false);
+        $this->debugDomainListingPage(false);
+      $this->debugAddDomains(false);
+        /* Example
+         *  $this->setMethodFilter('.*_createNonces.*', true);
          */
     }
 
@@ -184,7 +148,7 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Base_v1c2_Plugin_Debug {
         $this->setMethodFilter('hookFormActionSavePost', true);
         $this->setMethodFilter('hookSavePost', true);
         $this->setMethodFilter('setUserOption', true);
-        $this->setMethodFilter('Simpli_Frames_Base_v1c2_Plugin_Post', true);
+        $this->setMethodFilter('Nomstock_Com_Base_v1c2_Plugin_Post', true);
 
         $this->setMethodFilter('_savePost', true);
         $this->setMethodFilter('saveUserOptions', true);
@@ -247,7 +211,7 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Base_v1c2_Plugin_Debug {
 //   ,'wp_headers'
 //   ,'parse_request'
 //  ,'query_vars'
-//     'simpli_frames_simpli_frames_menu.*'
+//     'nomstock_com_nomstock_com_menu.*'
 //     , 'current_screen'
             $this->plugin()->getSlug() . '_flush_rewrite_rules'
             , $this->plugin()->getSlug() . '_activated'
@@ -261,14 +225,14 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Base_v1c2_Plugin_Debug {
 
 
         $this->setMethodFilter('flushRewriteRules', true);
-        $this->setMethodFilter('Simpli_Frames_Plugin::shutdown', true);
+        $this->setMethodFilter('Nomstock_Com_Plugin::shutdown', true);
 
 
-        $this->setMethodFilter('Simpli_Frames_Plugin::__destruct', true);
+        $this->setMethodFilter('Nomstock_Com_Plugin::__destruct', true);
         $this->setMethodFilter('doPersistentAction', true);
         $this->setMethodFilter('addPersistentAction', true);
         $this->setMethodFilter('toggleActivationStatus', true);
-        $this->setMethodFilter('Simpli_Frames_Base_v1c2_Plugin_PostType::config', true);
+        $this->setMethodFilter('Nomstock_Com_Base_v1c2_Plugin_PostType::config', true);
 
         $this->setMethodFilter('_register_post_type', true);
 
@@ -406,7 +370,7 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Base_v1c2_Plugin_Debug {
 //   ,'wp_headers'
 //   ,'parse_request'
 //  ,'query_vars'
-//     'simpli_frames_simpli_frames_menu.*'
+//     'nomstock_com_nomstock_com_menu.*'
 //     , 'current_screen'
 // $this->plugin()->getSlug() . '_flush_rewrite_rules'
 //   'wp_ajax.*'
@@ -459,16 +423,16 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Base_v1c2_Plugin_Debug {
         $this->setMethodFilter('pageCheckEditor', true);
         $this->setMethodFilter('hookEditingScreen', true);
 
-        $this->setMethodFilter('Simpli_Frames_Base_v1c2_Plugin_Module_Post', true);
+        $this->setMethodFilter('Nomstock_Com_Base_v1c2_Plugin_Module_Post', true);
 
 
 
         $this->setMethodFilter('.*_Metabox::config', true);
-        $this->setMethodFilter('Simpli_Frames_Modules_PostUserOptions::config', true);
+        $this->setMethodFilter('Nomstock_Com_Modules_PostUserOptions::config', true);
         $this->setMethodFilter('getPost', true);
         $this->setMethodFilter('getEditPostID', true);
 
-        $this->setMethodFilter('Simpli_Frames_Base_v1c2_Plugin_Module_Post', true);
+        $this->setMethodFilter('Nomstock_Com_Base_v1c2_Plugin_Module_Post', true);
         $this->setMethodFilter('_hookNewPost', true);
 
 
@@ -694,5 +658,51 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Base_v1c2_Plugin_Debug {
         $this->setOption('method_filters_enabled', false);
     }
 
-}
+    /**
+     * Debug Domain Listing Page
+     *
+     * Ignores all filters so shows all debug messages, reduces execution time
+     * to minimum since there will be a lot of output and will likely timeout.
+     *
+     * @param none
+     * @return void
+     */
+    public function debugDomainListingPage($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
 
+        $this->debug()->setMethodFilter('getDomainSalesPageLink', true); //by method
+        $this->debug()->setMethodFilter('_getDomainNameMarketplaceLinks', false); //by method
+        $this->debug()->setMethodFilter('listDomains', false); //by method
+        $this->setOption('trace_enabled', false);
+    }
+    /**
+     * Debug Add Domains
+     *
+     * Long Description
+     *
+     * @param none
+     * @return void
+     */
+
+    
+        public function debugAddDomains($enabled = true) {
+        if (!$enabled) {
+            return;
+        }
+$this->setCommonOptions(true);
+
+        $this->debug()->setMethodFilter('hookFormActionAjaxAddDomain', true); //by method
+       $this->debug()->setMethodFilter('getSellerIdFromSource', true); 
+        
+$this->setOption('ajax_debugging_enabled', true);
+
+    }
+    
+    
+ 
+
+
+
+}

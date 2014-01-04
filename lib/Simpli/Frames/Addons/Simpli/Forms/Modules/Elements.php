@@ -384,28 +384,7 @@ $form=$this->addon()->getModule('Form');
         return($this->addon()->getModule( 'Form' )->renderElement( __FUNCTION__, $atts, $defaults ));
     }
 
-    /**
-     * Response
-     *
-     * Fires the do_action('simpli_forms_response') event
-     * @param array $atts Shortcode attributes
-     * @return void
-     */
-    public function response( $atts ) {
-        $this->debug()->t();
 
-
-        $defaults = array(
-            'name' => 'response', //the name of the form field.
-            //  'content_override' => null,
-            'template' => __FUNCTION__
-        );
-
-
-
-
-        return($this->addon()->getModule( 'Form' )->renderElement( __FUNCTION__, $atts, $defaults ));
-    }
   /**
      * Form Start
      *

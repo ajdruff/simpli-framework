@@ -10,14 +10,6 @@
             </bookmark>
         </file>
         <file>
-            <url>lib/Simpli/Frames/Modules/Menu20DevManage.php</url>
-            <bookmark id="13">
-                <name/>
-                <line>0</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>lib/Simpli/Hello/Module/Debug.php</url>
             <bookmark id="12">
                 <name/>
@@ -31,6 +23,14 @@
             </bookmark>
         </file>
         <file>
+            <url>lib/Simpli/Frames/Modules/Menu20DevManage.php</url>
+            <bookmark id="13">
+                <name/>
+                <line>0</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>admin/js/metabox-form.js</url>
             <bookmark id="8">
                 <name/>
@@ -39,4 +39,7 @@
             </bookmark>
         </file>
     </editor-bookmarks>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group/>
+    </open-files>
 </project-private>

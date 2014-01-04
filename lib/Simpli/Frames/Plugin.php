@@ -148,7 +148,12 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
                 )
         );
 
-
+        $this->setConfig(
+                'DISABLED_MODULES'
+                , array(
+            'Forms'
+                )
+        );
 
         /*
          * ALWAYS_ENABLED_REGEX_PATTERN
@@ -171,6 +176,15 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
                 , false
         );
 
+        /*
+         * CSS Path
+         *
+         * Directory Path to the CSS File
+         */
+        $this->setConfig(
+                'URL_CSS'
+                , dirname(dirname($this->getURL())) . '/content/published/_jekyll-output/css'
+        );
 
         /*
          * DISABLED_ADDONS

@@ -364,7 +364,7 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Form extends Simpli_Frames_Base_
      */
     public function renderElement( $scid, $atts, $defaults ) {
         $this->debug()->t();
-        if ( $atts['render']===false) {
+        if ( array_key_exists( 'render', $atts ) && $atts['render']===false) {
             return;
 }
 
@@ -497,7 +497,7 @@ $template_contents=$theme->getTemplate( $atts[ 'template' ]);
 
 
 
-        $this->debug()->logVar( '$template for $template_id ' . $atts[ 'template' ] . '=<br>', $template );
+
 
         $att_template_tags = $this->getTagPairs( $atts ); //convert to tag pairs
         $template_with_atts_replaced = str_ireplace( $att_template_tags[ 'names' ], $att_template_tags[ 'values' ], $template_contents );
@@ -954,7 +954,7 @@ $template_contents=$theme->getTemplate( $atts[ 'template' ]);
     protected $_form_handler = null;
 
     /**
-     * Forms
+     * Form Handler
      *
      * Provides a reference to this class
      *
@@ -962,6 +962,7 @@ $template_contents=$theme->getTemplate( $atts[ 'template' ]);
      * @return object A metabox Class Object
      */
     public function formHandler() {
+
 
         if ( is_null( $this->_form_handler ) ) {
 

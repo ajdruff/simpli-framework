@@ -31,10 +31,6 @@ $f->el(array(
 );
 
 
-$f->el(array(
-    'el' => 'response',
-        )
-);
 
 
 

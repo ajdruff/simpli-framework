@@ -46,29 +46,18 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Base_v1c2_Plugin_Debug {
          * 
          */
         $this->debug()->turnOn();
- $this->setCommonOptions(false);
-
+ $this->setCommonOptions(true);
+ $this->debugNonces(true);
  
 
- 
-      $this->setMethodFilter('crunchTpl', false);   
-         $this->setOption('expand_on_click', false);
-        $this->setMethodFilter('showDomainLandingPage', false);
- 
-        $this->setMethodFilter('.*start.*', false);
 
-        $this->setOption('trace_output_format', 'text');
-        $this->setOption('expand_on_click', false);
-        $this->setOption('trace_enabled', false);
-        
         
         
         
  
 $this->debugAll(false);
  $this->reduceExecutionTime(false);
-        $this->debugDomainListingPage(false);
-      $this->debugAddDomains(false);
+
         /* Example
          *  $this->setMethodFilter('.*_createNonces.*', true);
          */
@@ -658,47 +647,8 @@ $this->debugAll(false);
         $this->setOption('method_filters_enabled', false);
     }
 
-    /**
-     * Debug Domain Listing Page
-     *
-     * Ignores all filters so shows all debug messages, reduces execution time
-     * to minimum since there will be a lot of output and will likely timeout.
-     *
-     * @param none
-     * @return void
-     */
-    public function debugDomainListingPage($enabled = true) {
-        if (!$enabled) {
-            return;
-        }
 
-        $this->debug()->setMethodFilter('getDomainSalesPageLink', true); //by method
-        $this->debug()->setMethodFilter('_getDomainNameMarketplaceLinks', false); //by method
-        $this->debug()->setMethodFilter('listDomains', false); //by method
-        $this->setOption('trace_enabled', false);
-    }
-    /**
-     * Debug Add Domains
-     *
-     * Long Description
-     *
-     * @param none
-     * @return void
-     */
 
-    
-        public function debugAddDomains($enabled = true) {
-        if (!$enabled) {
-            return;
-        }
-$this->setCommonOptions(true);
-
-        $this->debug()->setMethodFilter('hookFormActionAjaxAddDomain', true); //by method
-       $this->debug()->setMethodFilter('getSellerIdFromSource', true); 
-        
-$this->setOption('ajax_debugging_enabled', true);
-
-    }
     
     
  

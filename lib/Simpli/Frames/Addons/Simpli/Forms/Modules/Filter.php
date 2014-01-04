@@ -125,7 +125,7 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
         /*
          * Template Option
          */
-        if ( array_key_exists( 'template_option', $atts ) && is_null( $atts[ 'template_option' ] ) || $atts[ 'template_option' ] === '' ) {
+        if ( array_key_exists( 'template_option', $atts ) && (is_null( $atts[ 'template_option' ] ) || $atts[ 'template_option' ] === '' )) {
 
             $atts[ 'template_option' ] = $atts[ 'template' ] . '_option';
 }
@@ -212,21 +212,6 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
         return (compact( 'scid', 'atts', 'tags' ));
     }
 
-    /**
-     * Filter Response
-     *
-     * Filters the Response tag Attributers
-     * @param string $atts The attributes of the tag
-     * @return string $atts
-     */
-    protected function filterResponse( $properties ) {
-        $this->debug()->t();
-
-        extract( $properties );
-        $tags[ 'response_html' ] = apply_filters( 'simpli_forms_response', '' );
-
-        return (compact( 'scid', 'atts', 'tags' ));
-    }
 
     /**
      * Filter File

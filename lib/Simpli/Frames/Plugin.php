@@ -144,11 +144,11 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
                 , array(
                  //   'Admin',
                  //   'Core',
-            'Forms',
                     // 'Menu001Snippets',
                      //  'Menu10DevGetStarted',
 //                    'Menu10General',
-//                    'Menu20DevManage',
+                    'Menu20DevManage',
+                                        'Menu20MyMenu',
 //                    'Menu20MyMenu',
 //                    'Menu30Advanced',
 //                    'Menu40DevAbout',

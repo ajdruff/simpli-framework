@@ -146,54 +146,6 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
          */
         add_action( $this->_query_var_prefix . '_action' . '_permalinkActionShowTemplate', array( $this->plugin()->getModule( 'Core' ), 'permalinkActionShowTemplate' ) );
 
-        /*
-         * Add Action for Showing the Sales Page - Permalink Action Sales Page
-         * 
-         * Renders the Sales Page
-         * 
-         * 
-         */
-        add_action( $this->_query_var_prefix . '_action' . '_permalinkActionShowSalesPage', array( $this->plugin()->getModule( 'Core' ), 'permalinkActionShowSalesPage' ) );
-        
-        
-        
-        
-
-        /*
-         * Add Action - Nomstock Analytics (Stats) Actions
-         * 
-         * Requires NomstockStats Module
-         * 
-         */
-        add_action( $this->_query_var_prefix . '_action' . '_showStatsPage', array( $this->plugin()->getModule( 'NomstockStats' ), 'showStatsPage' ) );
-
-
-
-
-
-        /*
-         * Add an image creation script
-         */
-
-        add_action( $this->_query_var_prefix . '_action' . '_makeListingImage', array( $this->plugin()->getModule( 'Core' ), 'makeListingImage' ) );
-
-
-        add_action( $this->_query_var_prefix . '_action' . '_text2imgr', array( $this->plugin()->getModule( 'Core' ), 'text2imgr' ) );
-
-
-
-
-        /*
-         * Stats Counter - Count a viewable impression
-         */
-        add_action( $this->_query_var_prefix . '_action' . '_countViewportImpression', array( $this->plugin()->getModule( 'NomstockStats' ), 'countViewportImpression' ) );
-
-
-        /*
-         * Next Ticker Page - Grabs the next ticker page of results
-         */
-
-        add_action( $this->_query_var_prefix . '_action' . '_getNextTickerPage', array( $this->plugin()->getModule( 'Core' ), 'getNextTickerPage' ) );
 
 
 
@@ -229,19 +181,6 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
 
 
 
-        /*
-         * Add rules for htaccess
-         * Use this method if you need an internal redirect that doesnt change
-         * the browser's address bar, and where you need to pass the REQUEST_URI onto
-         * the target url.
-         * This will actually write to the htaccess file, so be sure you have access.
-         * RewriteRule ^txt2imgr/(.*)$ /wp-content/plugins/simpli-frames/lib/txt2imgr/$1 [QSA,L]
-         */
-        $this->addHtAccessRewriteRule(
-                'txt2imgr/(.*)$' //$match_pattern - will match everything that starts with subscribe. WordPress automatically adds a starting caret
-                , $this->plugin()->tools()->getRelativePath( ABSPATH, $this->plugin()->getDirectory() . '/lib/txt2imgr/$1' )//'wp-content/plugins/simpli-frames/lib/txt2imgr/$1' //$target_pattern - this will take everything in the first parens in the pattern and add it to where $1 is. WordPress Automatically adds a leading slash, so dont add one.
-        );
-
 //echo $this->plugin()->tools()->getRelativePath(ABSPATH,$this->plugin()->getDirectory() . '/lib/txt2imgr/$1');
         /*
          * Query Variables
@@ -258,11 +197,10 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
          * Add other query variables here that you need white listed, meaning that WordPress
          * will return them when using get_query_var() method and are accessible within actions
          * that are called using a wp rewrite rules redirect
-         */
-
-
-
-        $this->setConfig(
+         * 
+         * 
+         * Example:
+         *         $this->setConfig(
                 'QUERY_VARS'
                 , array(
             'domain_name',
@@ -272,10 +210,23 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
             , 'nstock_template'
                 )
         );
+         * 
+         * 
+         * 
+         */
+
+
+
+        $this->setConfig(
+                'QUERY_VARS'
+                , array(
+            ''
+                )
+        );
         /*
          * Template Directory
          *
-         * Long Description
+         * Set the path that holds the pages that a request from ?page='mytemplate' displays
          */
         $this->setConfig(
                 'TEMPLATE_DIRECTORY'
@@ -287,19 +238,12 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
 
         /*
          * Add a Page Template (Example)
+         * 
+         * Map the name of the template to the file name
          */
 
 
         $this->addPageTemplate( 'mytemplate', 'query_vars_template_example1.php' );
-
-
-        /*
-         * Add a Page Template for Domains
-         */
-
-        $this->addPageTemplate( 'domainstemplate', 'domains.tpl.php' );
-
-
 
 
 
@@ -340,181 +284,6 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
 */
         
         
-        /*
-         * Domain Landing Page Permalink
-         * Displays the seller's sales page for the domain name
-         * url scheme:  /domain/example.com/
-
-         */
-       
-        
-        $this->addWPRewriteRule(
-                'domain/([^\/]+)\/*?$' //$match_pattern - 
-                , 'index.php?' . $this->plugin()->getSlug()
-                . '_action=permalinkActionShowSalesPage' //the method within Core that will handle this url     
-                . '&domain_name=' . '$matches[1]'   //$target_pattern - 
-        );
-
-
-        
-        
-        
-
-
-        /*
-        /*
-         * Ticker Analytics URL
-         * Renders that Analytics Page for the given domain name
-         * url scheme:  /stats/example.com/
-         * 
-
-
-         */
-        $this->addWPRewriteRule(
-                'stats/([^\/]+)\/*?$' //$match_pattern - 
-                , 'index.php?' . $this->plugin()->getSlug() . '_action=showStatsPage&domain_name=' . '$matches[1]'   //$target_pattern - 
-        );
-
-
-
-
-
-        /*
-         * Domain Ticker Impression URL
-         * 
-         * Increases a viewport impression for the domain ( if the session is unique)
-         * url scheme:  /stats/impress/example.com/
-
-         */
-        $this->addWPRewriteRule(
-                'stats/impress/([^\/]+)\/*?$' //$match_pattern - 
-                , 'index.php?' . $this->plugin()->getSlug() . '_action=countViewportImpression&domain_name=' . '$matches[1]'   //$target_pattern - 
-        );
-
-
-
-
-
-
-
-        /*
-         * User Inventory Permalink
-         * Provides a User's Domain Inventory
-         * url scheme:  /domains/username 
-
-
-         */
-
-        $this->addWPRewriteRule(
-                'domains/([^\/]+)\/*?$' //$match_pattern - 
-                , 'index.php?' . $this->plugin()->getSlug()
-                . '_action=permalinkActionShowTemplate' //the method within Core that will handle this url
-                . '&nstock_tag_callback=getTagsForUserInventory' //the method within Core that will provide the tags for template parsing
-                . '&nstock_template=domain-portfolio' //the template name            
-                . '&user=' . '$matches[1]'   //$target_pattern - 
-        );
-
-
-        /*
-         * Add Domain Form Permalink
-         * Provides the form to add a domain to the ticker
-         * url scheme:  /add/domain/ 
-         */
-
-
-        $this->addWPRewriteRule(
-                'add/domain/?$' //$match_pattern - 
-                , 'index.php?' . $this->plugin()->getSlug()
-                . '_action=permalinkActionShowTemplate' //the method within Core that will handle this url
-                . '&nstock_tag_callback=' //the method within Core that will provide the tags for template parsing
-                . '&nstock_template=form-add-domain' //the template name            
-                // . '&domain_name=' . '$matches[1]'   //$target_pattern - 
-        );
-
-        /*
-         * Contact Seller Permalink
-         * Usage: http://simpli.frames/contact-seller/mydomain.com/
-         * 
-         * Pattern Notes
-         *  \/*domain\/     #e.g. "/domain/"
-         *  ([^\/]+)        #e.g. ?
-         *
-
-         */
-
-
-        $this->addWPRewriteRule(
-                'contact-seller/([^\/]+)\/*?$' //$match_pattern
-                , 'index.php?' . $this->plugin()->getSlug()
-                . '_action=permalinkActionShowTemplate' //the method within Core that will handle this url
-                . '&nstock_tag_callback=getTagsForDomain' //the method within Core that will provide the tags for template parsing. Empty is ok.
-                . '&nstock_template=form-contact-seller' //the template name            
-                . '&domain_name=' . '$matches[1]'   //$target_pattern - 
-        );
-
-
-
-
-
-
-        /*
-         * ************Pretty URLS for Pages that Are Passed Paramaters ******************
-         */
-
-        /*
-         * Buy With Escrow
-         * to use this scheme:
-         * no need to create a new action
-         * add the following to white list:
-         * 
-         * 
-         * 
-
-
-         */
-        $this->addWPRewriteRule(
-                'buy-with-escrow/([^\/]+)\/*?$' //$match_pattern - 
-                , 'index.php?' . $this->plugin()->getSlug()
-                . '_action=permalinkActionShowTemplate' //the method within Core that will handle this url
-                . '&nstock_tag_callback=getTagsForDomain' //the method within Core that will provide the tags for template parsing
-                . '&nstock_template=form-buy-with-escrow' //the template name            
-                . '&domain_name=' . '$matches[1]'   //$target_pattern - 
-        );
-        /*
-         * Buy With PayPal
-         * to use this scheme:
-         * no need to create a new action
-         * add the following to white list:
-         * 
-         * 
-         * 
-
-
-         */
-        $this->addWPRewriteRule(
-                'buy-with-paypal/([^\/]+)\/*?$' //$match_pattern - 
-                , 'index.php?' . $this->plugin()->getSlug()
-                . '_action=permalinkActionShowTemplate' //the method within Core that will handle this url
-                . '&nstock_tag_callback=getTagsForBuyWithPaypal' //the method within Core that will provide the tags for template parsing
-                . '&nstock_template=form-buy-with-paypal' //the template name            
-                . '&domain_name=' . '$matches[1]'   //$target_pattern - 
-        );
-
-        /*
-         * Template Pretty Url (Example)
-         * Works
-         */
-
-        $this->addWPRewriteRule(
-                'mytemplate/?$' //$match_pattern - 
-                , 'index.php?' . $this->plugin()->getSlug() . '_page=mytemplate&' . '$matches[1]'  //$target_pattern - 
-        );
-
-
-
-
-
-        $this->addExternalRedirect( '^/imageme', '/wp-content/plugins/simpli-frames/lib/txt2imgr' ); #target must begin with a slash
 
 
         /*

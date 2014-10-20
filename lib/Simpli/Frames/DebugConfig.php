@@ -46,9 +46,15 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Base_v1c2_Plugin_Debug {
          * 
          */
         $this->debug()->turnOn();
- $this->setCommonOptions(true);
+
+
  $this->debugNonces(true);
- 
+
+       // $this->setOption('trace_enabled', false);
+
+
+
+       // $this->setOption('backtrace_enabled', false);
 
 
         
@@ -277,7 +283,7 @@ $this->debugAll(false);
         $this->setOption('visual_backtrace_enabled', false);
 
 
-        $this->setOption('trace_output_format', 'normal');  //options are 'normal'(default), 'text' and 'simple'
+        $this->setOption('trace_output_format', 'text');  //options are 'normal'(default), 'text' and 'simple'
 
 
 

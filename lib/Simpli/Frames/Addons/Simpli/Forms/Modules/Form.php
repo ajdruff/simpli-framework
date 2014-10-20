@@ -692,116 +692,130 @@ $template_contents=$theme->getTemplate( $atts[ 'template' ]);
      */
     public function formStart( $atts ) {
         
-      
+            /*
+  * Invoke all functions attached to the simpli_forms_start tag
+         * This tag is used in Form Action Modules 
+         * Usage: add_action('simpli_forms_start',array($this,'my_method');
+  * 
+  */
+
+$this->debug()->log( 'doing action simpli_forms_start' );
+do_action('simpli_forms_start');
+
+
                 $atts[ 'el' ] = 'formStart';
         return($this->el( $atts
         ));
         
-                
-        
-        $this->debug()->t(true);
-        $defaults = array(
-            'name' => 'simpli_forms',
-            'target'=>null,
-            'style' => null,
-            'class' => null,
-            'device_size' => 'medium',
-            'size' => 'medium',
-            'label_size' => 'extra-small',
-            'theme' => 'Admin',
-            'ajax' => null,
-            'enctype' => null,
-            'action' => null,
-            'method' => 'post',
-            'template' => __FUNCTION__,
-            'filter' => null
-        );
-
-
-
-        /*
-         * Apply Defaults
-         * Use the shortcode_atts function which will also remove
-         * any attributes not specified in the element defaults
-         */
-        $properties = shortcode_atts( $defaults, $properties );
-
-
-
-        $this->debug()->logVar( '$properties = ', $properties );
-
-        /*
-         * increase the form counter
-         */
-        $this->form_counter++;
-
-        if ( !is_array( $properties ) ) {
-            $properties = array();
-        }
-        $this->form = array(); //initialize, clearing any previous form on the same page
-
-
-
-
-
-
-
-
-
-        /*
-         * if a theme was provided, set it.
-         */
-        if ( !is_null( $properties[ 'theme' ] ) ) {
-            $this->getTheme()->setTheme( $properties[ 'theme' ] );
-        }
-
-        /*
-         * if a filter was provided, set it.
-         */
-
-        if ( !is_null( $properties[ 'filter' ] ) ) {
-
-
-            $this->setFilter( $properties[ 'filter' ] );
-        }
-
-
-
-
-
-
-        /*
-         * reset the elements array for this new form
-         */
-        $this->form[ 'elements' ] = array();
-
-
-        /*
-         * reset the form properties
-         */
-        $this->form[ 'form' ] = $properties;
-
-        $this->debug()->log( 'Loading the form handler scripts' );
-        /*
-         * Load the javascript needed for the forms
-         */
-        $this->formHandler()->enqueueScripts();
-
-
-
-
-
-        /*
-         * output the html
-         * Note that we pass on *all* the properties
-         * The el() method will scrub out the ones that dont have a a default
-         *
-         */
-        $this->debug()->logVars( get_defined_vars() );
-        $atts = $properties;
-        $atts[ 'el' ] = 'formStart';
-        $this->el( $atts
-        );
+//                
+//        
+//        $this->debug()->t(true);
+//        $defaults = array(
+//            'name' => 'simpli_forms',
+//            'target'=>null,
+//            'style' => null,
+//            'class' => null,
+//            'device_size' => 'medium',
+//            'size' => 'medium',
+//            'label_size' => 'extra-small',
+//            'theme' => 'Admin',
+//            'ajax' => null,
+//            'enctype' => null,
+//            'action' => null,
+//            'method' => 'post',
+//            'template' => __FUNCTION__,
+//            'filter' => null
+//        );
+//
+//
+//
+//        /*
+//         * Apply Defaults
+//         * Use the shortcode_atts function which will also remove
+//         * any attributes not specified in the element defaults
+//         */
+//        $properties = shortcode_atts( $defaults, $properties );
+//
+//
+//
+//        $this->debug()->logVar( '$properties = ', $properties );
+//
+//        /*
+//         * increase the form counter
+//         */
+//        $this->form_counter++;
+//
+//        if ( !is_array( $properties ) ) {
+//            $properties = array();
+//        }
+//        $this->form = array(); //initialize, clearing any previous form on the same page
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//        /*
+//         * if a theme was provided, set it.
+//         */
+//        if ( !is_null( $properties[ 'theme' ] ) ) {
+//            $this->getTheme()->setTheme( $properties[ 'theme' ] );
+//        }
+//
+//        /*
+//         * if a filter was provided, set it.
+//         */
+//
+//        if ( !is_null( $properties[ 'filter' ] ) ) {
+//
+//
+//            $this->setFilter( $properties[ 'filter' ] );
+//        }
+//
+//
+//
+//
+//
+//
+//        /*
+//         * reset the elements array for this new form
+//         */
+//        $this->form[ 'elements' ] = array();
+//
+//
+//        /*
+//         * reset the form properties
+//         */
+//        $this->form[ 'form' ] = $properties;
+//
+//        $this->debug()->log( 'Loading the form handler scripts' );
+// 
+//        
+//        /*
+//  * Invoke all functions attached to the simpli_forms_start tag
+//         * This tag is used in Form Action Modules 
+//         * Usage: add_action('simpli_forms_start',array($this,'my_method');
+//  * 
+//  */
+//
+//$this->debug()->log( 'doing action simpli_forms_start',true );
+//do_action('simpli_forms_start');
+//$this->debug()->stop( true );
+//
+//        /*
+//         * output the html
+//         * Note that we pass on *all* the properties
+//         * The el() method will scrub out the ones that dont have a a default
+//         *
+//         */
+//        $this->debug()->logVars( get_defined_vars() );
+//        $atts = $properties;
+//        $atts[ 'el' ] = 'formStart';
+//        $this->el( $atts
+//        );
     }
 
     /**
@@ -951,24 +965,5 @@ $template_contents=$theme->getTemplate( $atts[ 'template' ]);
         );
     }
 
-    protected $_form_handler = null;
 
-    /**
-     * Form Handler
-     *
-     * Provides a reference to this class
-     *
-     * @param none
-     * @return object A metabox Class Object
-     */
-    public function formHandler() {
-
-
-        if ( is_null( $this->_form_handler ) ) {
-
-            $this->_form_handler = $this->plugin()->getModule( 'Forms' );
-        }
-
-        return $this->_form_handler;
-        }
 }

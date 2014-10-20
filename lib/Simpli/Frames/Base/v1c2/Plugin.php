@@ -716,9 +716,9 @@ class Simpli_Frames_Base_v1c2_Plugin implements Simpli_Frames_Base_v1c2_Plugin_I
 
         $plugin_file_data = get_file_data($this->getFilePath(), $headers, 'simpli');
 
+   //     echo '<pre>', print_r( $plugin_file_data, true ), '</pre>';
 
-
-        $version = $plugin_file_data['Simpli Base Class Version'];
+        $version = $plugin_file_data['SimpliBaseClassVersion'];
 
 //  $version = $this->_base_class_version;
 
@@ -1844,7 +1844,7 @@ class Simpli_Frames_Base_v1c2_Plugin implements Simpli_Frames_Base_v1c2_Plugin_I
      * @param string $config_value The value of the the config
      * @return void
      */
-    protected function setConfigDefault($property_name, $config_value) {
+    public function setConfigDefault($property_name, $config_value) {
         $this->_property_defaults[$property_name] = $config_value;
     }
 

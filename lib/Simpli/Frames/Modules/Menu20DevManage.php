@@ -30,7 +30,7 @@ class Simpli_Frames_Modules_Menu20DevManage extends Simpli_Frames_Base_v1c2_Plug
          */
         //   add_action($this->plugin()->QUERY_VAR . '_action' . '_upload_addon', array($this, 'hookFormActionUploadAddon')); // ?mycompany_myplugin_action=upload_addon will execute this action
 
-        $this->metabox()->addFormAction('upload_addon');
+        $this->metabox()->form_helper()->addFormAction('upload_addon');
 
         add_action('post_edit_form_tag', array($this, 'post_edit_form_tag'));
 

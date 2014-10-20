@@ -38,14 +38,14 @@ class Simpli_Frames_Modules_Menu20MyMenu extends Simpli_Frames_Base_v1c2_Plugin_
          *
          */
 
-        $this->UNIQUE_ACTION_NONCES = true;
+        $this->plugin()->UNIQUE_ACTION_NONCES = true;
 
         /*
          * Add any other hooks you need - see base class for examples
          *
          */
-        $this->metabox()->addFormAction('say_hello');
-        $this->metabox()->addFormActionAjax('say_hello');
+        $this->metabox()->form_helper()->addFormAction('say_hello');
+        $this->metabox()->form_helper()->addFormActionAjax('say_hello');
     }
 
     /**

@@ -476,13 +476,7 @@ $form_module=$this->plugin()->getAddon('Simpli_Forms')->getModule('Form');
          */
         $form_module->form[ 'form' ] = $atts;
 
-        $form_module->debug()->log( 'Loading the form handler scripts' );
-        /*
-         * Load the javascript needed for the forms
-         */
-        if ($form_module->formHandler()->ON_DEMAND_SCRIPTS===true){
-        $form_module->formHandler()->hookEnqueueScripts();
-        };
+ 
 
         /*
          * Load the theme specific javascript and css
@@ -499,8 +493,6 @@ $form_module=$this->plugin()->getAddon('Simpli_Forms')->getModule('Form');
          * The el() method will scrub out the ones that dont have a a default
          *
          */
-        $form_module->debug()->logVars( get_defined_vars() );
-   
 
 
 

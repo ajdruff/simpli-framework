@@ -98,8 +98,10 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Base_v1c2_Plug
         $this->debug()->t();
         if (!$this->pageCheckEditor()) {
             $this->debug()->log('Exiting hookEditingScreen since it didnt pass pageCheckEditor test');
+           
             return;
         }
+     
         $this->debug()->logVar('current_screen = ', get_current_screen());
         global $post;
         $this->debug()->logVar('$post = ', $post);
@@ -315,20 +317,7 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Base_v1c2_Plug
 
 
 
-        /*
-         *
-         * Nonces
-         * The PostUserOptions module controls nonce creation of metaboxes that are added
-         * to editor pages. Any NONCE_ properties created by other menu modules are ignored.
-         */
 
-        $this->setConfig('NONCE_ACTION', $this->plugin()->getSlug() . '_' . $this->plugin()->getSlug() . '_save_post');
-
-
-        $this->setConfig('NONCE_DEFAULT_VALUE', null); //cant wp_create_nonce now, since function not available
-        $this->setConfig('NONCE_FIELD_NAME', $this->plugin()->getSlug() . '_nonce');
-
-        $this->setConfig('UNIQUE_ACTION_NONCES', true);
     }
 
     /**
@@ -776,6 +765,7 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Base_v1c2_Plug
          * check we're on the editor page
          */
         if (!$this->pageCheckEditor()) {
+            
             return;
         }
 

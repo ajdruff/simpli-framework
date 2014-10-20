@@ -6,6 +6,11 @@
  * @author Andrew Druffner
  * @package SimpliFramework
  *
+ * @property string $NONCE_ACTION The action name used for the menu if unique action nonces are not used
+ * @property string $NONCE_FIELD_NAME The nonce field name used by the ajax script to add to the form
+* @property boolean $UNIQUE_ACTION_NONCES Whether to use unique nonces for each ajax action
+
+ * 
  */
 class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
 
@@ -132,26 +137,26 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
           , array('QueryVars', 'Shortcodes')
           );
          */
-        $this->setConfig(
-                'DISABLED_MODULES'
-                , array(
-            'ExampleModule'
-//            , 'PostUserOptions'
-//            , 'Menu10DevGetStarted'
-//            , 'Menu20DevManage'
-//            , 'Menu30Advanced'
-//            , 'PostUserOptions'
-//            , 'Tools'
-//            , 'Queryvars'
-//            , 'Shortcodes'
-                //   , 'Tools'
-                )
-        );
+
 
         $this->setConfig(
                 'DISABLED_MODULES'
                 , array(
-            'Forms'
+                 //   'Admin',
+                 //   'Core',
+            'Forms',
+                    // 'Menu001Snippets',
+                     //  'Menu10DevGetStarted',
+//                    'Menu10General',
+//                    'Menu20DevManage',
+//                    'Menu20MyMenu',
+//                    'Menu30Advanced',
+//                    'Menu40DevAbout',
+//                    'PostUserOptions',
+//                    'QueryVars',
+//                    'Theme',
+//                       'Shortcodes',
+                    
                 )
         );
 
@@ -205,7 +210,60 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
                 , true
         );
 
+        /*
+         * Default NONCE Action Name
+         *
+         * If unique nonces are not used, this is the action name that will be used when forms are submitted
+         */
+                $this->setConfig(
+                'NONCE_ACTION'
+                , $this->getSlug() . '_form_submit'
+        );
+        
 
+        
+
+        /*
+         * Nonce Field Name
+         *
+         * This is the nonce field name that will be submitted with each form
+         */
+        $this->setConfig(
+                'NONCE_FIELD_NAME'
+                ,  $this->getSlug() . '_nonce'
+        );
+        
+
+        /*
+         * Unique Action Nonce Flag
+         *
+         * Boolean - True if you want a nonce name for each form action, false if you want
+         * to use the default nonce for every form action
+         * False means submitting forms might be a little faster, True should
+         * be a little more secure
+         */
+        $this->setConfig(
+                'UNIQUE_ACTION_NONCES'
+                , false
+        );
+
+        
+        /*
+         * On Demand Form Scripts Flag
+         *
+         * True to load form scripts only on pages that have a formStart() call (requires
+         * the Simpli Forms Addon)
+         * False if you are not using the Simpli Forms Addon, and will load all the form
+         * scripts on each page request ( much less efficient )
+         */
+        $this->setConfig(
+                'ON_DEMAND_FORM_SCRIPTS'
+                , true
+        );
+        
+      
+         
+         
 
         /*
          *

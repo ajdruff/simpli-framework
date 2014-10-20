@@ -47,3 +47,53 @@ if (typeof console !== "object") {
 
 
 }
+
+/*
+ * jquery extensions
+ * 
+ */
+
+/*
+ * jQuery Extension - outerHTML
+ * http://stackoverflow.com/questions/2419749/get-selected-elements-outer-html
+ */
+(function($) {
+  $.fn.outerHTML = function() {
+  //  return $(this).clone().wrap('<div></div>').parent().html();
+    
+    return $(this).clone().wrap('<p>').parent().html();
+  }
+})(jQuery);
+
+jQuery.fn.center = function () {
+    this.css("position","absolute");
+    this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + 
+                                                $(window).scrollTop()) + "px");
+    this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + 
+                                                $(window).scrollLeft()) + "px");
+    return this;
+}
+
+/*
+ * 
+
+
+jQuery(document).ready(function() {
+    
+
+
+jQuery( "[data-sf-meta]").hover(
+function() {
+    jQuery(this).addClass('hover');
+    jQuery( this ).html(  jQuery(this).attr("data-sf-meta") ) ;
+}, function() {
+jQuery( this ).html(  jQuery(this).html("meta") ) ;
+   jQuery(this).addClass('unhover');
+   
+}
+
+);
+
+});
+
+ */

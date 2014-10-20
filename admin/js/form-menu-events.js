@@ -98,6 +98,8 @@ simpli.frames.menu.bind_events = function()
          */
         var isAjax = false;
 
+simpli.frames.log('clicked form submission button');
+
 
         /*
          *

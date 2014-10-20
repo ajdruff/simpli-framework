@@ -13,8 +13,8 @@
 /*
  * create the plugin's namespace
  */
-if (typeof simpli === 'undefined') {
-    simpli = {};
+if (typeof nomstock === 'undefined') {
+    nomstock = {};
 }
 if (typeof simpli.frames === 'undefined') {
     simpli.frames = {};

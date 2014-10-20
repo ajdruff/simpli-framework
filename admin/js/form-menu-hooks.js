@@ -67,7 +67,7 @@ simpli.frames.menu.addHooks = function()
     /*
      * Example:
      *
-     * Use generic add_action or simplified add_prompt:
+     * Use generic add_action or nomstockfied add_prompt:
 
      * simpli.frames.menu.add_prompt('upload_addon', simpli.frames.menu.uploadActionPrompt);
      *
@@ -85,6 +85,14 @@ simpli.frames.menu.addHooks = function()
     simpli.frames.add_action(simpli.frames.vars.plugin.slug + '_submit_prompt_' + 'settings_reset_with_reload', simpli.frames.menu.resetPrompt);
 
 
+/* add saveWidgetCode hook only if on home page and the widgets.js was loaded to define simpli.frames.widgets.saveWidgetCode */
+if (typeof simpli.frames.widgets !== 'undefined') {
+        simpli.frames.add_action(simpli.frames.vars.plugin.slug + '_submit_prompt_' + 'submit_domain', simpli.frames.widgets.saveWidgetCode);
+}
+
+
+
+    
 }
 
 
@@ -118,3 +126,7 @@ simpli.frames.menu.resetPrompt = function(trigger_event, args) {
     }
 
 }
+
+
+
+    

@@ -10,9 +10,6 @@
  * @package SimpliFramework
  *
 
-
-
- * @property string $MESSAGE_NONCE_FAILED The text to be displayed to the user if the nonce check fails
  * @property string $MESSAGE_SAVE_SUCCESS The text to be displayed to the user after saving the settings successfully
  * @property string $MESSAGE_RESET_SUCCESS The text to be displayed to the user after resetting the settings successfully
  * @property string $MESSAGE_UPDATE_SUCCESS The text to be displayed to the user after updating the settings successfully
@@ -59,18 +56,18 @@ class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin
 
         $this->debug()->t();
         $menus = $this->getMenuTracker();
-        $this->debug()->logVar( '$menus = ', $menus );
+        $this->debug()->logVar('$menus = ', $menus);
 
-        $result = $menus[ key( $menus ) ][ 'top_level_slug' ];
+        $result = $menus[key($menus)]['top_level_slug'];
         /*
          * if there is only one menu item, then
          * the item must be this one, so use this slug.
          * this allows custom post types to change the top level menu
          * to their own slug in the event they are made the top level menu
          */
-        $this->debug()->logVars( get_defined_vars() );
+        $this->debug()->logVars(get_defined_vars());
 
-        $this->debug()->logVar( '$result = ', $result );
+        $this->debug()->logVar('$result = ', $result);
 
 
 
@@ -87,7 +84,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin
      */
     public function getMenuTracker() {
         $this->debug()->t();
-        if ( is_null( self::$_menus ) ) {
+        if (is_null(self::$_menus)) {
             self::$_menus = array();
         }
         return self::$_menus;
@@ -99,8 +96,8 @@ class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin
      * @param none
      * @return string
      */
-    protected function _addMenuToTracker( $menu_slug ) {
-        self::$_menus[ $menu_slug ] = array();
+    protected function _addMenuToTracker($menu_slug) {
+        self::$_menus[$menu_slug] = array();
     }
 
     /**
@@ -135,7 +132,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin
      * at next visit to the page, even if the user changed it (i.e.: it ignores saved changes)
      * @return void
      */
-    public function setMetaboxOpenStateOLD( $id, $open = true, $persist = false ) {
+    public function setMetaboxOpenStateOLD($id, $open = true, $persist = false) {
 
         /*
          * Apply defaults to array if not all the settings were provided
@@ -144,7 +141,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin
          */
 
 
-        $this->_meta_box_open_states[ $id ] = array( 'open' => $open, 'persist' => $persist );
+        $this->_meta_box_open_states[$id] = array('open' => $open, 'persist' => $persist);
     }
 
     /**
@@ -166,9 +163,9 @@ class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin
 
      * @return object $this
      */
-    public function setMetaboxDefaultStatesOLD( $meta_box_open_states ) {
+    public function setMetaboxDefaultStatesOLD($meta_box_open_states) {
 
-        if ( !is_array( $meta_box_open_states ) ) {
+        if (!is_array($meta_box_open_states)) {
             return $this;
         }
 
@@ -178,10 +175,10 @@ class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin
          * This also ensures that if an element wasnt provided, it wont
          * break while the array is accessed
          */
-        $defaults = array( 'state' => 'open', 'persist' => false );
+        $defaults = array('state' => 'open', 'persist' => false);
 
-        foreach ( $meta_box_open_states as $id => $metabox_state ) {
-            $meta_box_open_states[ $id ] = array_merge( $defaults, $metabox_state );
+        foreach ($meta_box_open_states as $id => $metabox_state) {
+            $meta_box_open_states[$id] = array_merge($defaults, $metabox_state);
         }
 
 //            echo '<pre>';
@@ -209,7 +206,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin
      * @param string $menu_slug The menu_slug as added by add_menu or add_submenu
      * @return object $this
      */
-    public function setMenuSlug( $menu_slug ) {
+    public function setMenuSlug($menu_slug) {
         $this->_menu_slug = $menu_slug;
 
         return $this;
@@ -225,14 +222,12 @@ class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin
     public function addHooks() {
         $this->debug()->t();
 
-        if ( !is_admin() ) {
+        if (!is_admin()) {
             return;
         }
-/*
- * Don't add a pageCheck here or most menus wont load properly if you do
- */
 
-        $this->debug()->log( 'Adding Hooks for ' . $this->getMenuSlug(),true );
+
+
         /*
          * Menu Screen Actions
          *
@@ -247,9 +242,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin
          * it is not worth trying to fire off off the '_menuPageAdded' hook, since
          * it  will cause errors when using it for the custom post editor.
          */
-        add_action( 'current_screen', array( $this, 'hookMenuScreen' ) );
-
-
+        add_action('current_screen', array($this, 'hookMenuScreen'));
 
 
 
@@ -258,14 +251,14 @@ class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin
         /*
          * Add Menu Page Created in the Child Class
          */
-        add_action( 'admin_menu', array( $this, 'hookAddMenuPage' ) );
+        add_action('admin_menu', array($this, 'hookAddMenuPage'));
 
         /*
          * Add Custom Post Editor.
          */
 
 
-        add_action( 'admin_menu', array( $this, 'hookAddCustomPostEditor' ) );
+        add_action('admin_menu', array($this, 'hookAddCustomPostEditor'));
 
 
 
@@ -283,31 +276,26 @@ class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin
 
 
         /* save without reloading the page */
-
-
-
-
-
-        add_action( 'wp_ajax_' . $this->plugin()->getSlug() . '_settings_save', array( $this, 'hookFormActionSettingsSave' ) );
+        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_save', array($this, 'hookFormActionSettingsSave'));
 // move to hookMenuScreen add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_save', array($this, 'hookFormActionSave'));
         /* save with reloading the page */
-        add_action( 'wp_ajax_' . $this->plugin()->getSlug() . '_settings_save_with_reload', array( $this, 'hookFormActionSettingsSaveWithReload' ) );
+        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_save_with_reload', array($this, 'hookFormActionSettingsSaveWithReload'));
 
 
 
 
-        add_action( 'wp_ajax_' . $this->plugin()->getSlug() . '_settings_reset', array( $this, 'hookFormActionSettingsReset' ) );
+        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_reset', array($this, 'hookFormActionSettingsReset'));
 
         /*
          * Reset all settings to defaults
          *
          */
-        add_action( 'wp_ajax_' . $this->plugin()->getSlug() . '_settings_reset_all', array( $this, 'hookFormActionSettingsResetAll' ) );
+        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_reset_all', array($this, 'hookFormActionSettingsResetAll'));
         /*
          * Manuall Update settings so as to add any newly added settings due to a developer update
          *
          */
-        add_action( 'wp_ajax_' . $this->plugin()->getSlug() . '_settings_update_all', array( $this, 'hookFormActionSettingsUpdateAll' ) );
+        add_action('wp_ajax_' . $this->plugin()->getSlug() . '_settings_update_all', array($this, 'hookFormActionSettingsUpdateAll'));
 
 
 
@@ -339,29 +327,29 @@ class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin
          * having to make any code changes.
          */
         $menus = $this->getMenuTracker();
-        $this->debug()->logVar( '$menus = ', $menus );
+        $this->debug()->logVar('$menus = ', $menus);
 
-        if ( is_null( $menus ) || (empty( $menus ) === true) ) {
-            $this->debug()->log( 'Setting Menu Level to Top Level' );
-            $this->setMenuLevel( 'top_level' );
+        if (is_null($menus) || (empty($menus) === true)) {
+            $this->debug()->log('Setting Menu Level to Top Level');
+            $this->setMenuLevel('top_level');
         } else {
-            $this->debug()->log( 'Setting Menu Level to Sub Menu' );
-            $this->setMenuLevel( 'sub_menu' );
+            $this->debug()->log('Setting Menu Level to Sub Menu');
+            $this->setMenuLevel('sub_menu');
         }
 
 
 
-        $this->setMenuSlug( $this->plugin()->getSlug() . '_' . $this->getSlug() );
+        $this->setMenuSlug($this->plugin()->getSlug() . '_' . $this->getSlug());
 //$this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug'=>'edit.php?post_type=simpli_frames_snippet'));
 
-        $this->updateMenuTracker( $this->getMenuSlug(), array( 'top_level_slug' => $this->getMenuSlug() ) );
+        $this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug' => $this->getMenuSlug()));
 
         /*
          * Configure the metabox object
          * Pass the optional pageCheck callback method to
          * ensure no hooks fire on pages other than our Menu page
          */
-        $this->metabox()->config( array( $this, 'pageCheckMenu' ) );
+        $this->metabox()->config(array($this, 'pageCheckMenu'));
 
         /*
          * Configure the Module settings
@@ -370,26 +358,24 @@ class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin
 
 
 
-
         /*
          *
          * Messages to the User
          */
-        $this->setConfigDefault( 'MESSAGE_NONCE_FAILED', __( '<div style="color:red">Attempt failed, please try again</div>', $this->plugin()->getTextDomain() ) );
 
-        $this->setConfigDefault( 'MESSAGE_SAVE_SUCCESS', __( "Settings saved.", $this->plugin()->getTextDomain() ) );
-        $this->setConfigDefault( 'MESSAGE_UPDATE_SUCCESS', __( "Settings have been updated.", $this->plugin()->getTextDomain() ) );
+        $this->setConfigDefault('MESSAGE_SAVE_SUCCESS', __("Settings saved.", $this->plugin()->getTextDomain()));
+        $this->setConfigDefault('MESSAGE_UPDATE_SUCCESS', __("Settings have been updated.", $this->plugin()->getTextDomain()));
 
-        $this->setConfigDefault( 'MESSAGE_RESET_SUCCESS', __( "Settings reset.", $this->plugin()->getTextDomain() ) );
+        $this->setConfigDefault('MESSAGE_RESET_SUCCESS', __("Settings reset.", $this->plugin()->getTextDomain()));
 
-        $this->setConfigDefault( 'MESSAGE_RESET_ALL_SUCCESS', __( "All Settings Have been reset to initial defaults.", $this->plugin()->getTextDomain() ) );
+        $this->setConfigDefault('MESSAGE_RESET_ALL_SUCCESS', __("All Settings Have been reset to initial defaults.", $this->plugin()->getTextDomain()));
 
-        $this->setConfigDefault( 'MESSAGE_RESET_ALL_NOCHANGES', __( "Settings are already at defaults!", $this->plugin()->getTextDomain() ) );
-        $this->setConfigDefault( 'MESSAGE_RESET_ALL_FAILED', __( "Setting reset failed due to database error.", $this->plugin()->getTextDomain() ) );
+        $this->setConfigDefault('MESSAGE_RESET_ALL_NOCHANGES', __("Settings are already at defaults!", $this->plugin()->getTextDomain()));
+        $this->setConfigDefault('MESSAGE_RESET_ALL_FAILED', __("Setting reset failed due to database error.", $this->plugin()->getTextDomain()));
 
-        $this->setConfigDefault( 'MESSAGE_RESET', __( 'Are you sure you want to reset this form?', $this->plugin()->getTextDomain() ) );
+        $this->setConfigDefault('MESSAGE_RESET', __('Are you sure you want to reset this form?', $this->plugin()->getTextDomain()));
 
-        $this->setConfigDefault( 'MESSAGE_RESET_ALL', __( 'Are you sure you want to reset all the settings for this plugin to installed defaults?', $this->plugin()->getTextDomain() ) );
+        $this->setConfigDefault('MESSAGE_RESET_ALL', __('Are you sure you want to reset all the settings for this plugin to installed defaults?', $this->plugin()->getTextDomain()));
     }
 
     /**
@@ -403,37 +389,12 @@ class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin
      * @param none
      * @return boolean
      */
-    protected $_page_check_menu_cache=null;
-
     public function pageCheckMenu() {
         $this->debug()->t();
 
-        if ( is_null( $this->_page_check_menu_cache ) ) {
 
-
-
-            $result = ($this->plugin()->tools()->getRequestVar( 'page' ) === $this->getMenuSlug());
-
-            /*
-             * if false, then try checking for the page variable that is embedded in the _simpli_forms_referral_url which is added automatically by form-submit.js
-             */
-            if ( !$result ) {
-                $result = ($this->plugin()->tools()->getQueryVarFromUrl( 'page', $this->plugin()->tools()->getRequestVar( '_simpli_forms_referer_url' ) ) === $this->getMenuSlug());
-
-
-
-
-}
-
-
-$this->_page_check_menu_cache=$result;
-
-        }
-        $result = $this->_page_check_menu_cache;
-        if ( $result ) {
-            $this->debug()->log( 'Page Check Passed for ' . $this->getMenuSlug(), true );
-}
-
+        $result = ($this->plugin()->tools()->getRequestVar('page') === $this->getMenuSlug());
+        $this->debug()->logVar('$result = ', $result);
         return ($result);
     }
 
@@ -449,8 +410,8 @@ $this->_page_check_menu_cache=$result;
      */
     public function metabox() {
 
-        if ( is_null( $this->_meta_box_object ) ) {
-            $this->_meta_box_object = new Simpli_Frames_Base_v1c2_Plugin_Module_Metabox( $this );
+        if (is_null($this->_meta_box_object)) {
+            $this->_meta_box_object = new Simpli_Frames_Base_v1c2_Plugin_Module_Metabox($this);
         }
         return $this->_meta_box_object;
     }
@@ -465,7 +426,7 @@ $this->_page_check_menu_cache=$result;
     function hookCurrentScreenOLD() {
 
 
-        if ( !$this->pageCheckMenu() ) {
+        if (!$this->pageCheckMenu()) {
             return;
         }
 
@@ -499,10 +460,10 @@ $this->_page_check_menu_cache=$result;
          *
          */
 
-        if ( !$this->pageCheckMenu() ) {
+        if (!$this->pageCheckMenu()) {
 
 
-            $this->debug()->log( 'Exiting from ' . get_class( $this ) . '::' . __FUNCTION__ . '()  since didnt pass pageCheckMenu' );
+            $this->debug()->log('Exiting from ' . get_class($this) . '::' . __FUNCTION__ . '()  since didnt pass pageCheckMenu');
             return;
         }
         /*
@@ -510,9 +471,9 @@ $this->_page_check_menu_cache=$result;
          */
 
 // Add scripts
-        add_action( 'admin_enqueue_scripts', array( $this, 'hookEnqueueBaseClassScripts' ) );
+        add_action('admin_enqueue_scripts', array($this, 'hookEnqueueBaseClassScripts'));
 
-        add_action( 'admin_enqueue_scripts', array( $this, 'hookEnqueueFormScripts' ) );
+        add_action('admin_enqueue_scripts', array($this, 'hookEnqueueFormScripts'));
         /*
          * Add our meta boxes using a direct call, which will work
          * since the hookMenuScreen is itself called by the 'current_screen' action
@@ -532,7 +493,7 @@ $this->_page_check_menu_cache=$result;
      */
     public function isTopLevel() {
         $menus = $this->getMenuTracker();
-        if ( key( $menus ) === $this->getMenuSlug() ) {
+        if (key($menus) === $this->getMenuSlug()) {
             return true;
         } else {
             return false;
@@ -547,10 +508,10 @@ $this->_page_check_menu_cache=$result;
      * @param none
      * @return void
      */
-    public function removeMenuPage( $menu_slug ) {
-        reset( self::$_menus );
-        $parent_slug = key( self::$_menus );
-        remove_submenu_page( $parent_slug, $menu_slug );
+    public function removeMenuPage($menu_slug) {
+        reset(self::$_menus);
+        $parent_slug = key(self::$_menus);
+        remove_submenu_page($parent_slug, $menu_slug);
     }
 
     /**
@@ -565,9 +526,9 @@ $this->_page_check_menu_cache=$result;
      * @param $menu_level
      * @return none
      */
-    public function setMenuLevel( $menu_level ) {
+    public function setMenuLevel($menu_level) {
         $this->debug()->t();
-        $this->debug()->log( 'Set Menu Level for ' . $this->getSlug() . ' to ' . $menu_level );
+        $this->debug()->log('Set Menu Level for ' . $this->getSlug() . ' to ' . $menu_level);
         $this->_menu_level = $menu_level;
     }
 
@@ -599,10 +560,10 @@ $this->_page_check_menu_cache=$result;
      * @param string $position
      * @return void
      */
-    public function addMenuPage( $page_title, $menu_titles, $capability, $icon_url = '', $position = null ) {
+    public function addMenuPage($page_title, $menu_titles, $capability, $icon_url = '', $position = null) {
         $this->debug()->t();
-        $this->debug()->logVars( get_defined_vars() );
-        $this->_menu_page = compact( 'page_title', 'menu_titles', 'capability', 'icon_url', 'position' );
+        $this->debug()->logVars(get_defined_vars());
+        $this->_menu_page = compact('page_title', 'menu_titles', 'capability', 'icon_url', 'position');
     }
 
     /**
@@ -622,10 +583,10 @@ $this->_page_check_menu_cache=$result;
      * @param string $icon_url The icon url
      * @return void
      */
-    public function addCustomPostEditor( $page_title, $menu_title, $capability ) {
+    public function addCustomPostEditor($page_title, $menu_title, $capability) {
         $this->debug()->t();
-        $this->debug()->logVars( get_defined_vars() );
-        $this->_custom_post_editor = compact( 'page_title', 'menu_title', 'capability' );
+        $this->debug()->logVars(get_defined_vars());
+        $this->_custom_post_editor = compact('page_title', 'menu_title', 'capability');
     }
 
     /**
@@ -638,12 +599,12 @@ $this->_page_check_menu_cache=$result;
      */
     public function hookAddCustomPostEditor() {
         $this->debug()->t();
-        if ( is_null( $this->_custom_post_editor ) ) {
-            $this->debug()->log( 'Exiting hookAddCustomPostEditor since $_custom_post_editor is null' );
+        if (is_null($this->_custom_post_editor)) {
+            $this->debug()->log('Exiting hookAddCustomPostEditor since $_custom_post_editor is null');
             return;
         }
 
-        $this->debug()->logVar( '$this->_custom_post_editor = ', $this->_custom_post_editor );
+        $this->debug()->logVar('$this->_custom_post_editor = ', $this->_custom_post_editor);
 
 
         /*
@@ -653,9 +614,9 @@ $this->_page_check_menu_cache=$result;
 
         $this->_addCustomPostEditor
                 (
-                $this->_custom_post_editor[ 'page_title' ]
-                , $this->_custom_post_editor[ 'menu_title' ]
-                , $this->_custom_post_editor[ 'capability' ]
+                $this->_custom_post_editor['page_title']
+                , $this->_custom_post_editor['menu_title']
+                , $this->_custom_post_editor['capability']
         );
     }
 
@@ -669,13 +630,13 @@ $this->_page_check_menu_cache=$result;
      */
     public function hookAddMenuPage() {
         $this->debug()->t();
-        if ( is_null( $this->_menu_page ) ) {
-            $this->debug()->log( 'Exiting hookAddMenuPage since $_menu_page is null' );
+        if (is_null($this->_menu_page)) {
+            $this->debug()->log('Exiting hookAddMenuPage since $_menu_page is null');
             return;
         }
-        $this->debug()->log( 'Adding a Menu Page for ' . $this->_menu_page[ 'page_title' ] );
+        $this->debug()->log('Adding a Menu Page for ' . $this->_menu_page['page_title']);
 
-        $this->debug()->logVar( '$this->_menu_page = ', $this->_menu_page );
+        $this->debug()->logVar('$this->_menu_page = ', $this->_menu_page);
 
 
         /*
@@ -685,11 +646,11 @@ $this->_page_check_menu_cache=$result;
 
         $this->_addMenuPage
                 (
-                $this->_menu_page[ 'page_title' ]
-                , $this->_menu_page[ 'menu_titles' ]
-                , $this->_menu_page[ 'capability' ]
-                , $this->_menu_page[ 'icon_url' ]
-                , $this->_menu_page[ 'position' ]
+                $this->_menu_page['page_title']
+                , $this->_menu_page['menu_titles']
+                , $this->_menu_page['capability']
+                , $this->_menu_page['icon_url']
+                , $this->_menu_page['position']
         );
     }
 
@@ -700,21 +661,21 @@ $this->_page_check_menu_cache=$result;
      * * @param none
      * @return void
      */
-    protected function _addMenuPage( $page_title, $menu_titles, $capability, $icon_url, $position ) {
+    protected function _addMenuPage($page_title, $menu_titles, $capability, $icon_url, $position) {
 
-        $this->debug()->logVars( get_defined_vars() );
+        $this->debug()->logVars(get_defined_vars());
 
         /*
          * If $menu_title is an array, we use the 'menu' element as the menu title,
          * and the 'sub_menu' element as the sub menu title that can be seen when hovering over the main menu name.
          */
-        if ( is_array( $menu_titles ) ) {
+        if (is_array($menu_titles)) {
 
-            if ( $this->isTopLevel() ) {
-                $menu_title = $menu_titles[ 'menu' ];
-                $sub_menu_title = $menu_titles[ 'sub_menu' ];
+            if ($this->isTopLevel()) {
+                $menu_title = $menu_titles['menu'];
+                $sub_menu_title = $menu_titles['sub_menu'];
             } else {
-                $menu_title = $menu_titles[ 'sub_menu' ];
+                $menu_title = $menu_titles['sub_menu'];
             }
         } else {
             $menu_title = $menu_titles;
@@ -726,15 +687,15 @@ $this->_page_check_menu_cache=$result;
          * Class Method to display the HTML for the menu
          */
 
-        $function = array( $this, 'renderMenuPage' );
+        $function = array($this, 'renderMenuPage');
 
         /* Set the Menu Position
          *
          * Using the default menu position is a good way to avoid conflict
          * with other plugins
          */
-        if ( is_null( $position ) ) {
-            $position = $this->plugin()->getModule( 'Admin' )->getMenuPosition();
+        if (is_null($position)) {
+            $position = $this->plugin()->getModule('Admin')->getMenuPosition();
         }
 
         /*
@@ -746,8 +707,8 @@ $this->_page_check_menu_cache=$result;
          * modules as 'Menu10..., Menu20..,etc;'
          */
 
-        if ( $this->getMenuLevel() === 'top_level' ) {
-            $this->debug()->log( 'Adding menu ' . $menu_title . '  as top level' );
+        if ($this->getMenuLevel() === 'top_level') {
+            $this->debug()->log('Adding menu ' . $menu_title . '  as top level');
             $this->setMenuPageHookName(
                     add_menu_page(
                             $page_title// page title
@@ -761,7 +722,7 @@ $this->_page_check_menu_cache=$result;
             );
 
 //  add_action($this->getMenuPageHookName(), array($this, 'addPageActions'));
-            if ( !is_null( $sub_menu_title ) ) {
+            if (!is_null($sub_menu_title)) {
                 add_submenu_page(
                         $this->getTopLevelMenuSlug()  // parent slug
                         , $page_title // page title
@@ -783,7 +744,7 @@ $this->_page_check_menu_cache=$result;
             /*
              * Add the submenu
              */
-            $this->debug()->log( 'Adding menu ' . $menu_title . '  as sub menu' );
+            $this->debug()->log('Adding menu ' . $menu_title . '  as sub menu');
             add_submenu_page(
                     $this->getTopLevelMenuSlug()// parent slug
                     , $page_title // page title
@@ -800,9 +761,9 @@ $this->_page_check_menu_cache=$result;
          * as access the key properties from other methods
          */
 
-        $this->updateMenuTracker( $this->getMenuSlug(), array( 'capability' => $capability
-            , 'level' => $this->getMenuLevel(), 'top_level_slug' => $this->getMenuSlug() ) );
-        do_action( $this->getMenuSlug() . '_menuPageAdded' );
+        $this->updateMenuTracker($this->getMenuSlug(), array('capability' => $capability
+            , 'level' => $this->getMenuLevel(), 'top_level_slug' => $this->getMenuSlug()));
+        do_action($this->getMenuSlug() . '_menuPageAdded');
     }
 
     /**
@@ -815,24 +776,24 @@ $this->_page_check_menu_cache=$result;
      * @param array $properties Selected properties of the menu
      * @return void
      */
-    public function updateMenuTracker( $menu_slug, $properties ) {
+    public function updateMenuTracker($menu_slug, $properties) {
         $this->debug()->t();
-        $this->debug()->logVar( '$menu_slug = ', $menu_slug );
-        $this->debug()->logVar( '$properties = ', $properties );
+        $this->debug()->logVar('$menu_slug = ', $menu_slug);
+        $this->debug()->logVar('$properties = ', $properties);
         $menus = $this->getMenuTracker();
-        $this->debug()->logVar( '$menus = ', $menus );
+        $this->debug()->logVar('$menus = ', $menus);
 
         /*
          * if there are already properties associated with the menu tracker for
          * this element, then merge them, otherwise, just add the properties that
          * were passed
          */
-        if ( isset( $menus[ $menu_slug ] ) and is_array( $menus[ $menu_slug ] ) ) {
-            $properties = array_merge( $menus[ $menu_slug ], $properties );
+        if (isset($menus[$menu_slug]) and is_array($menus[$menu_slug])) {
+            $properties = array_merge($menus[$menu_slug], $properties);
         }
 
-        self::$_menus[ $menu_slug ] = $properties;
-        $this->debug()->logVar( 'self:$_menus = ', self::$_menus );
+        self::$_menus[$menu_slug] = $properties;
+        $this->debug()->logVar('self:$_menus = ', self::$_menus);
     }
 
     /**
@@ -847,7 +808,7 @@ $this->_page_check_menu_cache=$result;
      */
     public function getEditorTopLevelMenuSlug() {
 
-        if ( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] === $this->getMenuSlug() ) {
+        if (isset($_GET['page']) && $_GET['page'] === $this->getMenuSlug()) {
             return $this->getTopLevelMenuSlug();
         } else {
             return null;
@@ -867,11 +828,11 @@ $this->_page_check_menu_cache=$result;
      * * @param none
      * @return void
      */
-    protected function _addCustomPostEditor( $page_title, $menu_title, $capability ) {
+    protected function _addCustomPostEditor($page_title, $menu_title, $capability) {
 
         $this->debug()->t();
 
-        if ( !$this->CUSTOM_POST_EDITOR_ENABLED ) {
+        if (!$this->CUSTOM_POST_EDITOR_ENABLED) {
 
             return;
         }
@@ -880,7 +841,7 @@ $this->_page_check_menu_cache=$result;
          * Class Method to display the HTML for the menu
          */
 
-        $function = array( $this, 'renderMenuPage' );
+        $function = array($this, 'renderMenuPage');
 
 
         /*
@@ -897,7 +858,7 @@ $this->_page_check_menu_cache=$result;
                 , $function //function to display the html
         );
 
-        $this->debug()->logVar( '$hookname = ', $hookname );
+        $this->debug()->logVar('$hookname = ', $hookname);
         /*
          * immediately remove the submenu item we just added so
          * we still have the mapping of the url, but dont keep the menu item visible
@@ -910,11 +871,11 @@ $this->_page_check_menu_cache=$result;
          * as access the key properties from other methods
          */
 
-        $this->updateMenuTracker( $this->getMenuSlug(), array( 'capability' => $capability
-            , 'level' => $this->getMenuLevel() ) );
+        $this->updateMenuTracker($this->getMenuSlug(), array('capability' => $capability
+            , 'level' => $this->getMenuLevel()));
 // do_action($this->plugin()->getSlug() . '_menuPageAdded');
 
-        do_action( $this->getMenuSlug() . '_menuPageAdded' );
+        do_action($this->getMenuSlug() . '_menuPageAdded');
     }
 
     /**
@@ -926,10 +887,10 @@ $this->_page_check_menu_cache=$result;
      */
     public function hookAddMenuPageOLD() {
         $this->debug()->t();
-        if ( !$this->pageCheckMenu() ) {
+        if (!$this->pageCheckMenu()) {
             return;
         }
-        throw new Exception( 'You are missing a required hookAddMenuPage method in  ' . get_class( $this ) );
+        throw new Exception('You are missing a required hookAddMenuPage method in  ' . get_class($this));
     }
 
     /**
@@ -938,54 +899,54 @@ $this->_page_check_menu_cache=$result;
      * @param none
      * @return void
      */
-    public function _AjaxMetaboxOLD( $cache_timeout = 0 ) {
+    public function _AjaxMetaboxOLD($cache_timeout = 0) {
 
 //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
 // Disable errors
-        error_reporting( 0 );
+        error_reporting(0);
         /*
          * Compress Output
          */
-        if ( $this->COMPRESS ) {
+        if ($this->COMPRESS) {
             $this->tools()->startGzipBuffering();
         }
 
 // Set headers
-        header( "Status: 200" );
-        header( "HTTP/1.1 200 OK" );
-        header( 'Content-Type: text/html' );
-        header( "Vary: Accept-Encoding" );
+        header("Status: 200");
+        header("HTTP/1.1 200 OK");
+        header('Content-Type: text/html');
+        header("Vary: Accept-Encoding");
 
         /*
          * set cache
          */
-        if ( $cache_timeout === 0 ) {
-            header( 'Cache-Control: no-store, no-cache, must-revalidate' );
-            header( 'Cache-Control: post-check=0, pre-check=0', FALSE );
-            header( 'Pragma: no-cache' );
+        if ($cache_timeout === 0) {
+            header('Cache-Control: no-store, no-cache, must-revalidate');
+            header('Cache-Control: post-check=0, pre-check=0', FALSE);
+            header('Pragma: no-cache');
         } else {
 
             $expires = 60 * $cache_timeout;        // 15 minutes
 
-            header( 'Pragma: public' );
-            header( 'Cache-Control: maxage=' . $expires );
-            header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
-            header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires ) . ' GMT' );
+            header('Pragma: public');
+            header('Cache-Control: maxage=' . $expires);
+            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+            header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $expires) . ' GMT');
         }
 
 
-        if ( !wp_verify_nonce( $_GET[ '_nonce' ], $this->plugin()->getSlug() ) ) {
+        if (!wp_verify_nonce($_GET['_nonce'], $this->plugin()->getSlug())) {
             exit;
         }
 
 
         $request = new WP_Http;
-        $request_result = $request->request( $_GET[ 'url' ] );
-        $result[ 'html' ] = $request_result[ 'body' ];
-        $result[ 'metabox_id' ] = $_GET[ 'id' ];
+        $request_result = $request->request($_GET['url']);
+        $result['html'] = $request_result['body'];
+        $result['metabox_id'] = $_GET['id'];
 
 
-        echo json_encode( $result );
+        echo json_encode($result);
         exit();
     }
 
@@ -997,7 +958,7 @@ $this->_page_check_menu_cache=$result;
      */
     public function hookAjaxMetaboxCacheOLD() {
 //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
-        $this->_AjaxMetabox( 30 );
+        $this->_AjaxMetabox(30);
     }
 
     /**
@@ -1008,7 +969,7 @@ $this->_page_check_menu_cache=$result;
      */
     public function hookAjaxMetaboxOLD() {
 //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
-        $this->_AjaxMetabox( 0 );
+        $this->_AjaxMetabox(0);
     }
 
     /**
@@ -1022,7 +983,7 @@ $this->_page_check_menu_cache=$result;
     public function hookEnqueueFormScripts() {
 
         $this->debug()->t();
-        if ( !$this->pageCheckMenu() ) {
+        if (!$this->pageCheckMenu()) {
             return;
         }
 
@@ -1040,9 +1001,9 @@ $this->_page_check_menu_cache=$result;
 
         $path = $this->plugin()->getDirectory() . '/admin/js/form-menu-events.js';
         $inline_deps = array();
-        $external_deps = array( 'jquery' );
-        $this->plugin()->enqueueInlineScript( $handle, $path, $inline_deps, $external_deps );
-        $this->debug()->log( 'loaded script ' . $handle );
+        $external_deps = array('jquery');
+        $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+        $this->debug()->log('loaded script ' . $handle);
 
         $vars = array(
             'metabox_forms' => array(
@@ -1059,11 +1020,11 @@ $this->_page_check_menu_cache=$result;
 
         $path = $this->plugin()->getDirectory() . '/admin/js/form-menu-hooks.js';
         $inline_deps = array();
-        $external_deps = array( 'jquery' );
-        $this->plugin()->enqueueInlineScript( $handle, $path, $inline_deps, $external_deps );
-        $this->debug()->log( 'loaded script ' . $handle );
+        $external_deps = array('jquery');
+        $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
+        $this->debug()->log('loaded script ' . $handle);
 
-        $this->plugin()->setLocalVars( $vars );
+        $this->plugin()->setLocalVars($vars);
     }
 
     /**
@@ -1077,12 +1038,12 @@ $this->_page_check_menu_cache=$result;
      */
     public function hookEnqueueBaseClassScripts() {
         $this->debug()->t();
-        if ( !$this->pageCheckMenu() ) {
+        if (!$this->pageCheckMenu()) {
             return;
         }
 
-        wp_enqueue_style( $this->plugin()->getSlug() . '-admin-page', $this->plugin()->getAdminUrl() . '/css/settings.css', array(), $this->plugin()->getVersion() );
-        wp_enqueue_script( 'jquery' );
+        wp_enqueue_style($this->plugin()->getSlug() . '-admin-page', $this->plugin()->getAdminUrl() . '/css/settings.css', array(), $this->plugin()->getVersion());
+        wp_enqueue_script('jquery');
 
         /* by enqueuing post, you are enqueuing all the following scripts required to handle metaboxes (except save-metabox-state, which is enqueued in the next step):
           wp_enqueue_script( ' wp-ajax-response' );  //required to save state
@@ -1094,6 +1055,100 @@ $this->_page_check_menu_cache=$result;
           wp_enqueue_script('postbox');  //required for save/state
 
          */
+    }
+
+    /**
+     * Create Nonces
+     *
+     * Create the WordPress Nonces that will be needed for our forms.
+     * Will create a default nonce, unique for the menu, that will be used
+     * for any form action. If unique nonces are enabled, a nonce will
+     * be created for each method that starts with hookFormAction.
+     * All nonces will be made available to the javaqscript at
+     * <namespace>.forms.nonce_values[$action_slug] where $action_slug is
+     * a shortened version of the hookFormAction method that is called when
+     * the ajax form is submitted.
+     *
+     * @param none
+     * @return void
+     */
+    protected function _createNoncesOLD() {
+
+        #init
+        $vars = array();
+        /*
+         * Create the default Nonce Value for Form Submission
+         * This will be added to the ajax request when submitting the form.
+         */
+        $this->setConfig('NONCE_DEFAULT_VALUE', wp_create_nonce($this->NONCE_DEFAULT_ACTION));
+
+
+        /*
+         * Generate Unique Nonces
+         *
+         * Generate Unique Nonces for each hookFormAction method contained in this class.             *
+         * If the user wants to generate unique nonces,
+         * then create them using reflection and then pass them to
+         * javascript
+         *
+         */
+        if ($this->NONCE_UNIQUE_ENABLED) {
+            /*
+             * use reflection to get all the public method names of the current class
+             */
+            $all_methods = $this->plugin()->tools()->getMethodsNames(get_class($this), ReflectionMethod::IS_PUBLIC);
+
+
+            /*
+             * now filter for those methods that
+             * contain hookFormAction
+             * indicating they are a valid ajax action
+             */
+            $action_methods = $this->plugin()->tools()->getStringsWithSubstring(array('hookFormAction'), $all_methods);
+
+            $this->debug()->logVar('$actions = ', $action_methods);
+
+            /*
+             * Create a WordPress nonce action string for each method that starts with hookFormAction, which are the
+             * action handlers for ajax actions.
+             *
+             * Loop through each of the hookFormAction methods found within this class,
+             * and parse the names of the methods to turn them into nonce action names
+             *
+             *
+             * $action The name of the action method , e.g.:hookFormActionSettingsSave
+             *                *
+             * $action_slug  e.g.:  'settings_save' . The 'action slug', which is the short name for the action (without the module slug prefix)
+             *
+             * $action_long  e.g.: simpli_frames_Menu010_general_settings_save The 'long name' of the action
+             *
+             *
+             */
+            foreach ($action_methods as $action_method) {
+                $action_slug = $this->plugin()->tools()->getSlugFromWord(str_replace('hookFormAction', '', $action_method));
+                $this->debug()->logVar('$action_short_name = ', $action_slug);
+                $action = $this->plugin()->getSlug() . '_' . $this->getSlug() . '_' . $action_slug;
+
+
+                //   $vars[$action_short_name . '_nonce_value'] = wp_create_nonce($action_long);
+                $vars['forms']['nonce_values'][$action_slug] = wp_create_nonce($action);
+            }
+        }
+
+        /*
+         * tell javascript whether we are using unique nonces
+         * A unique nonce is a nonce that is unique for each
+         * ajax action. This is different from the default, where
+         * we have a nonce that is
+         * unique to the menu, not the action.
+         */
+        $vars['forms']['unique_action_nonces'] = $this->NONCE_UNIQUE_ENABLED;
+
+        $vars['forms']['nonce_field_name'] = $this->NONCE_FIELD_NAME;
+        $vars['forms']['nonce_values']['default'] = $this->NONCE_DEFAULT_VALUE;
+
+
+        $this->plugin()->setLocalVars($vars);
     }
 
     /**
@@ -1109,38 +1164,38 @@ $this->_page_check_menu_cache=$result;
          * with the menu properties when it was added
          */
 
-        $menu = self::$_menus[ $this->getMenuSlug() ];
-        $capability = $menu[ 'capability' ];
+        $menu = self::$_menus[$this->getMenuSlug()];
+        $capability = $menu['capability'];
 
 
         /*
          * require a template whose name is the same as the menu_slug
          * If it doesnt exist, use the default template
          */
-        if ( !current_user_can( $capability ) ) {
-            wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+        if (!current_user_can($capability)) {
+            wp_die(__('You do not have sufficient permissions to access this page.'));
         }
 
         $template_path = $this->plugin()->getDirectory() . '/admin/templates/' . $this->getSlug() . '.php';
-        if ( !file_exists( $template_path ) ) {
+        if (!file_exists($template_path)) {
             $template_path = $this->plugin()->getDirectory() . '/admin/templates/menu_settings_default.php';
         }
 
-        $this->debug()->logVar( '$template_path = ', $template_path );
-        $this->debug()->logVar( '$this->plugin()->ALLOW_SHORTCODES = ', $this->plugin()->ALLOW_SHORTCODES );
-        if ( $this->plugin()->ALLOW_SHORTCODES ) {
+        $this->debug()->logVar('$template_path = ', $template_path);
+        $this->debug()->logVar('$this->plugin()->ALLOW_SHORTCODES = ', $this->plugin()->ALLOW_SHORTCODES);
+        if ($this->plugin()->ALLOW_SHORTCODES) {
 
-            $this->debug()->log( 'Including template and executing shortcodes' );
+            $this->debug()->log('Including template and executing shortcodes');
             ob_start();
             include($template_path);
-            $template = do_shortcode( ob_get_clean() );
+            $template = do_shortcode(ob_get_clean());
             // $template = ob_get_clean();
             //   $this->debug()->logVar('$template = ', $template);
             // echo $template;
             echo $template;
             //$this->debug()->stop(true);
         } else {
-            $this->debug()->log( 'Not executing shortcodes since they are turned off' );
+            $this->debug()->log('Not executing shortcodes since they are turned off');
             include($template_path);
         }
     }
@@ -1157,7 +1212,7 @@ $this->_page_check_menu_cache=$result;
      * @param none
      * @return void
      */
-    public function hookFormActionAjaxSettingsReset() {
+    public function hookFormActionSettingsReset() {
 
         /*
          * pageCheck
@@ -1168,21 +1223,21 @@ $this->_page_check_menu_cache=$result;
         /*
          * Check Nonces
          */
-        if ( !$this->metabox()->wpVerifyNonce( __FUNCTION__ ) ) {
+        if (!$this->metabox()->wpVerifyNonce(__FUNCTION__)) {
 
             return false;
         }
 
         $message = $this->MESSAGE_RESET_SUCCESS;
         $user_option_defaults = $this->plugin()->getUserOptionDefaults();
-        foreach ( $this->plugin()->getUserOptions() as $setting_name => $setting_value ) {
+        foreach ($this->plugin()->getUserOptions() as $setting_name => $setting_value) {
             /**
              * Set new setting value equal to the post value only if the setting was actually submitted, otherwise, keep the setting value the same.
              *  Add extra code to scrub the values for specific settings if needed
              */
-            $setting_value = ((isset( $_POST[ $setting_name ] ) === true) ? $user_option_defaults[ $setting_name ] : $setting_value);
+            $setting_value = ((isset($_POST[$setting_name]) === true) ? $user_option_defaults[$setting_name] : $setting_value);
 
-            $this->plugin()->setUserOption( $setting_name, $setting_value );
+            $this->plugin()->setUserOption($setting_name, $setting_value);
         }
 
 
@@ -1197,52 +1252,52 @@ $this->_page_check_menu_cache=$result;
                 false, //boolean $logout Whether to force a logout after the message is displayed
                 true //boolean $reload Whether to force a page reload after the message is displayed
         );
-        }
+    }
 
     /**
      * Verify WordPress Nonce
      *
-     * Verifies the WordPress Nonce , using either a unique action name (derived from the $function_name parameter) or from the default $this->plugin()->NONCE_ACTION action.
+     * Verifies the WordPress Nonce , using either a unique action name (derived from the $function_name parameter) or from the default $this->NONCE_DEFAULT_ACTION action.
      *
      * The simpli framework automatically handles WordPress Nonces for you for any settings saved by this module. The default configuration is to use a 'one nonce' for each menu, regardless of how many ajax actions are created. This is the easiest to implement, and the least performance heavy, and one that does not require any adherence to method naming conventions for it to work.
      * Alternately, If you wish to use a unique nonce for each action, this is also easily done but is a bit more performance heavy and requires additional understanding if you are to create your own ajax actions.
      * The basic steps are :
      * 1) be sure to stick to naming conventions , where the function for the action hook must be named 'hookFormAction<MyAction>'
-     * 2) that $this->setConfig('UNIQUE_ACTION_NONCES',true) in the config() method for your Menu module
+     * 2) that $this->setConfig('NONCE_UNIQUE_ENABLED',true) in the config() method for your Menu module
      * 3) within your ajax script use simpli_frames.my_action_nonce_value
      * @param $function_name The name of the wp_ajax hook function. Must be in the form 'hookFormAction' , otherwise, the nonce will be rejected.
      * @return void
      */
-    public function wpVerifyNonceOLD( $function_name = null ) {
+    public function wpVerifyNonceOLD($function_name = null) {
         $this->debug()->t();
         /*
          * Get the nonce value that was submitted by checking
          * the $_REQUEST header ( which includes $_GET and $_POST vars)
          */
-        $nonce_value = $this->plugin()->tools()->getRequestVar( $this->plugin()->NONCE_FIELD_NAME );
+        $nonce_value = $this->plugin()->tools()->getRequestVar($this->NONCE_FIELD_NAME);
 
-        $this->debug()->logVar( '$nonce_value = ', $nonce_value );
+        $this->debug()->logVar('$nonce_value = ', $nonce_value);
         /*
          * Check whether unique nonces are enabled.
          *
          */
-        if ( $this->plugin()->UNIQUE_ACTION_NONCES && !is_null( $function_name ) ) {
+        if ($this->NONCE_UNIQUE_ENABLED && !is_null($function_name)) {
             /*
              * if unique nonces for each action are enabled, then get their action name from the function name
              */
-            $nonce_action = $this->plugin()->getSlug() . '_' . $this->getSlug() . '_' . $this->plugin()->tools()->getSlugFromWord( str_replace( 'hookFormAction', '', $function_name ) );
+            $nonce_action = $this->plugin()->getSlug() . '_' . $this->getSlug() . '_' . $this->plugin()->tools()->getSlugFromWord(str_replace('hookFormAction', '', $function_name));
         } else {
             /*
              * otherwise, just use the default action name
              */
-            $nonce_action = $this->plugin()->NONCE_ACTION;
+            $nonce_action = $this->NONCE_DEFAULT_ACTION;
         }
-        if ( !wp_verify_nonce( $nonce_value, $nonce_action ) ) {
+        if (!wp_verify_nonce($nonce_value, $nonce_action)) {
 
-            $this->debug()->log( 'Failed Nonce for ' . $nonce_action );
+            $this->debug()->log('Failed Nonce for ' . $nonce_action);
             return false;
         } else {
-            $this->debug()->log( 'Nonce PASSED for ' . $nonce_action );
+            $this->debug()->log('Nonce PASSED for ' . $nonce_action);
             return true;
         }
     }
@@ -1253,29 +1308,23 @@ $this->_page_check_menu_cache=$result;
      * @param none
      * @return void
      */
-    public function hookFormActionAjaxSettingsSave() {
+    public function hookFormActionSettingsSave() {
         $this->debug()->t();
 
-        $this->debug()->logVar( '$_POST = ', $_POST );
+        $this->debug()->logVar('$_POST = ', $_POST);
         $this->debug()->t();
-
-
-        if ( !$this->pageCheckMenu() ) {
-            return;
-        }
-
 
         /*
          * Check Nonces
          */
-        if ( !$this->metabox()->form_helper()->wpVerifyNonce( __FUNCTION__ ) ) {
+        if (!$this->metabox()->wpVerifyNonce(__FUNCTION__)) {
 
             return false;
         }
 
 //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
 
-        $this->_save( false );
+        $this->_save(false);
     }
 
     /**
@@ -1284,19 +1333,19 @@ $this->_page_check_menu_cache=$result;
      * @param none
      * @return void
      */
-    public function hookFormActionAjaxSettingsSaveWithReload() {
+    public function hookFormActionSettingsSaveWithReload() {
 //skip the pageCheck check since this is an ajax request and wont contain the $_GET page variable
         $this->debug()->t();
 
         /*
          * Check Nonces
          */
-        if ( !$this->metabox()->wpVerifyNonce( __FUNCTION__ ) ) {
+        if (!$this->metabox()->wpVerifyNonce(__FUNCTION__)) {
             return false;
         }
 
 
-        $this->_save( true );
+        $this->_save(true);
     }
 
     /**
@@ -1305,7 +1354,7 @@ $this->_page_check_menu_cache=$result;
      * @param boolean $reload Whether to reload (refresh) the page after the message.
      * @return void
      */
-    public function _save( $reload = false ) {
+    public function _save($reload = false) {
 
         $this->debug()->t();
 
@@ -1321,17 +1370,17 @@ $this->_page_check_menu_cache=$result;
          *          */
 
 
-        foreach ( $this->plugin()->getUserOptions() as $setting_name => $setting_value ) {
+        foreach ($this->plugin()->getUserOptions() as $setting_name => $setting_value) {
             /**
              * Set new setting value equal to the post value only if the setting was actually submitted, otherwise, keep the setting value the same.
              *  Add extra code to scrub the values for specific settings if needed
              */
             $previous_setting_value = $setting_value;
-            $setting_value = ((isset( $_POST[ $setting_name ] ) === true) ? $_POST[ $setting_name ] : $previous_setting_value);
+            $setting_value = ((isset($_POST[$setting_name]) === true) ? $_POST[$setting_name] : $previous_setting_value);
 
 
 
-            $this->plugin()->setUserOption( $setting_name, $setting_value );
+            $this->plugin()->setUserOption($setting_name, $setting_value);
         }
 
 
@@ -1346,7 +1395,7 @@ $this->_page_check_menu_cache=$result;
 //        );
 
 
-        $this->metabox()->form_helper()->showResponseMessage(
+        $this->metabox()->showResponseMessage(
                 $this->plugin()->getDirectory() . '/admin/templates/ajax_message_admin_panel.php', //string $template The path to the template to be used
                 $message, // string $message The html or text message to be displayed to the user
                 array(), //$errors Any error messages to display
@@ -1364,7 +1413,7 @@ $this->_page_check_menu_cache=$result;
      * @param none
      * @return void
      */
-    public function hookFormActionAjaxSettingsUpdateAll() {
+    public function hookFormActionSettingsUpdateAll() {
 
 
         /*
@@ -1376,7 +1425,7 @@ $this->_page_check_menu_cache=$result;
         /*
          * Check Nonces
          */
-        if ( !$this->metabox()->wpVerifyNonce( __FUNCTION__ ) ) {
+        if (!$this->metabox()->wpVerifyNonce(__FUNCTION__)) {
 
             return false;
         }
@@ -1397,7 +1446,7 @@ $this->_page_check_menu_cache=$result;
         $wp_option_name = $this->plugin()->getSlug() . '_options';
         $existing_options = $this->plugin()->getUserOptions();
         $option_defaults = $this->plugin()->getUserOptionDefaults();
-        $options = array_merge( $option_defaults, $existing_options );
+        $options = array_merge($option_defaults, $existing_options);
 
 
         /*
@@ -1406,7 +1455,7 @@ $this->_page_check_menu_cache=$result;
          *
          */
 
-        $this->plugin()->saveUserOptions( $options );
+        $this->plugin()->saveUserOptions($options);
 
         $this->metabox()->showResponseMessage(
                 $this->plugin()->getDirectory() . '/admin/templates/ajax_message_admin_panel.php', //string $template The path to the template to be used
@@ -1423,7 +1472,7 @@ $this->_page_check_menu_cache=$result;
      * @param none
      * @return void
      */
-    public function hookFormActionAjaxSettingsResetAll() {
+    public function hookFormActionSettingsResetAll() {
 
 
         /*
@@ -1435,7 +1484,7 @@ $this->_page_check_menu_cache=$result;
         /*
          * Check Nonces
          */
-        if ( !$this->metabox()->wpVerifyNonce( __FUNCTION__ ) ) {
+        if (!$this->metabox()->wpVerifyNonce(__FUNCTION__)) {
 
             return false;
         }
@@ -1448,12 +1497,12 @@ $this->_page_check_menu_cache=$result;
 
         global $wpdb;
         $query = 'delete from wp_options where option_name = \'' . $this->plugin()->getSlug() . '_options\'';
-        $dbresult = $wpdb->query( $query );
+        $dbresult = $wpdb->query($query);
 
         /* if no rows affected, that means the defaults havent been changed yet and stored in the database */
-        if ( $dbresult === 0 ) {
+        if ($dbresult === 0) {
             $message = $this->MESSAGE_RESET_ALL_NOCHANGES;
-        } elseif ( $dbresult === false ) {//returns false on error
+        } elseif ($dbresult === false) {//returns false on error
             $message = $this->MESSAGE_RESET_ALL_FAILED;
             ;
         }
@@ -1487,7 +1536,7 @@ $this->_page_check_menu_cache=$result;
      * @param string $menu_page_hook_name
      * @return object $this
      */
-    public function setMenuPageHookName( $menu_page_hook_name ) {
+    public function setMenuPageHookName($menu_page_hook_name) {
         $this->_menu_page_hook_name = $menu_page_hook_name;
         return $this;
     }
@@ -1514,8 +1563,8 @@ $this->_page_check_menu_cache=$result;
      * @return array $closed_metaboxes
      *
      */
-    public function hookCloseMetaboxesOld( $closed_metaboxes ) {
-        if ( !$this->pageCheckMenu() ) {
+    public function hookCloseMetaboxesOld($closed_metaboxes) {
+        if (!$this->pageCheckMenu()) {
             return($closed_metaboxes);
         }
 
@@ -1523,7 +1572,7 @@ $this->_page_check_menu_cache=$result;
          * this a 'first visit'  and ensure the initial argument type is an array
          * ensure that data type is array to avoid errors when empty
          */
-        if ( !is_array( $closed_metaboxes ) ) {
+        if (!is_array($closed_metaboxes)) {
             $first_visit = true;
             $closed_metaboxes = array();
         } else {
@@ -1539,7 +1588,7 @@ $this->_page_check_menu_cache=$result;
         /*
          * exit the filter if no default states have been set
          */
-        if ( !is_array( $metaboxDefaultStates ) ) {
+        if (!is_array($metaboxDefaultStates)) {
             return $closed_metaboxes;
         }
 
@@ -1549,28 +1598,28 @@ $this->_page_check_menu_cache=$result;
          * id to the filter if the metabox is to be closed
          */
 
-        foreach ( $metaboxDefaultStates as $metabox_id => $preferences ) {
+        foreach ($metaboxDefaultStates as $metabox_id => $preferences) {
 
-            if ( $preferences[ 'open' ] === false ) {
+            if ($preferences['open'] === false) {
                 /*
                  * if this is the first visit, and user wanted to apply defaults only to first visit
                  * or if this is not the first visit, and the user wanted to apply them always
                  * then apply the preference
                  */
-                if ( ($first_visit) || (!$first_visit && $preferences[ 'persist' ]) ) {
-                    if ( array_search( $metabox_id, $closed_metaboxes ) === false ) { //if the closed array didnt contain the metabox
+                if (($first_visit) || (!$first_visit && $preferences['persist'])) {
+                    if (array_search($metabox_id, $closed_metaboxes) === false) { //if the closed array didnt contain the metabox
                         $closed_metaboxes[] = $metabox_id;
                     }
                 } else {
-                    
+
                 }
             } else {
 
-                if ( ($first_visit && $preferences[ 'first' ]) || (!$first_visit && $preferences[ 'persist' ]) ) {
+                if (($first_visit && $preferences['first']) || (!$first_visit && $preferences['persist'])) {
 
-                    $key = array_search( $metabox_id, $closed_metaboxes );
-                    if ( $key !== false ) {
-                        $closed_metaboxes[ $key ] = '';
+                    $key = array_search($metabox_id, $closed_metaboxes);
+                    if ($key !== false) {
+                        $closed_metaboxes[$key] = '';
                     }
                 }
             }
@@ -1605,19 +1654,19 @@ $this->_page_check_menu_cache=$result;
 
 
 
-        if ( is_null( $this->_page_check_editor ) ) {
+        if (is_null($this->_page_check_editor)) {
 
-            if ( !is_admin() ) {
+            if (!is_admin()) {
                 $this->_page_check_editor = false;
             } else {
 
-                $this->_page_check_editor = $this->plugin()->tools()->isScreen( array( 'edit', 'add' ), null, false );
-                if ( !$this->_page_check_editor ) {
+                $this->_page_check_editor = $this->plugin()->tools()->isScreen(array('edit', 'add'), null, false);
+                if (!$this->_page_check_editor) {
                     /*
                      * if pageCheck failed, check to see if we are on a custom edit or add screen
                      */
-                    $this->debug()->log( 'Not a standard edit or add page, checking to see if its a CustomEdit or CustomAdd screen' );
-                    $this->_page_check_editor = $this->plugin()->tools()->isScreen( array( 'custom_edit', 'custom_add' ), null, false );
+                    $this->debug()->log('Not a standard edit or add page, checking to see if its a CustomEdit or CustomAdd screen');
+                    $this->_page_check_editor = $this->plugin()->tools()->isScreen(array('custom_edit', 'custom_add'), null, false);
                 }
             }
         }
@@ -1631,9 +1680,10 @@ $this->_page_check_menu_cache=$result;
 
 
 
-        $this->debug()->logVar( '$this->_page_check_editor  = ', $this->_page_check_editor );
+        $this->debug()->logVar('$this->_page_check_editor  = ', $this->_page_check_editor);
 
         return ($this->_page_check_editor);
     }
 
 }
+

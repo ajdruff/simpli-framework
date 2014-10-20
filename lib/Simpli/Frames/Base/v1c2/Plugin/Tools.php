@@ -29,7 +29,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param array $list - An associative array containing a complete list of handles to be sorted
      * @param array $dependencies Ann associative array whose keys are a subset of $list, but whose values are an array of handles that it is dependent on.
      */
-    public function sortDependentList($list = array(), $dependencies = array()) {
+    public function sortDependentList( $list = array(), $dependencies = array() ) {
         /* testing
           $list=array(
           'script1'
@@ -92,39 +92,39 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
 //
 //          echo '</pre>';
         // $dependent_handles = $dependencies;//
-        $dependent_handles = array_keys($dependencies); //makes the keys in dependencies their own array
+        $dependent_handles = array_keys( $dependencies ); //makes the keys in dependencies their own array
         $sorted_handles = array();
 
-        $todo_list = array_flip($list); //flip to ensure unqueness and allows us to remove items easily
+        $todo_list = array_flip( $list ); //flip to ensure unqueness and allows us to remove items easily
 
 
 
-        while (count($todo_list) > 0) {
+        while ( count( $todo_list ) > 0 ) {
 
-            foreach ($todo_list as $handle => $arbitrary) { //we only care about the index, the handle
-                if (!in_array($handle, $dependent_handles)) { //if the handle does not depend on anything,
-                    array_push($sorted_handles, $handle);  //add it to the final $sorted_handles array
-                    unset($todo_list[$handle]); // and remove it from the todo list
+            foreach ( $todo_list as $handle => $arbitrary ) { //we only care about the index, the handle
+                if ( !in_array( $handle, $dependent_handles ) ) { //if the handle does not depend on anything,
+                    array_push( $sorted_handles, $handle );  //add it to the final $sorted_handles array
+                    unset( $todo_list[ $handle ] ); // and remove it from the todo list
                 } else { //if the handle is dependent on others, check to see if its dependencies are in the final list
                     $requirements_met = true; //assume the best, toggle to false if even one requirement is not met
 
                     $missing_dependency = false; //assume the best, toggle to true if even one missing dependency found
-                    foreach ($dependencies[$handle] as $required_handle) { //check dependent handles
-                        if (!in_array($required_handle, $sorted_handles)) { //if dependent handle is not in final list yet,
+                    foreach ( $dependencies[ $handle ] as $required_handle ) { //check dependent handles
+                        if ( !in_array( $required_handle, $sorted_handles ) ) { //if dependent handle is not in final list yet,
                             $requirements_met = false; // then requirement is not met
                         }
-                        if (!in_array($required_handle, array_keys($todo_list)) && !in_array($required_handle, $sorted_handles)) { //if required_handle isnt on todo list, flag missing dependency or we will loop forever since the handle dependent on it will never be satisfied.
+                        if ( !in_array( $required_handle, array_keys( $todo_list ) ) && !in_array( $required_handle, $sorted_handles ) ) { //if required_handle isnt on todo list, flag missing dependency or we will loop forever since the handle dependent on it will never be satisfied.
                             $missing_dependency = true;
                         }
                     }
-                    if ($requirements_met === true && $missing_dependency === false) { //if all the required dependents are in the final list, then
-                        array_push($sorted_handles, $handle);  //add the dependent handle to the final list
+                    if ( $requirements_met === true && $missing_dependency === false ) { //if all the required dependents are in the final list, then
+                        array_push( $sorted_handles, $handle );  //add the dependent handle to the final list
 
-                        unset($todo_list[$handle]); //and remove from todo list
-                    } elseif ($missing_dependency === true) {
+                        unset( $todo_list[ $handle ] ); //and remove from todo list
+                    } elseif ( $missing_dependency === true ) {
 
 
-                        unset($todo_list[$handle]); //if required handle isnt on hte list at all, we cant include the handle that relies on it, so remove it.
+                        unset( $todo_list[ $handle ] ); //if required handle isnt on hte list at all, we cant include the handle that relies on it, so remove it.
                     }
                 }
             }
@@ -144,10 +144,10 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param string $url The absolute url to the local file
      * @return string The absolute directory path to the Directory
      */
-    public function url2dir($url) {
+    public function url2dir( $url ) {
 
-        $url_parts = parse_url($url);
-        return($this->normalizePath($_SERVER['DOCUMENT_ROOT'] . $url_parts['path']));
+        $url_parts = parse_url( $url );
+        return($this->normalizePath( $_SERVER[ 'DOCUMENT_ROOT' ] . $url_parts[ 'path' ] ));
     }
 
     /**
@@ -160,17 +160,17 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param boolean $replace_query_vars If false, merges the provided query vars with existing. if false, replaces them.
      * @return string $url The url
      */
-    public function rebuildURL($new_get_args, $url = null, $replace_query_vars = false) {
+    public function rebuildURL( $new_get_args, $url = null, $replace_query_vars = false ) {
 
         #init
         $old_get_vars = array();
 
 
-        if (is_null($url)) {
-            $url = $_SERVER['REQUEST_URI'];
+        if ( is_null( $url ) ) {
+            $url = $_SERVER[ 'REQUEST_URI' ];
         }
 
-        $url = urldecode($url);
+        $url = urldecode( $url );
 
 
 
@@ -188,7 +188,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
 
 
 
-        $old_url_parts = $this->screenDefaults($defaults, parse_url($url)); //creates an array of the different parts of the url
+        $old_url_parts = $this->screenDefaults( $defaults, parse_url( $url ) ); //creates an array of the different parts of the url
         //$url_parts = array_intersect_key(array_merge($defaults, $url_parts), $defaults); //make sure the indexes we need are there or use their defaults
 
 
@@ -202,13 +202,13 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
          * by first splitting it by the ampersand
          * and then iterating through that array to and split its elements by the = sign
          */
-        $old_query_parts = explode('&', $old_url_parts['query']); //creates {'myvar=myval','myvar2=myval2',etc}
+        $old_query_parts = explode( '&', $old_url_parts[ 'query' ] ); //creates {'myvar=myval','myvar2=myval2',etc}
 
-        foreach ($old_query_parts as $old_query_part) {
-            $namevalue = explode('=', $old_query_part); //split into {'name'=>var}
-            $name = isset($namevalue[0]) ? $namevalue[0] : null;
-            $value = isset($namevalue[1]) ? $namevalue[1] : null;
-            $old_get_vars[$name] = $value;
+        foreach ( $old_query_parts as $old_query_part ) {
+            $namevalue = explode( '=', $old_query_part ); //split into {'name'=>var}
+            $name = isset( $namevalue[ 0 ] ) ? $namevalue[ 0 ] : null;
+            $value = isset( $namevalue[ 1 ] ) ? $namevalue[ 1 ] : null;
+            $old_get_vars[ $name ] = $value;
         }
 
 
@@ -221,11 +221,11 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
          */
 
 
-        if (!$replace_query_vars) {
-            $get_args_merged_with_old = array_merge($old_get_vars, $new_get_args); //merge existing GET parameters
-            $new_url_parts['query'] = http_build_query($get_args_merged_with_old);
+        if ( !$replace_query_vars ) {
+            $get_args_merged_with_old = array_merge( $old_get_vars, $new_get_args ); //merge existing GET parameters
+            $new_url_parts[ 'query' ] = http_build_query( $get_args_merged_with_old );
         } else {
-            $new_url_parts['query'] = http_build_query($new_get_args); //replace the query string part with a new query string using the new values
+            $new_url_parts[ 'query' ] = http_build_query( $new_get_args ); //replace the query string part with a new query string using the new values
         }
 
 
@@ -240,7 +240,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
 
 
 
-        $result = $this->http_build_url($new_url_parts); //rebuild the url with the new parts;
+        $result = $this->http_build_url( $new_url_parts ); //rebuild the url with the new parts;
 
 
         return $result;
@@ -256,22 +256,22 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param boolean $replace_query_vars If false, merges the provided query vars with existing. if false, replaces them.
      * @return string $url The url
      */
-    public function rebuildURLOLD($get_args, $url = null, $replace_query_vars = false) {
+    public function rebuildURLOLD( $get_args, $url = null, $replace_query_vars = false ) {
         $url = '/wp-admin/edit.php';
-        if (is_null($url)) {
-            $url = $_SERVER['REQUEST_URI'];
+        if ( is_null( $url ) ) {
+            $url = $_SERVER[ 'REQUEST_URI' ];
         }
 
-        $url = urldecode($url);
+        $url = urldecode( $url );
 
 
 
 
 
-        $existing_url_parts = parse_url($url);
+        $existing_url_parts = parse_url( $url );
 
 
-        $this->debug()->logVar('$existing_url_parts = ', $existing_url_parts, true);
+        $this->debug()->logVar( '$existing_url_parts = ', $existing_url_parts, true );
 
         $existing_get_vars = array();
         /*
@@ -280,13 +280,13 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
          * by first splitting it by the ampersand
          * and then iterating through that array to and split its elements by the = sign
          */
-        $arr_existing_query_parts = explode('&', $existing_url_parts['query']); //creates {'myvar=myval','myvar2=myval2',etc}
+        $arr_existing_query_parts = explode( '&', $existing_url_parts[ 'query' ] ); //creates {'myvar=myval','myvar2=myval2',etc}
 
-        foreach ($arr_existing_query_parts as $arr_existing_query_part) {
-            $namevalue = explode('=', $arr_existing_query_part); //split into {'name'=>var}
-            $name = isset($namevalue[0]) ? $namevalue[0] : null;
-            $value = isset($namevalue[1]) ? $namevalue[1] : null;
-            $existing_get_vars[$name] = $value;
+        foreach ( $arr_existing_query_parts as $arr_existing_query_part ) {
+            $namevalue = explode( '=', $arr_existing_query_part ); //split into {'name'=>var}
+            $name = isset( $namevalue[ 0 ] ) ? $namevalue[ 0 ] : null;
+            $value = isset( $namevalue[ 1 ] ) ? $namevalue[ 1 ] : null;
+            $existing_get_vars[ $name ] = $value;
         }
 
 
@@ -295,14 +295,14 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
 
 
 
-        if (!$replace_query_vars) {
-            $get_args = array_merge($existing_get_vars, $get_args); //merge existing GET parameters
+        if ( !$replace_query_vars ) {
+            $get_args = array_merge( $existing_get_vars, $get_args ); //merge existing GET parameters
         }
 
 
 
 
-        $url_parts['query'] = http_build_query($get_args); //replace the query string part with a new query string using the new values
+        $url_parts[ 'query' ] = http_build_query( $get_args ); //replace the query string part with a new query string using the new values
 
 
 
@@ -311,7 +311,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
 
 
 
-        $result = $this->http_build_url($url_parts); //rebuild the url with the new parts;
+        $result = $this->http_build_url( $url_parts ); //rebuild the url with the new parts;
 
 
         return $result;
@@ -326,8 +326,8 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param array $variables An associative array of name/value pairs
      * @return array An array that has only the indexes that are listed in the defaults array and values that are supplied by either defaults or the provided $variables array
      */
-    public function screenDefaults($defaults, $array) {
-        return (array_intersect_key(array_merge($defaults, $array), $defaults));
+public function screenDefaults( $defaults, $array ) {
+        return (array_intersect_key( array_merge( $defaults, $array ), $defaults ));
     }
 
     /**
@@ -335,7 +335,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      *
      * @param array $http_array
      */
-    public function http_build_url($url_parts) {
+    public function http_build_url( $url_parts ) {
 
         $defaults = array(
             'scheme' => null,
@@ -344,14 +344,14 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
             'query' => null,
         );
 
-        $url_parts = $this->screenDefaults($defaults, $url_parts); //make sure the indexes we need are there or use their defaults
+        $url_parts = $this->screenDefaults( $defaults, $url_parts ); //make sure the indexes we need are there or use their defaults
 
 
 
 
-        $scheme = (trim($url_parts['scheme']) !== '') ? $url_parts['scheme'] . '://' : '';
-        $host = (trim($url_parts['host']) !== '') ? $url_parts['host'] : '';
-        $url = $scheme . $host . $url_parts['path'] . '?' . $url_parts['query'];
+        $scheme = (trim( $url_parts[ 'scheme' ] ) !== '') ? $url_parts[ 'scheme' ] . '://' : '';
+        $host = (trim( $url_parts[ 'host' ] ) !== '') ? $url_parts[ 'host' ] : '';
+        $url = $scheme . $host . $url_parts[ 'path' ] . '?' . $url_parts[ 'query' ];
 
         return($url);
     }
@@ -362,12 +362,12 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      *
      *
      */
-    public function detectShortcode($haystack, $shortcode) {
+    public function detectShortcode( $haystack, $shortcode ) {
 
         global $post;
         $pattern = get_shortcode_regex();
 
-        if (preg_match_all('/' . $pattern . '/s', $haystack, $matches) && array_key_exists(2, $matches) && in_array($shortcode, $matches[2])) {
+        if ( preg_match_all( '/' . $pattern . '/s', $haystack, $matches ) && array_key_exists( 2, $matches ) && in_array( $shortcode, $matches[ 2 ] ) ) {
             return true;
         }
 
@@ -387,9 +387,9 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      *
      * @return boolean True or False if keys are valid.
      */
-    public function validateArrayKeys($test_array, $valid_keys) {
-        $valid_keys_flipped = array_flip($valid_keys); // converts values in $valid_options to keys 'js'=>0
-        $test_array_and_valid_keys_combined = array_keys(array_merge($valid_keys_flipped, $test_array)); //results in an array of all the valid keys + any differing keys passed in debug. If nothing differs, then the combined array is the same
+    public function validateArrayKeys( $test_array, $valid_keys ) {
+        $valid_keys_flipped = array_flip( $valid_keys ); // converts values in $valid_options to keys 'js'=>0
+        $test_array_and_valid_keys_combined = array_keys( array_merge( $valid_keys_flipped, $test_array ) ); //results in an array of all the valid keys + any differing keys passed in debug. If nothing differs, then the combined array is the same
         $validity_result = ($valid_keys === $test_array_and_valid_keys_combined);
         return ($validity_result);
     }
@@ -402,37 +402,37 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param none
      * @return void
      */
-    public function getGlobFilesOLD($dir, $file_pattern, $max_levels = -1, $files = array()) {
+    public function getGlobFilesOLD( $dir, $file_pattern, $max_levels = -1, $files = array() ) {
 
         static $levels = 0;
         $levels++;
-        $globFiles = glob("$dir/$file_pattern");
-        $globDirs = glob("$dir/*", GLOB_ONLYDIR);
+        $globFiles = glob( "$dir/$file_pattern" );
+        $globDirs = glob( "$dir/*", GLOB_ONLYDIR );
 
-        if ($max_levels === -1 || $max_levels === true) {//true for backward compatibility (recursive)
-            foreach ($globDirs as $dir) {
-                $files = $this->getGlobFiles($dir, $file_pattern, -1, $files);
+        if ( $max_levels === -1 || $max_levels === true ) {//true for backward compatibility (recursive)
+            foreach ( $globDirs as $dir ) {
+                $files = $this->getGlobFiles( $dir, $file_pattern, -1, $files );
             }
         }
-        if (!is_bool($max_levels)) { //for backward compat, only do this if not boolean
-            if ($max_levels !== -1) {
-                $max_levels = intVal($max_levels);
+        if ( !is_bool( $max_levels ) ) { //for backward compat, only do this if not boolean
+            if ( $max_levels !== -1 ) {
+                $max_levels = intVal( $max_levels );
             }
-            if ($max_levels > 0 && $levels <= $max_levels) {
-                foreach ($globDirs as $dir) {
-                    $files = $this->getGlobFiles($dir, $file_pattern, $max_levels, $files);
+            if ( $max_levels > 0 && $levels <= $max_levels ) {
+                foreach ( $globDirs as $dir ) {
+                    $files = $this->getGlobFiles( $dir, $file_pattern, $max_levels, $files );
                 }
             }
         }
 
-        foreach ($globFiles as $file) {
+        foreach ( $globFiles as $file ) {
 
             $files[] = $file; // Replace '\n' with '<br />' if outputting to browser
             $file = null;
         }
 
-        if (!empty($files)) {
-            $files = array_filter($files, 'is_file');
+        if ( !empty( $files ) ) {
+            $files = array_filter( $files, 'is_file' );
 
 
             return $files;
@@ -447,21 +447,21 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param none
      * @return void
      */
-    public function getGlobFiles($dir, $file_pattern, $recursive = true, $files = array(), $exclude_pattern = null) {
+    public function getGlobFiles( $dir, $file_pattern, $recursive = true, $files = array(), $exclude_pattern = null ) {
 
 
-        $globFiles = glob("$dir/$file_pattern");
-        $globDirs = glob("$dir/*", GLOB_ONLYDIR);
+        $globFiles = glob( "$dir/$file_pattern" );
+        $globDirs = glob( "$dir/*", GLOB_ONLYDIR );
 
-        if ($recursive) {
-            foreach ($globDirs as $dir) {
-                $files = $this->getGlobFiles($dir, $file_pattern, true, $files, $exclude_pattern);
+        if ( $recursive ) {
+            foreach ( $globDirs as $dir ) {
+                $files = $this->getGlobFiles( $dir, $file_pattern, true, $files, $exclude_pattern );
             }
         }
 
 
 
-        foreach ($globFiles as $file) {
+        foreach ( $globFiles as $file ) {
 
             $files[] = $file; // Replace '\n' with '<br />' if outputting to browser
             $file = null;
@@ -470,13 +470,13 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
 
 
 
-        if (!empty($files)) {
-            if (!is_null($exclude_pattern)) {
+        if ( !empty( $files ) ) {
+            if ( !is_null( $exclude_pattern ) ) {
 
-                $files = preg_grep($exclude_pattern, $files, PREG_GREP_INVERT);
+                $files = preg_grep( $exclude_pattern, $files, PREG_GREP_INVERT );
             }
 
-            $files = array_filter($files, 'is_file');
+            $files = array_filter( $files, 'is_file' );
 
 
             return $files;
@@ -495,23 +495,23 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param  $longer_path
      * @return string normalized relative path
      */
-    function getRelativePath($base_path, $longer_path) {
-        $base_path = $this->normalizePath($base_path);
-        $longer_path = $this->normalizePath($longer_path);
+    function getRelativePath( $base_path, $longer_path ) {
+        $base_path = $this->normalizePath( $base_path );
+        $longer_path = $this->normalizePath( $longer_path );
 
-        $this->debug()->logVar('$base_path = ', $base_path);
-        $this->debug()->logVar('$longer_path = ', $longer_path);
+        $this->debug()->logVar( '$base_path = ', $base_path );
+        $this->debug()->logVar( '$longer_path = ', $longer_path );
 
-        if (false === strpos($longer_path, $base_path)) {
-            $this->debug()->log('Base Path Not found in longer path, returning longer path');
+        if ( false === strpos( $longer_path, $base_path ) ) {
+            $this->debug()->log( 'Base Path Not found in longer path, returning longer path' );
 
             return ($longer_path);
             //throw new Exception("Can not make relative path, base path is not contained in longer path: `" . $base_path . "`, `" . $longer_path . "`");
         }
-        $relative_path = substr($longer_path, strlen($base_path) + 1);
-        $this->debug()->logVar('$relative_path = ', $relative_path);
+        $relative_path = substr( $longer_path, strlen( $base_path ) + 1 );
+        $this->debug()->logVar( '$relative_path = ', $relative_path );
 
-        return substr($longer_path, strlen($base_path) + 1);
+        return substr( $longer_path, strlen( $base_path ) + 1 );
     }
 
     /**
@@ -527,39 +527,39 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param  $path
      * @return String
      */
-    function normalizePath($path, $resolve_indirection = false) {
+    function normalizePath( $path, $resolve_indirection = false ) {
 
 
 
 
-        $parts = preg_split(":[\\\/]:", $this->untrailingslashit($path)); // split on known directory separators
+        $parts = preg_split( ":[\\\/]:", $this->untrailingslashit( $path ) ); // split on known directory separators
 
-        if ($resolve_indirection) {
+        if ( $resolve_indirection ) {
 
 
             // resolve relative paths
-            for ($i = 0; $i < count($parts); $i +=1) {
-                if ($parts[$i] === "..") {          // resolve ..
-                    if ($i === 0) {
-                        throw new Exception("Cannot resolve path, path seems invalid: `" . $path . "`");
+            for ( $i = 0; $i < count( $parts ); $i +=1 ) {
+                if ( $parts[ $i ] === ".." ) {          // resolve ..
+                    if ( $i === 0 ) {
+                        throw new Exception( "Cannot resolve path, path seems invalid: `" . $path . "`" );
                     }
-                    unset($parts[$i - 1]);
-                    unset($parts[$i]);
-                    $parts = array_values($parts);
+                    unset( $parts[ $i - 1 ] );
+                    unset( $parts[ $i ] );
+                    $parts = array_values( $parts );
                     $i -= 2;
-                } else if ($parts[$i] === ".") {    // resolve .
-                    unset($parts[$i]);
-                    $parts = array_values($parts);
+                } else if ( $parts[ $i ] === "." ) {    // resolve .
+                    unset( $parts[ $i ] );
+                    $parts = array_values( $parts );
                     $i -= 1;
                 }
-                if ($i > 0 && $parts[$i] === "") {  // remove empty parts
-                    unset($parts[$i]);
-                    $parts = array_values($parts);
+                if ( $i > 0 && $parts[ $i ] === "" ) {  // remove empty parts
+                    unset( $parts[ $i ] );
+                    $parts = array_values( $parts );
                 }
             }
         }
 
-        return implode("/", $parts);
+        return implode( "/", $parts );
     }
 
     /**
@@ -570,14 +570,14 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param string $find The partial path to the file
      * @return boolean Whether the path can be included
      */
-    public function inIncludePath($find) {
+    public function inIncludePath( $find ) {
 
 
-        $paths = explode(PATH_SEPARATOR, get_include_path());
+        $paths = explode( PATH_SEPARATOR, get_include_path() );
         $found = false;
-        foreach ($paths as $p) {
+        foreach ( $paths as $p ) {
             $fullname = $p . DIRECTORY_SEPARATOR . $find;
-            if (is_file($fullname)) {
+            if ( is_file( $fullname ) ) {
                 $found = $fullname;
                 break;
             }
@@ -602,9 +602,17 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param string $template A string containing tokens to be replaced
      * @return void
      */
-    public function crunchTpl($tags, $template) {
+    public function crunchTpl( $tags, $template ) {
 
+        /*
+         * Check that $tags is array
+         * and set to empty array so as not to throw any errors
+         */
+        if ( !is_array( $tags ) ) {
 
+            $tags = array();
+}
+        $this->debug()->t();
 
 //        if (stripos($template, 'action') !== false) {
 //            $this->debug()->logVar('$template = ', $template, true);
@@ -614,17 +622,17 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
         /*
          * add a bracket around each key
          */
-        foreach ($tags as $key => $value) {
-            if (is_array($value) || is_object($value)) {
-                $value = '<pre>' . print_r($value, true) . '</pre>';
+        foreach ( $tags as $key => $value ) {
+            if ( is_array( $value ) || is_object( $value ) ) {
+                $value = '<pre>' . print_r( $value, true ) . '</pre>';
             }
 
-            $tags['{' . $key . '}'] = $value;
-            unset($tags[$key]);
+            $tags[ '{' . $key . '}' ] = $value;
+            unset( $tags[ $key ] );
         }
 
 
-        $html = str_ireplace(array_keys($tags), array_values($tags), $template);
+        $html = str_ireplace( array_keys( $tags ), array_values( $tags ), $template );
         return $html;
     }
 
@@ -638,7 +646,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param none
      * @return void
      */
-    public function scrubHtmlWhitespace($html) { //
+    public function scrubHtmlWhitespace( $html ) { //
         //ini_set("pcre.recursion_limit", "16777");  // 8MB stack. *nix //you can try using this, but better just to use small strings
         $re = '%# Collapse whitespace everywhere but in blacklisted elements.
         (?>             # Match all whitespans other than single space.
@@ -659,9 +667,9 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
           )             # End alternation group.
         )  # If we made it here, we are not in a blacklist tag.
         %Six';
-        $html = preg_replace($re, " ", $html);
-        if ($html === null)
-            exit("PCRE Error! File too big.\n");
+        $html = preg_replace( $re, " ", $html );
+        if ( $html === null )
+            exit( "PCRE Error! File too big.\n" );
         return $html;
     }
 
@@ -690,7 +698,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
          */
 
         $arr_btrace = debug_backtrace();
-        array_shift($arr_btrace);
+        array_shift( $arr_btrace );
         // array_shift($arr_btrace);
         /*
          * get where the debug statement was located
@@ -698,22 +706,22 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
 
 
 
-        $ds_line = (isset($arr_btrace[0]['line']) ? $arr_btrace[0]['line'] : '');
-        $ds_file = (isset($arr_btrace[0]['file']) ? $arr_btrace[0]['file'] : '');
-        $ds_class = (isset($arr_btrace[1]['class']) ? $arr_btrace[1]['class'] : '');
-        $ds_method = (isset($arr_btrace[1]['function']) ? $arr_btrace[1]['function'] : '');
+        $ds_line = (isset( $arr_btrace[ 0 ][ 'line' ] ) ? $arr_btrace[ 0 ][ 'line' ] : '');
+        $ds_file = (isset( $arr_btrace[ 0 ][ 'file' ] ) ? $arr_btrace[ 0 ][ 'file' ] : '');
+        $ds_class = (isset( $arr_btrace[ 1 ][ 'class' ] ) ? $arr_btrace[ 1 ][ 'class' ] : '');
+        $ds_method = (isset( $arr_btrace[ 1 ][ 'function' ] ) ? $arr_btrace[ 1 ][ 'function' ] : '');
 
 
         /*
          * iterate through the loop so we can simplify each trace
          */
 
-        foreach ($arr_btrace as $key => $trace_properties) {
+        foreach ( $arr_btrace as $key => $trace_properties ) {
 
-            $trace_properties = array_intersect_key(array_merge($defaults, $trace_properties), $defaults); //make sure the indexes we need are there or use their defaults
+            $trace_properties = array_intersect_key( array_merge( $defaults, $trace_properties ), $defaults ); //make sure the indexes we need are there or use their defaults
             $traces[] = $trace_properties;
         }
-        $content = 'Simplified debug_backtrace() <pre>' . print_r($traces, true) . '</pre>';
+        $content = 'Simplified debug_backtrace() <pre>' . print_r( $traces, true ) . '</pre>';
 
         echo $content;
     }
@@ -769,10 +777,10 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param boolean $is_xhtml Whether to use XHTML compatible line breaks or not ( <br/> )
      * @return string The string with all new lines replaced with HTML equivilent of breaks
      */
-    public function nl2br($string, $is_xhtml = true) {
+    public function nl2br( $string, $is_xhtml = true ) {
 
         $break = ($is_xhtml) ? '<br/>' : '<br>';
-        $result = str_replace(array("\r\n", "\r", "\n"), $break, $string);
+        $result = str_replace( array( "\r\n", "\r", "\n" ), $break, $string );
 
         return $result;
     }
@@ -796,18 +804,18 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param string $name_delimiter The delimiter used to segregate name from value
      * @return array The associative array
      */
-    public function lines2array($string, $line_delimiter = array("\r\n", "\r", "\n"), $name_delimiter = '|') {
+    public function lines2array( $string, $line_delimiter = array( "\r\n", "\r", "\n" ), $name_delimiter = '|' ) {
 
 
-        $normalized_lines = str_replace($line_delimiter, "\n", $string);
+        $normalized_lines = str_replace( $line_delimiter, "\n", $string );
 
-        $array_lines = explode("\n", $normalized_lines); // now we have 'name|value'
+        $array_lines = explode( "\n", $normalized_lines ); // now we have 'name|value'
 
         $result_array = array();
-        foreach ($array_lines as $line) {
-            $temp_array = explode($name_delimiter, $line);
-            if (isset($temp_array[1])) {
-                $result_array[trim($temp_array[0])] = trim($temp_array[1]);
+        foreach ( $array_lines as $line ) {
+            $temp_array = explode( $name_delimiter, $line );
+            if ( isset( $temp_array[ 1 ] ) ) {
+                $result_array[ trim( $temp_array[ 0 ] ) ] = trim( $temp_array[ 1 ] );
             }
         }
 
@@ -825,8 +833,8 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param string $name_delimiter The delimiter used to segregate name from value
      * @return array The associative array
      */
-    public function parse_str($string, $pair_delimiter = '&', $name_delimiter = '=') {
-        return($this->lines2array($string, $pair_delimiter, $name_delimiter));
+    public function parse_str( $string, $pair_delimiter = '&', $name_delimiter = '=' ) {
+        return($this->lines2array( $string, $pair_delimiter, $name_delimiter ));
     }
 
     /**
@@ -838,26 +846,26 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param $url The url you need to retrieve the query variable's value from
      * @return string The value of the query variable. Null if it doesnt appear in the url
      */
-    public function getQueryVarFromUrl($query_var, $url) {
+    public function getQueryVarFromUrl( $query_var, $url ) {
 
         /*
          * split the url by the first question mark
          */
-        $query_array = explode('?', $url, 2);
+        $query_array = explode( '?', $url, 2 );
 
         /*
          * if no question mark, then make sure we don't error out with a 'no index' error
          */
-        $query_string = (isset($query_array[1])) ? $query_array[1] : $query_array[0];
+        $query_string = (isset( $query_array[ 1 ] )) ? $query_array[ 1 ] : $query_array[ 0 ];
 
         /*
          * use our parse_str method to get an array of name value pairs
          */
-        $query_vars_array = $this->plugin()->tools()->parse_str($query_string);
+        $query_vars_array = $this->plugin()->tools()->parse_str( $query_string );
 
-        $this->debug()->logVar('$query_vars_array = ', $query_vars_array);
+        $this->debug()->logVar( '$query_vars_array = ', $query_vars_array );
 
-        $result = (isset($query_vars_array[$query_var])) ? $query_vars_array[$query_var] : null;
+        $result = (isset( $query_vars_array[ $query_var ] )) ? $query_vars_array[ $query_var ] : null;
 
         return $result;
     }
@@ -877,20 +885,20 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
 
      * @return string The string with all new lines replaced with HTML equivilent of breaks
      */
-    public function html2text($string, $new_line = "\n\r", $tags = array('br', 'div', 'p', 'li', 'ol', 'ul')) {
+    public function html2text( $string, $new_line = "\n\r", $tags = array( 'br', 'div', 'p', 'li', 'ol', 'ul' ) ) {
 
 
-        foreach ($tags as $tag) {
-            if ($tag === 'br') {
+        foreach ( $tags as $tag ) {
+            if ( $tag === 'br' ) {
                 $pattern = '/\<[\s]*br[\s]*[\/]*[\s]*>/'; //handles <br/> <br>  and all variants
             } else {
                 $pattern = '/\<[\s]*' . $tag . '[\s]*[\s]*>/';  //handles opening tags <p>,<div>, etc. assumes each is a block element.
             }
 
-            $string = preg_replace($pattern, $new_line, $string);
+            $string = preg_replace( $pattern, $new_line, $string );
         }
 
-        $string = strip_tags($string);
+        $string = strip_tags( $string );
 
         return $string;
     }
@@ -919,7 +927,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param boolean $debug Will print our the entire screen object
      * @return boolean
      */
-    public function isScreen($screen_id, $post_type = null) {
+    public function isScreen( $screen_id, $post_type = null ) {
         $this->debug()->t();
 
 #init
@@ -933,8 +941,8 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
          * known values and return result. If no post type is provided, then set the post type check to always be true, and remove the post_type check for isEdit and isAdd
          */
 
-        if (!function_exists('get_current_screen')) {
-            $this->debug()->logError('Current Screen isnt available, so cant use isScreen(), returning false');
+        if ( !function_exists( 'get_current_screen' ) ) {
+            $this->debug()->logError( 'Current Screen isnt available, so cant use isScreen(), returning false' );
             return false;
         }
         $current_screen = get_current_screen();
@@ -943,13 +951,13 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
 
 
 
-        $this->debug()->logVar('$current_screen = ', $current_screen);
+        $this->debug()->logVar( '$current_screen = ', $current_screen );
 
         /*
          * if post type parameter is null, just set it to the same as the screen.
          * that way, our checks will still work for all post types
          */
-        if (is_null($post_type)) {
+        if ( is_null( $post_type ) ) {
             $post_type = $current_screen->post_type; //need to define so subsequent isList check works.
             $isPostType = true; //if post type is null, then thats really saying this check is for all post types.
             $debug_message_post_types = ' any post type ';
@@ -960,7 +968,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
              * If the current_screen is not defined (as in the event of a custom editor) , check to see if there is a post type within the url by using get{pstTypeQueryVar
              */
 
-            if (is_null($current_screen->post_type)) {
+            if ( is_null( $current_screen->post_type ) ) {
 
                 $isPostType = $this->plugin()->post()->getPostTypeRequestVar() === $post_type;
             } else {
@@ -976,7 +984,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
         /*
          * Check for a Custom Editor by checking for the 'edit_post' value in our query variable
          */
-        $isCustomEditScreen = $this->getRequestVar($this->plugin()->QUERY_VAR) === $this->plugin()->QV_EDIT_POST;
+        $isCustomEditScreen = $this->getRequestVar( $this->plugin()->QUERY_VAR ) === $this->plugin()->QV_EDIT_POST;
 
 
         $isEditScreen = ($current_screen->base === 'post' && $current_screen->action === ''); //base will always be post regardless of post type. action will always be an empty string.
@@ -987,19 +995,19 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
         /*
          * Check for a Custom Add Page by checking for the 'add_post' value in our query variable
          */
-        $isCustomAddScreen = $this->getRequestVar($this->plugin()->QUERY_VAR) === $this->plugin()->QV_ADD_POST;
+        $isCustomAddScreen = $this->getRequestVar( $this->plugin()->QUERY_VAR ) === $this->plugin()->QV_ADD_POST;
 
 
 
-        if (!is_array($screen_id)) {
-            $screen_id = array($screen_id);
+        if ( !is_array( $screen_id ) ) {
+            $screen_id = array( $screen_id );
         }
 
 
-        foreach ($screen_id as $screen) {
+        foreach ( $screen_id as $screen ) {
 
 
-            switch ($screen) {
+            switch ( $screen ) {
                 case 'list': // the listing page for the post type provided
                     $result = ($isList && $isPostType) ? true : false;
                     $debug_message = 'Listing Screen';
@@ -1060,7 +1068,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
                 default:
                     $result = false;
                     $debug_message = '<ERROR: Could Not Find Screen ID >' . $screen;
-                    $this->debug()->logError('Unable to verify screen, could not find screen id ' . $screen);
+                    $this->debug()->logError( 'Unable to verify screen, could not find screen id ' . $screen );
                     break;
                 //todo: add more here (media,comments,etc)
             }
@@ -1070,14 +1078,14 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
 
 
         $debug_result = ($combined_result) ? ', and it is ' : ', and it is NOT ';
-        $this->debug()->log('Checked to see if this was the ' . $debug_message . ' for ' . $debug_message_post_types . $debug_result);
+        $this->debug()->log( 'Checked to see if this was the ' . $debug_message . ' for ' . $debug_message_post_types . $debug_result );
 
-        $this->debug()->logVars(get_defined_vars());
+        $this->debug()->logVars( get_defined_vars() );
         /*
          * for some reason, you have to cast to boolean
          * for the result to be recognized as boolean
          */
-        return((bool) $combined_result);
+        return(( bool ) $combined_result);
     }
 
 //    /**
@@ -1274,32 +1282,32 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param string $text Slug (any lowercase words connected by underscores)
      * @return string
      */
-    public function getWordFromSlug($slug, $wordpress_slug = false, $separator = null) {
-        if (!$wordpress_slug) {//  Not like WP
-            if (is_null($separator)) {
+    public function getWordFromSlug( $slug, $wordpress_slug = false, $separator = null ) {
+        if ( !$wordpress_slug ) {//  Not like WP
+            if ( is_null( $separator ) ) {
                 $separator = '_';
             }
         } else {
             $separator = '_';
         }
 
-        $slug_array = explode($separator, $slug);
-        foreach ($slug_array as $key => $value) {
-            $lvalue = strtolower($value);
-            $ucvalue = ucwords($lvalue);
-            $slug_array[$key] = $ucvalue;
+        $slug_array = explode( $separator, $slug );
+        foreach ( $slug_array as $key => $value ) {
+            $lvalue = strtolower( $value );
+            $ucvalue = ucwords( $lvalue );
+            $slug_array[ $key ] = $ucvalue;
         }
 
-        $this->debug()->logVar('$slug_array = ', $slug_array);
+        $this->debug()->logVar( '$slug_array = ', $slug_array );
 
 
         //   $slug_array = array_filter($slug_array, 'ucwords');
-        $word = implode($slug_array, '');
+        $word = implode( $slug_array, '' );
 
-        $this->debug()->logVar('$word = ', $word);
+        $this->debug()->logVar( '$word = ', $word );
 
         return $word;
-    }
+                            }
 
     /**
      * Get Slug from Word
@@ -1320,18 +1328,18 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param separator Seperator only used when $likeWP=false.
      * @return void
      */
-    public function getSlugFromWord($text, $wordpress_slug = false, $regex = null, $separator = null) {
+    public function getSlugFromWord( $text, $wordpress_slug = false, $regex = null, $separator = null ) {
 
-        $this->debug()->logVar('$text = ', $text);
+        $this->debug()->logVar( '$text = ', $text );
 
-        if (!$wordpress_slug) {//  Not like WP
+        if ( !$wordpress_slug ) {//  Not like WP
             /*
              * then use the regex and separators to create the slug
              */
-            if (is_null($separator)) {
+            if ( is_null( $separator ) ) {
                 $separator = '_';
             }
-            if (is_null($regex)) {
+            if ( is_null( $regex ) ) {
                 /*
                  * set regex pattern to find all capatilized word groups like 'MyPlugin'
                  */
@@ -1339,9 +1347,9 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
             }
 
 
-            $slug = strtolower(preg_replace($regex, $separator . '$1', $text));
+            $slug = strtolower( preg_replace( $regex, $separator . '$1', $text ) );
         } else {
-            $slug = sanitize_title($text); //users wordpress own conversion
+            $slug = sanitize_title( $text ); //users wordpress own conversion
         }
         return $slug;
     }
@@ -1358,19 +1366,32 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param none
      * @return void
      */
-    public function getRequestVar($var) {
-        $request_var = trim($var); //trim it to ensure inadvertent spaces dont mess up value comparisons
-        if (array_key_exists($request_var, $_REQUEST)) {
-            return $_REQUEST[$request_var];
+    public function getRequestVar( $request_var_in ) {
+        //$this->debug()->setMethodFilter( __FUNCTION__, false );
+        $this->debug()->logVar( '$request_var_in = ', $request_var_in );
+        $this->debug()->logVar( '$_REQUEST = ', $_REQUEST );
+
+        $request_var = trim( $request_var_in ); //trim it to ensure inadvertent spaces dont mess up value comparisons
+        if ( array_key_exists( $request_var, $_REQUEST ) ) {
+            return $_REQUEST[ $request_var ];
         } else {
-            return null;
+
+        
+/*
+ * if we couldn't find the query variable, the key
+ * might be in a multidimensional format, like [widget]['blurbit']['description'] we we use getArrayValue to make another attempt at finding its value. if no value found, the method wil return null
+ */
+            $result = $this->getArrayValue( $_REQUEST, $request_var );
+            $this->debug()->logVar( '$result = ', $result );
+     
+        return $result;
         }
     }
 
     /**
      * Get Query Variable
      *
-     * Returns the value of the variable $_GET[$var]
+     * Returns the value of the variable $_GET[$var] or if it can be retrieved using get_query_var()
 
      * Will return null if the variable does not exist in the array
      * Similar to WordPress get_query_var but works in admin and with non-white listed query variables. Main advantage is that it works with $_POST variables as well, and saves you from checking whether its set first, allowing you to a direct comparison.
@@ -1379,12 +1400,21 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param none
      * @return void
      */
-    public function getQueryVar($var) {
-        $query_var = trim($var); //trim it to ensure inadvertent spaces dont mess up value comparisons
-        if (array_key_exists($query_var, $_GET)) {
-            return $_GET[$query_var];
+    public function getQueryVar( $var ) {
+        $query_var = trim( $var ); //trim it to ensure inadvertent spaces dont mess up value comparisons
+        if ( isset( $_GET[ $query_var ] ) ) {
+            return $_GET[ $query_var ];
         } else {
-            return null;
+
+            if ( get_query_var( $query_var ) !== '' )
+            {
+                return get_query_var( $query_var );
+            } else
+            {
+
+
+                return null;
+            }
         }
     }
 
@@ -1401,8 +1431,8 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      */
     public function startGzipBuffering() {
 
-        if (!in_array('ob_gzhandler', ob_list_handlers())) {
-            ob_start('ob_gzhandler');
+        if ( !in_array( 'ob_gzhandler', ob_list_handlers() ) ) {
+            ob_start( 'ob_gzhandler' );
         }
     }
 
@@ -1417,8 +1447,8 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @return boolean
      */
     public function isAjax() {
-        if (is_null($this->_is_ajax)) {
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+        if ( is_null( $this->_is_ajax ) ) {
+            if ( isset( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) && strtolower( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) === 'xmlhttprequest' ) {
                 $this->_is_ajax = true;
             } else {
                 $this->_is_ajax = false;
@@ -1436,7 +1466,7 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param $strings The array of strings to match
      * @return an array of the elements that contain the substrings
      */
-    public function getStringsWithSubstring($substrings, $strings) {
+    public function getStringsWithSubstring( $substrings, $strings ) {
 
 
 
@@ -1446,22 +1476,22 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
          */
         //   $method = 2;
         //    if ($method === 1) {
-        $substrings = (array) $substrings;
+        $substrings = ( array ) $substrings;
         $matches = array();
 
-        foreach ($strings as $string) {
+        foreach ( $strings as $string ) {
 
-            foreach ($substrings as $substring) {
+            foreach ( $substrings as $substring ) {
 
-                if (stripos($string, $substring) !== false) {
-                    array_push($matches, $string);
+                if ( stripos( $string, $substring ) !== false ) {
+                    array_push( $matches, $string );
                 }
             }
         }
-        if (count($matches) === 0) {
+        if ( count( $matches ) === 0 ) {
             return (array());
         } else {
-            $this->debug()->logVar('$matches = ', $matches);
+            $this->debug()->logVar( '$matches = ', $matches );
             return ($matches);
         }
         //   }
@@ -1497,21 +1527,21 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * ref:  http://stackoverflow.com/a/3712754
      * @return void
      */
-    function getMethodsNames($className, $filters = null) {
+    function getMethodsNames( $className, $filters = null ) {
 
-        $reflector = new ReflectionClass($className);
-        if (!is_null($filters)) {
+        $reflector = new ReflectionClass( $className );
+        if ( !is_null( $filters ) ) {
 
-            $methods_object = $reflector->getMethods($filters);
+            $methods_object = $reflector->getMethods( $filters );
         } else {
             $methods_object = $reflector->getMethods();
         }
 
 
         $methodNames = array();
-        $lowerClassName = strtolower($className);
-        foreach ($methods_object as $method) {
-            if (strtolower($method->class) == $lowerClassName) {
+        $lowerClassName = strtolower( $className );
+        foreach ( $methods_object as $method ) {
+            if ( strtolower( $method->class ) == $lowerClassName ) {
                 $methodNames[] = $method->name;
             }
         }
@@ -1529,17 +1559,17 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param string $slug 2 words separated by underscores
      * @return string An abbreviated version of the slug
      */
-    public function shortenSlug($slug) {
+    public function shortenSlug( $slug ) {
 
-        $parts = explode('_', $slug);
-
-
-        $parts['prefix'] = (isset($parts[0])) ? $parts[0] : '';
-        $parts['suffix'] = (isset($parts[1])) ? '_' . $parts[1] : '';
+        $parts = explode( '_', $slug );
 
 
-        $prefix_first_character = substr($parts['prefix'], 1, 1);
-        return $prefix_first_character . $parts['suffix'];
+        $parts[ 'prefix' ] = (isset( $parts[ 0 ] )) ? $parts[ 0 ] : '';
+        $parts[ 'suffix' ] = (isset( $parts[ 1 ] )) ? '_' . $parts[ 1 ] : '';
+
+
+        $prefix_first_character = substr( $parts[ 'prefix' ], 1, 1 );
+        return $prefix_first_character . $parts[ 'suffix' ];
     }
 
     /**
@@ -1551,37 +1581,170 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param string $slug 2 words separated by underscores
      * @return string An abbreviated version of the slug
      */
-    public function shortenSlugMore($slug) {
+    public function shortenSlugMore( $slug ) {
 
-        $parts = explode('_', $slug);
+        $parts = explode( '_', $slug );
 
 
-        $parts['prefix'] = (isset($parts[0])) ? $parts[0] : '';
-        $parts['suffix'] = (isset($parts[1])) ? $parts[1] : '';
+        $parts[ 'prefix' ] = (isset( $parts[ 0 ] )) ? $parts[ 0 ] : '';
+        $parts[ 'suffix' ] = (isset( $parts[ 1 ] )) ? $parts[ 1 ] : '';
 
-        $prefix_first_character = substr($parts['prefix'], 0, 1);
-        $suffix_first_character = substr($parts['suffix'], 0, 1);
+        $prefix_first_character = substr( $parts[ 'prefix' ], 0, 1 );
+        $suffix_first_character = substr( $parts[ 'suffix' ], 0, 1 );
 
 
         return $prefix_first_character . $suffix_first_character;
     }
 
-//    /**
-//     * Short Description
-//     *
-//     * Long Description
-//     *
-//     * @param mixed $array A
-//     * @return void
-//     */
-//    public function makeArray($array) {
-//        if (!is_array($array)) {
-//            return (array) $array();
-//        } else {
-//
-//            return $array;
-//        }
-//    }
+    /**
+     * Get Array Column
+     *
+     * Returns all the array elements in $array that have a specific associative index
+     *
+     * @param none
+     * @return void
+     */
+    public function getArrayColumn( $array, $column ) {
+
+
+        $ret = array();
+        foreach ( $array as $row )
+            $ret[] = $row[ $column ];
+        return $ret;
+}
+
+    /**
+     * Get Db Result Indexed To Column
+     *
+     * Returns an WordPress Database Query Result as an associative array, the
+     * indexes of which are the values of the field represented by the $column paramater
+     * 
+     * Normally, results would return indexed to the primary index.
+     * So instead of getting something like this :
+     * array[0]=array('first_name'=>'joe','last_name'=>'smith');
+     * array[1]=array('first_name'=>'jim','last_name'=>'jones');
+     * 
+     * You would get something like this : 
+     * 
+     * 
+     * getDbResultIndexedToColumn( $query,'last_name' )
+     * 
+     * array['smith']=array('first_name'=>'joe','last_name'=>'smith');
+     * array[1]=array('jones'=>'jim','last_name'=>'jones');
+     * 
+     * Caution: To work without overwriting , the values provided by $column must be unique for each record.
+     * 
+     * Example: 
+     *
+     * @param none
+     * @return void
+     */
+    public function getDbResultIndexedToColumn( $query, $column ) {
+        global $wpdb;
+        $dbresult = $wpdb->get_results( $query, ARRAY_A );
+
+        /*
+         * Extract the values of each element that has $column as its index
+         * and add them to the $keys array
+         */
+
+        $keys = $this->getArrayColumn( $dbresult, $column );
+
+        /*
+         * Combine the keys with the original array
+         */
+        $dbresult_indexed_to_column = array_combine( $keys, $dbresult );
+
+        return $dbresult_indexed_to_column;
+
+    }
+
+    /**
+     * Get Database Column
+     *
+     * Gets all the unique values of a given database field, and returns them as an array. This provides an array ready  to be used* for a dropdown,radio, or checkbox element within the Simpli Forms addon. The array is in the form of ['value']=Value
+     * * Example Usage:
+     * $this->plugin()->tools()->getDbColumn( 
+      'simpli_forms',//$table,
+      'form_name',//$field,
+      null,//$query=null,
+      true,//$assoc=true,
+      true //$wordify=true
+      );
+     * 
+     * For a column that contains multiple rows but with only 2 values, 'my_form_1' and 'my_form_2' , this function will produce the following results
+     * 
+     *  $assoc=true,$wordify=true 
+     * 
+     * Array
+      (
+      [my_form_1] => My Form 1
+      [my_form_2] => My Form 2
+      )
+     * 
+     *  $assoc=true,$wordify=false 
+     * Array
+      (
+      [my_form_1] => my_form_1
+      [my_form_2] => my_form_2
+      )
+     * 
+     *  $assoc=false,$wordify=false 
+     * 
+     * Array
+      (
+      [0] => my_form_1
+      [1] => my_form_2
+      )
+     * 
+     * @param string $table The table to get the options
+     * @param string $field The field name 
+     * @param string $query Optional Query, otherwise a standard query will be used
+     * @param boolean $assoc Whether to return an associative array or a non-associative array
+     * @param boolean $wordify True will turn 'my_value' into 'My Value' , which is more human readable
+     * @return void
+     */
+    public function getDbColumn( $table, $field, $query = null, $assoc = true, $wordify = true ) {
+        global $wpdb;
+        if ( is_null( $query ) ) {
+            $query = "select `" . $field . "` from `" . $table . "` 
+group by `" . $field . "`";
+
+
+}
+
+        $db_records = $wpdb->get_results( $query, ARRAY_A );
+
+
+        foreach ( $db_records as $row ) {
+            $value = $row[ $field ];
+            $_display_text = $row[ $field ];
+            if ( $wordify ) {
+                $display_text = ucwords( str_replace( '_', ' ', $_display_text ) );
+} else{
+                $display_text = $_display_text;
+
+}
+
+
+
+
+
+
+
+
+            if ( $assoc ) {
+                $options[ $value ] = $display_text;
+} else{
+                $options[] = $display_text;
+}
+
+}
+
+
+
+        return $options;
+    }
 
     /**
      * Get Current Wp URL
@@ -1594,8 +1757,8 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
     public function getCurrentWPURL() {
 
 
-        $current_url = add_query_arg($_SERVER['QUERY_STRING'], '', home_url(//he home_url template tag retrieves the home URL for the current site, optionally with the $path argument appended. The function determines the appropriate protocol, "https" if is_ssl() and "http" otherwise.
-                        $_SERVER['SCRIPT_NAME'] //SCRIPT_NAME is defined in the CGI 1.1 specification, PHP_SELF is created by PHP itself. See http://php.about.com/od/learnphp/qt/_SERVER_PHP.htm for tests.
+        $current_url = add_query_arg( $_SERVER[ 'QUERY_STRING' ], '', home_url( //he home_url template tag retrieves the home URL for the current site, optionally with the $path argument appended. The function determines the appropriate protocol, "https" if is_ssl() and "http" otherwise.
+                        $_SERVER[ 'SCRIPT_NAME' ] //SCRIPT_NAME is defined in the CGI 1.1 specification, PHP_SELF is created by PHP itself. See http://php.about.com/od/learnphp/qt/_SERVER_PHP.htm for tests.
                 )
         );
         return $current_url;
@@ -1611,8 +1774,8 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param string $string What to add the trailing slash to.
      * @return string String with trailing slash added.
      */
-    function trailingslashit($string) {
-        return untrailingslashit($string) . '/';
+    function trailingslashit( $string ) {
+        return untrailingslashit( $string ) . '/';
     }
 
     /**
@@ -1622,12 +1785,178 @@ class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugi
      * @param string $string What to remove the trailing slash from.
      * @return string String without the trailing slash.
      */
-    function untrailingslashit($string) {
-        $result = rtrim($string, '\\'); //remove backslash
-        $result = rtrim($result, '/'); //remove backslash
+    function untrailingslashit( $string ) {
+        $result = rtrim( $string, '\\' ); //remove backslash
+        $result = rtrim( $result, '/' ); //remove backslash
         return $result;
     }
 
+    /**
+     * get Local Time From UTC
+     *
+     * Returns Local Time Using WordPress Conversion Function for GMT To Local
+     * Useful when retrieving a database time that is stored in UTC
+     * Usage:        $this->plugin()->tools()->getLocalTimeFromUTC( 
+      $dbrow->time_added, //$time as a timestamp string
+      'Y-m-d H:i:sP'  //$format The time format in which you'd like the result
+      );
+     * // Assuming today is March 10th, 2001, 5:16:18 pm, and that we are in the
+      // Mountain Standard Time (MST) Time Zone
+
+      $today = date("F j, Y, g:i a");                 // March 10, 2001, 5:16 pm
+      $today = date("m.d.y");                         // 03.10.01
+      $today = date("j, n, Y");                       // 10, 3, 2001
+      $today = date("Ymd");                           // 20010310
+      $today = date('h-i-s, j-m-y, it is w Day');     // 05-16-18, 10-03-01, 1631 1618 6 Satpm01
+      $today = date('\i\t \i\s \t\h\e jS \d\a\y.');   // it is the 10th day.
+      $today = date("D M j G:i:s T Y");               // Sat Mar 10 17:16:18 MST 2001
+      $today = date('H:m:s \m \i\s\ \m\o\n\t\h');     // 17:03:18 m is month
+      $today = date("H:i:s");                         // 17:16:18
+      $today = date("Y-m-d H:i:s");                   // 2001-03-10 17:16:18 (the MySQL DATETIME format)
+     *
+     * @param string $time The UTC time you want converted
+     * @param string $format The resulting format that you want to see the time
+     * @return string Local Time
+     */
+    public function getLocalTimeFromUTC( $time, $format ) {
+
+        return( get_date_from_gmt( date( 'Y-m-d H:i:s', strtotime( $time ) ), $format ));
+
+
+
+    }
+
+    /**
+     * Send Pear Email
+     *
+     * A Simple Wrapper To Send Email Using the Pear Library
+     * 
+     * Requires the installation of Pear Mail http://pear.php.net/
+     * To verify Mail is installed: pear list
+     * To install Mail:
+     *  pear install Mail
+     *  pear install -a Net_SMTP
+     * 
+     * 
+     * Assumes the following paramaters are set within the Plugin.php config() method using setConfig():
+
+
+      EMAIL_HOST
+      EMAIL_AUTH
+      EMAIL_PORT
+      EMAIL_USERNAME
+
+      example:
+
+      $this->setConfig(
+      'EMAIL_HOST'
+      , 'ssl://in.mailjet.com'
+      );
+
+     *
+     * @param string $to The 'to' address of the email
+     * @param string $subject The Subject of the email
+     * @param string $message The body of the email
+     * @param boolean $simulate True to Simulate, dumping to stdout, False to send. Default to true as a safety measure so you won't spam during testing.
+     * @return void
+     */
+    public function sendPearEmail( $from, $to, $subject, $message, $simulate = true ) {
+
+        require_once "Mail.php";
+
+        $host = $this->plugin()->EMAIL_HOST;
+        $auth = $this->plugin()->EMAIL_AUTH;
+        $port = $this->plugin()->EMAIL_PORT;
+        $username = $this->plugin()->EMAIL_USERNAME;
+
+
+        $headers = array( 'From' => $from,
+            'Subject' => $subject );
+
+
+        $smtp = Mail::factory(
+                        'smtp', array( 'host' => $host,
+                    'port' => $port,
+                    'auth' => $auth,
+                    'username' => $username,
+                    'password' => $password
+                ) );
+
+        /*
+         * will return true(1) if successful, error text if not
+         */
+
+        if ( $simulate ) {
+            $result = "\n" . print_r( array( 'to' => $to, 'headers' => $headers, 'message' => $message ), true ) . "\n"; //debug     
+} else{
+            $result = $smtp->send( $to, $headers, $message );
+}
+
+
+        return($result);
+    }
+
+    /**
+     * Get Array Value
+     *
+     * Returns the value of an array given its key or keys (if a multidimensional array) . 
+     * usage: getArrayValue($myarray,'[key1][key2][key3]'
+     * This seems easy to do by simply doing this : $myarray[key1[key2][key3]] but it doesnt work that way...
+     * Especially useful when you are validating forms and all you know is the name of the multidimensional field
+     *
+     * @param array $array The array that contains the value
+     * @param string $key A string that contains a key or keys in the following format 'key1' or '[key1][key2][key3]' . you must include in brackets if more than one key. single quotes are optional, double quotes are not supported.
+     * 
+     * @return void
+     */
+    public function getArrayValue( $array, $key ) {
+        #initialize
+        $result = array();
+        $subkeys = array();
+        $subkey = null;
+        /*
+         * first check to see if an opening bracket is contained in the key
+         * if so, we'll have to iterate through all keys
+         */
+
+        if ( stripos( $key, '[' ) !== false ) { //if an opening bracket is detected
+
+            /*
+             * remove any single quotes. double quotes are not supported
+             */
+
+            $key_no_quotes = str_ireplace( "'", '', $key );
+            /*
+             * remove closing brackets
+             */
+            $subkeys = str_ireplace( ']', '', $key_no_quotes );
+            /*
+             * split by opening brackets
+             */
+            $subkeys = explode( '[', $subkeys );
+            /*
+             * remove null keys which sometimes happens when exploding
+             */
+            $subkeys = array_filter( $subkeys );
+
+
+            $this->debug()->logVar( '$subkeys = ', $subkeys );
+            $result = $_POST;
+            foreach ( $subkeys as $subkey ) {
+                $result = $result[ $subkey ];
+}
+            $this->debug()->logVar( '$result = ', $result );
+
+            return $result;
+} else{
+            if ( isset( $array[ $key ] ) ) {
+                return $array[ $key ];
+} else{
+                return null;
+}
+
+}
+       }
 }
 
 ?>

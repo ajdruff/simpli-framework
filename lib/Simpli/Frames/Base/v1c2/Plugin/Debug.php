@@ -44,7 +44,7 @@
  *
  *
  */
-
+//class Simpli_Frames_Base_v1c2_Plugin_Debug {//extends Simpli_Frames_Base_v1c2_Plugin_Helper{
 class Simpli_Frames_Base_v1c2_Plugin_Debug extends Simpli_Frames_Base_v1c2_Plugin_Helper {
 //
 //    function __construct($plugin) {
@@ -2361,6 +2361,10 @@ $wpdb->hide_errors();
      */
     public function setMethodFilter( $name, $enabled ) {
         $filters = $this->getFilters();
+        
+
+        
+        
         if ( $enabled ) {
             $filters[ 'enabled' ][ $name ] = count( $filters[ 'enabled' ] );
         } else {
@@ -2382,6 +2386,22 @@ $wpdb->hide_errors();
      * @return void
      */
     public function getFilters() {
+        
+             /*
+              * Exclude everything except a 'debug when' condition
+              * When a $this->debug()->when()  condition is set,
+              * we check for that condition and return an empty filter set
+              * if it is not yet true.
+              */
+                if (     $this->getOption( 'debug_when' )===true  ) {
+            if ( $this->_when_enabled !== true ) {
+               $filters[ 'enabled' ]=array(); 
+                $filters[ 'disabled' ]=array(); 
+                return $filters;
+}
+                }
+                
+                
         if ( !isset( $this->_options[ 'filters' ] ) ) {
             $options = $this->getOptions();
             $options[ 'filters' ][ 'enabled' ] = array();
@@ -2997,6 +3017,16 @@ $wpdb->hide_errors();
 
         $this->_setDefaultOption( 'method_filters_enabled', true );
 
+        
+                /*
+         * Debug When Enabled
+         *
+         * Excludes all output except when the debug()->when() condition is set
+         */
+
+        $this->_setDefaultOption( 'debug_when', false );
+        
+        
 
         /*
          * Output To Inline

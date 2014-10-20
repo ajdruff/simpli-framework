@@ -14,14 +14,14 @@
  * create the script's namespace
  */
 
-if (typeof simpli.frames.post === 'undefined') {
-    simpli.frames.post = {};
+if (typeof nomstock.com.post === 'undefined') {
+    nomstock.com.post = {};
 }
 
 
 jQuery(document).ready(function() {
 
-    simpli.frames.post.addHooks();
+    nomstock.com.post.addHooks();
 
 
 });
@@ -33,7 +33,7 @@ jQuery(document).ready(function() {
  *
  * Add Hooks here
  * Hooks act the same way that WordPress action hooks do - they map events
- * ( triggered by simpli.frames.do_action ) to functions you want to occur.
+ * ( triggered by nomstock.com.do_action ) to functions you want to occur.
  * The only exception is that they your hooked functions can return values back
  * to the hook trigger
  *
@@ -43,14 +43,14 @@ jQuery(document).ready(function() {
 
 
 
-simpli.frames.post.addHooks = function()
+nomstock.com.post.addHooks = function()
 
 {
     /*
      *
      * Add action hooks here
      * Usage:
-     * simpli.frames.add_action('name_of_action_tag', function_name_without_quotes_around_it);
+     * nomstock.com.add_action('name_of_action_tag', function_name_without_quotes_around_it);
      *
      */
 
@@ -59,9 +59,9 @@ simpli.frames.post.addHooks = function()
      */
 /*
  * To add a javascript prompt , just add an action like this : 
- *     simpli.frames.add_action(simpli.frames.vars.plugin.slug + '_save_post', simpli.frames.post.savePost);
+ *     nomstock.com.add_action(nomstock.com.vars.plugin.slug + '_save_post', nomstock.com.post.savePost);
  *     
- *     That will fire the simpli.frames.post.savePost event.
+ *     That will fire the nomstock.com.post.savePost event.
  */
 
 
@@ -90,7 +90,7 @@ simpli.frames.post.addHooks = function()
  * @return mixed args Parameter values provided by the triggerHandler. May be a string, an array, or an object
  */
 
-simpli.frames.post.savePost = function(trigger_event, args) {
+nomstock.com.post.savePost = function(trigger_event, args) {
 
     if (!confirm('test')) { //if the user did not confirm upload, cancel it
         return (false);
@@ -101,7 +101,7 @@ simpli.frames.post.savePost = function(trigger_event, args) {
     /*
      * example of how you would access the triggering element:
      */
-    simpli.frames.log('you clicked element with id ' + args.element.attr('id') + ' in form with id = ' + args.form.attr('id'));
+    nomstock.com.log('you clicked element with id ' + args.element.attr('id') + ' in form with id = ' + args.form.attr('id'));
 
 
 

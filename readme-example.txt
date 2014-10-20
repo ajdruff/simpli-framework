@@ -1,4 +1,4 @@
-=== Simpli Frames World ===
+=== Nomstock Com World ===
 Contributors: Andrew Druffner
 Donate link: XXXXX
 Tags: framework,plugin development, plugin api, plugin kit
@@ -7,16 +7,16 @@ Tested up to: X.x
 Stable tag: x.x.x
 License: GPLv3
 
-The Simpli Frames World plugin is a demonstration plugin that can be used as a template to create new WordPress plugins using the Simpli WordPress Plugin Framework. Simpli is a Simple Plugin development framework that helps you create WordPress Plugin quickly within a fully object oriented structure.
+The Nomstock Com World plugin is a demonstration plugin that can be used as a template to create new WordPress plugins using the Simpli WordPress Plugin Framework. Simpli is a Simple Plugin development framework that helps you create WordPress Plugin quickly within a fully object oriented structure.
 
 == Description ==
-<p>Read the <a href="http://wordpress.org/extend/plugins/simpli-frames/installation/">Installation Guide</a>. If after setting up the plugin you are experiencing issues, please check the <a href="http://wordpress.org/extend/plugins/simpli-frames/faq/">FAQ</a>.</p>
-<p>If you are still unable to resolve your issue, <a href="http://wordpress.org/support/plugin/simpli-frames">start a support topic</a> and I or someone from the community will be able to assist you.</p>
-<p>Contribute Code at <a href="https://github.com/Mvied/simpli-frames">https://github.com/Mvied/simpli-frames</a></p>
-<p>Contribute Translations at <a href="https://translate.foe-services.de/projects/simpli-frames">https://translate.foe-services.de/projects/simpli-frames</a></p>
+<p>Read the <a href="http://wordpress.org/extend/plugins/nomstock-com/installation/">Installation Guide</a>. If after setting up the plugin you are experiencing issues, please check the <a href="http://wordpress.org/extend/plugins/nomstock-com/faq/">FAQ</a>.</p>
+<p>If you are still unable to resolve your issue, <a href="http://wordpress.org/support/plugin/nomstock-com">start a support topic</a> and I or someone from the community will be able to assist you.</p>
+<p>Contribute Code at <a href="https://github.com/Mvied/nomstock-com">https://github.com/Mvied/nomstock-com</a></p>
+<p>Contribute Translations at <a href="https://translate.foe-services.de/projects/nomstock-com">https://translate.foe-services.de/projects/nomstock-com</a></p>
 
 == Installation ==
-1. Upload the 'simpli-frames' folder to the '/wp-content/plugins/' directory.
+1. Upload the 'nomstock-com' folder to the '/wp-content/plugins/' directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Navigate to the Settings page in the admin sidebar in the dashboard.
 4. etc.

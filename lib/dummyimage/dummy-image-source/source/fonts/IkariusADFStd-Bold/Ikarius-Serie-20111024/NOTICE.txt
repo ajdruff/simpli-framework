@@ -1,0 +1,47 @@
+    The Ikarius collection consists of fonts made by Arkandis Digital
+    Foundry (ADF), collectively known as the "Program"
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or any later 
+    version, with font exception.
+
+   As a special exception, if you create a document which uses Ikarius 
+   font, and embed this font or unaltered portions of this font into the
+   document, this font does not by itself cause the resulting document to
+   be covered by the GNU General Public License. This exception does not
+   however invalidate any other reasons why the document might be covered
+   by the GNU General Public License. If you modify this font, you may
+   extend this exception to your version of the font, but you are not
+   obligated to do so. If you do not wish to do so, delete this exception
+   statement from your version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+____________________________________________________________________________
+     RELEASE Ikarius
+	1.000 - Initial release (Jully 2007)
+	1.001 - Modifications: A,a,R,r,G,g,V,v,W,w - hinting correction
+	1.002 - Spacing correction, modification: e,g,t
+	1.003 - Extended to the new Std, modifications: s, mu.
+	1.004 - Minor corrections.
+	1.005 - Glyphs renaming, new hints.
+
+____________________________________________________________________________
+     RELEASE Ikarius No2
+	1.000 - Initial release (November 2007)
+	1.001 - Spacing ajustement, modifications: e,j,y.
+	1.002 - Modification: V,W,v,w
+	1.003 - Rescaling, spacing change (120)
+	1.004 - Minor corrections, new kerning table
+	1.005 - Extended to the new Std.
+	1.006 - Minor corrections.
+	1.007 - Glyphs renaming, new hints.
+
+

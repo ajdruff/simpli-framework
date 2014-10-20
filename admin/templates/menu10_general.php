@@ -12,7 +12,7 @@ require_once('includes/template.php'); // WordPress Dashboard Functions
 
  *  */
 ?>
-<div class="simpli-frames">
+<div class="nomstock-com">
     <div class="simpli-message-wrap" id="message-wrap"><div id="message-body">
 
 

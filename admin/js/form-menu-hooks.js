@@ -13,14 +13,14 @@
 /*
  * create the script's namespace
  */
-if (typeof simpli.frames.menu === 'undefined') {
-    simpli.frames.menu = {};
+if (typeof nomstock.com.menu === 'undefined') {
+    nomstock.com.menu = {};
 }
 
-simpli.frames.menu.add_prompt = function(action_slug, fnc) {
+nomstock.com.menu.add_prompt = function(action_slug, fnc) {
 
 
-    simpli.frames.add_action(simpli.frames.vars.plugin.slug + '_submit_prompt_' + action_slug, fnc);
+    nomstock.com.add_action(nomstock.com.vars.plugin.slug + '_submit_prompt_' + action_slug, fnc);
 
 
 
@@ -28,7 +28,7 @@ simpli.frames.menu.add_prompt = function(action_slug, fnc) {
 }
 
 jQuery(document).ready(function() {
-    simpli.frames.menu.addHooks();
+    nomstock.com.menu.addHooks();
 });
 
 
@@ -38,7 +38,7 @@ jQuery(document).ready(function() {
  *
  * Add Hooks here
  * Hooks act the same way that WordPress action hooks do - they map events
- * ( triggered by simpli.frames.do_action ) to functions you want to occur.
+ * ( triggered by nomstock.com.do_action ) to functions you want to occur.
  * The only exception is that they your hooked functions can return values back
  * to the hook trigger
  *
@@ -48,43 +48,51 @@ jQuery(document).ready(function() {
 
 
 
-simpli.frames.menu.addHooks = function()
+nomstock.com.menu.addHooks = function()
 
 {
     /*
      *
      * Add action hooks here
      * Usage:
-     * simpli.frames.add_action('name_of_action_tag', function_name_without_quotes_around_it);
+     * nomstock.com.add_action('name_of_action_tag', function_name_without_quotes_around_it);
      *
      */
 
     /*
      * prompt the user on upload
      */
-    // simpli.frames.add_action(simpli.frames.vars.plugin.slug + '_submit_prompt_' + 'upload_addon', simpli.frames.menu.uploadActionPrompt);
+    // nomstock.com.add_action(nomstock.com.vars.plugin.slug + '_submit_prompt_' + 'upload_addon', nomstock.com.menu.uploadActionPrompt);
 
     /*
      * Example:
      *
-     * Use generic add_action or simplified add_prompt:
+     * Use generic add_action or nomstockfied add_prompt:
 
-     * simpli.frames.menu.add_prompt('upload_addon', simpli.frames.menu.uploadActionPrompt);
+     * nomstock.com.menu.add_prompt('upload_addon', nomstock.com.menu.uploadActionPrompt);
      *
      * or:
      *
-     * simpli.frames.add_action(simpli.frames.vars.plugin.slug + '_submit_prompt_' + 'upload_addon', simpli.frames.menu.uploadActionPrompt);
+     * nomstock.com.add_action(nomstock.com.vars.plugin.slug + '_submit_prompt_' + 'upload_addon', nomstock.com.menu.uploadActionPrompt);
      *
      */
 
 
 
-    simpli.frames.add_action(simpli.frames.vars.plugin.slug + '_submit_prompt_' + 'settings_reset_all', simpli.frames.menu.resetAllPrompt);
+    nomstock.com.add_action(nomstock.com.vars.plugin.slug + '_submit_prompt_' + 'settings_reset_all', nomstock.com.menu.resetAllPrompt);
 
-    simpli.frames.add_action(simpli.frames.vars.plugin.slug + '_submit_prompt_' + 'settings_reset', simpli.frames.menu.resetPrompt);
-    simpli.frames.add_action(simpli.frames.vars.plugin.slug + '_submit_prompt_' + 'settings_reset_with_reload', simpli.frames.menu.resetPrompt);
+    nomstock.com.add_action(nomstock.com.vars.plugin.slug + '_submit_prompt_' + 'settings_reset', nomstock.com.menu.resetPrompt);
+    nomstock.com.add_action(nomstock.com.vars.plugin.slug + '_submit_prompt_' + 'settings_reset_with_reload', nomstock.com.menu.resetPrompt);
 
 
+/* add saveWidgetCode hook only if on home page and the widgets.js was loaded to define nomstock.com.widgets.saveWidgetCode */
+if (typeof nomstock.com.widgets !== 'undefined') {
+        nomstock.com.add_action(nomstock.com.vars.plugin.slug + '_submit_prompt_' + 'submit_domain', nomstock.com.widgets.saveWidgetCode);
+}
+
+
+
+    
 }
 
 
@@ -99,9 +107,9 @@ simpli.frames.menu.addHooks = function()
 
 
 
-simpli.frames.menu.resetAllPrompt = function(trigger_event, args) {
+nomstock.com.menu.resetAllPrompt = function(trigger_event, args) {
 
-    if (!confirm(simpli.frames.vars.metabox_forms.reset_all_message)) { //if the user did not confirm upload, cancel it
+    if (!confirm(nomstock.com.vars.metabox_forms.reset_all_message)) { //if the user did not confirm upload, cancel it
         return false;
     } else {
         return true;
@@ -109,12 +117,16 @@ simpli.frames.menu.resetAllPrompt = function(trigger_event, args) {
 
 }
 
-simpli.frames.menu.resetPrompt = function(trigger_event, args) {
+nomstock.com.menu.resetPrompt = function(trigger_event, args) {
 
-    if (!confirm(simpli.frames.vars.metabox_forms.reset_message)) { //if the user did not confirm upload, cancel it
+    if (!confirm(nomstock.com.vars.metabox_forms.reset_message)) { //if the user did not confirm upload, cancel it
         return false;
     } else {
         return true;
     }
 
 }
+
+
+
+    

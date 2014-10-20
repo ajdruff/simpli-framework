@@ -17,14 +17,14 @@ jQuery(document).ready(function() {
     /*
      * Find the form from the submitted id
      */
-    form = jQuery('#' + simpli.frames.vars.forms.submitted_form_id)[0];
+    form = jQuery('#' + nomstock.com.vars.forms.submitted_form_id)[0];
 
-
-    if (jQuery(form).find('.simpli_forms_response').length > 0) {
-        jQuery(form).find('.simpli_forms_response').html(simpli.frames.vars.forms.response).fadeOut(0).fadeIn().delay(5000).fadeOut();
+nomstock.com.log('form response is ' + nomstock.com.vars.forms.response);
+    if (jQuery(form).find('.nomstock_forms_response').length > 0) {
+        jQuery(form).find('.nomstock_forms_response').html(nomstock.com.vars.forms.response).fadeOut(0).fadeIn().delay(5000).fadeOut();
     } else {
         if (jQuery('#message-body').length > 0) {
-            jQuery('#message-body').html(simpli.frames.vars.forms.response).fadeOut(0).fadeIn().delay(5000).fadeOut();
+            jQuery('#message-body').html(nomstock.com.vars.forms.response).fadeOut(0).fadeIn().delay(5000).fadeOut();
         }
 
     }

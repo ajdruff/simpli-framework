@@ -1,4 +1,4 @@
-<div id="simpli-frames">
+<div id="nomstock-com">
     <?php
 //echo '<pre>';
 //echo '<pre>';
@@ -78,7 +78,7 @@
 
     /*
      *
-     * Provide a dropdown with the Simpli Frames Snippets
+     * Provide a dropdown with the Nomstock Com Snippets
      * if they are available.
      *
      */
@@ -96,7 +96,7 @@
         'el' => 'dropdown',
         'options' => $options,
         'name' => 'snippet',
-        'label' => 'Simpli Frames Snippets:',
+        'label' => 'Nomstock Com Snippets:',
         'hint' => '<a href=' . admin_url() . '/edit.php?post_type=' . $this->plugin()->getSlug() . '_snippet' . '>View/Edit Snippets</a>',
         'heading' => '',
         'template' => 'dropdown_post',

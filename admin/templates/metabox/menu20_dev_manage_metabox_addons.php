@@ -90,7 +90,7 @@ $f->formStart(array(
     , 'enctype' => "multipart/form-data"
     , 'name' => 'simpli_forms'
     , 'method' => 'post'
-//      , 'action' => '/?simpli_frames_action = upload_addon' //normally, the framework will supply this based on the value of the button action (either for ajax or non-ajax). you should only use it if you want to override that behavior.
+//      , 'action' => '/?nomstock_com_action = upload_addon' //normally, the framework will supply this based on the value of the button action (either for ajax or non-ajax). you should only use it if you want to override that behavior.
     , 'ajax' => false
         )
 );
@@ -103,11 +103,11 @@ if (is_array($creds)) {
 
 
     foreach ($creds as $key => $value) {
-        echo '<input type="hidden" name="simpli_frames[creds][' . $key . ']" value="' . $value . '">';
+        echo '<input type="hidden" name="nomstock_com[creds][' . $key . ']" value="' . $value . '">';
     }
 } else {
 
-    echo '<input type="hidden" name="simpli_frames[creds]" value="' . $creds . '">';
+    echo '<input type="hidden" name="nomstock_com[creds]" value="' . $creds . '">';
 }
 
 $f->el(array(

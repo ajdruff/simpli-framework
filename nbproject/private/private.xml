@@ -1,48 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="13">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="4">
         <file>
-            <url>admin/js/get-remote-metabox-html.js</url>
-            <bookmark id="10">
+            <url>lib/Nomstock/Com/Modules/NomstockStats.php</url>
+            <bookmark id="1">
                 <name/>
-                <line>19</line>
+                <line>198</line>
                 <key/>
             </bookmark>
         </file>
         <file>
-            <url>lib/Simpli/Frames/Modules/Menu20DevManage.php</url>
-            <bookmark id="13">
+            <url>lib/Nomstock/Com/Modules/Forms.php</url>
+            <bookmark id="4">
                 <name/>
-                <line>0</line>
+                <line>1587</line>
                 <key/>
             </bookmark>
-        </file>
-        <file>
-            <url>lib/Simpli/Hello/Module/Debug.php</url>
-            <bookmark id="12">
+            <bookmark id="2">
                 <name/>
-                <line>2917</line>
+                <line>2067</line>
                 <key/>
             </bookmark>
-            <bookmark id="11">
+            <bookmark id="3">
                 <name/>
-                <line>2918</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>admin/js/metabox-form.js</url>
-            <bookmark id="8">
-                <name/>
-                <line>11</line>
+                <line>2814</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
-        <group name="GVAlert.com"/>
+        <group>
+            <file>file:/C:/wamp/www/nomstock-dev.com/public_html/wp-content/plugins/nomstock-com/lib/Nomstock/Com/Modules/Queryvars.php</file>
+            <file>file:/C:/wamp/www/nomstock-dev.com/public_html/wp-content/plugins/nomstock-com/lib/Nomstock/Com/Modules/Core.php</file>
+        </group>
+        <group name="GVAlert.com">
+            <file>file:/C:/wamp/www/nomstock-dev.com/public_html/wp-content/plugins/nomstock-com/lib/Nomstock/Com/Modules/Queryvars.php</file>
+            <file>file:/C:/wamp/www/nomstock-dev.com/public_html/wp-content/plugins/nomstock-com/lib/Nomstock/Com/Modules/Core.php</file>
+        </group>
         <group name="Simple Framework"/>
+        <group name="Jekyll Websites"/>
+        <group name="Nomstock.com-backup-group"/>
         <group name="Nomstock.com"/>
     </open-files>
 </project-private>

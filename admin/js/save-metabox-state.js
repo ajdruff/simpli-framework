@@ -14,16 +14,16 @@
 
 jQuery(document).ready(function($) {
 
-    simpli.frames.log('the menu slug is ' + simpli.frames.vars.menu_slug);
-    simpli.frames.log('the screen_id is ' + simpli.frames.vars.screen_id);
-    simpli.frames.log('the plugin name is ' + simpli.frames.vars.plugin.name);
-    simpli.frames.log('Toggled postbox state menu slug = ' + simpli.frames.vars.menu_slug);
-    simpli.frames.log('Toggled postbox state simpli.frames.vars.screen_id = ' + simpli.frames.vars.screen_id);
+    nomstock.com.log('the menu slug is ' + nomstock.com.vars.menu_slug);
+    nomstock.com.log('the screen_id is ' + nomstock.com.vars.screen_id);
+    nomstock.com.log('the plugin name is ' + nomstock.com.vars.plugin.name);
+    nomstock.com.log('Toggled postbox state menu slug = ' + nomstock.com.vars.menu_slug);
+    nomstock.com.log('Toggled postbox state nomstock.com.vars.screen_id = ' + nomstock.com.vars.screen_id);
 
     $(".if-js-closed").removeClass("if-js-closed").addClass("closed");
 
-    postboxes.add_postbox_toggles(simpli.frames.vars.menu_slug);  //e.g.: 'simpli.frames.vars_menu10_settings'
-    postboxes.add_postbox_toggles(simpli.frames.vars.screen_id); //e.g.
+    postboxes.add_postbox_toggles(nomstock.com.vars.menu_slug);  //e.g.: 'nomstock.com.vars_menu10_settings'
+    postboxes.add_postbox_toggles(nomstock.com.vars.screen_id); //e.g.
 
 
 

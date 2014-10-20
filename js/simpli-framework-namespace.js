@@ -13,11 +13,11 @@
 /*
  * create the plugin's namespace
  */
-if (typeof simpli === 'undefined') {
-    simpli = {};
+if (typeof nomstock === 'undefined') {
+    nomstock = {};
 }
-if (typeof simpli.frames === 'undefined') {
-    simpli.frames = {};
+if (typeof nomstock.com === 'undefined') {
+    nomstock.com = {};
 }
 
 /**
@@ -30,22 +30,22 @@ if (typeof simpli.frames === 'undefined') {
 
 
 
-simpli.frames.log = function(message)
+nomstock.com.log = function(message)
 {
 
-    if (typeof simpli.frames !== 'undefined') { //check if simpli_frames namespace is available . if it is, variables are also available
-        if (simpli.frames.vars.plugin.debug === true) { //if variables are available, we can check preferences
+    if (typeof nomstock.com !== 'undefined') { //check if nomstock_com namespace is available . if it is, variables are also available
+        if (nomstock.com.vars.plugin.debug === true) { //if variables are available, we can check preferences
 
             console.log(message);
         }
     }
 
 };
-simpli.frames.logError = function(message)
+nomstock.com.logError = function(message)
 {
 
-    if (typeof simpli.frames !== 'undefined') { //check if simpli_frames namespace is available . if it is, variables are also available
-        if (simpli.frames.vars.plugin.debug === true) { //if variables are available, we can check preferences
+    if (typeof nomstock.com !== 'undefined') { //check if nomstock_com namespace is available . if it is, variables are also available
+        if (nomstock.com.vars.plugin.debug === true) { //if variables are available, we can check preferences
 
             console.error(message);
         }
@@ -53,11 +53,11 @@ simpli.frames.logError = function(message)
 
 };
 
-simpli.frames.logWarn = function(message)
+nomstock.com.logWarn = function(message)
 {
 
-    if (typeof simpli.frames !== 'undefined') { //check if simpli_frames namespace is available . if it is, variables are also available
-        if (simpli.frames.vars.plugin.debug === true) { //if variables are available, we can check preferences
+    if (typeof nomstock.com !== 'undefined') { //check if nomstock_com namespace is available . if it is, variables are also available
+        if (nomstock.com.vars.plugin.debug === true) { //if variables are available, we can check preferences
 
             console.warn(message);
         }
@@ -71,16 +71,16 @@ simpli.frames.logWarn = function(message)
  * Wrapper around trigger, so jQuery trigger interface is WordPress Developer friendly.
  * Ref:http://codex.wordpress.org/Function_Reference/do_action
  * Instead of doing this :
- *  jQuery(document).trigger('simpli_forms_submit_prompt_' + form_action_slug, form_action_slug);
+ *  jQuery(document).trigger('nomstock_forms_submit_prompt_' + form_action_slug, form_action_slug);
  *
  *  You can do this :
- *  simpli.frames.do_action('simpli_forms_submit_prompt_' + form_action_slug,form_action_slug);
+ *  nomstock.com.do_action('nomstock_forms_submit_prompt_' + form_action_slug,form_action_slug);
  *
  * @param string $tag The name of the hook you wish to execute.
  * @param string $arg The list of arguments to send to this hook.
  */
 
-simpli.frames.do_action = function(tag, arg)
+nomstock.com.do_action = function(tag, arg)
 {
     return  (jQuery(document).triggerHandler(tag, arg));
 
@@ -93,16 +93,16 @@ simpli.frames.do_action = function(tag, arg)
  * Ref:http://codex.wordpress.org/Function_Reference/add_action
  *
  * Instead of doing this :
- *  jQuery(document).bind('simpli_forms_submit_prompt_' + 'upload_addon', uploadActionPrompt);
+ *  jQuery(document).bind('nomstock_forms_submit_prompt_' + 'upload_addon', uploadActionPrompt);
  *
  *  You can do this :
- *  simpli.frames.add_action('simpli_forms_submit_prompt_' + 'upload_addon', uploadActionPrompt);
+ *  nomstock.com.add_action('nomstock_forms_submit_prompt_' + 'upload_addon', uploadActionPrompt);
  *
  *
  * @param string $tag The name of the action to which $function_to_add is hooked
  * @param string $function_to_add The function object you wish to be hooked
  */
-simpli.frames.add_action = function(trigger, function_object) {
+nomstock.com.add_action = function(trigger, function_object) {
     jQuery(document).bind(trigger, function_object);
 
 

@@ -12,8 +12,8 @@
 /*
  * create the script's namespace
  */
-if (typeof simpli.frames.menu === 'undefined') {
-    simpli.frames.menu = {};
+if (typeof nomstock.com.menu === 'undefined') {
+    nomstock.com.menu = {};
 }
 
 jQuery(document).ready(function(jQuery) {
@@ -24,7 +24,7 @@ jQuery(document).ready(function(jQuery) {
      */
 
 
-    simpli.frames.menu.bind_events();
+    nomstock.com.menu.bind_events();
 
 })
 
@@ -32,9 +32,9 @@ jQuery(document).ready(function(jQuery) {
 
 
 
-simpli.frames.menu.bind_events = function()
+nomstock.com.menu.bind_events = function()
 {
-    //   var form = jQuery('#'+simpli.frames.vars.plugin.slug + '_' + simpli.frames.vars.metabox_forms[metabox_id].form_name).first();
+    //   var form = jQuery('#'+nomstock.com.vars.plugin.slug + '_' + nomstock.com.vars.metabox_forms[metabox_id].form_name).first();
     var form;
 
 
@@ -98,6 +98,8 @@ simpli.frames.menu.bind_events = function()
          */
         var isAjax = false;
 
+nomstock.com.log('clicked form submission button');
+
 
         /*
          *
@@ -132,7 +134,7 @@ simpli.frames.menu.bind_events = function()
          *
          */
         //   var userConfirmed = true;
-        var userConfirmed = simpli.frames.do_action(simpli.frames.vars.plugin.slug + '_submit_prompt_' + form_action_slug,
+        var userConfirmed = nomstock.com.do_action(nomstock.com.vars.plugin.slug + '_submit_prompt_' + form_action_slug,
                 {
                     form: jQuery(form)
                             , event: event
@@ -183,7 +185,7 @@ simpli.frames.menu.bind_events = function()
          * Prepare form , which adds any needed hidden elements
          */
 
-        simpli.frames.submit.prepare_form(form); //adds hidden form elements
+        nomstock.com.submit.prepare_form(form); //adds hidden form elements
 
         /*
          * Pass on to the form handler
@@ -191,10 +193,10 @@ simpli.frames.menu.bind_events = function()
 
         if (isAjax) {
             event.preventDefault();//to prevent being submitted as non-ajax.
-            simpli.frames.submit.ajaxSubmit(form, event, form_action_slug); //submits the form
+            nomstock.com.submit.ajaxSubmit(form, event, form_action_slug); //submits the form
 
         } else {
-            simpli.frames.submit.nonAjaxSubmit(form, event, form_action_slug); //submits the form
+            nomstock.com.submit.nonAjaxSubmit(form, event, form_action_slug); //submits the form
 
         }
 
@@ -203,8 +205,8 @@ simpli.frames.menu.bind_events = function()
         /*
          * debug messages
          */
-        simpli.frames.log('Action of button you clicked = ' + id_parts.action);
-        simpli.frames.log('Form action = ' + jQuery(form).attr('action'));
+        nomstock.com.log('Action of button you clicked = ' + id_parts.action);
+        nomstock.com.log('Form action = ' + jQuery(form).attr('action'));
 
 
 

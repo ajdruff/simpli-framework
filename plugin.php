@@ -1,17 +1,18 @@
 <?php
 
 /**
-  Plugin Name:   Simpli Framework Plugin-In Development
-  Plugin URI:    http://simpliwp/simpli-framework
-  Description:   The Simpli Framework is a WordPress Plugin Framework that makes building object oriented WordPress plugins just a bit easier. The Simpli Framework plugin defines the framework and is used by the Simpli WP Plugin Builder plugin as a template to produce new plugins. This plugin is not intended to be used directly by developers or end users.
-  Author:        Andrew Druffner
-  Version:       1.4.0
-  Author URI:    http://simpliwp/about
-  Text Domain:   simpli_frames
-  Domain Path:   /languages/
+Plugin Name:   Nomstock Com 
+ Plugin URI:    http://example.com 
+ Description:   The Nomstock Com plugin does some amazing stuff and was built upon the Simpli framework, a WordPress Plugin development framework that makes building WordPress plugins just a bit easier. 
+ Author:        Author 
+ Version:       1.0.0 
+ Author URI:    http://example.com 
+ Text Domain:   nomstock_com 
+ Domain Path:   /languages/ 
 
-  Simpli Framework Version:   1.4.0
-  Simpli Base Class Version:   1.2
+
+  Simpli Framework Version:     1.4.0
+  Simpli Base Class Version: 1.2
  *
  */
 /*
@@ -40,8 +41,6 @@
  */
 
 
-
-
 /*
  * Add framework bootstrapping code
  */
@@ -57,8 +56,9 @@ require(dirname(__FILE__) . '/lib/Simpli/Framework.php');
  * $plugin_slug must be universally unique, and consist of 2 lowercase words separated by an underscore
  * $plugin_file_path should always be __FILE__
  */
+global $nomstock_com; //globalize it so we can access the object in command line scripts, from other plugins, or within the core if needed.
 
-$simpli_frames = Simpli_Framework::load('simpli_frames', __FILE__);
+$nomstock_com = Simpli_Framework::load('nomstock_com', __FILE__);
 
 
 /*
@@ -67,8 +67,8 @@ $simpli_frames = Simpli_Framework::load('simpli_frames', __FILE__);
  */
 
 
-$simpli_frames->setName('Simpli Frames'); // Name should match the value of 'Plugin Name' in the comments at the top of this file);
-$simpli_frames->setTextDomain('simpli-frames'); // TextDomain must *not* include underscores and uniquely identifies the language domain for your plugin
+$nomstock_com->setName('Nomstock Com'); // Name should match the value of 'Plugin Name' in the comments at the top of this file);
+$nomstock_com->setTextDomain('nomstock-com'); // TextDomain must *not* include underscores and uniquely identifies the language domain for your plugin
 
 
 /*
@@ -87,5 +87,7 @@ $simpli_frames->setTextDomain('simpli-frames'); // TextDomain must *not* include
  * Initialize Plugin
  * (Loads modules and settings)
  */
-$simpli_frames->init();
+$nomstock_com->init();
+
+        
 ?>

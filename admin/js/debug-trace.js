@@ -19,7 +19,7 @@
  * Note that the Expand Span element must always come before the Collapse element
  * For a working example, see the v() method in the Debug module.
  *         <div style="display:inline-block;">
- <a class="simpli_debug_citem" href="#"><span>More</span><span style="visibility:hidden;display:none">Less</span></a>
+ <a class="nomstock_debug_citem" href="#"><span>More</span><span style="visibility:hidden;display:none">Less</span></a>
  <div style="visibility:hidden;display:none;">
  {CONTENT}
  </div>
@@ -31,14 +31,14 @@
  * @return void
  */
 
-simpli.frames.debug_bind_collapse_expand_events =
+nomstock.com.debug_bind_collapse_expand_events =
         function()
         {
 
 
 
 
-            jQuery("a.simpli_debug_citem").click(function(e) {
+            jQuery("a.nomstock_debug_citem").click(function(e) {
                 e.preventDefault();
 
 
@@ -83,7 +83,7 @@ simpli.frames.debug_bind_collapse_expand_events =
 
 
 
-simpli.frames.debug_bind_collapse_expand_events();
+nomstock.com.debug_bind_collapse_expand_events();
 
 
 /**
@@ -93,7 +93,7 @@ simpli.frames.debug_bind_collapse_expand_events();
  * This works , but the click events do not, so I am no longer using the multi-select
 
 
- simpli.frames.multiselect2side =
+ nomstock.com.multiselect2side =
  function()
  {
 
@@ -106,7 +106,7 @@ simpli.frames.debug_bind_collapse_expand_events();
 
  // Create the multi select boxes for the debug module
 
- simpli.frames.multiselect2side();
+ nomstock.com.multiselect2side();
 
 
  */

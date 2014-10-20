@@ -33,7 +33,7 @@ if (!is_object($post)) {
     return;
 }
 ?>
-<div class="simpli-frames">
+<div class="nomstock-com">
     <div class="simpli-message-wrap" id="message-wrap"><div id="message-body">
 
 
@@ -114,7 +114,7 @@ if (!is_object($post)) {
                         )
                 );
                 /*
-                 *   alternately use the shortcode [simpli_frames_form el='postEditor']
+                 *   alternately use the shortcode [nomstock_com_form el='postEditor']
                  *   DO NOT PLACE MORE THAN ONE postEditor on the page at one time or they will not work unless you give
                  * them unique ids
                   Remember that even if you comment out the shortcode in html, it will still be parsed!

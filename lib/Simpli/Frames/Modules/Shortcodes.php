@@ -27,6 +27,7 @@ class Simpli_Frames_Modules_Shortcodes extends Simpli_Frames_Base_v1c2_Plugin_Mo
 
 
         add_shortcode($this->plugin()->getSlug(), array($this, 'sayHello'), 10);
+          add_shortcode($this->plugin()->getSlug() . '_example_forms', array($this, 'exampleForms'), 10);
 
         /**
          *
@@ -89,6 +90,43 @@ class Simpli_Frames_Modules_Shortcodes extends Simpli_Frames_Base_v1c2_Plugin_Mo
 
         return $result;
     }
+    /**
+     *  Say Hello
+     *
+     *
+     *  */
+    public function exampleForms( $atts ) {
+        $this->debug()->t();
+        //$this->debug()->setMethodFilter( __FUNCTION__, false );
 
+        $defaults = array(
+            'theme' => null, //set equal to a them and it will load all the layout examples
+            'layouts'=>null
+        );
+
+$atts=shortcode_atts($defaults,$atts);
+
+$layouts=explode(',',$atts['layouts']);
+$this->debug()->logVar( '$layouts = ', $layouts );
+$content=null;
+    $template_directory=$this->plugin()->getAddon('Simpli_Forms')->getDirectory() . '/Themes/' . $atts['theme'];
+$this->debug()->logVar( '$template_directory = ', $template_directory );
+
+
+foreach ( $layouts as $layout ) {
+    ob_start();
+    $test_form_file_path=$template_directory . '/templates/' . $layout . '/_example.php';
+    $this->debug()->logVar( '$test_form_file_path = ', $test_form_file_path );
+    if ( file_exists($test_form_file_path)) {
+    
+        include($test_form_file_path);
 }
+    $output.=ob_get_clean();
+    
+}
+
+        return($output);
+    }
+}
+
 

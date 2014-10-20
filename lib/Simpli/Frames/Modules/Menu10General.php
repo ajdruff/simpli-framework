@@ -158,7 +158,7 @@ class Simpli_Frames_Modules_Menu10General extends Simpli_Frames_Base_v1c2_Plugin
         /*
          * Set Unique Nonces if desired (for increased security, slightly slower)
          */
-        $this->setConfig('UNIQUE_ACTION_NONCES', false);
+        $this->setConfig('NONCE_UNIQUE_ENABLED', false);
     }
 
     /**

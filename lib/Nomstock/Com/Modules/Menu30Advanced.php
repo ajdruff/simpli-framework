@@ -9,7 +9,7 @@
  *
  *
  */
-class Nomstock_Com_Modules_Menu30Advanced extends Nomstock_Com_Base_v1c2_Plugin_Menu {
+class Simpli_Frames_Modules_Menu30Advanced extends Simpli_Frames_Base_v1c2_Plugin_Menu {
 
     /**
      * Add Hooks

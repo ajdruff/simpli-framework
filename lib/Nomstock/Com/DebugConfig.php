@@ -16,7 +16,7 @@
  *
  *
  */
-class Nomstock_Com_DebugConfig extends Nomstock_Com_Base_v1c2_Plugin_Debug {
+class Simpli_Frames_DebugConfig extends Simpli_Frames_Base_v1c2_Plugin_Debug {
 
     /**
      * Configure Module
@@ -198,7 +198,7 @@ $this->debug()->debugShowStatsPage(false);
         $this->setMethodFilter( 'hookFormActionSavePost', true );
         $this->setMethodFilter( 'hookSavePost', true );
         $this->setMethodFilter( 'setUserOption', true );
-        $this->setMethodFilter( 'Nomstock_Com_Base_v1c2_Plugin_Post', true );
+        $this->setMethodFilter( 'Simpli_Frames_Base_v1c2_Plugin_Post', true );
 
         $this->setMethodFilter( '_savePost', true );
         $this->setMethodFilter( 'saveUserOptions', true );
@@ -261,7 +261,7 @@ $this->debug()->debugShowStatsPage(false);
 //   ,'wp_headers'
 //   ,'parse_request'
 //  ,'query_vars'
-//     'nomstock_com_nomstock_com_menu.*'
+//     'simpli_frames_simpli_frames_menu.*'
 //     , 'current_screen'
             $this->plugin()->getSlug() . '_flush_rewrite_rules'
             , $this->plugin()->getSlug() . '_activated'
@@ -276,14 +276,14 @@ $this->debug()->debugShowStatsPage(false);
 
 
         $this->setMethodFilter( 'flushRewriteRules', true );
-        $this->setMethodFilter( 'Nomstock_Com_Plugin::shutdown', true );
+        $this->setMethodFilter( 'Simpli_Frames_Plugin::shutdown', true );
 
 
-        $this->setMethodFilter( 'Nomstock_Com_Plugin::__destruct', true );
+        $this->setMethodFilter( 'Simpli_Frames_Plugin::__destruct', true );
         $this->setMethodFilter( 'doPersistentAction', true );
         $this->setMethodFilter( 'addPersistentAction', true );
         $this->setMethodFilter( 'toggleActivationStatus', true );
-        $this->setMethodFilter( 'Nomstock_Com_Base_v1c2_Plugin_PostType::config', true );
+        $this->setMethodFilter( 'Simpli_Frames_Base_v1c2_Plugin_PostType::config', true );
 
         $this->setMethodFilter( '_register_post_type', true );
 
@@ -422,7 +422,7 @@ $this->debug()->debugShowStatsPage(false);
 //   ,'wp_headers'
 //   ,'parse_request'
 //  ,'query_vars'
-//     'nomstock_com_nomstock_com_menu.*'
+//     'simpli_frames_simpli_frames_menu.*'
 //     , 'current_screen'
 // $this->plugin()->getSlug() . '_flush_rewrite_rules'
 //   'wp_ajax.*'
@@ -475,16 +475,16 @@ $this->debug()->debugShowStatsPage(false);
         $this->setMethodFilter( 'pageCheckEditor', true );
         $this->setMethodFilter( 'hookEditingScreen', true );
 
-        $this->setMethodFilter( 'Nomstock_Com_Base_v1c2_Plugin_Module_Post', true );
+        $this->setMethodFilter( 'Simpli_Frames_Base_v1c2_Plugin_Module_Post', true );
 
 
 
         $this->setMethodFilter( '.*_Metabox::config', true );
-        $this->setMethodFilter( 'Nomstock_Com_Modules_PostUserOptions::config', true );
+        $this->setMethodFilter( 'Simpli_Frames_Modules_PostUserOptions::config', true );
         $this->setMethodFilter( 'getPost', true );
         $this->setMethodFilter( 'getEditPostID', true );
 
-        $this->setMethodFilter( 'Nomstock_Com_Base_v1c2_Plugin_Module_Post', true );
+        $this->setMethodFilter( 'Simpli_Frames_Base_v1c2_Plugin_Module_Post', true );
         $this->setMethodFilter( '_hookNewPost', true );
 
 
@@ -1075,7 +1075,7 @@ $this->debug()->debugShowStatsPage(false);
 
         }
     
-         $this->setMethodFilter( '.*Nomstock_Com_Modules_NomstockStats.*', false );
+         $this->setMethodFilter( '.*Simpli_Frames_Modules_NomstockStats.*', false );
           $this->setMethodFilter( 'showStatsPage', false );
              $this->setMethodFilter( 'mySQLCallProc', true );
           

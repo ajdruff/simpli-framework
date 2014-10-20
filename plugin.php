@@ -7,7 +7,7 @@ Plugin Name:   Nomstock Com
  Author:        Author 
  Version:       1.0.0 
  Author URI:    http://example.com 
- Text Domain:   nomstock_com 
+ Text Domain:   simpli_frames 
  Domain Path:   /languages/ 
 
 
@@ -16,7 +16,7 @@ Plugin Name:   Nomstock Com
  *
  */
 /*
-  Simpli Framework Copyright 2013  Andrew Druffner  (email :andrew@nomstock.com)
+  Simpli Framework Copyright 2013  Andrew Druffner  (email :andrew@simpli.frames)
  * The Simpli framework was originally based on the WordPress plugin wordpress-https developed by Mike Ems.
  * Since 1.2.1, the code has been significantly re-written so as to make it virtually unrecognizable except for the basic module architecture.
 
@@ -56,9 +56,9 @@ require(dirname(__FILE__) . '/lib/Simpli/Framework.php');
  * $plugin_slug must be universally unique, and consist of 2 lowercase words separated by an underscore
  * $plugin_file_path should always be __FILE__
  */
-global $nomstock_com; //globalize it so we can access the object in command line scripts, from other plugins, or within the core if needed.
+global $simpli_frames; //globalize it so we can access the object in command line scripts, from other plugins, or within the core if needed.
 
-$nomstock_com = Simpli_Framework::load('nomstock_com', __FILE__);
+$simpli_frames = Simpli_Framework::load('simpli_frames', __FILE__);
 
 
 /*
@@ -67,8 +67,8 @@ $nomstock_com = Simpli_Framework::load('nomstock_com', __FILE__);
  */
 
 
-$nomstock_com->setName('Nomstock Com'); // Name should match the value of 'Plugin Name' in the comments at the top of this file);
-$nomstock_com->setTextDomain('nomstock-com'); // TextDomain must *not* include underscores and uniquely identifies the language domain for your plugin
+$simpli_frames->setName('Nomstock Com'); // Name should match the value of 'Plugin Name' in the comments at the top of this file);
+$simpli_frames->setTextDomain('nomstock-com'); // TextDomain must *not* include underscores and uniquely identifies the language domain for your plugin
 
 
 /*
@@ -87,7 +87,7 @@ $nomstock_com->setTextDomain('nomstock-com'); // TextDomain must *not* include u
  * Initialize Plugin
  * (Loads modules and settings)
  */
-$nomstock_com->init();
+$simpli_frames->init();
 
         
 ?>

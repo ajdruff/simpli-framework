@@ -10,7 +10,7 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Nomstock_Com_Addons_Simpli_Forms_Themes_Admin_Modules_FilterAddDomain extends Nomstock_Com_Addons_Simpli_Forms_Modules_Filter {
+class Simpli_Frames_Addons_Simpli_Forms_Themes_Admin_Modules_FilterAddDomain extends Simpli_Frames_Addons_Simpli_Forms_Modules_Filter {
 
     /**
      * Common Filter

@@ -11,7 +11,7 @@
  *
  *
  */
-class Nomstock_Com_Modules_NomstockStats extends Nomstock_Com_Base_v1c2_Plugin_Module {
+class Simpli_Frames_Modules_NomstockStats extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     /**
      * Configure Module
@@ -53,9 +53,9 @@ class Nomstock_Com_Modules_NomstockStats extends Nomstock_Com_Base_v1c2_Plugin_M
          * - retrieve the click data from the database and create an array where the impression dates are keys and values are unique_click counts
          * -localize the data for consumption by jqPlot.
          * this data will become available in javascript as : 
-         * nomstock.com.vars.plugin.charts.jqplot.chart1.clicks  //click counts series
-         * nomstock.com.vars.plugin.charts.jqplot.chart1.impressions    //impression counts series
-         * nomstock.com.vars.plugin.charts.jqplot.chart1.ticks   //ticks ( labels)
+         * simpli.frames.vars.plugin.charts.jqplot.chart1.clicks  //click counts series
+         * simpli.frames.vars.plugin.charts.jqplot.chart1.impressions    //impression counts series
+         * simpli.frames.vars.plugin.charts.jqplot.chart1.ticks   //ticks ( labels)
          * it is then used by stats-charts.js
 
 
@@ -373,7 +373,7 @@ class Nomstock_Com_Modules_NomstockStats extends Nomstock_Com_Base_v1c2_Plugin_M
         /*
          * Localize Variables so we can use them with Grafico
          * (Send Variables to Javascript)
-         * we want the namespace to be nomstock.com.vars.plugin.charts.flot
+         * we want the namespace to be simpli.frames.vars.plugin.charts.flot
          */
         $chart[ 'clicks_history' ] = $series;
 
@@ -450,7 +450,7 @@ class Nomstock_Com_Modules_NomstockStats extends Nomstock_Com_Base_v1c2_Plugin_M
         /*
          * Localize Variables so we can use them with Grafico
          * (Send Variables to Javascript)
-         * we want the namespace to be nomstock.com.vars.plugin.charts.grafico
+         * we want the namespace to be simpli.frames.vars.plugin.charts.grafico
          */
 
         $chart[ 'data' ] = $data;
@@ -807,7 +807,7 @@ class Nomstock_Com_Modules_NomstockStats extends Nomstock_Com_Base_v1c2_Plugin_M
          * Load Chart Page Scripts
          * but only if requesting a page with '/stats/' in the url
          */
-        if ( !is_null( $this->plugin()->tools()->getQueryVar( 'nomstock_com_action' ) ) && (stripos( $_SERVER[ 'REQUEST_URI' ], '/stats/' ) !== false)
+        if ( !is_null( $this->plugin()->tools()->getQueryVar( 'simpli_frames_action' ) ) && (stripos( $_SERVER[ 'REQUEST_URI' ], '/stats/' ) !== false)
         ) {
             $this->debug()->log( 'Loading Chart Page Scripts' );
             $this->_enqueuChartPageScripts();

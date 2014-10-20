@@ -11,7 +11,7 @@
  *
  *
  */
-class Nomstock_Com_Modules_Core extends Nomstock_Com_Base_v1c2_Plugin_Module {
+class Simpli_Frames_Modules_Core extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     /**
      * Configure Module
@@ -20,7 +20,7 @@ class Nomstock_Com_Modules_Core extends Nomstock_Com_Base_v1c2_Plugin_Module {
      * @return void
      */
     public function config() {
-        $metabox = new Nomstock_Com_Base_v1c2_Plugin_Module_Metabox( $this );
+        $metabox = new Simpli_Frames_Base_v1c2_Plugin_Module_Metabox( $this );
         $metabox->config();
         $this->debug()->t(); //trace provides a information about the method and arguments, and provides a backtrace in an expandable box. A visual trace is also provided if graphiviz is enabled.
 
@@ -2029,7 +2029,7 @@ Array
      * Get Next Ticker Page
      *
      * url:
-     * nomstock-dev.com/index.php?nomstock_com_action=getNextTickerPage&next_tickerid=1
+     * nomstock-dev.com/index.php?simpli_frames_action=getNextTickerPage&next_tickerid=1
 
      * 
      * Returns a list of results in json 

@@ -34,8 +34,8 @@
 //  datalabels :          {one: ["January", "February", "March", "April", "May", "June", "July"]}
 //};
 
-var data=nomstock.com.vars.plugin.charts.chart1.data;
-var options=nomstock.com.vars.plugin.charts.chart1.options;
+var data=simpli.frames.vars.plugin.charts.chart1.data;
+var options=simpli.frames.vars.plugin.charts.chart1.options;
 
 var bargraph3 = new Grafico.BarGraph($('mychart'),data,options
 );

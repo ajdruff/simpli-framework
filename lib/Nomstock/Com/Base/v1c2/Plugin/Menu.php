@@ -30,7 +30,7 @@
  *
  *
  */
-class Nomstock_Com_Base_v1c2_Plugin_Menu extends Nomstock_Com_Base_v1c2_Plugin_Module {
+class Simpli_Frames_Base_v1c2_Plugin_Menu extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     protected $_menu_page_hook_name;
 
@@ -151,8 +151,8 @@ class Nomstock_Com_Base_v1c2_Plugin_Menu extends Nomstock_Com_Base_v1c2_Plugin_M
      * Usage:
       setMetaboxDefaultStates(array
       (
-      'nomstock_com_about' => array('state' => 'closed', 'first' => false)
-      , 'nomstock_com_hellosettings' => array('state' => 'closed', 'first' => true)
+      'simpli_frames_about' => array('state' => 'closed', 'first' => false)
+      , 'simpli_frames_hellosettings' => array('state' => 'closed', 'first' => true)
       ));
      * @param array $meta_box_open_states
       index of each element is the id of the metabox
@@ -340,7 +340,7 @@ class Nomstock_Com_Base_v1c2_Plugin_Menu extends Nomstock_Com_Base_v1c2_Plugin_M
 
 
         $this->setMenuSlug($this->plugin()->getSlug() . '_' . $this->getSlug());
-//$this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug'=>'edit.php?post_type=nomstock_com_snippet'));
+//$this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug'=>'edit.php?post_type=simpli_frames_snippet'));
 
         $this->updateMenuTracker($this->getMenuSlug(), array('top_level_slug' => $this->getMenuSlug()));
 
@@ -411,7 +411,7 @@ class Nomstock_Com_Base_v1c2_Plugin_Menu extends Nomstock_Com_Base_v1c2_Plugin_M
     public function metabox() {
 
         if (is_null($this->_meta_box_object)) {
-            $this->_meta_box_object = new Nomstock_Com_Base_v1c2_Plugin_Module_Metabox($this);
+            $this->_meta_box_object = new Simpli_Frames_Base_v1c2_Plugin_Module_Metabox($this);
         }
         return $this->_meta_box_object;
     }
@@ -821,7 +821,7 @@ class Nomstock_Com_Base_v1c2_Plugin_Menu extends Nomstock_Com_Base_v1c2_Plugin_M
      * This is very similar to addMenuPage but forces parent to be edit.php and hardcodes some other parameters, as well
      * as immediately removing the page from the menu. This allows you to use the page added as an editor by redirecting
      * the edit action to it.
-     * the page can be accessed at : /wp-admin/edit.php?page=nomstock_com_post_editor
+     * the page can be accessed at : /wp-admin/edit.php?page=simpli_frames_post_editor
      * you can look at $hookname to confirm the page slug.
      *
      * Wrapper around add_menu_page so we can capture the page hook and still provide a nice api interface
@@ -1120,7 +1120,7 @@ class Nomstock_Com_Base_v1c2_Plugin_Menu extends Nomstock_Com_Base_v1c2_Plugin_M
              *                *
              * $action_slug  e.g.:  'settings_save' . The 'action slug', which is the short name for the action (without the module slug prefix)
              *
-             * $action_long  e.g.: nomstock_com_Menu010_general_settings_save The 'long name' of the action
+             * $action_long  e.g.: simpli_frames_Menu010_general_settings_save The 'long name' of the action
              *
              *
              */
@@ -1264,7 +1264,7 @@ class Nomstock_Com_Base_v1c2_Plugin_Menu extends Nomstock_Com_Base_v1c2_Plugin_M
      * The basic steps are :
      * 1) be sure to stick to naming conventions , where the function for the action hook must be named 'hookFormAction<MyAction>'
      * 2) that $this->setConfig('NONCE_UNIQUE_ENABLED',true) in the config() method for your Menu module
-     * 3) within your ajax script use nomstock_com.my_action_nonce_value
+     * 3) within your ajax script use simpli_frames.my_action_nonce_value
      * @param $function_name The name of the wp_ajax hook function. Must be in the form 'hookFormAction' , otherwise, the nonce will be rejected.
      * @return void
      */

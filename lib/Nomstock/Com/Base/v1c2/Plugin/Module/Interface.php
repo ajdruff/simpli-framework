@@ -10,7 +10,7 @@
  * @package SimpliFramework
  * @subpackage SimpliBasev1c2
  */
-interface Nomstock_Com_Base_v1c2_Plugin_Module_Interface {
+interface Simpli_Frames_Base_v1c2_Plugin_Module_Interface {
 
 
 
@@ -81,7 +81,7 @@ interface Nomstock_Com_Base_v1c2_Plugin_Module_Interface {
     /**
      * Get Plugin
      *
-     * @return Nomstock_Com_Base_v1c2_Plugin
+     * @return Simpli_Frames_Base_v1c2_Plugin
      */
     public function plugin() ;
 

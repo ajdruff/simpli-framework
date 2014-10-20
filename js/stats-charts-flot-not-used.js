@@ -40,8 +40,8 @@
 
 
 
-//var data=nomstock.com.vars.plugin.charts.chart1.data;
-// var options=nomstock.com.vars.plugin.charts.chart1.options;
+//var data=simpli.frames.vars.plugin.charts.chart1.data;
+// var options=simpli.frames.vars.plugin.charts.chart1.options;
 
 /*
  * Flot Plot
@@ -92,13 +92,13 @@ var options = {
 
 
 var data = [
-    {label: "Clicks", data: nomstock.com.vars.plugin.charts.flot.chart1.clicks_history},
-    {label: "Impressions", data: nomstock.com.vars.plugin.charts.flot.chart1.impressions_history}
+    {label: "Clicks", data: simpli.frames.vars.plugin.charts.flot.chart1.clicks_history},
+    {label: "Impressions", data: simpli.frames.vars.plugin.charts.flot.chart1.impressions_history}
 ];
 
 // data = [
 //    {label: "Clicks", data:[1391904000000,5]},
-//    {label: "Impressions", data: nomstock.com.vars.plugin.charts.flot.chart1.impressions_history}
+//    {label: "Impressions", data: simpli.frames.vars.plugin.charts.flot.chart1.impressions_history}
 //];
 var plot = jQuery.plot('#stats-history', data, options);
 

@@ -4,8 +4,8 @@
  * stats-charts.js
  */
 
-//var data=nomstock.com.vars.plugin.charts.chart1.data;
-// var options=nomstock.com.vars.plugin.charts.chart1.options;
+//var data=simpli.frames.vars.plugin.charts.chart1.data;
+// var options=simpli.frames.vars.plugin.charts.chart1.options;
 
 //declare vars
 var chartData;
@@ -38,13 +38,13 @@ max_impressions=0;
 
 
 chartData=[
-      nomstock.com.vars.plugin.charts.jqplot.historicalTraffic.impressions,
-    nomstock.com.vars.plugin.charts.jqplot.historicalTraffic.clicks
+      simpli.frames.vars.plugin.charts.jqplot.historicalTraffic.impressions,
+    simpli.frames.vars.plugin.charts.jqplot.historicalTraffic.clicks
 ]
   
 
-ticks = nomstock.com.vars.plugin.charts.jqplot.historicalTraffic.ticks;
-max_impressions= Array.max(nomstock.com.vars.plugin.charts.jqplot.historicalTraffic.impressions);
+ticks = simpli.frames.vars.plugin.charts.jqplot.historicalTraffic.ticks;
+max_impressions= Array.max(simpli.frames.vars.plugin.charts.jqplot.historicalTraffic.impressions);
 /*
  * check if no impressions were made and if so, then not enough data...
  */
@@ -71,8 +71,8 @@ max_impressions=0;
 
 
 chartData=[
-     nomstock.com.vars.plugin.charts.jqplot.todaysTraffic.impressions,
-    nomstock.com.vars.plugin.charts.jqplot.todaysTraffic.clicks
+     simpli.frames.vars.plugin.charts.jqplot.todaysTraffic.impressions,
+    simpli.frames.vars.plugin.charts.jqplot.todaysTraffic.clicks
    
 
 ];
@@ -80,17 +80,17 @@ chartData=[
 
 
 
-max_impressions= Array.max(nomstock.com.vars.plugin.charts.jqplot.todaysTraffic.impressions);
+max_impressions= Array.max(simpli.frames.vars.plugin.charts.jqplot.todaysTraffic.impressions);
 
 
 
-ticks = nomstock.com.vars.plugin.charts.jqplot.todaysTraffic.ticks;
+ticks = simpli.frames.vars.plugin.charts.jqplot.todaysTraffic.ticks;
 
-nomstock.com.log('ticks = ' + ticks);
-nomstock.com.log('chartData = ' + chartData);
-nomstock.com.log('clicks = ' + nomstock.com.vars.plugin.charts.jqplot.todaysTraffic.clicks);
-nomstock.com.log('impressions = ' + nomstock.com.vars.plugin.charts.jqplot.todaysTraffic.impressions);
-nomstock.com.log('max_impressions = ' + max_impressions);
+simpli.frames.log('ticks = ' + ticks);
+simpli.frames.log('chartData = ' + chartData);
+simpli.frames.log('clicks = ' + simpli.frames.vars.plugin.charts.jqplot.todaysTraffic.clicks);
+simpli.frames.log('impressions = ' + simpli.frames.vars.plugin.charts.jqplot.todaysTraffic.impressions);
+simpli.frames.log('max_impressions = ' + max_impressions);
 
 /*
  * Check for Enough Data Before we can display the chart
@@ -210,7 +210,7 @@ function chartToday(chartId,chartData,ticks){
      */
     
     var yAxisMax=GetMaxY(chartData);
-nomstock.com.log('yAxisMax ' +yAxisMax );
+simpli.frames.log('yAxisMax ' +yAxisMax );
     var chart = jQuery.jqplot(chartId, chartData, {
     animate: !jQuery.jqplot.use_excanvas,
     seriesDefaults: {

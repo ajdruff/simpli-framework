@@ -12,7 +12,7 @@
  *
  * @property boolean $CUSTOM_POST_EDITOR_ENABLED Whether you want to redirect to a custom post editor
  */
-class Nomstock_Com_Base_v1c2_Plugin_PostType extends Nomstock_Com_Base_v1c2_Plugin_Menu {
+class Simpli_Frames_Base_v1c2_Plugin_PostType extends Simpli_Frames_Base_v1c2_Plugin_Menu {
 
     /**
      * Add Hooks

@@ -9,7 +9,7 @@
  * @subpackage SimpliBasev1c2
  * @property string $DISABLED_MODULES An array of Module Names of the Addon that you don't want to have loaded
  */
-class Nomstock_Com_Base_v1c2_Plugin_Addon implements Nomstock_Com_Base_v1c2_Plugin_Addon_Interface, Nomstock_Com_Base_v1c2_Plugin_Interface {
+class Simpli_Frames_Base_v1c2_Plugin_Addon implements Simpli_Frames_Base_v1c2_Plugin_Addon_Interface, Simpli_Frames_Base_v1c2_Plugin_Interface {
 
     /**
      * Plugin directory path
@@ -122,7 +122,7 @@ class Nomstock_Com_Base_v1c2_Plugin_Addon implements Nomstock_Com_Base_v1c2_Plug
      * Get Plugin
      *
      * @param none
-     * @return Nomstock_Com_Base_v1c2_Plugin
+     * @return Simpli_Frames_Base_v1c2_Plugin
      */
     public function plugin() {
 

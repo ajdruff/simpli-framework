@@ -13,8 +13,8 @@
 /*
  * create the script's namespace
  */
-if (typeof nomstock.com.post === 'undefined') {
-    nomstock.com.post = {};
+if (typeof simpli.frames.post === 'undefined') {
+    simpli.frames.post = {};
 }
 
 
@@ -27,13 +27,13 @@ jQuery(document).ready(function(jQuery) {
      */
 
 
-    nomstock.com.post.bind_events();
+    simpli.frames.post.bind_events();
 })
 
 
 
 
-nomstock.com.post.bind_events = function()
+simpli.frames.post.bind_events = function()
 {
 
     var form;
@@ -51,7 +51,7 @@ nomstock.com.post.bind_events = function()
          * Remove all the hidden fields holding
          * the unchecked checkboxes values
          */
-        nomstock.com.submit.reset_checkboxes(form);
+        simpli.frames.submit.reset_checkboxes(form);
         /*
          * Save Buttons ( publish , save , or our own ajax save )
          */
@@ -59,8 +59,8 @@ nomstock.com.post.bind_events = function()
 
 //        jQuery('#publish,#save-post').click(function(event) {
 //
-//            nomstock.com.log('submitting via publish button');
-//            nomstock.com.submit.prepare_form(form);
+//            simpli.frames.log('submitting via publish button');
+//            simpli.frames.submit.prepare_form(form);
 //
 //        });
 
@@ -74,8 +74,8 @@ nomstock.com.post.bind_events = function()
 //        form = jQuery(this).closest('form')[0];
 //
 //
-//        nomstock.com.submit.prepare_form(form); //adds nonce and hidden form elements
-//        nomstock.com.submit.ajaxSubmit(form, event, ajax_action_slug); //executes the ajax submission
+//        simpli.frames.submit.prepare_form(form); //adds nonce and hidden form elements
+//        simpli.frames.submit.ajaxSubmit(form, event, ajax_action_slug); //executes the ajax submission
 //
 //    });
 
@@ -148,7 +148,7 @@ nomstock.com.post.bind_events = function()
 
 
         if (isAjax) {
-            nomstock.com.log('post options are being saved as ajax');
+            simpli.frames.log('post options are being saved as ajax');
             /*
              *
              * @var object The parts of the id. Includes form_namae, form_counter, and action_slug
@@ -175,7 +175,7 @@ nomstock.com.post.bind_events = function()
              */
             //   var userConfirmed = true;
 
-            var userConfirmed = nomstock.com.do_action(nomstock.com.vars.plugin.slug + '_save_post',
+            var userConfirmed = simpli.frames.do_action(simpli.frames.vars.plugin.slug + '_save_post',
                     {
                         form: jQuery(form)
                                 , event: event
@@ -199,7 +199,7 @@ nomstock.com.post.bind_events = function()
              * Prepare form , which adds any needed hidden elements
              */
 
-            nomstock.com.submit.prepare_form(form); //adds hidden form elements
+            simpli.frames.submit.prepare_form(form); //adds hidden form elements
 
             /*
              * Pass on to the form handler
@@ -207,15 +207,15 @@ nomstock.com.post.bind_events = function()
 
 
             event.preventDefault(); //to prevent being submitted as non-ajax.
-            nomstock.com.submit.ajaxSubmit(form, event, form_action_slug); //submits the form
+            simpli.frames.submit.ajaxSubmit(form, event, form_action_slug); //submits the form
 
             /*
              * debug messages
              */
-            nomstock.com.log('Action of button you clicked = ' + id_parts.action);
+            simpli.frames.log('Action of button you clicked = ' + id_parts.action);
             return(false);
         } else {
-            var userConfirmed = nomstock.com.do_action(nomstock.com.vars.plugin.slug + '_save_post',
+            var userConfirmed = simpli.frames.do_action(simpli.frames.vars.plugin.slug + '_save_post',
                     {
                         form: jQuery(form)
                                 , event: event
@@ -233,7 +233,7 @@ nomstock.com.post.bind_events = function()
              * Prepare form , which adds any needed hidden elements
              */
 
-            nomstock.com.submit.prepare_form(form); //adds hidden form elements
+            simpli.frames.submit.prepare_form(form); //adds hidden form elements
 
             return (true);
         }
@@ -244,6 +244,6 @@ nomstock.com.post.bind_events = function()
          * debug messages
          */
 
-        nomstock.com.log('Form action = ' + jQuery(form).attr('action'));
+        simpli.frames.log('Form action = ' + jQuery(form).attr('action'));
     });
 }

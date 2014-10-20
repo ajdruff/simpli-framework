@@ -9,7 +9,7 @@
  * @package SimpliFramework
  * @subpackage Addons
  */
-class Nomstock_Com_Addons_Mycompany_Myaddon_Addon extends Nomstock_Com_Base_v1c2_Plugin_Addon {
+class Simpli_Frames_Addons_Mycompany_Myaddon_Addon extends Simpli_Frames_Base_v1c2_Plugin_Addon {
 
     /**
      * Add Hooks

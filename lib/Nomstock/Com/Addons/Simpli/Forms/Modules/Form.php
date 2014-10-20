@@ -10,7 +10,7 @@
  * @subpackage SimpliAddonsForms
 
  */
-class Nomstock_Com_Addons_Simpli_Forms_Modules_Form extends Nomstock_Com_Base_v1c2_Plugin_Module {
+class Simpli_Frames_Addons_Simpli_Forms_Modules_Form extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     private $_form_theme;
     private $_field_prefix;
@@ -202,8 +202,8 @@ class Nomstock_Com_Addons_Simpli_Forms_Modules_Form extends Nomstock_Com_Base_v1
 
         /*
          * if el_id is not specified as an attribute, then make the 0th attribute the el_id
-         * that allows you to do something like this [nomstock_com text] , note the space after
-         * the shortcode tag. or [nomstock_com el='text'
+         * that allows you to do something like this [simpli_frames text] , note the space after
+         * the shortcode tag. or [simpli_frames el='text'
          */
         if ( !isset( $atts[ 'el' ] ) || is_null( $atts[ 'el' ] ) ) {
 

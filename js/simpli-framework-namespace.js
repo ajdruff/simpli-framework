@@ -16,8 +16,8 @@
 if (typeof nomstock === 'undefined') {
     nomstock = {};
 }
-if (typeof nomstock.com === 'undefined') {
-    nomstock.com = {};
+if (typeof simpli.frames === 'undefined') {
+    simpli.frames = {};
 }
 
 /**
@@ -30,22 +30,22 @@ if (typeof nomstock.com === 'undefined') {
 
 
 
-nomstock.com.log = function(message)
+simpli.frames.log = function(message)
 {
 
-    if (typeof nomstock.com !== 'undefined') { //check if nomstock_com namespace is available . if it is, variables are also available
-        if (nomstock.com.vars.plugin.debug === true) { //if variables are available, we can check preferences
+    if (typeof simpli.frames !== 'undefined') { //check if simpli_frames namespace is available . if it is, variables are also available
+        if (simpli.frames.vars.plugin.debug === true) { //if variables are available, we can check preferences
 
             console.log(message);
         }
     }
 
 };
-nomstock.com.logError = function(message)
+simpli.frames.logError = function(message)
 {
 
-    if (typeof nomstock.com !== 'undefined') { //check if nomstock_com namespace is available . if it is, variables are also available
-        if (nomstock.com.vars.plugin.debug === true) { //if variables are available, we can check preferences
+    if (typeof simpli.frames !== 'undefined') { //check if simpli_frames namespace is available . if it is, variables are also available
+        if (simpli.frames.vars.plugin.debug === true) { //if variables are available, we can check preferences
 
             console.error(message);
         }
@@ -53,11 +53,11 @@ nomstock.com.logError = function(message)
 
 };
 
-nomstock.com.logWarn = function(message)
+simpli.frames.logWarn = function(message)
 {
 
-    if (typeof nomstock.com !== 'undefined') { //check if nomstock_com namespace is available . if it is, variables are also available
-        if (nomstock.com.vars.plugin.debug === true) { //if variables are available, we can check preferences
+    if (typeof simpli.frames !== 'undefined') { //check if simpli_frames namespace is available . if it is, variables are also available
+        if (simpli.frames.vars.plugin.debug === true) { //if variables are available, we can check preferences
 
             console.warn(message);
         }
@@ -74,13 +74,13 @@ nomstock.com.logWarn = function(message)
  *  jQuery(document).trigger('nomstock_forms_submit_prompt_' + form_action_slug, form_action_slug);
  *
  *  You can do this :
- *  nomstock.com.do_action('nomstock_forms_submit_prompt_' + form_action_slug,form_action_slug);
+ *  simpli.frames.do_action('nomstock_forms_submit_prompt_' + form_action_slug,form_action_slug);
  *
  * @param string $tag The name of the hook you wish to execute.
  * @param string $arg The list of arguments to send to this hook.
  */
 
-nomstock.com.do_action = function(tag, arg)
+simpli.frames.do_action = function(tag, arg)
 {
     return  (jQuery(document).triggerHandler(tag, arg));
 
@@ -96,13 +96,13 @@ nomstock.com.do_action = function(tag, arg)
  *  jQuery(document).bind('nomstock_forms_submit_prompt_' + 'upload_addon', uploadActionPrompt);
  *
  *  You can do this :
- *  nomstock.com.add_action('nomstock_forms_submit_prompt_' + 'upload_addon', uploadActionPrompt);
+ *  simpli.frames.add_action('nomstock_forms_submit_prompt_' + 'upload_addon', uploadActionPrompt);
  *
  *
  * @param string $tag The name of the action to which $function_to_add is hooked
  * @param string $function_to_add The function object you wish to be hooked
  */
-nomstock.com.add_action = function(trigger, function_object) {
+simpli.frames.add_action = function(trigger, function_object) {
     jQuery(document).bind(trigger, function_object);
 
 

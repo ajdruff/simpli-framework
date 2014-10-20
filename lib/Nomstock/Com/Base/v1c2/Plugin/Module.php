@@ -10,12 +10,12 @@
  * @package SimpliFramework
  * @subpackage SimpliBasev1c2
  */
-class Nomstock_Com_Base_v1c2_Plugin_Module implements Nomstock_Com_Base_v1c2_Plugin_Module_Interface {
+class Simpli_Frames_Base_v1c2_Plugin_Module implements Simpli_Frames_Base_v1c2_Plugin_Module_Interface {
 
     /**
      * Plugin object that this module extends
      *
-     * @var Nomstock_Com_Base_v1c2_Plugin
+     * @var Simpli_Frames_Base_v1c2_Plugin
      */
     protected $_plugin;
 
@@ -34,7 +34,7 @@ class Nomstock_Com_Base_v1c2_Plugin_Module implements Nomstock_Com_Base_v1c2_Plu
     protected $_name;
     protected $_addon = null;
 
-    function __construct(Nomstock_Com_Base_v1c2_Plugin $plugin, Nomstock_Com_Base_v1c2_Plugin_Addon $addon = null) {
+    function __construct(Simpli_Frames_Base_v1c2_Plugin $plugin, Simpli_Frames_Base_v1c2_Plugin_Addon $addon = null) {
 
         if (is_null($addon)) {
             $this->_plugin = $plugin;
@@ -186,7 +186,7 @@ class Nomstock_Com_Base_v1c2_Plugin_Module implements Nomstock_Com_Base_v1c2_Plu
      * Returns the plugin object that created the module
      *
      * @param none
-     * @return Nomstock_Com_Base_v1c2_Plugin
+     * @return Simpli_Frames_Base_v1c2_Plugin
      */
     public function plugin() {
 

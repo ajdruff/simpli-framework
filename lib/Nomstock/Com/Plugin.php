@@ -17,7 +17,7 @@
  * @property string $EMAIL_PASSWORD The password to be used when sending emails.
 
  */
-class Nomstock_Com_Plugin extends Nomstock_Com_Base_v1c2_Plugin {
+class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
 
     /**
      * Add Hooks
@@ -182,7 +182,7 @@ add_action( 'template_redirect', 'catalyst_add_stylesheets', 0 );
          */
         $this->setConfig(
         'EMAIL_FROM_DEFAULT'
-        , 'siteadmin@nomstock.com'
+        , 'siteadmin@simpli.frames'
         );    
         
         /*

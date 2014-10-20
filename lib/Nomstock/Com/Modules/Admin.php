@@ -10,7 +10,7 @@
  * 
  *
  */
-class Nomstock_Com_Modules_Admin extends Nomstock_Com_Base_v1c2_Plugin_Module {
+class Simpli_Frames_Modules_Admin extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     private $_menu_position = '';
 

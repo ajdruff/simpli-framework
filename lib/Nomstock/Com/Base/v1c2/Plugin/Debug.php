@@ -44,8 +44,8 @@
  *
  *
  */
-//class Nomstock_Com_Base_v1c2_Plugin_Debug {//extends Nomstock_Com_Base_v1c2_Plugin_Helper{
-class Nomstock_Com_Base_v1c2_Plugin_Debug extends Nomstock_Com_Base_v1c2_Plugin_Helper {
+//class Simpli_Frames_Base_v1c2_Plugin_Debug {//extends Simpli_Frames_Base_v1c2_Plugin_Helper{
+class Simpli_Frames_Base_v1c2_Plugin_Debug extends Simpli_Frames_Base_v1c2_Plugin_Helper {
 //
 //    function __construct($plugin) {
 //        $this->_plugin = $plugin;

@@ -12,7 +12,7 @@
  *
  *
  */
-class Nomstock_Com_Modules_CronEmailAlerts extends Nomstock_Com_Base_v1c2_Plugin_Module {
+class Simpli_Frames_Modules_CronEmailAlerts extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     /**
      * Configure Module

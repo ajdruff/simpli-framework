@@ -9,7 +9,7 @@
  * @package SimpliFramework
  * @subpackage SimpliBasev1c2
  */
-class Nomstock_Com_Base_v1c2_Plugin_Helper implements Nomstock_Com_Base_v1c2_Plugin_Helper_Interface {
+class Simpli_Frames_Base_v1c2_Plugin_Helper implements Simpli_Frames_Base_v1c2_Plugin_Helper_Interface {
 
     /**
      * Constructor
@@ -21,7 +21,7 @@ class Nomstock_Com_Base_v1c2_Plugin_Helper implements Nomstock_Com_Base_v1c2_Plu
      */
     protected $_plugin = null;
 
-    function __construct(Nomstock_Com_Base_v1c2_Plugin $plugin) {
+    function __construct(Simpli_Frames_Base_v1c2_Plugin $plugin) {
 //        static $count = 0;
 //        $count++;
 //        if ($count > 2) {

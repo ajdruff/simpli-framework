@@ -10,7 +10,7 @@
  *
  *
  */
-class Nomstock_Com_Modules_PostUserOptions extends Nomstock_Com_Base_v1c2_Plugin_Module {
+class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     /**
      * Post option Defaults
@@ -231,7 +231,7 @@ class Nomstock_Com_Modules_PostUserOptions extends Nomstock_Com_Base_v1c2_Plugin
          * Set the Post Option defaults
          * About options: You must prefix each option with the plugin slug in the form 'mycompany_myplugin_<option_name>
          * When creating post option forms, the field name must exactly equal the associative index of each element below
-         * You can access a option with or without the prefix. as in $text=getUserOption('text') or $text=getUserOption('nomstock_com_text')
+         * You can access a option with or without the prefix. as in $text=getUserOption('text') or $text=getUserOption('simpli_frames_text')
          * Both will retrieve the same value
          */
 
@@ -378,7 +378,7 @@ class Nomstock_Com_Modules_PostUserOptions extends Nomstock_Com_Base_v1c2_Plugin
 //    /**
 //     * Get Post Option
 //     *
-//     * You can access a option with or without the prefix. as in $text=getUserOption('text') or $text=getUserOption('nomstock_com_text')
+//     * You can access a option with or without the prefix. as in $text=getUserOption('text') or $text=getUserOption('simpli_frames_text')
 //     * Its a bit faster without the prefix :)
 //     * @param string $option_name
 //     * @return mixed
@@ -744,7 +744,7 @@ class Nomstock_Com_Modules_PostUserOptions extends Nomstock_Com_Base_v1c2_Plugin
 //        $inline_deps = array();
 //        $external_deps = array('jquery');
 //        $this->plugin()->enqueueInlineScript($handle, $path, $inline_deps, $external_deps);
-//+ '&' + nomstock_com.plugin.slug + '_nonce= ' + nomstock_com.save_post_option_nonce
+//+ '&' + simpli_frames.plugin.slug + '_nonce= ' + simpli_frames.save_post_option_nonce
 //        <?php wp_nonce_field('ajax_save_post_options', $this->plugin()->getSlug() . '_nonce');
 
 
@@ -868,7 +868,7 @@ class Nomstock_Com_Modules_PostUserOptions extends Nomstock_Com_Base_v1c2_Plugin
         /*
          * WordPress update_post_meta function does not give a true indication of
          * success or failure , so as a result, neither do we by default and by designso we choose here to always return a success message.
-         * If you want to override this behavior, you'll need to set the parameter $true_on_success to true in (Nomstock_Com_Module_PostUserOptions::saveUserOptions)
+         * If you want to override this behavior, you'll need to set the parameter $true_on_success to true in (Simpli_Frames_Module_PostUserOptions::saveUserOptions)
          * If the user questions whether updating is occuring properly, they can turn on debugging.
          */
         $this->saveUserOptions($post_id);
@@ -1040,7 +1040,7 @@ class Nomstock_Com_Modules_PostUserOptions extends Nomstock_Com_Base_v1c2_Plugin
     public function metabox() {
 
         if (is_null($this->_meta_box_object)) {
-            $this->_meta_box_object = new Nomstock_Com_Base_v1c2_Plugin_Module_Metabox($this);
+            $this->_meta_box_object = new Simpli_Frames_Base_v1c2_Plugin_Module_Metabox($this);
         }
         return $this->_meta_box_object;
     }

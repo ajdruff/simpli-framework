@@ -9,9 +9,9 @@
  * @package SimpliFramework
  * @subpackage SimpliBasev1c2
  */
-interface Nomstock_Com_Base_v1c2_Plugin_Module_Helper_Interface {
+interface Simpli_Frames_Base_v1c2_Plugin_Module_Helper_Interface {
 
-public function __construct(Nomstock_Com_Base_v1c2_Plugin_Module $module, Nomstock_Com_Base_v1c2_Plugin_Addon $addon = null);
+public function __construct(Simpli_Frames_Base_v1c2_Plugin_Module $module, Simpli_Frames_Base_v1c2_Plugin_Addon $addon = null);
 
     /**
      * Get Addon
@@ -40,7 +40,7 @@ public function __construct(Nomstock_Com_Base_v1c2_Plugin_Module $module, Nomsto
     /**
      * Get Plugin
      *
-     * @return Nomstock_Com_Base_v1c2_Plugin
+     * @return Simpli_Frames_Base_v1c2_Plugin
      */
     public function plugin() ;
 

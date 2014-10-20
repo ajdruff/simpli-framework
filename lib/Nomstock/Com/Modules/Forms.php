@@ -28,7 +28,7 @@
  * 
  * 
  */
-class Nomstock_Com_Modules_Forms extends Nomstock_Com_Base_v1c2_Plugin_Module {
+class Simpli_Frames_Modules_Forms extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     public function __toString(){
 
@@ -445,7 +445,7 @@ class Nomstock_Com_Modules_Forms extends Nomstock_Com_Base_v1c2_Plugin_Module {
              *                *
              * $action_slug  e.g.:  'settings_save' . The 'action slug', which is the short name for the action (without the module slug prefix)
              *
-             * $action_long  e.g.: nomstock_com_Menu010_general_settings_save The 'long name' of the action
+             * $action_long  e.g.: simpli_frames_Menu010_general_settings_save The 'long name' of the action
              *
              *
              */
@@ -514,7 +514,7 @@ class Nomstock_Com_Modules_Forms extends Nomstock_Com_Base_v1c2_Plugin_Module {
      * The basic steps are :
      * 1) be sure to stick to naming conventions , where the function for the action hook must be named 'hookFormAction<MyAction>'
      * 2) that $this->setConfig('NONCE_UNIQUE_ENABLED',true) in the config() method for your Menu module
-     * 3) within your ajax script use nomstock_com.my_action_nonce_value
+     * 3) within your ajax script use simpli_frames.my_action_nonce_value
      * @param $function_name The name of the wp_ajax hook function. Must be in the form 'hookFormAction' , otherwise, the nonce will be rejected.
      * @return void
      */
@@ -865,7 +865,7 @@ class Nomstock_Com_Modules_Forms extends Nomstock_Com_Base_v1c2_Plugin_Module {
          * the 'hookShowResponseMessage' which shows the message there.
          */
         $redirect_url = $this->plugin()->tools()->rebuildUrl( array( $this->plugin()->QUERY_VAR . '_action' => 'form_response', 'simpli_forms_id' => $form_id ), $this->plugin()->tools()->getRequestVar( '_simpli_forms_referer_url' ) );
-///wp-admin/edit.php?post_type=sf_snippet&page=nomstock_com_menu20_my_menu&nomstock_com_action=form_response&simpli_forms_id=simpli_forms_1
+///wp-admin/edit.php?post_type=sf_snippet&page=simpli_frames_menu20_my_menu&simpli_frames_action=form_response&simpli_forms_id=simpli_forms_1
         //   $this->debug()->logVar('$redirect_url = ', $redirect_url);
 
         wp_redirect( $redirect_url );
@@ -3872,7 +3872,7 @@ where id IN (" . $str = implode( ", ", $ids[ $status_group ] ) . ")";
             'label_size' => '4',
             'size' => '4',
             'name' => 'beta_signup',
-            'layout' => 'nomstock.com'
+            'layout' => 'simpli.frames'
                 )
         );
         ?><!-- response start to replace form -->
@@ -3921,7 +3921,7 @@ where id IN (" . $str = implode( ", ", $ids[ $status_group ] ) . ")";
                 $f->el( array(
                     'el' => 'button',
                     'value' => 'Send me a Beta Invite!', //'Add to the Nomstock Ticker',
-                    //  'spinner'=>$nomstock_com->getUrl().'/images/wpspin_light.gif',
+                    //  'spinner'=>$simpli_frames->getUrl().'/images/wpspin_light.gif',
                     'spinner' => $this->plugin()->getUrl() . '/images/spinner.gif',
                     'action' => 'beta_signup',
                     'class' => 'btn-success btn-block',
@@ -3984,7 +3984,7 @@ where id IN (" . $str = implode( ", ", $ids[ $status_group ] ) . ")";
             'label_size' => '4',
             'size' => '4',
             'name' => 'list_domain',
-            'layout' => 'nomstock.com'
+            'layout' => 'simpli.frames'
                 )
         );
         ?><!-- response start to replace form -->
@@ -4113,7 +4113,7 @@ where id IN (" . $str = implode( ", ", $ids[ $status_group ] ) . ")";
                 $f->el( array(
                     'el' => 'button',
                     'value' => 'List my domain name for free!', //'Add to the Nomstock Ticker',
-                    //  'spinner'=>$nomstock_com->getUrl().'/images/wpspin_light.gif',
+                    //  'spinner'=>$simpli_frames->getUrl().'/images/wpspin_light.gif',
                     'spinner' => $this->plugin()->getUrl() . '/images/spinner.gif',
                     'action' => 'submit_domain',
                     'class' => 'btn-info btn-block',

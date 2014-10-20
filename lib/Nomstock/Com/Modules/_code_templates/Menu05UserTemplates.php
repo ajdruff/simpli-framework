@@ -8,7 +8,7 @@
  * @package SimpliFramework
  *
  */
-class Nomstock_Com_Modules_Menu05UserTemplates extends Nomstock_Com_Base_v1c2_Plugin_PostType {
+class Simpli_Frames_Modules_Menu05UserTemplates extends Simpli_Frames_Base_v1c2_Plugin_PostType {
 
 
 /**

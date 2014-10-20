@@ -6,15 +6,15 @@
  * 
  */
 
-nomstock.com.log('loaded widgets.js');
+simpli.frames.log('loaded widgets.js');
 
 
 
 /*
  * create the script's namespace
  */
-if (typeof nomstock.com.widgets === 'undefined') {
-    nomstock.com.widgets = {};
+if (typeof simpli.frames.widgets === 'undefined') {
+    simpli.frames.widgets = {};
 }
 
 
@@ -30,13 +30,13 @@ jQuery(document).ready(function() {
      * Used WidgeCode and populate your form with that.
      */
     
-    nomstock.com.widgets.AutoFillWidgetCode();
+    simpli.frames.widgets.AutoFillWidgetCode();
     
     /*
      * 
      * Configure Markitup TextArea
      */
-  //  nomstock.com.widgets.configureMarkitup();
+  //  simpli.frames.widgets.configureMarkitup();
     
 });
 
@@ -44,26 +44,26 @@ jQuery(document).ready(function() {
 /*
  * Declare Variables for Widgets Namespace
  */
-nomstock.com.widgets.widgetFormElement = jQuery('#widget_code_1');
+simpli.frames.widgets.widgetFormElement = jQuery('#widget_code_1');
 
-nomstock.com.widgets.key = 'savedWidgetCode';
+simpli.frames.widgets.key = 'savedWidgetCode';
 
 /*
  * AutoFillWidgetCode
  * Manages the saving and retrieving of the Widget Code from local storage
  */
-nomstock.com.widgets.AutoFillWidgetCode = function() {
+simpli.frames.widgets.AutoFillWidgetCode = function() {
 
 
 
     // use jStorage to retrieve a stored key
     // on first load this is going to return undefined
-    widgetCode = localStorage.getItem(nomstock.com.widgets.key);
+    widgetCode = localStorage.getItem(simpli.frames.widgets.key);
 
     // if a widgetCode was saved from previous session
     // set the value of the widgetCode field to that
     if (widgetCode) {
-        nomstock.com.widgets.widgetFormElement.val(widgetCode);
+        simpli.frames.widgets.widgetFormElement.val(widgetCode);
 
     }
 
@@ -71,7 +71,7 @@ nomstock.com.widgets.AutoFillWidgetCode = function() {
     // set widgetCode field value to blank and focus on it
     // and make sure the checkbox is unchecked
     else {
-        nomstock.com.widgets.widgetFormElement.val('').focus();
+        simpli.frames.widgets.widgetFormElement.val('').focus();
     }
 
 
@@ -81,35 +81,35 @@ nomstock.com.widgets.AutoFillWidgetCode = function() {
  * Namespace hook to form submit
  * This is fired using the form-menu-hooks.js plugin
  */
-nomstock.com.widgets.saveWidgetCode = function(trigger_event, args) {
+simpli.frames.widgets.saveWidgetCode = function(trigger_event, args) {
 
-    localStorage.setItem(nomstock.com.widgets.key, nomstock.com.widgets.widgetFormElement.val());
+    localStorage.setItem(simpli.frames.widgets.key, simpli.frames.widgets.widgetFormElement.val());
 
-    nomstock.com.log('saved to local storage');
+    simpli.frames.log('saved to local storage');
 
 }
 
-nomstock.com.widgets.addHooks = function()
+simpli.frames.widgets.addHooks = function()
 
 {
     /*
      *
      * Add action hooks here
      * Usage:
-     * nomstock.com.add_action('name_of_action_tag', function_name_without_quotes_around_it);
+     * simpli.frames.add_action('name_of_action_tag', function_name_without_quotes_around_it);
      *
      */
 
 
 
-    nomstock.com.add_action(nomstock.com.vars.plugin.slug + '_submit_prompt_' + 'submit_domain', nomstock.com.widgets.saveWidgetCode);
+    simpli.frames.add_action(simpli.frames.vars.plugin.slug + '_submit_prompt_' + 'submit_domain', simpli.frames.widgets.saveWidgetCode);
     
 }
 
 /*
  * Configure TextArea to use Markitup, a Markdown text editor
  */
-nomstock.com.widgets.configureMarkitup = function()
+simpli.frames.widgets.configureMarkitup = function()
 
 {
  /*

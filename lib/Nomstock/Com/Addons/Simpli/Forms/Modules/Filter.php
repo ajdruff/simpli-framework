@@ -10,7 +10,7 @@
  * @subpackage SimpliAddonsForms
  *
  */
-class Nomstock_Com_Addons_Simpli_Forms_Modules_Filter extends Nomstock_Com_Base_v1c2_Plugin_Module {
+class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     /**
      * Add Hooks

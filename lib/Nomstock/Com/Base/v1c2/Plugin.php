@@ -28,7 +28,7 @@
  *
  *
  */
-class Nomstock_Com_Base_v1c2_Plugin implements Nomstock_Com_Base_v1c2_Plugin_Interface {
+class Simpli_Frames_Base_v1c2_Plugin implements Simpli_Frames_Base_v1c2_Plugin_Interface {
 
     /**
      * Plugin directory path
@@ -54,7 +54,7 @@ class Nomstock_Com_Base_v1c2_Plugin implements Nomstock_Com_Base_v1c2_Plugin_Int
 //    /**
 //     * Logger
 //     *
-//     * @var Nomstock_Com_Base_v1c2_Logger_Interface
+//     * @var Simpli_Frames_Base_v1c2_Logger_Interface
 //     */
 //    protected $_logger = null;
 
@@ -249,7 +249,7 @@ class Nomstock_Com_Base_v1c2_Plugin implements Nomstock_Com_Base_v1c2_Plugin_Int
 //         *
 //         */
 //
-//        $this->setLogger(Nomstock_Com_Base_v1c2_Logger::getInstance());
+//        $this->setLogger(Simpli_Frames_Base_v1c2_Logger::getInstance());
 //
 
         return $this;
@@ -282,13 +282,13 @@ class Nomstock_Com_Base_v1c2_Plugin implements Nomstock_Com_Base_v1c2_Plugin_Int
          */
 
         if (!$this->DEBUG) {
-            return (new Nomstock_Com_Base_v1c2_Phantom()); //return a phantom object which will silently ignore each call to the debug class. To optimize further, you should comment out all calls to the $this->debug() object using a regex search and replace  in your final released code.
+            return (new Simpli_Frames_Base_v1c2_Phantom()); //return a phantom object which will silently ignore each call to the debug class. To optimize further, you should comment out all calls to the $this->debug() object using a regex search and replace  in your final released code.
         }
         if (is_null($this->_debug)) {
             $class_namespace_parts = $this->getClassNamespaceParts();
             if (!file_exists($this->getDirectory() . '/lib/' . $class_namespace_parts[0] . '/' . $class_namespace_parts[1] . '/DebugConfig.php')) {
                 $this->setConfig('DEBUG', false); //switch Debug to off since phantom will not be accurate.
-                $this->_debug = new Nomstock_Com_Base_v1c2_Phantom(); //create a phantom
+                $this->_debug = new Simpli_Frames_Base_v1c2_Phantom(); //create a phantom
             } else {
                 try {
 
@@ -298,7 +298,7 @@ class Nomstock_Com_Base_v1c2_Plugin implements Nomstock_Com_Base_v1c2_Plugin_Int
                     //   $this->_debug->addHooks();
                 } catch (Exception $exc) {
                     echo $exc->getMessage();
-                    $this->_debug = new Nomstock_Com_Base_v1c2_Phantom(); //create a phantom
+                    $this->_debug = new Simpli_Frames_Base_v1c2_Phantom(); //create a phantom
                 }
             }
         }
@@ -910,13 +910,13 @@ class Nomstock_Com_Base_v1c2_Plugin implements Nomstock_Com_Base_v1c2_Plugin_Int
      *
      * Provides access to the library of methods in the Basev1c2 Tools class
      * @param none
-     * @return Nomstock_Com_Base_v1c2_Plugin_Tools Basev1c2 Tools
+     * @return Simpli_Frames_Base_v1c2_Plugin_Tools Basev1c2 Tools
      */
     public function tools() {
 
         if (is_null($this->_tools)) {
 
-            $this->_tools = new Nomstock_Com_Base_v1c2_Plugin_Tools($this);
+            $this->_tools = new Simpli_Frames_Base_v1c2_Plugin_Tools($this);
         }
 
 
@@ -1718,7 +1718,7 @@ class Nomstock_Com_Base_v1c2_Plugin implements Nomstock_Com_Base_v1c2_Plugin_Int
 
         /*
          * Use the framework setLocalVars to create an object within javascript named after the slug for your plugin, with the properties above.
-         * for example,to access the plugins url, do this : alert ( nomstock_com.plugin.url)
+         * for example,to access the plugins url, do this : alert ( simpli_frames.plugin.url)
          * Avoid use of wp_localize as it prevents us from adding variables after the enqueue events.
          */
 
@@ -1729,7 +1729,7 @@ class Nomstock_Com_Base_v1c2_Plugin implements Nomstock_Com_Base_v1c2_Plugin_Int
      * Prints Local Vars to Footer of Page
      *
      * Gathers all the variables that were passed using setLocalVars()
-     * and adds them to javascript as members of object nomstock.com.vars
+     * and adds them to javascript as members of object simpli.frames.vars
      * @param none
      * @return void
      */
@@ -1744,7 +1744,7 @@ class Nomstock_Com_Base_v1c2_Plugin implements Nomstock_Com_Base_v1c2_Plugin_Int
          */
         ?>
         <script type='text/javascript'>
-            // nomstock.com variables
+            // simpli.frames variables
             if (typeof  <?php echo $prefix; ?> !== 'undefined' && typeof  <?php echo $prefix . '.' . $suffix ?> !== 'undefined') {
         <?php echo $namespace; ?> = <?php echo $vars; ?>;
             }
@@ -2265,12 +2265,12 @@ class Nomstock_Com_Base_v1c2_Plugin implements Nomstock_Com_Base_v1c2_Plugin_Int
      *
      * Provides access to the library of methods in the Post Helper class
      * @param none
-     * @return Nomstock_Com_Base_v1c2_Plugin_Module_Post
+     * @return Simpli_Frames_Base_v1c2_Plugin_Module_Post
      */
     public function post() {
 
         if (is_null($this->_post_helper)) {
-            $this->_post_helper = new Nomstock_Com_Base_v1c2_Plugin_Post($this);
+            $this->_post_helper = new Simpli_Frames_Base_v1c2_Plugin_Post($this);
         }
         return $this->_post_helper;
     }

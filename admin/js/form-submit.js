@@ -16,8 +16,8 @@
  * create the script's namespace
  */
 
-if (typeof nomstock.com.submit === 'undefined') {
-    nomstock.com.submit = {};
+if (typeof simpli.frames.submit === 'undefined') {
+    simpli.frames.submit = {};
 }
 
 
@@ -32,10 +32,10 @@ if (typeof nomstock.com.submit === 'undefined') {
  */
 
 jQuery(document).ready(function() {
-    nomstock.com.log('form-submit.js loaded inline');
+    simpli.frames.log('form-submit.js loaded inline');
 });
 
-nomstock.com.submit.prepare_form = function(form)
+simpli.frames.submit.prepare_form = function(form)
 {
 
 
@@ -43,7 +43,7 @@ nomstock.com.submit.prepare_form = function(form)
     /*
      * add the nonce for our post options
      */
-//    $nonce_element = '<input type="hidden" name="' + nomstock.com.vars.plugin.slug + '_nonce" value="' + nomstock.com.vars.save_post_option_nonce + '">';
+//    $nonce_element = '<input type="hidden" name="' + simpli.frames.vars.plugin.slug + '_nonce" value="' + simpli.frames.vars.save_post_option_nonce + '">';
 //
 //    jQuery(form).append($nonce_element);
 
@@ -52,7 +52,7 @@ nomstock.com.submit.prepare_form = function(form)
      * Get all the unchecked checkboxes
      *
      * Explanation of selector:
-     * input[id^='" + nomstock.com.vars.plugin.slug + "']  //find all inputs that begin with nomstock.com.vars or whatever your plugin slug is
+     * input[id^='" + simpli.frames.vars.plugin.slug + "']  //find all inputs that begin with simpli.frames.vars or whatever your plugin slug is
      *
      * :checkbox:not(:checked)   //of those, get all checkboxes that are not checked
      */
@@ -60,7 +60,7 @@ nomstock.com.submit.prepare_form = function(form)
     /*
      * Framework fix: found an error in the code that added unchecked boxes - removed the plugin.slug from the search criteria.
      * 
-     * $unchecked_checkboxes = jQuery(form).find("input[id^='" + nomstock.com.vars.plugin.slug + "']:checkbox:not(:checked)");
+     * $unchecked_checkboxes = jQuery(form).find("input[id^='" + simpli.frames.vars.plugin.slug + "']:checkbox:not(:checked)");
      */
     $unchecked_checkboxes = jQuery(form).find("input:checkbox:not(:checked)");
     //jQuery('.hidden-checkbox').get(0).type = 'hidden'; // bug in jquery prevents you from using attr http://stackoverflow.com/a/7634737
@@ -83,7 +83,7 @@ nomstock.com.submit.prepare_form = function(form)
  * @param {type} form
  * @returns {undefined}
  */
-nomstock.com.submit.reset_checkboxes = function(form) {
+simpli.frames.submit.reset_checkboxes = function(form) {
     /*
      * remove any temporary hidden fields that were previously added.
      */
@@ -104,15 +104,15 @@ nomstock.com.submit.reset_checkboxes = function(form) {
  * Show Ajax Response
  *
  * Shows ajax response message
- * Intended to be called only by the nomstock.com.submit.ajaxSubmit method
+ * Intended to be called only by the simpli.frames.submit.ajaxSubmit method
  * 
  * @param object form The form currently being processed
- * @param object responseObject The response object as created by nomstock.com.submit.ajaxSubmit
+ * @param object responseObject The response object as created by simpli.frames.submit.ajaxSubmit
  * 
  * @return string The parsed output of the form body tag 
  */
 
-nomstock.com.submit.show_ajax_response = function(form, responseObject) {
+simpli.frames.submit.show_ajax_response = function(form, responseObject) {
 
     /*
      * display the response differently, depending
@@ -120,8 +120,8 @@ nomstock.com.submit.show_ajax_response = function(form, responseObject) {
      *
      */
 
-    nomstock.com.log('debug is ' + 'on');
-    nomstock.com.log('nomstock.com.vars.plugin.debug =  ' + nomstock.com.vars.plugin.debug);
+    simpli.frames.log('debug is ' + 'on');
+    simpli.frames.log('simpli.frames.vars.plugin.debug =  ' + simpli.frames.vars.plugin.debug);
 
 
 
@@ -130,8 +130,8 @@ nomstock.com.submit.show_ajax_response = function(form, responseObject) {
      * then use it. otherwise, use the popup if available.
      */
     var output_element;
-    if (typeof nomstock.com.vars.forms['target'] !== 'undefined') {
-        output_element = jQuery('#' + nomstock.com.vars.forms['target']);
+    if (typeof simpli.frames.vars.forms['target'] !== 'undefined') {
+        output_element = jQuery('#' + simpli.frames.vars.forms['target']);
     }
     else if (jQuery(form).find('.simpli_forms_response').length > 0) {
         output_element = jQuery(form).find('.simpli_forms_response');
@@ -139,7 +139,7 @@ nomstock.com.submit.show_ajax_response = function(form, responseObject) {
 
         if (jQuery('#message-body').length > 0) {
             output_element = jQuery('#message-body');
-            if (nomstock.com.vars.plugin.debug) {
+            if (simpli.frames.vars.plugin.debug) {
                 /*
                  * don't use message-body if debugging since it floats and is difficult to read. instead add a debugging container.
                  */
@@ -178,10 +178,10 @@ nomstock.com.submit.show_ajax_response = function(form, responseObject) {
 
 
         /*
-         * if debugging or nomstock.com.vars.response_fadeout=false, don't clear response message.
+         * if debugging or simpli.frames.vars.response_fadeout=false, don't clear response message.
          */
 
-        if (nomstock.com.vars.plugin.debug || (nomstock.com.vars.forms.response_fadeout===false)) {
+        if (simpli.frames.vars.plugin.debug || (simpli.frames.vars.forms.response_fadeout===false)) {
 
             output_element.html(responseObject.successMessage).addClass('sf-success').fadeOut(0).fadeIn().delay(5000);
         }
@@ -195,7 +195,7 @@ nomstock.com.submit.show_ajax_response = function(form, responseObject) {
 /*
  * Finally, hide the form if the result is a success
  */
-if (typeof nomstock.com.vars.forms['hide_form'] === true) {
+if (typeof simpli.frames.vars.forms['hide_form'] === true) {
 if (jQuery(form).length > 0) {
     jQuery(form).hide();
 }
@@ -241,7 +241,7 @@ if (jQuery(form).length > 0) {
         'transform': 'translate(-50%, -50%)',
         'z-index': '100'
     }).prependTo(form).html(responseObject.errorMessage).addClass('sf-error').fadeIn().delay(2500).fadeOut(500, function(){
-  if (nomstock.com.vars.plugin.debug){
+  if (simpli.frames.vars.plugin.debug){
         jQuery(this).fadeIn();
   
   }else{
@@ -251,7 +251,7 @@ if (jQuery(form).length > 0) {
 
 
         
-//        if (nomstock.com.vars.plugin.debug|| (nomstock.com.vars.forms.response_fadeout===false)) {
+//        if (simpli.frames.vars.plugin.debug|| (simpli.frames.vars.forms.response_fadeout===false)) {
 //
 //            output_element.html(responseObject.errorMessage).addClass('sf-error').fadeOut(0).fadeIn().delay(5000);
 //        }
@@ -286,7 +286,7 @@ jQuery(form).find( "[data-sf-valid]" ).addClass('sf-valid').removeClass('sf-vali
                     jQuery(form).find('[data-sf-valid="' + name + '"]').removeClass('sf-valid').removeClass('sf-valid-success').removeClass('sf-valid-error').addClass('sf-valid-success').html(validation_html);
                 }
 
-                nomstock.com.log('type = ' + type + '; name=' + '[data-sf-valid="' + name + '"]' + 'html = ' + validation_html);
+                simpli.frames.log('type = ' + type + '; name=' + '[data-sf-valid="' + name + '"]' + 'html = ' + validation_html);
             })
 
 
@@ -310,8 +310,8 @@ jQuery(form).find( "[data-sf-valid]" ).addClass('sf-valid').removeClass('sf-vali
 
 }
 
-nomstock.com.submit.ajaxSubmit = function(form, event, ajax_action_slug) {
-    nomstock.com.log('ajax_action_slug=' + ajax_action_slug);
+simpli.frames.submit.ajaxSubmit = function(form, event, ajax_action_slug) {
+    simpli.frames.log('ajax_action_slug=' + ajax_action_slug);
     var triggeredBy;
     /*
      * How to tell if clicked by script
@@ -322,15 +322,15 @@ nomstock.com.submit.ajaxSubmit = function(form, event, ajax_action_slug) {
     if (event.which) {
         triggeredBy='mouse';
         
-        nomstock.com.log('clicked by a mouse');
+        simpli.frames.log('clicked by a mouse');
     }else{
        triggeredBy='script'; 
-         nomstock.com.log('clicked by a script');
+         simpli.frames.log('clicked by a script');
     }
     
     event.preventDefault();
-    var ajax_action = nomstock.com.vars.plugin.slug + '_' + ajax_action_slug; //set the ajax action for WordPress
-    nomstock.com.submit.prepare_form(); //prepared the form for submission - adds checkboxes
+    var ajax_action = simpli.frames.vars.plugin.slug + '_' + ajax_action_slug; //set the ajax action for WordPress
+    simpli.frames.submit.prepare_form(); //prepared the form for submission - adds checkboxes
 
     var output_element = {};
 
@@ -341,8 +341,8 @@ nomstock.com.submit.ajaxSubmit = function(form, event, ajax_action_slug) {
      * we can use the localized version
      */
     if (typeof ajaxurl === 'undefined') {
-        ajaxurl = nomstock.com.vars.forms['ajaxurl'];
-        nomstock.com.log('ajaxurl = ' + ajaxurl);
+        ajaxurl = simpli.frames.vars.forms['ajaxurl'];
+        simpli.frames.log('ajaxurl = ' + ajaxurl);
 
     }
 
@@ -350,12 +350,12 @@ nomstock.com.submit.ajaxSubmit = function(form, event, ajax_action_slug) {
     /*
      * if unique nonces are not configured, then use the default
      */
-    if (!nomstock.com.vars.forms.unique_action_nonces) {
+    if (!simpli.frames.vars.forms.unique_action_nonces) {
 
         ajax_action_slug = 'default';
     }
-    nonce_value = nomstock.com.vars.forms.nonce_values[ajax_action_slug];  
-    nomstock.com.log('ajax form submitted, used nonce value for \'' + ajax_action + '\' = ' + nonce_value);
+    nonce_value = simpli.frames.vars.forms.nonce_values[ajax_action_slug];  
+    simpli.frames.log('ajax form submitted, used nonce value for \'' + ajax_action + '\' = ' + nonce_value);
     /*
      * Show the ajax spinner image
      * This appears when waiting for an ajax response
@@ -372,7 +372,7 @@ nomstock.com.submit.ajaxSubmit = function(form, event, ajax_action_slug) {
  * http://stackoverflow.com/a/5971324/3306354
  */
 
-    if (nomstock.com.vars.forms.spam_controls===true && triggeredBy==='mouse') {
+    if (simpli.frames.vars.forms.spam_controls===true && triggeredBy==='mouse') {
      var timestamp = Math.round(+new Date()/1000);
 timestamp += 3600 * 24 *2 ; //3600 secs * hours * days
 //var datetime = new Date(timestamp*1000); //convert back to date object
@@ -418,7 +418,7 @@ jQuery('#sf-as-time').attr('value',timestamp);
              * add it in the templates
              * you can find the localized statements where this script is enqueued.
              */
-            + '&' + nomstock.com.vars.forms.nonce_field_name + '=' + nonce_value;
+            + '&' + simpli.frames.vars.forms.nonce_field_name + '=' + nonce_value;
 
 
     success = function(response) {
@@ -434,7 +434,7 @@ jQuery('#sf-as-time').attr('value',timestamp);
              * assume the message is successful since we dont have
              * any error information
              */
-            nomstock.com.log(err.message);
+            simpli.frames.log(err.message);
 
             responseObject.successResult = true;
             responseObject.successMessage = response;
@@ -467,19 +467,19 @@ jQuery('#sf-as-time').attr('value',timestamp);
 
             jQuery(form).find("[data-sf-valid='" + name + "']").addClass('sf-valid-error').removeClass('sf-valid').html(message);
 
-            nomstock.com.log("Name: " + name + ", Message: " + message);
+            simpli.frames.log("Name: " + name + ", Message: " + message);
         })
    }
 
 
-        nomstock.com.submit.reset_checkboxes(form);
+        simpli.frames.submit.reset_checkboxes(form);
         jQuery(form).find('.submit-waiting').hide();
 
 
         /*
          * Show the response message
          */
-        nomstock.com.submit.show_ajax_response(form, responseObject);
+        simpli.frames.submit.show_ajax_response(form, responseObject);
 
 
 
@@ -492,10 +492,10 @@ jQuery('#sf-as-time').attr('value',timestamp);
      * Set Method based on Form's method attribute
      */
     if (jQuery(form).attr('method').toUpperCase() === 'GET') {
-        nomstock.com.log('submitting via ajax and GET method');
+        simpli.frames.log('submitting via ajax and GET method');
         method = 'GET';
     } else {
-        nomstock.com.log('submitting via ajax and POST method');
+        simpli.frames.log('submitting via ajax and POST method');
         method = 'POST';
     }
 
@@ -523,22 +523,22 @@ jQuery('#sf-as-time').attr('value',timestamp);
  * @returns {undefined}
  */
 
-nomstock.com.submit.nonAjaxSubmit = function(form, event, form_action_slug) {
+simpli.frames.submit.nonAjaxSubmit = function(form, event, form_action_slug) {
 
     var nonce_index = form_action_slug;
-    nomstock.com.log('form_action_slug=' + form_action_slug);
-    form_action = nomstock.com.vars.plugin.slug + '_' + form_action_slug; //set the form action
-    nomstock.com.log('submitting the form using a non-ajax request');
-    nomstock.com.submit.prepare_form(); //prepare the form by adding checkboxes for false values
+    simpli.frames.log('form_action_slug=' + form_action_slug);
+    form_action = simpli.frames.vars.plugin.slug + '_' + form_action_slug; //set the form action
+    simpli.frames.log('submitting the form using a non-ajax request');
+    simpli.frames.submit.prepare_form(); //prepare the form by adding checkboxes for false values
     /*
      * if unique nonces are not configured, then use the default
      */
-    if (!nomstock.com.vars.forms.unique_action_nonces) {
+    if (!simpli.frames.vars.forms.unique_action_nonces) {
 
         nonce_index = 'default';
     }
-    nonce_value = nomstock.com.vars.forms.nonce_values[nonce_index];
-    nomstock.com.log('Non-Ajax form submitted, used nonce value for \'' + nonce_index + '\' = ' + nonce_value);
+    nonce_value = simpli.frames.vars.forms.nonce_values[nonce_index];
+    simpli.frames.log('Non-Ajax form submitted, used nonce value for \'' + nonce_index + '\' = ' + nonce_value);
     /*
      * Show the spinner image
      * It will spin until the form submits and refreshes the page,
@@ -576,22 +576,22 @@ nomstock.com.submit.nonAjaxSubmit = function(form, event, form_action_slug) {
         /*
          * add action
          */
-        nomstock.com.vars.query_var_action = 'nomstock_com_action';
-        jQuery(form).append('<input type="hidden" name="' + nomstock.com.vars.query_var_action + '" value="' + form_action_slug + '">');
+        simpli.frames.vars.query_var_action = 'simpli_frames_action';
+        jQuery(form).append('<input type="hidden" name="' + simpli.frames.vars.query_var_action + '" value="' + form_action_slug + '">');
 
 
         var _nomstock_forms_referer_url = escape(jQuery(location).attr('pathname') + jQuery(location).attr('search'));
-        nomstock.com.log('_nomstock_forms_referer_url = ' + _nomstock_forms_referer_url);
+        simpli.frames.log('_nomstock_forms_referer_url = ' + _nomstock_forms_referer_url);
         jQuery(form).append('<input name="_nomstock_forms_referer_url" value="' + _nomstock_forms_referer_url + '" type="hidden" >');
     }
 
-//    nomstock.com.logWarn('bailed out of form submission');
+//    simpli.frames.logWarn('bailed out of form submission');
 //    event.preventDefault();
 //    return(false);
     /*
      * append the nonce field to the form
      */
-    jQuery(form).append('<input type="hidden" name="' + nomstock.com.vars.forms.nonce_field_name + '" value="' + nonce_value + '">');
+    jQuery(form).append('<input type="hidden" name="' + simpli.frames.vars.forms.nonce_field_name + '" value="' + nonce_value + '">');
     /*
      * append the id of the form
      */
@@ -612,6 +612,6 @@ nomstock.com.submit.nonAjaxSubmit = function(form, event, form_action_slug) {
      * Add the nonce value to the form , if not already added.
      */
 //+ '&action=' + ajax_action
-// + '&' + nomstock.com.vars.forms.nonce_field_name + '=' + nonce_value
+// + '&' + simpli.frames.vars.forms.nonce_field_name + '=' + nonce_value
 
 };

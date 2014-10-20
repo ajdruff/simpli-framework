@@ -10,11 +10,11 @@
  * @subpackage SimpliBasev1c2
  */
 // Check that the class exists before attempting to declare it again. its possible another plugin loaded it.
-if (class_exists('Nomstock_Com_Base_v1c2_Loader')) {
+if (class_exists('Simpli_Frames_Base_v1c2_Loader')) {
     return;
 }
 
-class Nomstock_Com_Base_v1c2_Loader {
+class Simpli_Frames_Base_v1c2_Loader {
 
     /**
      * Plugin Name
@@ -205,7 +205,7 @@ class Nomstock_Com_Base_v1c2_Loader {
 
         /*
          * Get the lowercase class plugin slug
-         * e.g.: nomstock_com
+         * e.g.: simpli_frames
          *
          */
 
@@ -224,7 +224,7 @@ class Nomstock_Com_Base_v1c2_Loader {
      * Class Autoloader
      *
      * Loads the classes dynamically as each object is instanced. Reference the autoloader documentation at php.net for more information.
-     *  Example: When an object of class 'Nomstock_Com_Plugin' is asked to be created by your code, the autoloader calls this function
+     *  Example: When an object of class 'Simpli_Frames_Plugin' is asked to be created by your code, the autoloader calls this function
      * the function explodes the class name into an array using the underscore as a delimiter. Each element of the array is a word
      * it then looks to see if the first two words of the class name match any element in namespaces.
      * The namespaces are made up of a ucword version of the slug + the version number (for the base classes)
@@ -232,7 +232,7 @@ class Nomstock_Com_Base_v1c2_Loader {
      * @param string $class
      * @return void;
      */
-    public function autoloader($class) { //e.g. class= 'Nomstock_Com_Plugin'
+    public function autoloader($class) { //e.g. class= 'Simpli_Frames_Plugin'
         $base_class_version = $this->getBaseClassVersion('v{major}c{minor}');
 
 

@@ -13,8 +13,8 @@
     </h1></div>
 
 <?php
-global $nomstock_com;
-$f = $nomstock_com->getAddon( 'Simpli_Forms' )->getModule( 'Form' );
+global $simpli_frames;
+$f = $simpli_frames->getAddon( 'Simpli_Forms' )->getModule( 'Form' );
 
 $f->formStart( array(
     'theme' => 'Bootstrap',

@@ -24,7 +24,7 @@
  * @property string $MODULE_NAME_ELEMENTS  Root Name of the Module that holds the Form Element Definitions
  * @property string $MODULE_NAME_FILTERS   Name of the Module that holds the Filter Definitions
  */
-class Nomstock_Com_Addons_Simpli_Forms_Addon extends Nomstock_Com_Base_v1c2_Plugin_Addon {
+class Simpli_Frames_Addons_Simpli_Forms_Addon extends Simpli_Frames_Base_v1c2_Plugin_Addon {
 
     /**
      * Add Hooks

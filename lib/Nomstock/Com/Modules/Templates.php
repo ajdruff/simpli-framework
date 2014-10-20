@@ -16,7 +16,7 @@
 
 
 
-class Nomstock_Com_Modules_Templates extends Nomstock_Com_Base_v1c2_Plugin_Module {
+class Simpli_Frames_Modules_Templates extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     /**
      * Configure Module

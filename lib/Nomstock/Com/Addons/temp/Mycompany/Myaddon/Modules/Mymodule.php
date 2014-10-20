@@ -10,7 +10,7 @@
  * @subpackage Addons
  *
  */
-class Nomstock_Com_Addons_Mycompany_Myaddon_Modules_Mymodule extends Nomstock_Com__Base_v1c2_Plugin_Module {
+class Simpli_Frames_Addons_Mycompany_Myaddon_Modules_Mymodule extends Simpli_Frames__Base_v1c2_Plugin_Module {
 
     /**
      * Add Hooks

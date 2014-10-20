@@ -17,19 +17,19 @@
  * How does it work?
  * It first 'white lists' a number of query variables, all beginning with a prefix you define. The default prefix is the slug of your plugin
  * The last part of the query variable is anything you want. Some predefined ones are:
- * 'action' so with the prefix, the url would look like http://example.com?nomstock_com_action=value  : This query variable calls any method in this class by passing the appropriate value defined by your add_action () function. For example, If you passed ?nomstock_com_action=sayHello, you could create a method called sayHello that would echo 'Hello'
- * 'page , so with the prefix, the url would look like http://example.com?nomstock_com_page=value  : In this case, the url would redirect the page to a template that is mapped to the value
+ * 'action' so with the prefix, the url would look like http://example.com?simpli_frames_action=value  : This query variable calls any method in this class by passing the appropriate value defined by your add_action () function. For example, If you passed ?simpli_frames_action=sayHello, you could create a method called sayHello that would echo 'Hello'
+ * 'page , so with the prefix, the url would look like http://example.com?simpli_frames_page=value  : In this case, the url would redirect the page to a template that is mapped to the value
  *
  * Note: query variable redirects work from the root of your site, not from a subdirectory:
- * Example: http://wpdev.com/?nomstock_com_action=phpInfo
+ * Example: http://wpdev.com/?simpli_frames_action=phpInfo
  * They will also work within admin, but admin uses  a different way of checking for them ( it checks the $_GET parameters instead of wp_query_vars).
  *
  * How to Use this Module
  *
  * 1) Configure by editing the configure() method
- * 2) For every template you want to have access to, do this : $this->_pages = array('value'=>'relative_file_path.php') where 'value' is the value passed to ?nomstock_com_page
+ * 2) For every template you want to have access to, do this : $this->_pages = array('value'=>'relative_file_path.php') where 'value' is the value passed to ?simpli_frames_page
  * 3) For every action you want to trigger, add an 'add_action' just like the examples given , and write a function that maps to it.
- * For example, I want to trigger wordpress do return a database query when I pass request ?nomstock_com_action=latest-products
+ * For example, I want to trigger wordpress do return a database query when I pass request ?simpli_frames_action=latest-products
  * So I would , add the action:
  * add_action($this->_query_var_prefix . '_action' . '_latest-products', array($this, 'latestProducts'));
  * and then write a method called 'latestProducts' to return the database result
@@ -38,7 +38,7 @@
 
 
 
-class Nomstock_Com_Modules_QueryVars extends Nomstock_Com_Base_v1c2_Plugin_Module {
+class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Module {
 
     public $_query_var_prefix;
     private $_query_var_suffixes = array();
@@ -119,10 +119,10 @@ class Nomstock_Com_Modules_QueryVars extends Nomstock_Com_Base_v1c2_Plugin_Modul
          * add_action($this->_query_var . '_action' . '<ActionValuePassedInQuery>', array($this, '<Method>'));
 
 
-          add_action($this->_query_var_prefix . '_action' . '_sayHello', array($this, 'sayHello')); // Example 1: ?nomstock_com_action=sayHello
-          add_action($this->_query_var_prefix . '_action' . '_sayGoodbye', array($this, 'sayGoodbye')); //Example 2: ?nomstock_com_action=sayGoodbye
-          add_action($this->_query_var_prefix . '_action' . '_phpInfo', array($this, 'phpInfo')); // Example 3: ?nomstock_com_action=phpInfo
-          add_action($this->_query_var_prefix . '_action' . '_test', array($this, 'test')); // Example 3: ?nomstock_com_action=phpInfo
+          add_action($this->_query_var_prefix . '_action' . '_sayHello', array($this, 'sayHello')); // Example 1: ?simpli_frames_action=sayHello
+          add_action($this->_query_var_prefix . '_action' . '_sayGoodbye', array($this, 'sayGoodbye')); //Example 2: ?simpli_frames_action=sayGoodbye
+          add_action($this->_query_var_prefix . '_action' . '_phpInfo', array($this, 'phpInfo')); // Example 3: ?simpli_frames_action=phpInfo
+          add_action($this->_query_var_prefix . '_action' . '_test', array($this, 'test')); // Example 3: ?simpli_frames_action=phpInfo
 
          */
 
@@ -433,7 +433,7 @@ class Nomstock_Com_Modules_QueryVars extends Nomstock_Com_Base_v1c2_Plugin_Modul
 
         /*
          * Contact Seller Permalink
-         * Usage: http://nomstock.com/contact-seller/mydomain.com/
+         * Usage: http://simpli.frames/contact-seller/mydomain.com/
          * 
          * Pattern Notes
          *  \/*domain\/     #e.g. "/domain/"
@@ -567,7 +567,7 @@ class Nomstock_Com_Modules_QueryVars extends Nomstock_Com_Base_v1c2_Plugin_Modul
 
         /*
          * Register query variables in the form:
-         * Example: nomstock_com_action  , nomstock_com_page
+         * Example: simpli_frames_action  , simpli_frames_page
          */
 
 

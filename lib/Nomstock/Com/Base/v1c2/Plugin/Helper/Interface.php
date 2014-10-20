@@ -9,9 +9,9 @@
  * @package SimpliFramework
  * @subpackage SimpliBasev1c2
  */
-interface Nomstock_Com_Base_v1c2_Plugin_Helper_Interface {
+interface Simpli_Frames_Base_v1c2_Plugin_Helper_Interface {
 
-    function __construct(Nomstock_Com_Base_v1c2_Plugin $plugin);
+    function __construct(Simpli_Frames_Base_v1c2_Plugin $plugin);
 
     /**
      * Debug
@@ -26,7 +26,7 @@ interface Nomstock_Com_Base_v1c2_Plugin_Helper_Interface {
     /**
      * Get Plugin
      *
-     * @return Nomstock_Com_Base_v1c2_Plugin
+     * @return Simpli_Frames_Base_v1c2_Plugin
      */
     public function plugin();
 

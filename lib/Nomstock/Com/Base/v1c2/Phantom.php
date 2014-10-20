@@ -24,7 +24,7 @@
  * @package SimpliFramework
  * @subpackage SimpliBasev1c2
  */
-class Nomstock_Com_Base_v1c2_Phantom {
+class Simpli_Frames_Base_v1c2_Phantom {
 
     public function __call($method, $args) {
         /*

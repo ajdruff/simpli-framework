@@ -9,7 +9,7 @@
  * @package SimpliFramework
  * @subpackage SimpliBasev1c2
  */
-class Nomstock_Com_Base_v1c2_Plugin_Module_Helper implements Nomstock_Com_Base_v1c2_Plugin_Module_Helper_Interface {
+class Simpli_Frames_Base_v1c2_Plugin_Module_Helper implements Simpli_Frames_Base_v1c2_Plugin_Module_Helper_Interface {
 
     /**
      * Constructor
@@ -23,7 +23,7 @@ class Nomstock_Com_Base_v1c2_Plugin_Module_Helper implements Nomstock_Com_Base_v
     protected $_addon = null;
     protected $_plugin = null;
 
-    function __construct(Nomstock_Com_Base_v1c2_Plugin_Module $module, Nomstock_Com_Base_v1c2_Plugin_Addon $addon = null) {
+    function __construct(Simpli_Frames_Base_v1c2_Plugin_Module $module, Simpli_Frames_Base_v1c2_Plugin_Addon $addon = null) {
 
         if (is_null($addon)) {
             $this->_module = $module;

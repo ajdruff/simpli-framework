@@ -2,14 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="4">
         <file>
-            <url>lib/Nomstock/Com/Modules/NomstockStats.php</url>
-            <bookmark id="1">
-                <name/>
-                <line>198</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>lib/Nomstock/Com/Modules/Forms.php</url>
             <bookmark id="4">
                 <name/>
@@ -27,6 +19,14 @@
                 <key/>
             </bookmark>
         </file>
+        <file>
+            <url>lib/Nomstock/Com/Modules/NomstockStats.php</url>
+            <bookmark id="1">
+                <name/>
+                <line>198</line>
+                <key/>
+            </bookmark>
+        </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
@@ -37,9 +37,9 @@
             <file>file:/C:/wamp/www/nomstock-dev.com/public_html/wp-content/plugins/nomstock-com/lib/Nomstock/Com/Modules/Queryvars.php</file>
             <file>file:/C:/wamp/www/nomstock-dev.com/public_html/wp-content/plugins/nomstock-com/lib/Nomstock/Com/Modules/Core.php</file>
         </group>
-        <group name="Simple Framework"/>
         <group name="Jekyll Websites"/>
         <group name="Nomstock.com-backup-group"/>
         <group name="Nomstock.com"/>
+        <group name="Simple Framework"/>
     </open-files>
 </project-private>

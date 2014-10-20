@@ -10,7 +10,7 @@
  * @package SimpliFramework
  * @subpackage SimpliBasev1c2
  */
-class Nomstock_Com_Base_v1c2_Plugin_Post extends Nomstock_Com_Base_v1c2_Plugin_Helper {
+class Simpli_Frames_Base_v1c2_Plugin_Post extends Simpli_Frames_Base_v1c2_Plugin_Helper {
 
     /**
      * Config
@@ -201,11 +201,11 @@ class Nomstock_Com_Base_v1c2_Plugin_Post extends Nomstock_Com_Base_v1c2_Plugin_H
      * When called with no argument, it will return the post_type query variable that is in $_GET, but removes a preceeding obfuscation string if one exists. This obfuscation is sometimes added to prevent wordpress from erroring out in the event we are using a custom edit page. WordPress will not load a custom edit page  if it sees that the post_type is a query variable and its value is a registered post type.
      *
      * Usage:
-     * assume we are on a page with url : ?post_type=___my_post_type&nomstock_com=edit_post
+     * assume we are on a page with url : ?post_type=___my_post_type&simpli_frames=edit_post
      * $post_type=getPostTypeRequestVar() // returns 'my_post_type'
      *
      * Now assume we need to build a url that will redirect to a custom edit page, and we need to pass the post type
-     * $url='http://example.com?post_type='.getPostTypeRequestVar('my_post_type').'&nomstock_com=edit_post // will result in $url = http://example.com?post_type=___my_post_type&nomstock_com=edit_post
+     * $url='http://example.com?post_type='.getPostTypeRequestVar('my_post_type').'&simpli_frames=edit_post // will result in $url = http://example.com?post_type=___my_post_type&simpli_frames=edit_post
      *
      *
      *

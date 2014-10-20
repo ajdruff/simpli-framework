@@ -8,7 +8,7 @@
  * @package SimpliFramework
  * @subpackage SimpliBasev1c2
  */
-class Nomstock_Com_Base_v1c2_Plugin_Tools extends Nomstock_Com_Base_v1c2_Plugin_Helper {
+class Simpli_Frames_Base_v1c2_Plugin_Tools extends Simpli_Frames_Base_v1c2_Plugin_Helper {
 
     /**
      * Sort Dependent List

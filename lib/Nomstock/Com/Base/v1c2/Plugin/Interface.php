@@ -9,7 +9,7 @@
  * @subpackage SimpliBasev1c2
  * @property string $DISABLED_MODULES An array of Module Names of the Addon that you don't want to have loaded
  */
-Interface Nomstock_Com_Base_v1c2_Plugin_Interface {
+Interface Simpli_Frames_Base_v1c2_Plugin_Interface {
 
     /**
      * Debug

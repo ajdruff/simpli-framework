@@ -9,7 +9,7 @@
  *
  *
  */
-class Nomstock_Com_Modules_Menu22SimpliForms extends Nomstock_Com_Base_v1c2_Plugin_Menu {
+class Simpli_Frames_Modules_Menu22SimpliForms extends Simpli_Frames_Base_v1c2_Plugin_Menu {
 
     /**
      * Add Hooks

@@ -1,14 +1,11 @@
 #### MySQL Queries
 
 
-
-If SQL queries are used in this plugin, add them here. It is intended to hold queries that would otherwise be held apart from the plugin and may be lost.
-
-The examples directory shows some real world examples of some of the queries and procs used from other plugins. Note the suggested file naming convention.
+This directory contains all the sql queries used in the plugin.
 
 * _procs_  The creation scripts for stored procedures.
 
-* common_queries Miscellanous queries that are not specific to the plugin or specific database used
+* dashboard_queries Queries that are normally used for administering MySQL or the Nomstock Ticker.
 
 * example_queries Example queries to jog your memory on syntax
 

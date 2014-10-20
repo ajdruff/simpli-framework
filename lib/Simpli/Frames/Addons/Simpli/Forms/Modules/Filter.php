@@ -76,9 +76,9 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
         if ( method_exists( $this, $method ) ) {
             $this->debug()->log( 'base class is calling filter for ' . $method );
             $properties = $this->$method( $properties );
-        } else {
+} else {
             $this->debug()->log( 'No filter for ' . $method . ' exists' );
-        }
+}
 
 
         return ($properties);
@@ -96,7 +96,7 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
         $this->debug()->log( 'applying the common filters of the base class' );
 
         extract( $properties );
-
+        $this->debug()->logVar( '$properties = ', $properties );
 
         /*
          * Template
@@ -106,34 +106,62 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
 
         $theme = $this->addon()->getModule( 'Form' )->getTheme();
         $this->debug()->logVar( '$theme = ', $theme->getThemeName() );
+        $this->debug()->logVar( 'Form Tracker = ', $this->plugin()->getAddon( 'Simpli_Forms' )->getModule( 'Form' )->form );
 
-        $template_type = $this->plugin()->getAddon( 'Simpli_Forms' )->getModule( 'Form' )->form[ 'form' ][ 'template_type' ];
-        $this->debug()->logVar( '$template_type = ', $template_type );
 
-        if ( (!is_null( $template_type )) && $template_type !== '' ) {
-            $template_modified_with_type = $atts[ 'template' ] . '_' . $template_type;
-            /*
-             * if the template is not null, replace the template with the new modified template that
-             * incorporates the type
-             */
+        /*
+         * if scid is 'formStart' then take layout from form, otherwise, check to see if one is defined in the 
+         * elements[scid] and if so, use it instead.
+         */
 
-            if ( !is_null( $template_modified_with_type ) ) {
-                $atts[ 'template' ] = $template_modified_with_type;
-}
-}
+        /*
+         * if the element has defined a 'layout' attribute, then check to see if it has been
+         * assigned a value by the user, and if so, use that instead.
+         */
+//           if ( isset($atts['layout']) && !is_null( $atts['layout'] ) ) {
+//               $template_layout = $atts['layout'];
+//               
+//           }else{
+//               
+//                   $template_layout = $this->plugin()->getAddon( 'Simpli_Forms' )->getModule( 'Form' )->form[ 'form' ][ 'layout' ];
+//    
+//               
+//           }     
+        //     $this->debug()->logVar( '$template_layout = ', $template_layout );
+//        if ( (!is_null( $template_layout )) && $template_layout !== '' ) {
+//            $template_path_modified_with_layout =  $template_layout . '/' . $atts[ 'template' ];
+//            /*
+//             * if the template is not null, replace the template with the new modified template that
+//             * incorporates the type
+//             */
+//
+//            if ( !is_null( $template_path_modified_with_layout ) ) {
+//                $atts[ 'template' ] = $template_path_modified_with_layout;
+//}
+//}
 
         /*
          * Template Option
          */
-        if ( array_key_exists( 'template_option', $atts ) && (is_null( $atts[ 'template_option' ] ) || $atts[ 'template_option' ] === '' )) {
+        if ( $atts [ 'template_option' ] && is_null( $atts[ 'template_option' ] ) || $atts[ 'template_option' ] === '' ) {
 
             $atts[ 'template_option' ] = $atts[ 'template' ] . '_option';
+}
+
+/*
+ * Set Default Template
+ */
+
+          if ( array_key_exists( 'template', $atts ) && is_null( $atts[ 'template' ] ) ) {
+
+            $atts[ 'template' ] = $scid;
 }
 
 
         $this->debug()->logVar( '$atts = ', $atts );
         /*
          * Return error if required arguments are not found
+         * Do NOT use isset since its not the same thing.
          */
         if ( array_key_exists( 'name', $atts ) && is_null( $atts[ 'name' ] ) ) {
 
@@ -141,9 +169,9 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
 
 
 
-        } else{
+} else{
             $tags[ 'id' ] = $atts[ 'name' ] . '_' . $this->addon()->getModule( 'Form' )->form_counter;
-        }
+}
 
 
 
@@ -154,7 +182,7 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
 
         if ( array_key_exists( 'name', $atts ) && is_null( $atts[ 'name' ] ) ) {
             $atts[ 'name' ] = $this->getFieldPrefix() . $atts[ 'name' ];
-        }
+}
 
 
 
@@ -166,14 +194,14 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
         if ( array_key_exists( 'label', $atts ) && is_null( $atts[ 'label' ] ) ) {
 
             $atts[ 'label' ] = $this->getDefaultFieldLabel( $atts[ 'name' ] );
-        }
+}
 
         $this->debug()->logVar( '$atts = ', $atts );
 
         $tags[ 'form_counter' ] = $this->addon()->getModule( 'Form' )->form_counter;
         if ( isset( $this->addon()->getModule( 'Form' )->form[ 'form' ][ 'name' ] ) ) {
             $tags[ 'form_name' ] = $this->addon()->getModule( 'Form' )->form[ 'form' ][ 'name' ];
-        }
+}
 
 
 
@@ -197,6 +225,29 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
     }
 
     /**
+     * Filter Button
+     *
+     * Filters the Button tag attributes
+     * @param string $atts The attributes of the tag
+     * @return string $atts
+     */
+    protected function filterButton( $properties ) {
+        $this->debug()->t();
+
+        extract( $properties );
+
+        /*
+         * Set the default {SPINNER} tag
+         */
+        if ( array_key_exists( 'spinner', $atts ) && is_null( $atts[ 'spinner' ] ) ) {
+
+            $atts[ 'spinner' ] = $this->plugin()->getUrl() . '/images/wpspin_light.gif';
+}
+
+        return (compact( 'scid', 'atts', 'tags' ));
+    }
+
+    /**
      * Filter Text
      *
      * Filters the Text Tag Attributers
@@ -209,9 +260,40 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
         extract( $properties );
 
 
+        if ( $atts[ 'disabled' ] === true ){
+
+            $atts[ 'disabled' ] = 'disabled';
+
+} else{
+            $atts[ 'disabled' ] = '';
+}
+
+        if ( $atts[ 'readonly' ] === true ){
+
+            $atts[ 'readonly' ] = 'readonly';
+
+} else{
+            $atts[ 'readonly' ] = '';
+}
+
         return (compact( 'scid', 'atts', 'tags' ));
     }
 
+    /**
+     * Filter Response
+     *
+     * Filters the Response tag Attributers
+     * @param string $atts The attributes of the tag
+     * @return string $atts
+     */
+    protected function filterResponse( $properties ) {
+        $this->debug()->t();
+
+        extract( $properties );
+        $tags[ 'response_html' ] = apply_filters( 'simpli_forms_response', '' );
+
+        return (compact( 'scid', 'atts', 'tags' ));
+    }
 
     /**
      * Filter File
@@ -271,7 +353,7 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
             $tokens[ 'option_text' ] = $option_text;
             $option_template = '<option {selected_html} value = "{option_value}">{option_text}</option>';
             $options_html.=$this->plugin()->tools()->crunchTpl( $tokens, $option_template );
-        }
+}
 
 
         $tags[ 'options_html' ] = $options_html;
@@ -341,7 +423,7 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
 </p>';
 
             $options_html.=$this->plugin()->tools()->crunchTpl( $tokens, $option_template );
-        }
+}
 
 
         $tags[ 'options_html' ] = $options_html;
@@ -395,7 +477,7 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
 //$tokens['checked'] = (($atts['selected'][$option_value] == $option_value) ? ' checked="checked" ' : '');
 //
 //
-            //radio - works but only if not filtered
+//radio - works but only if not filtered
 //$tokens['checked'] = (($atts['selected'] == $option_value) ? ' checked="checked"' : '');
 
             /*
@@ -406,13 +488,13 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
 
 
                     $tokens[ 'checked' ] = (($atts[ 'selected' ][ $option_value ] == 'yes') ? ' checked="checked"' : '');
-                } else {
+} else {
                     $tokens[ 'checked' ] = '';
-                }
-            } else {
+}
+} else {
 
                 $tokens[ 'checked' ] = (($atts[ 'selected' ] == $option_value) ? ' checked="checked"' : '');
-            }
+}
 
             /*
              * dropdown
@@ -423,24 +505,33 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
                     $this->debug()->logVar( '$option_value = ', $option_value );
                     $this->debug()->logVar( '$selected[$option_value] = ', $atts[ 'selected' ][ $option_value ] );
                     $this->debug()->logVar( '$tokens[selected] = ', $tokens[ 'selected' ] );
-                } else {
+} else {
                     $tokens[ 'selected' ] = '';
-                }
-            } else {
+}
+} else {
 
                 $tokens[ 'selected' ] = (($atts[ 'selected' ] == $option_value) ? ' selected="selected" ' : '');
-            }
+}
 
 //dropdown - works
 //     $tokens['selected'] = (($atts['selected'] == $option_value) ? ' selected="selected" ' : '');
 
             $tokens[ 'option_value' ] = $option_value;
             $tokens[ 'option_text' ] = $option_text;
-            $option_template = $this->addon()->getModule( 'Form' )->getTheme()->getTemplate( $atts[ 'template_option' ] );
+
+            if ( isset( $atts[ 'layout' ] ) && !is_null( $atts[ 'layout' ] ) ) {
+                $layout = $atts[ 'layout' ];
+} else {
+
+                $layout = $this->plugin()->getAddon( 'Simpli_Forms' )->getModule( 'Form' )->form[ 'form' ][ 'layout' ];
+}
+
+
+            $option_template = $this->addon()->getModule( 'Form' )->getTheme()->getTemplate( $atts[ 'template_option' ], $layout );
 
             $options_html.=$this->plugin()->tools()->crunchTpl( $tokens, $option_template );
             $this->debug()->logVar( '$tokens = ', $tokens );
-        }
+}
 
         $this->debug()->logVar( '$options_html = ', $options_html );
 
@@ -469,6 +560,41 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
          * use the shared code for radio,dropdown, and checkbox elements
          */
         return($this->_filterOptions( $properties ));
+    }
+
+    /**
+     * Filter Form End
+     *
+     * Filters the Text Tag Attributers
+     * @param string $atts The attributes of the tag
+     * @return string $atts
+     */
+    protected function filterFormEnd( $properties ) {
+        ////$this->debug()->setMethodFilter( __FUNCTION__, false );
+        $this->debug()->t();
+        $this->debug()->logVar( '$properties = ', $properties );
+        extract( $properties );
+
+        $tags[ 'spam-controls' ] = $this->spamControls();
+
+        $form_props = $this->plugin()->getAddon( 'Simpli_Forms' )->getModule( 'Form' )->form[ 'form' ];
+
+        $this->debug()->logVar( '$form_props = ', $form_props );
+        /*
+         * Add a container
+         */
+        if ( array_key_exists( 'container', $form_props ) && $form_props[ 'container' ] === true ) {
+
+            $tags[ 'container_end' ] = '</div>';
+
+    }else{
+        $tags[ 'container_end' ] = '';
+    }
+
+
+        $properties = compact( 'scid', 'atts', 'tags' );
+
+        return ($properties);
     }
 
     /**
@@ -510,14 +636,14 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
                 if ( $last_id = get_post_meta( $post_ID, '_edit_last', true ) ) {
                     $last_user = get_userdata( $last_id );
                     $tags[ 'last_edit' ].=sprintf( __( 'Last edited by %1$s on %2$s at %3$s' ), esc_html( $last_user->display_name ), mysql2date( get_option( 'date_format' ), $post->post_modified ), mysql2date( get_option( 'time_format' ), $post->post_modified ) );
-                } else {
+} else {
                     $this->debug()->log( 'auto draft' );
                     $this->debug()->log( 'adding last edit' );
                     $tags[ 'last_edit' ].=sprintf( __( 'Last edited on %1$s at %2$s' ), mysql2date( get_option( 'date_format' ), $post->post_modified ), mysql2date( get_option( 'time_format' ), $post->post_modified ) );
-                }
+}
                 $tags[ 'last_edit' ].= '</span>';
-            }
-        } else {
+}
+} else {
             $this->debug()->logError( 'Post type ' . $post_type . ' doesnt support editor, not showing editor' );
 
             /*
@@ -525,14 +651,14 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
              * Output nothing
              */
             $atts[ 'content_override' ] = '';
-        }
+}
         /*
          * Ensure default editor id.
          * if id is duplicate, the editor wont display
          */
         if ( is_null( $atts[ 'id' ] ) ) {
             $atts[ 'id' ] = 'postdivrich';
-        }
+}
 
 
         $properties = compact( 'scid', 'atts', 'tags' );
@@ -543,20 +669,21 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
     /**
      * Form Start
      *
-     * Filters the Text Tag Attribute
+     * Filters the formStart attribute
      * @param string $atts The attributes of the tag
      * @return string $atts
      */
     protected function filterFormStart( $properties ) {
         $this->debug()->t();
-
+        //$this->debug()->setMethodFilter( __FUNCTION__, false );
         extract( $properties );
 
-
+            $local_vars = $this->plugin()->getLocalVars();
+            
         if ( array_key_exists( 'name', $atts ) && is_null( $atts[ 'name' ] ) ) {
 
             $atts[ 'name' ] = 'simpli_forms';
-        }
+}
 
 
         /*
@@ -569,7 +696,7 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
         ) {
 
             $atts[ 'ajax' ] === true;
-        }
+}
         /*
          * Localize the Target attribute, which tells the form where to place the response
          */
@@ -579,15 +706,33 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
             /*
              * Localize Success Message
              */
-            $local_vars = array( 'forms' => array( 'target' => $atts[ 'target' ] ) );
+   
+$local_vars['forms']['target']=$atts[ 'target' ];
+     
+}
 
+        /*
+         * Add a container
+         * 
+         * add container start tag if container is set to true and class is provided. if class is not provided, set to 'container'
+         * the filterFormEnd() provides an ending tag for {container_end} if the formStart has contained set to true.
+         * 
+         * 
+         */
+        if ( array_key_exists( 'container', $atts ) && $atts[ 'container' ] === true ) {
+            if ( array_key_exists( 'container_class', $atts ) && !is_null( $atts[ 'container_class' ] ) ) {
+                $temp_class = $atts[ 'container_class' ];
 
+     } else{
+                $temp_class = 'container';
+     }
+            $tags[ 'container_start' ] = '<div class="' . $temp_class . '"><!-- start of container, added by formStart() -->';
 
+ } else{
+            $atts[ 'container' ] = false;
+            $tags[ 'container_start' ] = '';
 
-            $this->plugin()->setLocalVars( $local_vars );
-        }
-
-
+ }
 
         /*
          *
@@ -598,7 +743,7 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
         if ( array_key_exists( 'ajax', $atts ) && $atts[ 'ajax' ] === true ) {
 
             $atts[ 'action' ] = ''; //form action attribute must be empty string if ajax
-        } elseif ( array_key_exists( 'ajax', $atts ) && $atts[ 'ajax' ] === false ) {
+} elseif ( array_key_exists( 'ajax', $atts ) && $atts[ 'ajax' ] === false ) {
 
             /*
              *
@@ -632,21 +777,54 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
                  * Use the current URL as the submission url, and add the query action variable onto it.
                  */
                 $atts[ 'action' ] = $this->plugin()->tools()->rebuildUrl( array( $this->plugin()->QUERY_VAR . '_action' => '{action}' ) );
-            }
-        }
+}
+}
 
 
 
         if ( array_key_exists( 'method', $atts ) && is_null( $atts[ 'method' ] ) ) {
             $atts[ 'method' ] = 'post';
-        }
+}
 
         if ( array_key_exists( 'enctype', $atts ) && is_null( $atts[ 'enctype' ] ) ) {
             $tags[ 'enctype_html' ] = '';
-        } else {
+} else {
             $tags[ 'enctype_html' ] = 'enctype = ' . $atts[ 'enctype' ];
-        }
+}
+/*
+ * Hide Form
+ * Hides Form on Successful Submission
+ * Default to True
+ */
 
+        if ( array_key_exists( 'hide_form', $atts ) && is_null( $atts[ 'hide_form' ] ) ) {
+            $atts[ 'hide_form' ]=true;
+} 
+            $local_vars['forms']['hide_form']=$atts[ 'hide_form' ];
+
+/*
+ * 
+ * Response Fade
+ * True will fade out the response. False will make it remain until the page is refreshed.
+ */
+
+        if ( array_key_exists( 'response_fadeout', $atts ) && is_null( $atts[ 'response_fadeout' ] ) ) {
+            $atts[ 'response_fadeout' ]=true;
+} 
+
+
+/* localize it */
+
+
+            $local_vars['forms']['response_fadeout']=$atts[ 'response_fadeout' ];
+
+            
+            /*
+             * Set Local Variables
+             */
+            $this->plugin()->setLocalVars( $local_vars );
+            
+            
         $this->debug()->logVar( '$atts = ', $atts );
 
         return (compact( 'scid', 'atts', 'tags' ));
@@ -684,4 +862,97 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Filter extends Simpli_Frames_Bas
         $this->plugin()->getSlug() . '_';
     }
 
+    /**
+     * Spam Controls
+     *
+     * produces markup used by the {spam-controls} tag added to the form End element.
+     *
+     * @param none
+     * @return string Html markup for input controls that are used for fighting spam
+     */
+    public function spamControls() {
+        #initialize
+        $anti_spam_controls = '';
+        $space = ' ';
+        /*
+         * honey pot
+         * if anything is in here, we know its spam.
+         */
+
+        /*
+         * dont do anything if spam controls arent on
+         */
+        if ( $this->plugin()->getModule( 'Forms' )->BLOCK_FORM_SPAM === false ) {
+            $this->debug()->log( 'Spam Controls turned off, not adding them', true );
+            return '';
+
+}
+
+
+
+        $anti_spam_controls .=
+                '<label'
+        . $space . 'style="visibility:hidden;display:none;"'
+                . $space . 'data-sf-as'
+                . $space . 'for="sf-as-url"'
+                . '>' //end of opening label tag
+                . 'Do not enter anything in the last 2 fields or your form will be rejected as spam'
+                . '</label>';  //end of closing label tab   
+
+
+        $anti_spam_controls .=
+                '<'
+                . 'input'
+                . $space . 'style="visibility:hidden;display:none;"'
+                . $space . 'id="sf-as-url"'
+                . $space . 'name="sf-as-url"'
+                . $space . 'placeholder="Do not enter anything here"'
+                . $space . 'type="text"'
+                . $space . 'data-sf-as'
+                . '>';
+
+        /*
+         * honey pot - if anything is in here, we know its spam
+         */
+        $anti_spam_controls .=
+                '<label'
+                . $space . 'style="visibility:hidden;display:none;"'
+                . $space . 'data-sf-as'
+                . $space . 'for="sf-as-comment"'
+                . '>' //end of opening label tag
+                . 'Do not enter anything in the last 2 fields or your form will be rejected as spam'
+                . '</label>';  //end of closing label tab   
+
+        $anti_spam_controls .=
+                '<'
+                . 'textarea'
+                . $space . 'style="visibility:hidden;display:none;"'
+                . $space . 'id="sf-as-comment"'
+                . $space . 'name="sf-as-comment"'
+                . $space . 'placeholder="Do not enter anything here"'
+                . $space . 'data-sf-as'
+                . '></textarea>';
+        //     . $space . '</textarea>';
+
+
+
+        /*
+         * a time stamp in the future ( 2 days will replace this value) when the user
+         * submits the form. when we check it server side, we will see if the date is still in the future. if it is, then we know its not spam.
+         */
+
+        $anti_spam_controls .= '<'
+                . 'input'
+                . $space . 'style="visibility:hidden;display:none;"'
+                . $space . 'id="sf-as-time"'
+                . $space . 'name="sf-as-time"'
+                . $space . 'type="hidden"'
+                . $space . 'value="' . time() . '"'
+                . '>';
+
+        $this->debug()->logVar( '$anti_spam_controls = ', $anti_spam_controls );
+        return $anti_spam_controls;
+
+
+    }
 }

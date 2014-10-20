@@ -38,7 +38,7 @@ $this->debug()->t();
 /*
  * add scripts
  *  */
-}
+
         add_action( 'wp_enqueue_scripts', array( $this, 'hookEnqueueScripts' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'hookEnqueueScripts' ) );
 

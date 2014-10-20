@@ -17,24 +17,25 @@
  * How does it work?
  * It first 'white lists' a number of query variables, all beginning with a prefix you define. The default prefix is the slug of your plugin
  * The last part of the query variable is anything you want. Some predefined ones are:
- * 'action' so with the prefix, the url would look like http://example.com?nomstock_com_action=value  : This query variable calls any method in this class by passing the appropriate value defined by your add_action () function. For example, If you passed ?nomstock_com_action=sayHello, you could create a method called sayHello that would echo 'Hello'
- * 'page , so with the prefix, the url would look like http://example.com?nomstock_com_page=value  : In this case, the url would redirect the page to a template that is mapped to the value
+ * 'action' so with the prefix, the url would look like http://example.com?simpli_frames_action=value  : This query variable calls any method in this class by passing the appropriate value defined by your add_action () function. For example, If you passed ?simpli_frames_action=sayHello, you could create a method called sayHello that would echo 'Hello'
+ * 'page , so with the prefix, the url would look like http://example.com?simpli_frames_page=value  : In this case, the url would redirect the page to a template that is mapped to the value
  *
  * Note: query variable redirects work from the root of your site, not from a subdirectory:
- * Example: http://wpdev.com/?nomstock_com_action=phpInfo
+ * Example: http://wpdev.com/?simpli_frames_action=phpInfo
  * They will also work within admin, but admin uses  a different way of checking for them ( it checks the $_GET parameters instead of wp_query_vars).
  *
  * How to Use this Module
  *
  * 1) Configure by editing the configure() method
- * 2) For every template you want to have access to, do this : $this->_pages = array('value'=>'relative_file_path.php') where 'value' is the value passed to ?nomstock_com_page
+ * 2) For every template you want to have access to, do this : $this->_pages = array('value'=>'relative_file_path.php') where 'value' is the value passed to ?simpli_frames_page
  * 3) For every action you want to trigger, add an 'add_action' just like the examples given , and write a function that maps to it.
- * For example, I want to trigger wordpress do return a database query when I pass request ?nomstock_com_action=latest-products
+ * For example, I want to trigger wordpress do return a database query when I pass request ?simpli_frames_action=latest-products
  * So I would , add the action:
  * add_action($this->_query_var_prefix . '_action' . '_latest-products', array($this, 'latestProducts'));
  * and then write a method called 'latestProducts' to return the database result
  * 4) To access these 'ugly urls' , define a pretty_url_pattern and its target ugly_url_pattern and add these to the $this->$_rewrite_rules array as in the examples.
  */
+
 
 
 class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Module {
@@ -60,18 +61,18 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
      */
     public function addHooks() {
         $this->debug()->t();
-      /*
+        /*
          * flush the rewrite rules if just activted
          */
-        
-        
-        
- 
+
+
+
+
         add_action( 'init', array( $this, 'hookAddHtAccessRewriteRules' ) );
         /*
          * disable in production since it flushes rules with every refresh
          */
-      
+
 
         if ( $this->plugin()->DEBUG ) {
 
@@ -118,25 +119,84 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
          * add_action($this->_query_var . '_action' . '<ActionValuePassedInQuery>', array($this, '<Method>'));
 
 
-          add_action($this->_query_var_prefix . '_action' . '_sayHello', array($this, 'sayHello')); // Example 1: ?nomstock_com_action=sayHello
-          add_action($this->_query_var_prefix . '_action' . '_sayGoodbye', array($this, 'sayGoodbye')); //Example 2: ?nomstock_com_action=sayGoodbye
-          add_action($this->_query_var_prefix . '_action' . '_phpInfo', array($this, 'phpInfo')); // Example 3: ?nomstock_com_action=phpInfo
-          add_action($this->_query_var_prefix . '_action' . '_test', array($this, 'test')); // Example 3: ?nomstock_com_action=phpInfo
+          add_action($this->_query_var_prefix . '_action' . '_sayHello', array($this, 'sayHello')); // Example 1: ?simpli_frames_action=sayHello
+          add_action($this->_query_var_prefix . '_action' . '_sayGoodbye', array($this, 'sayGoodbye')); //Example 2: ?simpli_frames_action=sayGoodbye
+          add_action($this->_query_var_prefix . '_action' . '_phpInfo', array($this, 'phpInfo')); // Example 3: ?simpli_frames_action=phpInfo
+          add_action($this->_query_var_prefix . '_action' . '_test', array($this, 'test')); // Example 3: ?simpli_frames_action=phpInfo
 
          */
 
-                           
-                                
+
+
+        /*
+         *
+         * Add Actions for Page Redirects
+         *
+         */
 
 
 
-//
-//
-        //
-        add_action( $this->_query_var_prefix . '_action' . '_phpinfo', array( $this, 'phpinfo' ) ); // Example 1: ?nomstock_com_action=sayHello
-//
-//
-//      add_action($this->_query_var_prefix . '_action' . '_upload_addon', array($this->plugin()->getModule('Menu20DevManage'), 'hookFormActionUploadAddon')); // ?nomstock_com_action=upload_addon
+
+        /*
+         * Add Action for Template Rendering - Permalink Action Show Template
+         * 
+         * Renders a Template
+         * 
+         * 
+         */
+        add_action( $this->_query_var_prefix . '_action' . '_permalinkActionShowTemplate', array( $this->plugin()->getModule( 'Core' ), 'permalinkActionShowTemplate' ) );
+
+        /*
+         * Add Action for Showing the Sales Page - Permalink Action Sales Page
+         * 
+         * Renders the Sales Page
+         * 
+         * 
+         */
+        add_action( $this->_query_var_prefix . '_action' . '_permalinkActionShowSalesPage', array( $this->plugin()->getModule( 'Core' ), 'permalinkActionShowSalesPage' ) );
+        
+        
+        
+        
+
+        /*
+         * Add Action - Nomstock Analytics (Stats) Actions
+         * 
+         * Requires NomstockStats Module
+         * 
+         */
+        add_action( $this->_query_var_prefix . '_action' . '_showStatsPage', array( $this->plugin()->getModule( 'NomstockStats' ), 'showStatsPage' ) );
+
+
+
+
+
+        /*
+         * Add an image creation script
+         */
+
+        add_action( $this->_query_var_prefix . '_action' . '_makeListingImage', array( $this->plugin()->getModule( 'Core' ), 'makeListingImage' ) );
+
+
+        add_action( $this->_query_var_prefix . '_action' . '_text2imgr', array( $this->plugin()->getModule( 'Core' ), 'text2imgr' ) );
+
+
+
+
+        /*
+         * Stats Counter - Count a viewable impression
+         */
+        add_action( $this->_query_var_prefix . '_action' . '_countViewportImpression', array( $this->plugin()->getModule( 'NomstockStats' ), 'countViewportImpression' ) );
+
+
+        /*
+         * Next Ticker Page - Grabs the next ticker page of results
+         */
+
+        add_action( $this->_query_var_prefix . '_action' . '_getNextTickerPage', array( $this->plugin()->getModule( 'Core' ), 'getNextTickerPage' ) );
+
+
+
 
 
 
@@ -166,24 +226,22 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
      */
     function config() {
         $this->debug()->t();
-        
-  
-   
+
+
+
         /*
          * Add rules for htaccess
          * Use this method if you need an internal redirect that doesnt change
          * the browser's address bar, and where you need to pass the REQUEST_URI onto
          * the target url.
          * This will actually write to the htaccess file, so be sure you have access.
-         * RewriteRule ^txt2imgr/(.*)$ /wp-content/plugins/nomstock-com/lib/txt2imgr/$1 [QSA,L]
-      
+         * RewriteRule ^txt2imgr/(.*)$ /wp-content/plugins/simpli-frames/lib/txt2imgr/$1 [QSA,L]
+         */
         $this->addHtAccessRewriteRule(
                 'txt2imgr/(.*)$' //$match_pattern - will match everything that starts with subscribe. WordPress automatically adds a starting caret
-                , $this->plugin()->tools()->getRelativePath(ABSPATH,$this->plugin()->getDirectory() . '/lib/txt2imgr/$1')//'wp-content/plugins/nomstock-com/lib/txt2imgr/$1' //$target_pattern - this will take everything in the first parens in the pattern and add it to where $1 is. WordPress Automatically adds a leading slash, so dont add one.
+                , $this->plugin()->tools()->getRelativePath( ABSPATH, $this->plugin()->getDirectory() . '/lib/txt2imgr/$1' )//'wp-content/plugins/simpli-frames/lib/txt2imgr/$1' //$target_pattern - this will take everything in the first parens in the pattern and add it to where $1 is. WordPress Automatically adds a leading slash, so dont add one.
         );
-   */
-        
-        
+
 //echo $this->plugin()->tools()->getRelativePath(ABSPATH,$this->plugin()->getDirectory() . '/lib/txt2imgr/$1');
         /*
          * Query Variables
@@ -200,14 +258,20 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
          * Add other query variables here that you need white listed, meaning that WordPress
          * will return them when using get_query_var() method and are accessible within actions
          * that are called using a wp rewrite rules redirect
-       
+         */
+
+
+
         $this->setConfig(
                 'QUERY_VARS'
-                , array( 'domain_name','user' )
+                , array(
+            'domain_name',
+            'user',
+            'next_tickerid',
+            'nstock_tag_callback'
+            , 'nstock_template'
+                )
         );
-         * 
-         * 
-         */
         /*
          * Template Directory
          *
@@ -254,65 +318,211 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
          * will call an action using the pretty url /action/myaction/
          * 
          * http://example.com/action/sayHello/
-         */
+        
         $this->addWPRewriteRule(
                 'action/(.+)/?$' //$match_pattern - 
                 , 'index.php?' . $this->plugin()->getSlug() . '_action=' . '$matches[1]'   //$target_pattern - 
         );
-
+ */
+        
+        
         /*
          * PhpInfo Pretty Url (Example)
          * 
          * Calls PhpInfo ( comment out in production ) 
          * 
          * http://example.com/phpinfo/
-         */
+         
         $this->addWPRewriteRule(
                 'phpinfo/{0,1}(.*)$' //$match_pattern - 
                 , 'index.php?' . $this->plugin()->getSlug() . '_action=phpinfo'   //$target_pattern - 
         );
+*/
+        
+        
+        /*
+         * Domain Landing Page Permalink
+         * Displays the seller's sales page for the domain name
+         * url scheme:  /domain/example.com/
+
+         */
+       
+        
+        $this->addWPRewriteRule(
+                'domain/([^\/]+)\/*?$' //$match_pattern - 
+                , 'index.php?' . $this->plugin()->getSlug()
+                . '_action=permalinkActionShowSalesPage' //the method within Core that will handle this url     
+                . '&domain_name=' . '$matches[1]'   //$target_pattern - 
+        );
 
 
-    }
+        
+        
+        
 
-    /**
-     * Action Example 2 - Method
-     *
-     * Long Description
-     * * @param none
-     * @return void
-     */
-    function sayHello() {
-        $this->debug()->t();
 
-        echo '<br> Hello';
+        /*
+        /*
+         * Ticker Analytics URL
+         * Renders that Analytics Page for the given domain name
+         * url scheme:  /stats/example.com/
+         * 
 
-    }
 
-    /**
-     * Test
-     *
-     * Code anything you want here. for testing
-     *
-     * @param none
-     * @return void
-     */
-    public function test() {
+         */
+        $this->addWPRewriteRule(
+                'stats/([^\/]+)\/*?$' //$match_pattern - 
+                , 'index.php?' . $this->plugin()->getSlug() . '_action=showStatsPage&domain_name=' . '$matches[1]'   //$target_pattern - 
+        );
 
-        echo $this->plugin()->tools()->url2dir( admin_url() );
-    }
 
-    /**
-     * Action Example 2 - Step 2 - Add the function
-     *
-     * This is the method that will fire when http://example.com/?simpli_frames_action=sayGoodbye is called.
-     * * @param none
-     * @return void
-     */
-    function sayGoodbye() {
-        $this->debug()->t();
 
-        echo '<br> Goodbye';
+
+
+        /*
+         * Domain Ticker Impression URL
+         * 
+         * Increases a viewport impression for the domain ( if the session is unique)
+         * url scheme:  /stats/impress/example.com/
+
+         */
+        $this->addWPRewriteRule(
+                'stats/impress/([^\/]+)\/*?$' //$match_pattern - 
+                , 'index.php?' . $this->plugin()->getSlug() . '_action=countViewportImpression&domain_name=' . '$matches[1]'   //$target_pattern - 
+        );
+
+
+
+
+
+
+
+        /*
+         * User Inventory Permalink
+         * Provides a User's Domain Inventory
+         * url scheme:  /domains/username 
+
+
+         */
+
+        $this->addWPRewriteRule(
+                'domains/([^\/]+)\/*?$' //$match_pattern - 
+                , 'index.php?' . $this->plugin()->getSlug()
+                . '_action=permalinkActionShowTemplate' //the method within Core that will handle this url
+                . '&nstock_tag_callback=getTagsForUserInventory' //the method within Core that will provide the tags for template parsing
+                . '&nstock_template=domain-portfolio' //the template name            
+                . '&user=' . '$matches[1]'   //$target_pattern - 
+        );
+
+
+        /*
+         * Add Domain Form Permalink
+         * Provides the form to add a domain to the ticker
+         * url scheme:  /add/domain/ 
+         */
+
+
+        $this->addWPRewriteRule(
+                'add/domain/?$' //$match_pattern - 
+                , 'index.php?' . $this->plugin()->getSlug()
+                . '_action=permalinkActionShowTemplate' //the method within Core that will handle this url
+                . '&nstock_tag_callback=' //the method within Core that will provide the tags for template parsing
+                . '&nstock_template=form-add-domain' //the template name            
+                // . '&domain_name=' . '$matches[1]'   //$target_pattern - 
+        );
+
+        /*
+         * Contact Seller Permalink
+         * Usage: http://nomstock.com/contact-seller/mydomain.com/
+         * 
+         * Pattern Notes
+         *  \/*domain\/     #e.g. "/domain/"
+         *  ([^\/]+)        #e.g. ?
+         *
+
+         */
+
+
+        $this->addWPRewriteRule(
+                'contact-seller/([^\/]+)\/*?$' //$match_pattern
+                , 'index.php?' . $this->plugin()->getSlug()
+                . '_action=permalinkActionShowTemplate' //the method within Core that will handle this url
+                . '&nstock_tag_callback=getTagsForDomain' //the method within Core that will provide the tags for template parsing. Empty is ok.
+                . '&nstock_template=form-contact-seller' //the template name            
+                . '&domain_name=' . '$matches[1]'   //$target_pattern - 
+        );
+
+
+
+
+
+
+        /*
+         * ************Pretty URLS for Pages that Are Passed Paramaters ******************
+         */
+
+        /*
+         * Buy With Escrow
+         * to use this scheme:
+         * no need to create a new action
+         * add the following to white list:
+         * 
+         * 
+         * 
+
+
+         */
+        $this->addWPRewriteRule(
+                'buy-with-escrow/([^\/]+)\/*?$' //$match_pattern - 
+                , 'index.php?' . $this->plugin()->getSlug()
+                . '_action=permalinkActionShowTemplate' //the method within Core that will handle this url
+                . '&nstock_tag_callback=getTagsForDomain' //the method within Core that will provide the tags for template parsing
+                . '&nstock_template=form-buy-with-escrow' //the template name            
+                . '&domain_name=' . '$matches[1]'   //$target_pattern - 
+        );
+        /*
+         * Buy With PayPal
+         * to use this scheme:
+         * no need to create a new action
+         * add the following to white list:
+         * 
+         * 
+         * 
+
+
+         */
+        $this->addWPRewriteRule(
+                'buy-with-paypal/([^\/]+)\/*?$' //$match_pattern - 
+                , 'index.php?' . $this->plugin()->getSlug()
+                . '_action=permalinkActionShowTemplate' //the method within Core that will handle this url
+                . '&nstock_tag_callback=getTagsForBuyWithPaypal' //the method within Core that will provide the tags for template parsing
+                . '&nstock_template=form-buy-with-paypal' //the template name            
+                . '&domain_name=' . '$matches[1]'   //$target_pattern - 
+        );
+
+        /*
+         * Template Pretty Url (Example)
+         * Works
+         */
+
+        $this->addWPRewriteRule(
+                'mytemplate/?$' //$match_pattern - 
+                , 'index.php?' . $this->plugin()->getSlug() . '_page=mytemplate&' . '$matches[1]'  //$target_pattern - 
+        );
+
+
+
+
+
+        $this->addExternalRedirect( '^/imageme', '/wp-content/plugins/simpli-frames/lib/txt2imgr' ); #target must begin with a slash
+
+
+        /*
+         * Example of an external redirect
+         * 
+         * $this->addExternalRedirect( '^/google', 'http://google.com' ); #target must begin with a slash
+         */
+
     }
 
     /**
@@ -529,7 +739,7 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
     public function addExternalRedirect( $match_pattern, $target_url ) {
 
         $this->_external_redirects[ $match_pattern ] = $target_url;
-       
+
 
     }
 
@@ -543,38 +753,38 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
      */
     public function hookCheckForExternalRedirects() {
         $redirects = $this->_external_redirects;
-        $this->debug()->logVar( '$redirects = ', $redirects);
+        $this->debug()->logVar( '$redirects = ', $redirects );
 
 
 
-        foreach ( $redirects as $match_pattern=>$target_url ) {
+        foreach ( $redirects as $match_pattern => $target_url ) {
 
 
             $this->debug()->logVar( '$target_url = ', $target_url );
             $this->debug()->logVar( '$match_pattern = ', $match_pattern );
-            if ( (preg_match( '|'.$match_pattern.'|', $_SERVER[ 'REQUEST_URI' ], $matches ) === 0 ) ) {
+            if ( (preg_match( '|' . $match_pattern . '|', $_SERVER[ 'REQUEST_URI' ], $matches ) === 0 ) ) {
 
                 continue;
 }
-                $this->debug()->logVar( '$match_pattern = ', $match_pattern);
-                $this->debug()->logVar( '$matches = ', $matches );
-            
+            $this->debug()->logVar( '$match_pattern = ', $match_pattern );
+            $this->debug()->logVar( '$matches = ', $matches );
+
             global $wp_query;
             $wp_query->is_404 = false;
             status_header( '200' );
-            
-            $this->debug()->logVar( '$matches = ', $matches);
-            
+
+            $this->debug()->logVar( '$matches = ', $matches );
+
             /*
              * need to remove the part of the uri that matched, or will get an endless loop
              */
-            $redirect_url=$target_url . str_replace( $matches[ 0 ], '', $_SERVER[ 'REQUEST_URI' ]);
+            $redirect_url = $target_url . str_replace( $matches[ 0 ], '', $_SERVER[ 'REQUEST_URI' ] );
             $this->debug()->logVar( '$redirect_url = ', $redirect_url );
- 
+
 
             header( "HTTP/1.1 302 Moved Temporarily" );
 
-            header( "Location: " .  $redirect_url );
+            header( "Location: " . $redirect_url );
             exit();
 
 
@@ -623,7 +833,7 @@ class Simpli_Frames_Modules_QueryVars extends Simpli_Frames_Base_v1c2_Plugin_Mod
 
 }
 
-  $this->plugin()->doPersistentAction($this->plugin()->getSlug() . '_flush_rewrite_rules');
+        $this->plugin()->doPersistentAction( $this->plugin()->getSlug() . '_flush_rewrite_rules' );
     }
 
     /**

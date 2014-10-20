@@ -5,12 +5,17 @@
  *
  * @author Andrew Druffner
  * @package SimpliFramework
- *
- * @property string $NONCE_ACTION The action name used for the menu if unique action nonces are not used
- * @property string $NONCE_FIELD_NAME The nonce field name used by the ajax script to add to the form
-* @property boolean $UNIQUE_ACTION_NONCES Whether to use unique nonces for each ajax action
+ * @property string $SEDO_LINK_TEMPLATE Sedo.com link template to the domain listing
 
- * 
+ * @property string $AFTERNIC_LINK_TEMPLATE Afternic.com link template to the domain listing
+ * @property string $CONTACT_OWNER_LINK_TEMPLATE A template for the link to the owner's contact form
+ *  @property string $EMAIL_FROM_DEFAULT The default from email address that will be used to send emails
+ *  @property string $EMAIL_HOST The host that will be used for sending emails.
+ *  @property string $EMAIL_AUTH Whether Email Authentication is required when sending Emails
+ *  @property string $EMAIL_PORT The port to be used when sending emails.
+ *  @property string $EMAIL_USERNAME The username used for authentication when sending Emails.
+ * @property string $EMAIL_PASSWORD The password to be used when sending emails.
+
  */
 class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
 
@@ -23,19 +28,24 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
      */
     public function addHooks() {
 
+/*
+	* required to get the catalyst header to display properly
+*/
+remove_action( 'template_redirect', 'catalyst_add_stylesheets' );
+add_action( 'template_redirect', 'catalyst_add_stylesheets', 0 );
 
 
         /*
          * Save Activation Errors for later display
          */
-        add_action('activated_plugin', array($this, 'save_activation_error'));
+        add_action( 'activated_plugin', array( $this, 'save_activation_error' ) );
 
         /*
          * Show Activation Error
          *
          */
 
-        add_action('admin_notices', array($this, 'show_activation_extra_characters'));
+        add_action( 'admin_notices', array( $this, 'show_activation_extra_characters' ) );
 
 
 
@@ -46,40 +56,40 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
          * Add our local variables
          *
          */
-        if (is_admin()) {
+        if ( is_admin() ) {
             /*
              * Enqueue Inline and External Scripts
              */
-            add_action('admin_enqueue_scripts', array($this, 'hookEnqueueScripts'), 0);
+            add_action( 'admin_enqueue_scripts', array( $this, 'hookEnqueueScripts' ), 0 );
             /*
              * Print Header Inline Scripts
              */
-            add_action('admin_print_scripts', array($this, 'hookPrintInlineHeaderScripts'));
+            add_action( 'admin_print_scripts', array( $this, 'hookPrintInlineHeaderScripts' ) );
             /*
              * Print Local Vars ( always print to the footer)
              */
-            add_action('admin_print_footer_scripts', array($this, 'hookPrintLocalVars'));
+            add_action( 'admin_print_footer_scripts', array( $this, 'hookPrintLocalVars' ) );
             /*
              * Print Footer Inline Scripts
              */
-            add_action('admin_print_footer_scripts', array($this, 'hookPrintInlineFooterScripts'));
+            add_action( 'admin_print_footer_scripts', array( $this, 'hookPrintInlineFooterScripts' ) );
         } else {
             /*
              * Enqueue Inline and External Scripts
              */
-            add_action('wp_enqueue_scripts', array($this, 'hookEnqueueScripts'));
+            add_action( 'wp_enqueue_scripts', array( $this, 'hookEnqueueScripts' ) );
             /*
              * Print Header Inline Scripts
              */
-            add_action('wp_print_scripts', array($this, 'hookPrintInlineHeaderScripts'));
+            add_action( 'wp_print_scripts', array( $this, 'hookPrintInlineHeaderScripts' ) );
             /*
              * Print Local Vars ( always print to the footer)
              */
-            add_action('wp_print_footer_scripts', array($this, 'hookPrintLocalVars'));
+            add_action( 'wp_print_footer_scripts', array( $this, 'hookPrintLocalVars' ) );
             /*
              * Print Footer Inline Scripts
              */
-            add_action('wp_print_footer_scripts', array($this, 'hookPrintInlineFooterScripts'));
+            add_action( 'wp_print_footer_scripts', array( $this, 'hookPrintInlineFooterScripts' ) );
 
 //            add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
 //            add_action('wp_print_footer_scripts', array($this, 'printLocalVars'));
@@ -95,11 +105,11 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
 
 
 
-        $this->debug()->log('Plugin Directory: ' . $this->getDirectory());
-        $this->debug()->log('Module Directory: ' . $this->getModuleDirectory());
+        $this->debug()->log( 'Plugin Directory: ' . $this->getDirectory() );
+        $this->debug()->log( 'Module Directory: ' . $this->getModuleDirectory() );
 
 
-        $this->debug()->log('Plugin URL: ' . $this->getUrl());
+        $this->debug()->log( 'Plugin URL: ' . $this->getUrl() );
     }
 
     /**
@@ -119,13 +129,115 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
          *  Load any libraries you need that may not be included with the default wordpress installation
          */
 
-        if (!class_exists('WP_Http'))
+        if ( !class_exists( 'WP_Http' ) )
             include_once( ABSPATH . WPINC . '/class-http.php' );
 
 
 
+        /*
+         * Sedo Template
+         *
+         * Link Template
+         */
+        $this->setConfig(
+                'SEDO_LINK_TEMPLATE'
+                , '<a href="http://www.sedo.de/search/details.php4?domain={domain_name}&amp;language=us">Sedo</a>'
+        );
+        /*
+         * Afternic Link Template
+         *
+         * Listing Link Template
+         */
+        $this->setConfig(
+                'AFTERNIC_LINK_TEMPLATE'
+                , '<a href="<a href="http://www.afternic.com/name.php?domain={domain_name}">Afternic</a>'
+        );
+
+        /*
+         * Contact Owner Link Template
+         *
+         * Listing Link Template
+         */
+        $this->setConfig(
+                'CONTACT_OWNER_LINK_TEMPLATE'
+                , '<a href="/contact/us/?domain={domain_name}">Direct from Seller</a>'
+        );
 
 
+        /*
+         * Contact Owner Link Template
+         *
+         * Listing Link Template
+         */
+        $this->setConfig(
+                'LISTING_EXPIRATION_HOURS'
+                , 99999
+        );
+
+  
+        /*
+         * EMAIL_FROM
+         *
+         * The default from email address that will be used to send emails
+         */
+        $this->setConfig(
+        'EMAIL_FROM_DEFAULT'
+        , 'siteadmin@nomstock.com'
+        );    
+        
+        /*
+         * EMAIL_HOST
+         *
+         * The host that will be used for sending emails.
+         */
+        $this->setConfig(
+        'EMAIL_HOST'
+        , 'ssl://in.mailjet.com'
+        );
+        
+        
+        /*
+         * EMAIL_AUTH
+         *
+         * Whether Email Authentication is required when sending Emails. True or False
+         */
+        $this->setConfig(
+        'EMAIL_AUTH'
+        , true
+        );
+
+        
+        /*
+         * EMAIL_PORT
+         *
+         * The port to be used when sending emails.
+         */
+        $this->setConfig(
+        'EMAIL_PORT'
+        , 465
+        );
+        
+        /*
+         * EMAIL_USERNAME
+         *
+         * The username used for authentication when sending Emails.
+         */
+        $this->setConfig(
+        'EMAIL_USERNAME'
+        , MAILJET_API_KEY //this is MailJet's API Key as set in wp-config.php
+        );
+
+        /*
+         * EMAIL_PASSWORD
+         *
+         * The password to be used when sending emails.
+         */
+        $this->setConfig(
+        'EMAIL_PASSWORD'
+        , MAILJET_SECRET_KEY //this is MailJet's Secret Key as set in wp-config.php
+        );
+        
+ 
 
         /*
          * DISABLED_MODULES
@@ -137,28 +249,23 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
           , array('QueryVars', 'Shortcodes')
           );
          */
-
-
         $this->setConfig(
                 'DISABLED_MODULES'
                 , array(
-                 //   'Admin',
-                 //   'Core',
-            'Forms',
-                    // 'Menu001Snippets',
-                     //  'Menu10DevGetStarted',
-//                    'Menu10General',
-//                    'Menu20DevManage',
-//                    'Menu20MyMenu',
-//                    'Menu30Advanced',
-//                    'Menu40DevAbout',
-//                    'PostUserOptions',
-//                    'QueryVars',
-//                    'Theme',
-//                       'Shortcodes',
-                    
+            'ExampleModule'
+//            , 'PostUserOptions'
+//            , 'Menu10DevGetStarted'
+//            , 'Menu20DevManage'
+//            , 'Menu30Advanced'
+//            , 'PostUserOptions'
+//            , 'Tools'
+//            , 'Queryvars'
+//            , 'Shortcodes'
+                //   , 'Tools'
                 )
         );
+
+
 
         /*
          * ALWAYS_ENABLED_REGEX_PATTERN
@@ -190,7 +297,7 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
                 'URL_CSS'
                 , dirname(dirname($this->getURL())) . '/content/published/_jekyll-output/css'
         );
-
+        
         /*
          * DISABLED_ADDONS
          *
@@ -210,60 +317,9 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
                 , true
         );
 
-        /*
-         * Default NONCE Action Name
-         *
-         * If unique nonces are not used, this is the action name that will be used when forms are submitted
-         */
-                $this->setConfig(
-                'NONCE_ACTION'
-                , $this->getSlug() . '_form_submit'
-        );
         
-
         
-
-        /*
-         * Nonce Field Name
-         *
-         * This is the nonce field name that will be submitted with each form
-         */
-        $this->setConfig(
-                'NONCE_FIELD_NAME'
-                ,  $this->getSlug() . '_nonce'
-        );
         
-
-        /*
-         * Unique Action Nonce Flag
-         *
-         * Boolean - True if you want a nonce name for each form action, false if you want
-         * to use the default nonce for every form action
-         * False means submitting forms might be a little faster, True should
-         * be a little more secure
-         */
-        $this->setConfig(
-                'UNIQUE_ACTION_NONCES'
-                , false
-        );
-
-        
-        /*
-         * On Demand Form Scripts Flag
-         *
-         * True to load form scripts only on pages that have a formStart() call (requires
-         * the Simpli Forms Addon)
-         * False if you are not using the Simpli Forms Addon, and will load all the form
-         * scripts on each page request ( much less efficient )
-         */
-        $this->setConfig(
-                'ON_DEMAND_FORM_SCRIPTS'
-                , true
-        );
-        
-      
-         
-         
 
         /*
          *
@@ -291,59 +347,9 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
          * Radio Button Setting Example
          * 'yes' or 'no'
          */
-        $this->setUserOptionDefault(
-                'radio_setting', 'yes'
-        );
-
-        /*
-         * Text Setting Example
-         * any string
-         */
-        $this->setUserOptionDefault(
-                'text_setting', 'Joe Smith'
-        );
-
-        /*
-         * Dropdown Setting Example
-         * Set equal to the value that you want selected
-         */
-        $this->setUserOptionDefault(
-                'dropdown_setting', 'red'
-        );
-
-
-        /*
-         * Checkbox Setting Example
-         * The index is the value of the checkbox,
-         * the value is either 'yes' or 'no' , indicating whether you want it checked or not
-         */
-        $this->setUserOptionDefault(
-                'checkbox_setting', array(
-            'yellow' => 'yes'
-            , 'red' => 'no'
-            , 'orange' => 'yes'
-            , 'blue' => 'yes'
-                )
-        );
-
-
-
-        /*
-         *
-         * Advanced Settings
-         *
-         */
-
-        /*
-         * Plugin Enabled Setting
-         * 'enabled' or 'disabled' Controls whether the plugins modules are loaded. Disabled still loads the admin pages
-         */
-        $this->setUserOptionDefault(
-                'plugin_enabled', 'enabled'
-        );
-
-
-
+        //      $this->setUserOptionDefault(
+        //           'radio_setting', 'yes'
+        //    );
 
 
 
@@ -375,20 +381,20 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
          */
 
 
-        $persistent_actions = get_transient($this->getSlug() . '_persistent_actions');
+        $persistent_actions = get_transient( $this->getSlug() . '_persistent_actions' );
 
 
 
 
-        foreach ($persistent_actions as $action_name => $action) {
-            if ($action['action_taken'] === true) {
+        foreach ( $persistent_actions as $action_name => $action ) {
+            if ( $action[ 'action_taken' ] === true ) {
 
-                unset($persistent_actions[$action_name]);
+                unset( $persistent_actions[ $action_name ] );
             }
         }
 
 
-        set_transient($this->getSlug() . '_persistent_actions', $persistent_actions);
+        set_transient( $this->getSlug() . '_persistent_actions', $persistent_actions );
     }
 
     /**
@@ -400,7 +406,7 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
      * @return void
      */
     public function deactivatePlugin() {
-        flush_rewrite_rules();
+        flush_rewrite_rules(true);
     }
 
     /**
@@ -413,7 +419,7 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
      */
     public function activatePlugin() {
         $this->debug()->t();
-
+    
 
         /*
          * Execute all the Activate Actions
@@ -432,11 +438,11 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
 
         $activate_actions = $this->getActivateActions();
 
-        foreach ($activate_actions as $action) {
+        foreach ( $activate_actions as $action ) {
 
-            $object = $action[0];
-            $method = $action[1];
-            $this->debug()->log('Calling Activate Action : ' . get_class($object) . '::' . $method);
+            $object = $action[ 0 ];
+            $method = $action[ 1 ];
+            $this->debug()->log( 'Calling Activate Action : ' . get_class( $object ) . '::' . $method );
 
             $object->$method();
             //
@@ -455,7 +461,7 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
         /*
          * Extend a Hook to trigger other activation actions
          */
-        do_action($this->getSlug() . '_activated');
+        do_action( $this->getSlug() . '_activated' );
 
         /*
          * Flush rewrite rules
@@ -465,8 +471,7 @@ class Simpli_Frames_Plugin extends Simpli_Frames_Base_v1c2_Plugin {
          * in the code where the 'doPersistentAction' method is called.
          */
 
-        $this->addPersistentAction($this->getSlug() . '_flush_rewrite_rules', 'flush_rewrite_rules');
+        $this->addPersistentAction( $this->getSlug() . '_flush_rewrite_rules', 'flush_rewrite_rules' );
     }
 
 }
-

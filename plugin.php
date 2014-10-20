@@ -57,6 +57,7 @@ require(dirname(__FILE__) . '/lib/Simpli/Framework.php');
  * $plugin_slug must be universally unique, and consist of 2 lowercase words separated by an underscore
  * $plugin_file_path should always be __FILE__
  */
+global $simpli_frames; //globalize it so we can access the object in command line scripts, from other plugins, or within the core if needed.
 
 $simpli_frames = Simpli_Framework::load('simpli_frames', __FILE__);
 

@@ -27,13 +27,17 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Base_v1c2_Plugin_Debug {
      * @param none
      * @return void
      */
-    
-    
-
-        
-        
     public function config() {
 
+
+
+
+// Set our assert options
+        assert_options( ASSERT_ACTIVE, true ); //enable assert() evaluation
+        assert_options( ASSERT_WARNING, false ); // Always False since we have are our handler. issue a PHP warning for each failed assertion
+        assert_options( ASSERT_BAIL, false ); //Always False terminate execution on failed assertions. *this should always be false, or you may not know why your script stops!*
+        assert_options( ASSERT_QUIET_EVAL, true ); //Always true - disable error_reporting during assertion expression evaluation 
+        assert_options( ASSERT_CALLBACK, array( $this, 'showAssertionMessage' ) ); //Callback to call on failed assertions
 
 
 
@@ -47,22 +51,71 @@ class Simpli_Frames_DebugConfig extends Simpli_Frames_Base_v1c2_Plugin_Debug {
          */
         $this->debug()->turnOn();
 
-
- $this->debugNonces(true);
-
-       // $this->setOption('trace_enabled', false);
-
-
-
-       // $this->setOption('backtrace_enabled', false);
-
-
-        
-        
-        
+        $this->setCommonOptions( true );
  
-$this->debugAll(false);
- $this->reduceExecutionTime(false);
+        $this->setOption( 'debug_when',false );
+ 
+        $this->debugNonces( false );
+
+        $this->debugDomainListingPage( false );
+
+        $this->debugDomainSalesPageRedirect( false );
+
+
+        $this->debug()->setMethodFilter( ".*Core.*", false );
+
+$this->debug()->debugShowStatsPage(false);
+        
+        
+    $this->debugSupportForm(false);
+
+
+
+        $this->debug()->setMethodFilter( 'getDomainSalesPageUrl', false );
+        $this->debug()->setMethodFilter( '_SubmitForm', false );
+
+        $this->setMethodFilter( 'crunchTpl', false );
+        $this->setOption( 'expand_on_click', false );
+        $this->setMethodFilter( 'showDomainLandingPage', false );
+        $this->setMethodFilter( '.*NomstockStats.*', false );
+
+        $this->debugServerVars( false );
+        $this->setMethodFilter( 'getChartData', false );
+        $this->setMethodFilter( 'mySQLCallProc', false );
+        $this->setMethodFilter( 'addjqPlotCharts', false );
+        $this->setMethodFilter( 'arrayWalkConvertDate', false );
+
+
+
+        $this->setMethodFilter( '.*start.*', false );
+
+        $this->setOption( 'trace_output_format', 'text' );
+        $this->setOption( 'expand_on_click', false );
+        $this->setOption( 'trace_enabled', false );
+
+    $this->debugValidation(false);
+    
+        $this->debugDomainListingPage( false );
+
+
+        $this->debugAll( false );//must be added as last debug statement or it will likely be overwritten
+        $this->reduceExecutionTime( false );
+
+        $this->debugAddDomains( false );
+
+        $this->debugAdminAddDomain( false ); //add domain routine of the add domains admin panel
+
+
+
+
+        $this->debugUserAddDomain( false ); // submit domain routine of the add domains external facing form
+
+
+ $this->debugSimpliFormsManageForms(false);
+ 
+         $this->debugShowTemplate(false);
+         
+         
 
         /* Example
          *  $this->setMethodFilter('.*_createNonces.*', true);
@@ -84,16 +137,16 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function debugJavascriptLoading($enabled = true) {
-        if (!$enabled) {
+    public function debugJavascriptLoading( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
         $this->setCommonOptions();
 
-        $this->setMethodFilter('hookEnqueue.*', true);
-        $this->setMethodFilter('hookEdit.*', true);
+        $this->setMethodFilter( 'hookEnqueue.*', true );
+        $this->setMethodFilter( 'hookEdit.*', true );
 
-        $this->setOption('debug_post_only', false); //block all but post , block all but ajax, block all but
+        $this->setOption( 'debug_post_only', false ); //block all but post , block all but ajax, block all but
     }
 
     /**
@@ -104,26 +157,28 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function debugNonces($enabled = true) {
-        if (!$enabled) {
+    public function debugNonces( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
         $this->setCommonOptions();
-        $this->setMethodFilter('.*_createNonces.*', true);
-        $this->setMethodFilter('wpVerifyNonce', true);
+        $this->setMethodFilter( '.*_createNonces.*', true );
+        $this->setMethodFilter( 'wpVerifyNonce', true );
+        $this->setMethodFilter( 'hookEnqueueScripts', true );
 
 
-        $this->setMethodFilter('.*_jax.*', true);
 
-        $this->setMethodFilter('.*once.*', true); //nonces
+        $this->setMethodFilter( '.*_jax.*', true );
 
-        $this->setMethodFilter('.*ave.*', true); //savePost,etc
+        $this->setMethodFilter( '.*once.*', true ); //nonces
+
+        $this->setMethodFilter( '.*ave.*', true ); //savePost,etc
         /*
          * Only output debugging information if a form has posted
          * @todo: add this to defaults as false
          */
 
-        $this->setOption('debug_post_only', false); //block all but post , block all but ajax, block all but
+        $this->setOption( 'debug_post_only', false ); //block all but post , block all but ajax, block all but
     }
 
     /**
@@ -134,20 +189,20 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function debugSavePost($enabled = true) {
-        if (!$enabled) {
+    public function debugSavePost( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
         $this->setCommonOptions();
 
-        $this->setMethodFilter('hookFormActionSavePost', true);
-        $this->setMethodFilter('hookSavePost', true);
-        $this->setMethodFilter('setUserOption', true);
-        $this->setMethodFilter('Simpli_Frames_Base_v1c2_Plugin_Post', true);
+        $this->setMethodFilter( 'hookFormActionSavePost', true );
+        $this->setMethodFilter( 'hookSavePost', true );
+        $this->setMethodFilter( 'setUserOption', true );
+        $this->setMethodFilter( 'Simpli_Frames_Base_v1c2_Plugin_Post', true );
 
-        $this->setMethodFilter('_savePost', true);
-        $this->setMethodFilter('saveUserOptions', true);
-        $this->setOption('debug_post_only', true); //block all but post so it doesnt provide debug output until you submit
+        $this->setMethodFilter( '_savePost', true );
+        $this->setMethodFilter( 'saveUserOptions', true );
+        $this->setOption( 'debug_post_only', true ); //block all but post so it doesnt provide debug output until you submit
     }
 
     /**
@@ -158,19 +213,19 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function debugHello($enabled = true) {
-        if (!$enabled) {
+    public function debugHello( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
         $this->setCommonOptions();
 
 
-        $this->setMethodFilter('addTextToPost', true);
-        $this->setMethodFilter('Core', true);
-        $this->setOption('trace_enabled', true);
-        $this->setOption('defined_vars_enabled', true);
-        $this->setOption('backtrace_enabled', true);
-        $this->setOption('expand_on_click', true);
+        $this->setMethodFilter( 'addTextToPost', true );
+        $this->setMethodFilter( 'Core', true );
+        $this->setOption( 'trace_enabled', true );
+        $this->setOption( 'defined_vars_enabled', true );
+        $this->setOption( 'backtrace_enabled', true );
+        $this->setOption( 'expand_on_click', true );
     }
 
     /**
@@ -181,8 +236,8 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function debugActivation($enabled = true) {
-        if (!$enabled) {
+    public function debugActivation( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
 
@@ -190,16 +245,16 @@ $this->debugAll(false);
         /*
          * options
          */
-        $this->setOption('log_all_actions', true);
+        $this->setOption( 'log_all_actions', true );
 
-        $this->setOption('method_filters_enabled', true);
-        $this->setOption('trace_output_format', 'text');
-        $this->setOption('expand_on_click', false);
-        $this->setOption('trace_enabled', true);
-        $this->setOption('output_to_inline', true);
-        $this->setOption('output_to_file', true);
-        $this->setOption('action_inclusion_filter', array_merge(
-                        $this->getOption('action_inclusion_filter'), array(
+        $this->setOption( 'method_filters_enabled', true );
+        $this->setOption( 'trace_output_format', 'text' );
+        $this->setOption( 'expand_on_click', false );
+        $this->setOption( 'trace_enabled', true );
+        $this->setOption( 'output_to_inline', true );
+        $this->setOption( 'output_to_file', true );
+        $this->setOption( 'action_inclusion_filter', array_merge(
+                        $this->getOption( 'action_inclusion_filter' ), array(
 //    'pre_get_posts',
 //   'parse_query'
 //  ,'send_headers'
@@ -212,38 +267,39 @@ $this->debugAll(false);
             , $this->plugin()->getSlug() . '_activated'
 //   'wp_ajax.*'
                         )
-        ));
+        ) );
 
         /*
          * filters
          */
 
 
-        $this->setMethodFilter('flushRewriteRules', true);
-        $this->setMethodFilter('Simpli_Frames_Plugin::shutdown', true);
+
+        $this->setMethodFilter( 'flushRewriteRules', true );
+        $this->setMethodFilter( 'Simpli_Frames_Plugin::shutdown', true );
 
 
-        $this->setMethodFilter('Simpli_Frames_Plugin::__destruct', true);
-        $this->setMethodFilter('doPersistentAction', true);
-        $this->setMethodFilter('addPersistentAction', true);
-        $this->setMethodFilter('toggleActivationStatus', true);
-        $this->setMethodFilter('Simpli_Frames_Base_v1c2_Plugin_PostType::config', true);
+        $this->setMethodFilter( 'Simpli_Frames_Plugin::__destruct', true );
+        $this->setMethodFilter( 'doPersistentAction', true );
+        $this->setMethodFilter( 'addPersistentAction', true );
+        $this->setMethodFilter( 'toggleActivationStatus', true );
+        $this->setMethodFilter( 'Simpli_Frames_Base_v1c2_Plugin_PostType::config', true );
 
-        $this->setMethodFilter('_register_post_type', true);
+        $this->setMethodFilter( '_register_post_type', true );
 
-        $this->setMethodFilter('my_plugin.*', true);
-
-
-        $this->setMethodFilter('hookFlushRewriteRules', true);
-        $this->setMethodFilter('addAction.*', true);
-
-        $this->setMethodFilter('.*flush.*', true);
+        $this->setMethodFilter( 'my_plugin.*', true );
 
 
+        $this->setMethodFilter( 'hookFlushRewriteRules', true );
+        $this->setMethodFilter( 'addAction.*', true );
+
+        $this->setMethodFilter( '.*flush.*', true );
 
 
-        $this->setMethodFilter('activatePlugin', true);
-        $this->setMethodFilter('addActivateAction', false);
+
+
+        $this->setMethodFilter( 'activatePlugin', true );
+        $this->setMethodFilter( 'addActivateAction', false );
     }
 
     /**
@@ -262,56 +318,57 @@ $this->debugAll(false);
          * set to false to ignore all filters and print all module debug output
          *
          */
-        $this->setOption('method_filters_enabled', true);
+        $this->setOption( 'method_filters_enabled', true );
+
+     $this->setOption( 'debug_when',false );
+     
+        $this->setOption( 'log_all_actions', false );
+
+        $this->setOption( 'logging_enabled', true );
+
+        $this->setOption( 'always_show_errors', true ); /* always show errors, regardless of filtering */
+
+        $this->setOption( 'error_template', '<div ><em style="color:red;"> Error ( Plugin {PLUGIN_SLUG} ) </em> {ERROR_MESSAGE}  <p>Calling method : {CALLING_CLASS}::{CALLING_METHOD}() </p>on Line {CALLING_LINE} in file {CALLING_FILE}</div>' );
 
 
-        $this->setOption('log_all_actions', false);
+        $this->setOption( 'trace_enabled', false );
 
-        $this->setOption('logging_enabled', true);
+        $this->setOption( 'defined_vars_enabled', false );
 
-        $this->setOption('always_show_errors', true); /* always show errors, regardless of filtering */
+        $this->setOption( 'backtrace_enabled', false );
 
-        $this->setOption('error_template', '<div ><em style="color:red;"> Error ( Plugin {PLUGIN_SLUG} ) </em> {ERROR_MESSAGE}  <p>Calling method : {CALLING_CLASS}::{CALLING_METHOD}() </p>on Line {CALLING_LINE} in file {CALLING_FILE}</div>');
-
-
-        $this->setOption('trace_enabled', true);
-
-        $this->setOption('defined_vars_enabled', false);
-
-        $this->setOption('backtrace_enabled', false);
-
-        $this->setOption('visual_backtrace_enabled', false);
+        $this->setOption( 'visual_backtrace_enabled', false );
 
 
-        $this->setOption('trace_output_format', 'text');  //options are 'normal'(default), 'text' and 'simple'
+        $this->setOption( 'trace_output_format', 'text' );  //options are 'normal'(default), 'text' and 'simple'
 
 
 
 
-        $this->setOption('show_arrays', true);
-        $this->setOption('show_objects', true);
+        $this->setOption( 'show_arrays', true );
+        $this->setOption( 'show_objects', false );
 
-        $this->setOption('ajax_debugging_enabled', true);
+        $this->setOption( 'ajax_debugging_enabled', true );
 
-        $this->setOption('ajax_debugging_only', false); // NOT ADDED TO DEFAULTS !only outputs debugging if the request is ajax. this helps in preventing debug output when you are only interested in the response during an ajax request (and not , for example, a page refresh).
+        $this->setOption( 'ajax_debugging_only', false ); // NOT ADDED TO DEFAULTS !only outputs debugging if the request is ajax. this helps in preventing debug output when you are only interested in the response during an ajax request (and not , for example, a page refresh).
 
-        $this->setOption('expand_on_click', true);
+        $this->setOption( 'expand_on_click', true );
 
         /*
          * Debug Output
          * Where you want to send the log output
          */
-        $this->setOption('output_to_inline', true);
+        $this->setOption( 'output_to_inline', true );
 
-        $this->setOption('output_to_footer', false);
-        $this->setOption('output_to_file', false);
-        $this->setOption('output_to_console', false);
-        $this->setOption('log_file_path', $this->plugin()->getDirectory() . '/debug.log.txt');
+        $this->setOption( 'output_to_footer', false );
+        $this->setOption( 'output_to_file', false );
+        $this->setOption( 'output_to_console', false );
+        $this->setOption( 'log_file_path', $this->plugin()->getDirectory() . '/debug.log.txt' );
 
         /*
          * Demo Enabled
          */
-        $this->setOption('demo_enabled', false);
+        $this->setOption( 'demo_enabled', false );
 
         /*
          * Excluded Functions Filter Enabled
@@ -319,9 +376,9 @@ $this->debugAll(false);
          * this filter removes unwanted functions from trace output
          */
 
-        $this->setOption('function_exclusion_filter_enabled', true);
-        $this->setOption('function_exclusion_filter', array_merge(
-                        $this->getOption('function_exclusion_filter'), array()
+        $this->setOption( 'function_exclusion_filter_enabled', true );
+        $this->setOption( 'function_exclusion_filter', array_merge(
+                        $this->getOption( 'function_exclusion_filter' ), array()
                 )
         );
 
@@ -344,9 +401,9 @@ $this->debugAll(false);
          * Works the same way as the Excluded Functions filter above
          */
 
-        $this->setOption('action_exclusion_filter_enabled', true);
-        $this->setOption('action_exclusion_filter', array_merge(
-                        $this->getOption('action_exclusion_filter'), array()
+        $this->setOption( 'action_exclusion_filter_enabled', true );
+        $this->setOption( 'action_exclusion_filter', array_merge(
+                        $this->getOption( 'action_exclusion_filter' ), array()
                 )
         );
 
@@ -356,9 +413,9 @@ $this->debugAll(false);
          * Log only those actions listed in the filter when enabled
          */
 
-        $this->setOption('action_inclusion_filter_enabled', true);
-        $this->setOption('action_inclusion_filter', array_merge(
-                        $this->getOption('action_inclusion_filter'), array(
+        $this->setOption( 'action_inclusion_filter_enabled', true );
+        $this->setOption( 'action_inclusion_filter', array_merge(
+                        $this->getOption( 'action_inclusion_filter' ), array(
 //    'pre_get_posts',
 //   'parse_query'
 //  ,'send_headers'
@@ -382,14 +439,14 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function debugMetaboxState($enabled = true) {
-        if (!$enabled) {
+    public function debugMetaboxState( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
 
         $this->setCommonOptions();
-        $this->setMethodFilter('hookClose.*', true);
-        $this->setMethodFilter('setOpenState', false);
+        $this->setMethodFilter( 'hookClose.*', true );
+        $this->setMethodFilter( 'setOpenState', false );
     }
 
     /**
@@ -400,49 +457,49 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function debugPostMetaboxes($enabled = true) {
-        if (!$enabled) {
+    public function debugPostMetaboxes( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
 
         $this->setCommonOptions();
 
-        $this->setOption('method_filters_enabled', true);
+        $this->setOption( 'method_filters_enabled', true );
 
-        $this->setOption('trace_enabled', true);
+        $this->setOption( 'trace_enabled', true );
 
-        $this->setMethodFilter('renderMetaBox.*', true);
+        $this->setMethodFilter( 'renderMetaBox.*', true );
 //$this->setMethodFilter('.*_Module_Metabox::addMetaBox', true);
-        $this->setMethodFilter('.*addMetaBox', true);
-        $this->setMethodFilter('.*hookAddMetaBoxes', true);
-        $this->setMethodFilter('pageCheckEditor', true);
-        $this->setMethodFilter('hookEditingScreen', true);
+        $this->setMethodFilter( '.*addMetaBox', true );
+        $this->setMethodFilter( '.*hookAddMetaBoxes', true );
+        $this->setMethodFilter( 'pageCheckEditor', true );
+        $this->setMethodFilter( 'hookEditingScreen', true );
 
-        $this->setMethodFilter('Simpli_Frames_Base_v1c2_Plugin_Module_Post', true);
-
-
-
-        $this->setMethodFilter('.*_Metabox::config', true);
-        $this->setMethodFilter('Simpli_Frames_Modules_PostUserOptions::config', true);
-        $this->setMethodFilter('getPost', true);
-        $this->setMethodFilter('getEditPostID', true);
-
-        $this->setMethodFilter('Simpli_Frames_Base_v1c2_Plugin_Module_Post', true);
-        $this->setMethodFilter('_hookNewPost', true);
+        $this->setMethodFilter( 'Simpli_Frames_Base_v1c2_Plugin_Module_Post', true );
 
 
 
-        $this->setOption('log_all_actions', true);
-        $this->setOption('action_inclusion_filter_enabled', true);
-        $this->setOption('action_inclusion_filter', array_merge(
-                        $this->getOption('action_inclusion_filter'), array(
+        $this->setMethodFilter( '.*_Metabox::config', true );
+        $this->setMethodFilter( 'Simpli_Frames_Modules_PostUserOptions::config', true );
+        $this->setMethodFilter( 'getPost', true );
+        $this->setMethodFilter( 'getEditPostID', true );
+
+        $this->setMethodFilter( 'Simpli_Frames_Base_v1c2_Plugin_Module_Post', true );
+        $this->setMethodFilter( '_hookNewPost', true );
+
+
+
+        $this->setOption( 'log_all_actions', true );
+        $this->setOption( 'action_inclusion_filter_enabled', true );
+        $this->setOption( 'action_inclusion_filter', array_merge(
+                        $this->getOption( 'action_inclusion_filter' ), array(
             'wp_insert_post',
             'save_post'
                         )
                 )
         );
 
-        $this->setOption('trace_output_format', 'text');  //options are 'normal'(default), 'text' and 'simple'
+        $this->setOption( 'trace_output_format', 'text' );  //options are 'normal'(default), 'text' and 'simple'
     }
 
     /**
@@ -454,42 +511,42 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function reduceExecutionTime($enabled = true) {
-        if (!$enabled) {
+    public function reduceExecutionTime( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
 
-        $this->setOption('defined_vars_enabled', false);
-        $this->setOption('method_filters_enabled', true);
+        $this->setOption( 'defined_vars_enabled', false );
+        $this->setOption( 'method_filters_enabled', true );
 
-        $this->setOption('action_inclusion_filter_enabled', true);
-        $this->setOption('show_arrays', false);
-        $this->setOption('show_objects', false);
-
-
-        $this->setOption('trace_enabled', true);
+        $this->setOption( 'action_inclusion_filter_enabled', true );
+        $this->setOption( 'show_arrays', false );
+        $this->setOption( 'show_objects', false );
 
 
-        $this->setOption('backtrace_enabled', false);
-
-        $this->setOption('visual_backtrace_enabled', false);
+        $this->setOption( 'trace_enabled', true );
 
 
-        $this->setOption('trace_output_format', 'text');  //options are 'normal'(default), 'text' and 'simple'
+        $this->setOption( 'backtrace_enabled', false );
+
+        $this->setOption( 'visual_backtrace_enabled', false );
+
+
+        $this->setOption( 'trace_output_format', 'text' );  //options are 'normal'(default), 'text' and 'simple'
 
 
 
-        $this->setOption('expand_on_click', true);
+        $this->setOption( 'expand_on_click', true );
 
         /*
          * Debug Output
          * Where you want to send the log output
          */
-        $this->setOption('output_to_inline', true);
+        $this->setOption( 'output_to_inline', true );
 
-        $this->setOption('output_to_footer', false);
-        $this->setOption('output_to_file', false);
-        $this->setOption('output_to_console', false);
+        $this->setOption( 'output_to_footer', false );
+        $this->setOption( 'output_to_file', false );
+        $this->setOption( 'output_to_console', false );
     }
 
     /**
@@ -500,22 +557,22 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function debugShortcode($enabled = true) {
-        if (!$enabled) {
+    public function debugShortcode( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
 
-        $this->setOption('method_filters_enabled', true);
+        $this->setOption( 'method_filters_enabled', true );
 
-        $this->setMethodFilter('renderMetaBoxTemplate', true);
-        $this->setMethodFilter('renderMenuPage', true);
-
-
+        $this->setMethodFilter( 'renderMetaBoxTemplate', true );
+        $this->setMethodFilter( 'renderMenuPage', true );
 
 
 
-        $this->setMethodFilter('hookShortcodeElementWithoutContent', true);
-        $this->setMethodFilter('hookShortcodeElementWithContent', true);
+
+
+        $this->setMethodFilter( 'hookShortcodeElementWithoutContent', true );
+        $this->setMethodFilter( 'hookShortcodeElementWithContent', true );
     }
 
     /**
@@ -526,15 +583,15 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function debugPostType($enabled = true) {
-        if (!$enabled) {
+    public function debugPostType( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
-        $this->setMethodFilter('getPost', true);
-        $this->setMethodFilter('getPostType', true);
-        $this->setMethodFilter('_getEditorPostID', true);
-        $this->setMethodFilter('getPostTypeRequestVar', true);
-        $this->setMethodFilter('hookCreateNewPost', true);
+        $this->setMethodFilter( 'getPost', true );
+        $this->setMethodFilter( 'getPostType', true );
+        $this->setMethodFilter( '_getEditorPostID', true );
+        $this->setMethodFilter( 'getPostTypeRequestVar', true );
+        $this->setMethodFilter( 'hookCreateNewPost', true );
     }
 
     /**
@@ -545,12 +602,12 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function debugPostEditor($enabled = true) {
-        if (!$enabled) {
+    public function debugPostEditor( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
 //$this->setMethodFilter('.*_Addons_Simpli_Forms_Modules_Form::addHooks', true); //fix bug
-        $this->setMethodFilter('filterPostEditor', true);
+        $this->setMethodFilter( 'filterPostEditor', true );
     }
 
     /**
@@ -561,14 +618,14 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function debugSimpliFormsElements($enabled = true) {
-        if (!$enabled) {
+    public function debugSimpliFormsElements( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
-        $this->setMethodFilter('renderElement', true);
-        $this->setMethodFilter('.*filter.*', true);
-        $this->setMethodFilter('getTemplate', true);
-        $this->setMethodFilter('_setCachedTemplate', true);
+        $this->setMethodFilter( 'renderElement', true );
+        $this->setMethodFilter( '.*filter.*', true );
+        $this->setMethodFilter( 'getTemplate', true );
+        $this->setMethodFilter( '_setCachedTemplate', true );
     }
 
     /**
@@ -579,11 +636,11 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function debugRedirect($enabled = true) {
-        if (!$enabled) {
+    public function debugRedirect( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
-        $this->setMethodFilter('hookRedirect.*', true);
+        $this->setMethodFilter( 'hookRedirect.*', true );
     }
 
     /**
@@ -594,16 +651,16 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function debugCustomPostType($enabled = true) {
-        if (!$enabled) {
+    public function debugCustomPostType( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
-        $this->setMethodFilter('.*_Modules_Menu001Snippets.*', true);
-        $this->setMethodFilter('.*_Plugin_PostType.*', true);
-        $this->setMethodFilter('.*_Plugin_Menu.*', true);
-        $this->setOption('show_arrays', true);
-        $this->setOption('show_objects', false);
-        $this->setOption('expand_on_click', false);
+        $this->setMethodFilter( '.*_Modules_Menu001Snippets.*', true );
+        $this->setMethodFilter( '.*_Plugin_PostType.*', true );
+        $this->setMethodFilter( '.*_Plugin_Menu.*', true );
+        $this->setOption( 'show_arrays', true );
+        $this->setOption( 'show_objects', false );
+        $this->setOption( 'expand_on_click', false );
         //$this->setMethodFilter('.*_Menu.*', true);
     }
 
@@ -615,21 +672,21 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function debugUploadAddon($enabled = true) {
-        if (!$enabled) {
+    public function debugUploadAddon( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
-        $this->setCommonOptions(true);
-        $this->setMethodFilter('installAddon', true);
-        $this->setMethodFilter('hookFormActionUploadAddon', true);
-        $this->setMethodFilter('include', true); //by method
-        $this->setMethodFilter('deleteTempAddonsDirectory', false); //by method
-        $this->setMethodFilter('getRelativePath', false); //by method
-        $this->setMethodFilter('connect', true); //by method
-        $this->setOption('output_to_inline', false);
+        $this->setCommonOptions( true );
+        $this->setMethodFilter( 'installAddon', true );
+        $this->setMethodFilter( 'hookFormActionUploadAddon', true );
+        $this->setMethodFilter( 'include', true ); //by method
+        $this->setMethodFilter( 'deleteTempAddonsDirectory', false ); //by method
+        $this->setMethodFilter( 'getRelativePath', false ); //by method
+        $this->setMethodFilter( 'connect', true ); //by method
+        $this->setOption( 'output_to_inline', false );
 
-        $this->setMethodFilter('getNormalizedFilesystemPath', false); //by method
-        $this->setOption('output_to_footer', true);
+        $this->setMethodFilter( 'getNormalizedFilesystemPath', false ); //by method
+        $this->setOption( 'output_to_footer', true );
     }
 
     /**
@@ -641,8 +698,8 @@ $this->debugAll(false);
      * @param none
      * @return void
      */
-    public function debugAll($enabled = true) {
-        if (!$enabled) {
+    public function debugAll( $enabled = true ) {
+        if ( !$enabled ) {
             return;
         }
 
@@ -650,15 +707,404 @@ $this->debugAll(false);
 
 
         $this->reduceExecutionTime();
-        $this->setOption('method_filters_enabled', false);
+        $this->setOption( 'method_filters_enabled', false );
     }
 
+    /**
+     * Debug Domain Listing Page
+     *
+     * Ignores all filters so shows all debug messages, reduces execution time
+     * to minimum since there will be a lot of output and will likely timeout.
+     *
+     * @param none
+     * @return void
+     */
+    public function debugDomainListingPage( $enabled = true ) {
+        if ( !$enabled ) {
+            return;
+        }
 
 
-    
-    
+
+        $this->debug()->setMethodFilter( '_getDomainNameMarketplaceLinks', true ); //by method
+        $this->debug()->setMethodFilter( '_getTickerListings', true ); //by method
+
+
+        $this->debug()->setMethodFilter( 'listDomains', true ); //by method
+        $this->setOption( 'trace_enabled', false );
+    }
+
+    /**
+     * Debug Add Domains
+     *
+     * Long Description
+     *
+     * @param none
+     * @return void
+     */
+    public function debugAddDomains( $enabled = true ) {
+        if ( !$enabled ) {
+            return;
+        }
+        $this->setCommonOptions( true );
+
+        $this->debug()->setMethodFilter( 'hookFormActionAjaxAddDomain', true ); //by method
+        $this->debug()->setMethodFilter( 'getSellerIdFromSource', true );
+
+        $this->setOption( 'ajax_debugging_enabled', true );
+
+    }
+
+    public function debugAdminAddDomain( $enabled = true ) {
+        if ( !$enabled ) {
+            return;
+        }
+        $this->setCommonOptions( true );
+//$this->debug()->setMethodFilter( '.*Simpli_Forms_.*', true ); //by method
+//$this->debug()->setMethodFilter( '.*Theme.*', true ); //by method
+//$this->debug()->setMethodFilter( '.*Menu20AddDomains.*', true ); //by method
+
+
+
+
+
+
+        $this->debug()->setMethodFilter( 'hookFormActionAjaxAddDomain', true ); //by method
+        $this->debug()->setMethodFilter( 'getSellerIdFromSource', true );
+
+
+        $this->setOption( 'ajax_debugging_enabled', true );
+
+}
+
+    /**
+     * Debug Submit Domain
+     *
+     * Provides debug messages for the 'submit domain' external facing form at /add/domain/
+     *
+     * @param none
+     * @return void
+     */
+    public function debugUserAddDomain( $enabled ) {
+
+        if ( !$enabled ) {
+            return;
+
+
+        }
+/*
+ * Nonces - comment/uncomment as desired
+ */
+        //$this->debug()->setMethodFilter( 'wpVerifyNonce', true );
+        
+        
+        
+        $this->debug()->setMethodFilter( '_SubmitForm', true );
+
+        $this->debug()->setMethodFilter( "hookFormActionAjaxSubmitDomain", true );
+
  
 
+        $this->setMethodFilter( 'getFormattedErrors', true );
 
 
+        $this->debug()->setMethodFilter( "returnAjaxFormResponse", true );
+
+  $this->debug()->setMethodFilter( "_insertSubmittedDomainToNstockDomains", true );
+
+
+
+        /*
+         * form validation
+         * comment/uncomment as required
+         */
+    //           $this->debug()->setMethodFilter( "_validateDomainSubmission", true );
+   //     $this->setMethodFilter( 'getValidMessages', true );
+        
+     //   $this->debug()->setMethodFilter( ".*[vV]+alid.*", true );
+
+
+     //   $this->debug()->setMethodFilter( "blockSpam", true );
+      //  $this->debug()->setMethodFilter( "isSpamPerLinkSleeve", true );
+      //  $this->debug()->setMethodFilter( "isSpamPerBlogSpamDotNet", true );
+       
+        /* end form validation */
+        
+        $this->debug()->setMethodFilter( "sendFormResponse", true );
+
+}
+
+    /**
+     * Show Assertion Message
+     *
+     * Assertion Handler
+     * ref:http://www.php.net/manual/en/function.assert.php 
+     * usage:
+      assert(sprintf('%s!=="text"',$scid));
+     * 
+     * @param string $file The file path where the assertion was made
+     * @param string $line The line number on which the assertion was made
+     * @param $code The assertion code (the string passed to assert() )
+     * @param $desc The description of the insertion
+     * @return void
+     */
+    public function showAssertionMessage( $file, $line, $code, $desc = null ) {
+
+        /*
+         * description not available if not passed or in older versions of php that
+         * do not support the description argument
+         */
+        $this->log( '<p ><em style="color:red">Assertion failed at </em> '
+                . '<ul>'
+                . '<li><strong>File:</strong> ' . basename( $file ) . '</li>'
+                . '<li><strong>Line:</strong>' . $line . '</li>'
+                . '<li><strong>Code:</strong>' . $code . '</li>'
+                . '</ul>'
+                . '<blockquote> <strong>Description:</strong>' . (is_null( $desc ) ? 'Not Available' : $desc) . '</blockquote></p>', true
+        );
+        $this->debug()->stop( true );
+}
+
+    /**
+     * Debug Server Variables
+     *
+     * Displays the server variables
+     *
+     * @param none
+     * @return void
+     */
+    public function debugServerVars( $enabled ) {
+
+        if ( !$enabled ) {
+            return;
+
+
+        }
+
+        echo '<pre>', print_r( $_SERVER, true ), '</pre>';
+
+    }
+
+    /**
+     * Short Description
+     *
+     * Long Description
+     *
+     * @param none
+     * @return void
+     */
+    public function debugDomainSalesPageRedirect( $enabled ) {
+
+        if ( !$enabled ) {
+            return;
+
+
+
+        }
+
+        $this->debugServerVars( false );
+        $this->setCommonOptions( true );
+        $this->debug()->setMethodFilter( 'countDomainSalesPageClick', true );
+        $this->debug()->setMethodFilter( 'getDomainSalesPageUrl', true );
+
+
+
+    }
+
+    protected $_when_enabled = null;
+
+    /**
+     * When
+     *
+     * Provides a flag so debug filtering can check to see if a condition has been met
+     * before it starts to debug.
+     * usage:
+     * $this->debug()->when($scid="text",'$scid="text"');
+     * 
+     * This provides an alternative to assert.
+     *
+     * @param none
+     * @return void
+     */
+    public function when( $boolean, $description ) {
+        
+        if ( $this->getOption('debug_when')!==true) {
+            return;
+}
+        
+        if ( $this->_when_enabled === true && $boolean === false ) {
+           //  $this->debug()->log( '**debug stop**', true );
+}
+        $this->_when_enabled = $boolean;
+
+        if ( $boolean === true ) {
+           // $this->debug()->log( '**debug start**', true );
+}
+    }
+    
+    
+    /**
+     * Debug Validation
+     *
+     * Debug Messages for some of the validation problem areas
+     *
+     * @param none
+     * @return void
+     */
+    public function debugValidation( $enabled ) {
+
+        if ( !$enabled ) {
+            return;
+
+
+
+        }
+            
+                $this->debug()->setMethodFilter( 'getRequestVar', false );
+    $this->debug()->setMethodFilter( 'validateRequired', false );
+        $this->debug()->setMethodFilter( '_processValidationRules', false );
+          $this->debug()->setMethodFilter( 'getValidMessages', false );
+           $this->debug()->setMethodFilter( '_setValidMessage', false );
+           $this->debug()->setMethodFilter( 'validSetSuccessMessage', false );
+           
+          
+
+    }
+    
+
+    /**
+     * Debug Support Form
+     *
+     * Provides debug messages for the 'submit domain' external facing form at /add/domain/
+     *
+     * @param none
+     * @return void
+     */
+    public function debugSupportForm( $enabled ) {
+
+        if ( !$enabled ) {
+            return;
+
+
+        }
+/*
+ * Nonces - comment/uncomment as desired
+ */
+        //$this->debug()->setMethodFilter( 'wpVerifyNonce', true );
+        
+        
+        
+        $this->debug()->setMethodFilter( '.*_SubmitForm.*', true );
+          $this->debug()->setMethodFilter( 'hookFormActionAjaxContactSupport', true );
+
+
+             /*
+         * form validation
+         * comment/uncomment as required
+         */
+             $this->debug()->setMethodFilter( "_validateDomainSubmission", true );
+        $this->setMethodFilter( 'getValidMessages', true );
+        
+       $this->debug()->setMethodFilter( ".*[vV]+alid.*", true );
+
+
+        $this->debug()->setMethodFilter( "blockSpam", true );
+        $this->debug()->setMethodFilter( "isSpamPerLinkSleeve", true );
+        $this->debug()->setMethodFilter( "isSpamPerBlogSpamDotNet", true );
+       
+        /* end form validation */
+
+}
+
+ /**
+     * Debug Simpli Forms Manage Forms
+     *
+     * Debug Simpli Forms Manage Forms
+     *
+     * @param none
+     * @return void
+     */
+    public function debugSimpliFormsManageForms( $enabled ) {
+
+        if ( !$enabled ) {
+            return;
+
+
+        }
+/*
+ * Nonces - comment/uncomment as desired
+ */
+        //$this->debug()->setMethodFilter( 'wpVerifyNonce', true );
+        
+        
+        
+        $this->debug()->setMethodFilter( 'hookFormActionAjaxApplyFilters', true );
+   $this->debug()->setMethodFilter( 'sendFormResponse', true );
+
+             /*
+         * form validation
+         * comment/uncomment as required
+         */
+             $this->debug()->setMethodFilter( "_validateDomainSubmission", true );
+        $this->setMethodFilter( 'getValidMessages', true );
+        
+       $this->debug()->setMethodFilter( ".*[vV]+alid.*", true );
+
+
+        $this->debug()->setMethodFilter( "blockSpam", true );
+        $this->debug()->setMethodFilter( "isSpamPerLinkSleeve", true );
+        $this->debug()->setMethodFilter( "isSpamPerBlogSpamDotNet", true );
+       
+        /* end form validation */
+
+}
+
+     /**
+     * Debug Show Stats Page
+     *
+     * Debug the stats page
+     *
+     * @param none
+     * @return void
+     */
+    public function debugShowStatsPage( $enabled ) {
+
+        if ( !$enabled ) {
+            return;
+
+
+        }
+    
+         $this->setMethodFilter( '.*Simpli_Frames_Modules_NomstockStats.*', false );
+          $this->setMethodFilter( 'showStatsPage', false );
+             $this->setMethodFilter( 'mySQLCallProc', true );
+          
+        
+         
+        }
+        
+
+     /**
+     * Debug Show Template
+     *
+     * Debug the stats page
+     *
+     * @param none
+     * @return void
+     */
+    public function debugShowTemplate( $enabled ) {
+
+        if ( !$enabled ) {
+            return;
+
+
+        }
+    
+    
+          $this->setMethodFilter( 'showTemplate', true );
+             $this->setMethodFilter( 'permalinkActionShowTemplate', true );
+          
+        
+         
+        }
 }

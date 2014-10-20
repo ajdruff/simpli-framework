@@ -101,6 +101,4 @@ class Simpli_Frames_Addons_Simpli_Forms_Themes_Bootstrap_Modules_Elements extend
         );
     }
 
-
-
 }

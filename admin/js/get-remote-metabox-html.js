@@ -68,7 +68,7 @@ jQuery(document).ready(function(jQuery) {
  , $screen_id// Current Screen ID . This is mistakenly called $post_type in the codex. See source.
  , 'side'//normal advanced or side The part of the page where the metabox should show
  , 'default' // 'high' , 'core','default', 'low' The priority within the context where the box should show
- , array('metabox' => 'ajax', 'url' => 'http://www.simpliwp.com/simpli-framework/metabox-feedback-example/') //callback arguments. file that contains the html for the metabox. metabox is the folder, 'settings-example' is the file in the folder
+ , array('metabox' => 'ajax', 'url' => 'http://www.simpliwp.com/nomstock-framework/metabox-feedback-example/') //callback arguments. file that contains the html for the metabox. metabox is the folder, 'settings-example' is the file in the folder
  );
 
 

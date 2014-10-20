@@ -98,10 +98,8 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Base_v1c2_Plug
         $this->debug()->t();
         if (!$this->pageCheckEditor()) {
             $this->debug()->log('Exiting hookEditingScreen since it didnt pass pageCheckEditor test');
-           
             return;
         }
-     
         $this->debug()->logVar('current_screen = ', get_current_screen());
         global $post;
         $this->debug()->logVar('$post = ', $post);
@@ -203,7 +201,7 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Base_v1c2_Plug
         /*
          * add the metaboxes
          */
-        if (true)
+        if (false)
             $this->metabox()->addMetaBox(
                     'metabox_options'  //Meta Box DOM ID
                     , __('Simpli Frames Options', $this->plugin()->getTextDomain()) //title of the metabox.
@@ -312,12 +310,25 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Base_v1c2_Plug
          * Messages to the User
          */
         $this->setConfigDefault('MESSAGE_SAVE_SUCCESS', __("Changes saved.", $this->plugin()->getTextDomain()));
-        $this->setConfigDefault('MESSAGE_NONCE_FAILED', __("Failed to save changes, please log out and log back in and try again.", $this->plugin()->getTextDomain()));
+        $this->setConfigDefault('NONCE_FAILED_MESSAGE', __("Failed to save changes, please log out and log back in and try again.", $this->plugin()->getTextDomain()));
         $this->setConfigDefault('MESSAGE_SAVE_FAILED', __("Failed to save changes, please log out and log back in and try again.", $this->plugin()->getTextDomain()));
 
 
 
+        /*
+         *
+         * Nonces
+         * The PostUserOptions module controls nonce creation of metaboxes that are added
+         * to editor pages. Any NONCE_ properties created by other menu modules are ignored.
+         */
 
+        $this->setConfig('NONCE_DEFAULT_ACTION', $this->plugin()->getSlug() . '_' . $this->plugin()->getSlug() . '_save_post');
+
+
+        $this->setConfig('NONCE_DEFAULT_VALUE', null); //cant wp_create_nonce now, since function not available
+        $this->setConfig('NONCE_FIELD_NAME', $this->plugin()->getSlug() . '_nonce');
+
+        $this->setConfig('NONCE_UNIQUE_ENABLED', true);
     }
 
     /**
@@ -765,7 +776,6 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Base_v1c2_Plug
          * check we're on the editor page
          */
         if (!$this->pageCheckEditor()) {
-            
             return;
         }
 
@@ -889,7 +899,7 @@ class Simpli_Frames_Modules_PostUserOptions extends Simpli_Frames_Base_v1c2_Plug
          */
         if (!$this->metabox()->wpVerifyNonce(__FUNCTION__)) {
 
-            $message = $this->MESSAGE_NONCE_FAILED;
+            $message = $this->NONCE_FAILED_MESSAGE;
             $this->metabox()->showResponseMessage(
                     $this->plugin()->getDirectory() . '/admin/templates/ajax_message_post_options.php', //string $template The path to the template to be used
                     $message, // string $message The html or text message to be displayed to the user

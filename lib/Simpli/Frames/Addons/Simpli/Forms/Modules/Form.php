@@ -320,25 +320,32 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Form extends Simpli_Frames_Base_
      */
     private function _el( $properties ) {
         $this->debug()->t();
-
+        //$this->debug()->setMethodFilter( __FUNCTION__, false );
+       
         /*
          * Use the name of the element id as the method
          *
          */
 
-
+        $this->debug()->logVar( '$properties = ', $properties);
+   
+     // $this->debug()->stop( true );
+        $module=$this->getElementsModule();
         $method = $properties[ 'el' ];
-
+        $this->debug()->logVar( 'Module Used to Render Element = ', get_class($module) );
+        $this->debug()->logVar( 'Method Used to Render Element = ', $method);
+  
+         
         unset( $properties[ 'el' ] ); //remove the element id since we dont want it part of atts, and it served its only purpose
 
-        $this->debug()->logVar( '$this->getElementsModule()->$method($properties)', get_class( $this->getElementsModule() ) . '::' . $method . '()' );
-        if ( method_exists( $this->getElementsModule(), $method ) ) {
-            return($this->getElementsModule()->$method( $properties ));
+        $this->debug()->logVar( 'method used to generate element:', get_class( $module ) . '::' . $method . '()' );
+        if ( method_exists( $module, $method ) ) {
+            return($module->$method( $properties ));
         } else {
             /*
              * if no element defined, then display an error message
              */
-            echo $this->getElementErrorMessages( $el_id, array( 'Element ' . $el_id . ' is not defined in ' . get_class( $this->getElementsModule() ) ) );
+            echo $this->getElementErrorMessages( $el_id, array( 'Element ' . $el_id . ' is not defined in ' . get_class( $module ) ) );
         }
     }
 
@@ -364,9 +371,20 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Form extends Simpli_Frames_Base_
      */
     public function renderElement( $scid, $atts, $defaults ) {
         $this->debug()->t();
-        if ( array_key_exists( 'render', $atts ) && $atts['render']===false) {
+        if ( $atts[ 'render' ] === false ) {
             return;
 }
+        //$this->debug()->setMethodFilter( __FUNCTION__, false );
+        
+
+   
+/*
+ * Set default template
+ * default template is always the name of the scid ( shortcode id) 
+ */
+$this->debug()->logVar( '$defaults = ', $defaults);
+$this->debug()->logVar( '$atts = ', $atts);
+        
 
         /*
          * Apply Defaults
@@ -375,13 +393,19 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Form extends Simpli_Frames_Base_
          */
         $atts = shortcode_atts( $defaults, $atts );
 
+        
 
+   
+   
+   
+        $this->debug()->logVar( '$atts after shortcode_atts = ', $atts); 
 
         /*
          * Package Properties so we can hand off to filters
          */
         $tags = array();
-        $this->debug()->logVar( '$scid = ', $scid );
+
+
         $properties = array(
             'scid' => $scid, //shortcode , represents the
             'atts' => $atts,
@@ -392,7 +416,7 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Form extends Simpli_Frames_Base_
 
 
 
-        $this->debug()->logVar( '$properties = ', $properties );
+        $this->debug()->logVar( '$properties = ', $properties,false );
         /*
          * Filter
          * Apply the filter set by the template.
@@ -425,15 +449,15 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Form extends Simpli_Frames_Base_
 
             $filter_module_name = $this->addon()->MODULE_NAME_FILTERS . $filter; // e.g.: 'FilterOptions'
             if ( method_exists( $this->addon()->getModule( $filter_module_name ), 'filter' ) ) {
-                $this->debug()->log( 'filtering using ' . $filter_module_name );
-                $this->debug()->logVar( 'unfiltered properties are  = ', $properties );
-                $this->debug()->log( 'Filtering with module ' . $filter_module_name );
+              //  $this->debug()->log( 'filtering using ' . $filter_module_name,false );
+              //  $this->debug()->logVar( 'unfiltered properties are  = ', $properties,false );
+              //  $this->debug()->log( 'Filtering with module ' . $filter_module_name,false );
                 $properties = $this->addon()->getModule( $filter_module_name )->filter( $properties );
-                $this->debug()->logVar( 'filtered properties are  = ', $properties );
+             //   $this->debug()->logVar( 'filtered properties are  = ', $properties,false );
             }
         }
 
-        $this->debug()->logVar( '$properties after filtering = ', $properties);
+        $this->debug()->logVar( '$properties after filtering = ', $properties );
 
 
 
@@ -489,15 +513,26 @@ class Simpli_Frames_Addons_Simpli_Forms_Modules_Form extends Simpli_Frames_Base_
 
 
 
-$theme = $this->addon()->getModule('Form')->getTheme();
-$template_contents=$theme->getTemplate( $atts[ 'template' ]);
+        $theme = $this->addon()->getModule( 'Form' )->getTheme();
+      
+        /*
+         * Use the element's layout if set, otherwise use the one provided by the form
+         */
+        if ( isset($atts['layout']) && !is_null($atts['layout'])) {
+            $layout=$atts['layout'];
+}else {
+    
+        $layout = $this->plugin()->getAddon( 'Simpli_Forms' )->getModule( 'Form' )->form[ 'form' ][ 'layout' ];
+}
+        $this->debug()->logVar( '$layout = ', $layout );
+        $this->debug()->logVar( '$atts[ template ] = ', $atts[ 'template' ] );
+        $template_contents = $theme->getTemplate( $atts[ 'template' ] ,$layout);
 
 
+        $this->debug()->logVar( '$template_contents = ', $template_contents );
 
 
-
-
-
+        $this->debug()->logVar( '$template for $template_id ' . $atts[ 'template' ] . '=<br>', $template );
 
         $att_template_tags = $this->getTagPairs( $atts ); //convert to tag pairs
         $template_with_atts_replaced = str_ireplace( $att_template_tags[ 'names' ], $att_template_tags[ 'values' ], $template_contents );
@@ -510,7 +545,7 @@ $template_contents=$theme->getTemplate( $atts[ 'template' ]);
         $element_template_tags = $this->getTagPairs( $tags ); //convert to tag pairs
         $processed_template = str_ireplace( $element_template_tags[ 'names' ], $element_template_tags[ 'values' ], $template_with_atts_replaced );
 
-
+ 
 
         /*
          *
@@ -682,6 +717,7 @@ $template_contents=$theme->getTemplate( $atts[ 'template' ]);
         }
         return $tag_value;
     }
+
     /**
      * Form Start
      *
@@ -691,131 +727,124 @@ $template_contents=$theme->getTemplate( $atts[ 'template' ]);
      * @return void
      */
     public function formStart( $atts ) {
-        
-            /*
-  * Invoke all functions attached to the simpli_forms_start tag
-         * This tag is used in Form Action Modules 
-         * Usage: add_action('simpli_forms_start',array($this,'my_method');
-  * 
-  */
 
-$this->debug()->log( 'doing action simpli_forms_start' );
-do_action('simpli_forms_start');
+      
+         
+         ////$this->debug()->setMethodFilter( __FUNCTION__, false );
+         
 
-
-                $atts[ 'el' ] = 'formStart';
+        $atts[ 'el' ] = 'formStart';
         return($this->el( $atts
         ));
-        
-//                
-//        
-//        $this->debug()->t(true);
-//        $defaults = array(
+
+
+
+        $this->debug()->t( true );
+        $defaults = array(
 //            'name' => 'simpli_forms',
-//            'target'=>null,
+//            'target' => null,
 //            'style' => null,
 //            'class' => null,
 //            'device_size' => 'medium',
 //            'size' => 'medium',
 //            'label_size' => 'extra-small',
-//            'theme' => 'Admin',
+            'theme' => 'Admin',
 //            'ajax' => null,
 //            'enctype' => null,
 //            'action' => null,
 //            'method' => 'post',
 //            'template' => __FUNCTION__,
-//            'filter' => null
-//        );
-//
-//
-//
-//        /*
-//         * Apply Defaults
-//         * Use the shortcode_atts function which will also remove
-//         * any attributes not specified in the element defaults
-//         */
-//        $properties = shortcode_atts( $defaults, $properties );
-//
-//
-//
-//        $this->debug()->logVar( '$properties = ', $properties );
-//
-//        /*
-//         * increase the form counter
-//         */
-//        $this->form_counter++;
-//
-//        if ( !is_array( $properties ) ) {
-//            $properties = array();
-//        }
-//        $this->form = array(); //initialize, clearing any previous form on the same page
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//        /*
-//         * if a theme was provided, set it.
-//         */
-//        if ( !is_null( $properties[ 'theme' ] ) ) {
-//            $this->getTheme()->setTheme( $properties[ 'theme' ] );
-//        }
-//
-//        /*
-//         * if a filter was provided, set it.
-//         */
-//
-//        if ( !is_null( $properties[ 'filter' ] ) ) {
-//
-//
-//            $this->setFilter( $properties[ 'filter' ] );
-//        }
-//
-//
-//
-//
-//
-//
-//        /*
-//         * reset the elements array for this new form
-//         */
-//        $this->form[ 'elements' ] = array();
-//
-//
-//        /*
-//         * reset the form properties
-//         */
-//        $this->form[ 'form' ] = $properties;
-//
-//        $this->debug()->log( 'Loading the form handler scripts' );
-// 
-//        
-//        /*
-//  * Invoke all functions attached to the simpli_forms_start tag
-//         * This tag is used in Form Action Modules 
-//         * Usage: add_action('simpli_forms_start',array($this,'my_method');
-//  * 
-//  */
-//
-//$this->debug()->log( 'doing action simpli_forms_start',true );
-//do_action('simpli_forms_start');
-//$this->debug()->stop( true );
-//
-//        /*
-//         * output the html
-//         * Note that we pass on *all* the properties
-//         * The el() method will scrub out the ones that dont have a a default
-//         *
-//         */
-//        $this->debug()->logVars( get_defined_vars() );
-//        $atts = $properties;
-//        $atts[ 'el' ] = 'formStart';
-//        $this->el( $atts
-//        );
+            'filter' => null
+        );
+
+
+
+        /*
+         * Apply Defaults
+         * Use the shortcode_atts function which will also remove
+         * any attributes not specified in the element defaults
+         */
+        $properties = shortcode_atts( $defaults, $properties );
+
+
+
+        $this->debug()->logVar( '$properties = ', $properties );
+        
+                 $this->debug()->stop( true );
+
+
+        /*
+         * increase the form counter
+         */
+        $this->form_counter++;
+
+        if ( !is_array( $properties ) ) {
+            $properties = array();
+        }
+        $this->form = array(); //initialize, clearing any previous form on the same page
+
+
+
+
+
+
+
+
+
+        /*
+         * if a theme was provided, set it.
+         */
+        if ( !is_null( $properties[ 'theme' ] ) ) {
+            $this->getTheme()->setTheme( $properties[ 'theme' ] );
+        }
+
+        /*
+         * if a filter was provided, set it.
+         */
+
+        if ( !is_null( $properties[ 'filter' ] ) ) {
+
+
+            $this->setFilter( $properties[ 'filter' ] );
+        }
+
+
+
+
+
+
+        /*
+         * reset the elements array for this new form
+         */
+        $this->form[ 'elements' ] = array();
+
+
+        /*
+         * reset the form properties
+         */
+        $this->form[ 'form' ] = $properties;
+
+        $this->debug()->log( 'Loading the form handler scripts' );
+        /*
+         * Load the javascript needed for the forms
+         */
+        $this->formHandler()->enqueueScripts();
+
+
+
+
+
+        /*
+         * output the html
+         * Note that we pass on *all* the properties
+         * The el() method will scrub out the ones that dont have a a default
+         *
+         */
+        $this->debug()->logVars( get_defined_vars() );
+        $atts = $properties;
+        $atts[ 'el' ] = 'formStart';
+        $this->el( $atts
+        );
     }
 
     /**
@@ -830,7 +859,7 @@ do_action('simpli_forms_start');
         $this->debug()->t();
         $defaults = array(
             'name' => 'simpli_forms',
-            'target'=>null,
+            'target' => null,
             'style' => null,
             'class' => null,
             'device_size' => 'medium',
@@ -954,16 +983,37 @@ do_action('simpli_forms_start');
          */
         $properties = shortcode_atts( $defaults, $properties );
 
+        
 
+        
 
 
         $this->el( array(
             'el' => 'formEnd',
             'name' => 'formEnd',
-            'template' => $properties[ 'template' ],
+            'template' => $properties['template'],
                 )
         );
     }
 
+    protected $_form_handler = null;
+
+    /**
+     * Forms
+     *
+     * Provides a reference to this class
+     *
+     * @param none
+     * @return object A metabox Class Object
+     */
+    public function formHandler() {
+
+        if ( is_null( $this->_form_handler ) ) {
+
+            $this->_form_handler = $this->plugin()->getModule( 'Forms' );
+        }
+
+        return $this->_form_handler;
+        }
 
 }

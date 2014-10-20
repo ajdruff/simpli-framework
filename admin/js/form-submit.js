@@ -408,7 +408,7 @@ jQuery('#sf-as-time').attr('value',timestamp);
              * This uses escape() so the string wont be interpreted as fields
              * jQuery(location).attr('search') is the query string
              */
-            + '&_nomstock_forms_referer_url=' + escape(jQuery(location).attr('pathname') + jQuery(location).attr('search'))
+            + '&_simpli_forms_referer_url=' + escape(jQuery(location).attr('pathname') + jQuery(location).attr('search'))
 
             /*
              * Form Nonce
@@ -580,9 +580,9 @@ simpli.frames.submit.nonAjaxSubmit = function(form, event, form_action_slug) {
         jQuery(form).append('<input type="hidden" name="' + simpli.frames.vars.query_var_action + '" value="' + form_action_slug + '">');
 
 
-        var _nomstock_forms_referer_url = escape(jQuery(location).attr('pathname') + jQuery(location).attr('search'));
-        simpli.frames.log('_nomstock_forms_referer_url = ' + _nomstock_forms_referer_url);
-        jQuery(form).append('<input name="_nomstock_forms_referer_url" value="' + _nomstock_forms_referer_url + '" type="hidden" >');
+        var _simpli_forms_referer_url = escape(jQuery(location).attr('pathname') + jQuery(location).attr('search'));
+        simpli.frames.log('_simpli_forms_referer_url = ' + _simpli_forms_referer_url);
+        jQuery(form).append('<input name="_simpli_forms_referer_url" value="' + _simpli_forms_referer_url + '" type="hidden" >');
     }
 
 //    simpli.frames.logWarn('bailed out of form submission');
@@ -595,7 +595,7 @@ simpli.frames.submit.nonAjaxSubmit = function(form, event, form_action_slug) {
     /*
      * append the id of the form
      */
-    jQuery(form).append('<input type="hidden" name="nomstock_forms_id" value="' + jQuery(form).attr('id') + '">');
+    jQuery(form).append('<input type="hidden" name="simpli_forms_id" value="' + jQuery(form).attr('id') + '">');
 
 
 

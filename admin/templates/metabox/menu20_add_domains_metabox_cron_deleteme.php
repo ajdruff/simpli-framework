@@ -30,7 +30,7 @@
     ?>
     
     <div style="margin-bottom:150px; height:50px;" class="button-controls pull-right">
-   <div   class="pull-left nomstock_forms_response">&nbsp;</div><input type="submit" id="{form_name}_{form_counter}_add_domain" class="button-primary" value="Add Domain(s)" name="{form_name}_{form_counter}_add_domain">
+   <div   class="pull-left simpli_forms_response">&nbsp;</div><input type="submit" id="{form_name}_{form_counter}_add_domain" class="button-primary" value="Add Domain(s)" name="{form_name}_{form_counter}_add_domain">
 
     <img alt="<?php _e('Waiting...', $this->plugin()->getTextDomain()); ?>" src="<?php echo admin_url('/images/wpspin_light.gif'); ?>" class="waiting submit-waiting" />
 </div>

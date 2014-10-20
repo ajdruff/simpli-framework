@@ -139,7 +139,7 @@ simpli.frames.submit.ajaxSubmit = function(form, event, ajax_action_slug) {
              * This uses escape() so the string wont be interpreted as fields
              * jQuery(location).attr('search') is the query string
              */
-            + '&_nomstock_forms_referer_url=' + escape(jQuery(location).attr('pathname') + jQuery(location).attr('search'))
+            + '&_simpli_forms_referer_url=' + escape(jQuery(location).attr('pathname') + jQuery(location).attr('search'))
 
             /*
              * Form Nonce
@@ -170,11 +170,11 @@ simpli.frames.submit.ajaxSubmit = function(form, event, ajax_action_slug) {
         if (!simpli.frames.vars.plugin.debug) {
             simpli.frames.log('response = ' + response);
             /*
-             * If an element exists within the form with class ='.nomstock_forms_response',
+             * If an element exists within the form with class ='.simpli_forms_response',
              * then use it. otherwise, use the popup if available.
              */
-            if (jQuery(form).find('.nomstock_forms_response').length > 0) {
-                output_element = jQuery(form).find('.nomstock_forms_response');
+            if (jQuery(form).find('.simpli_forms_response').length > 0) {
+                output_element = jQuery(form).find('.simpli_forms_response');
             } else {
 
                 if (jQuery('#message-body').length > 0) {
@@ -184,7 +184,7 @@ simpli.frames.submit.ajaxSubmit = function(form, event, ajax_action_slug) {
             }
 
             output_element.html(response).fadeOut(0).fadeIn().delay(5000).fadeOut();
-            //  jQuery(form).find('.nomstock_forms_response').html(response).fadeOut(0).fadeIn().delay(2500).fadeOut();
+            //  jQuery(form).find('.simpli_forms_response').html(response).fadeOut(0).fadeIn().delay(2500).fadeOut();
 
         } else {
 
@@ -257,7 +257,7 @@ simpli.frames.submit.ajaxSubmit = function(form, event, ajax_action_slug) {
                  * This uses escape() so the string wont be interpreted as fields
                  * jQuery(location).attr('search') is the query string
                  */
-                + '&_nomstock_forms_referer_url=' + escape(jQuery(location).attr('pathname') + jQuery(location).attr('search'))
+                + '&_simpli_forms_referer_url=' + escape(jQuery(location).attr('pathname') + jQuery(location).attr('search'))
 
                 /*
                  * Form Nonce
@@ -288,11 +288,11 @@ simpli.frames.submit.ajaxSubmit = function(form, event, ajax_action_slug) {
             if (!simpli.frames.vars.plugin.debug) {
                 simpli.frames.log('response = ' + response);
                 /*
-                 * If an element exists within the form with class ='.nomstock_forms_response',
+                 * If an element exists within the form with class ='.simpli_forms_response',
                  * then use it. otherwise, use the popup if available.
                  */
-                if (jQuery(form).find('.nomstock_forms_response').length > 0) {
-                    output_element = jQuery(form).find('.nomstock_forms_response');
+                if (jQuery(form).find('.simpli_forms_response').length > 0) {
+                    output_element = jQuery(form).find('.simpli_forms_response');
                 } else {
 
                     if (jQuery('#message-body').length > 0) {
@@ -302,7 +302,7 @@ simpli.frames.submit.ajaxSubmit = function(form, event, ajax_action_slug) {
                 }
 
                 output_element.html(response).fadeOut(0).fadeIn().delay(5000).fadeOut();
-                //  jQuery(form).find('.nomstock_forms_response').html(response).fadeOut(0).fadeIn().delay(2500).fadeOut();
+                //  jQuery(form).find('.simpli_forms_response').html(response).fadeOut(0).fadeIn().delay(2500).fadeOut();
 
             } else {
 
@@ -400,9 +400,9 @@ simpli.frames.submit.nonAjaxSubmit = function(form, event, form_action_slug) {
         jQuery(form).append('<input type="hidden" name="' + simpli.frames.vars.query_var_action + '" value="' + form_action_slug + '">');
 
 
-        var _nomstock_forms_referer_url = escape(jQuery(location).attr('pathname') + jQuery(location).attr('search'));
-        simpli.frames.log('_nomstock_forms_referer_url = ' + _nomstock_forms_referer_url);
-        jQuery(form).append('<input name="_nomstock_forms_referer_url" value="' + _nomstock_forms_referer_url + '" type="hidden" >');
+        var _simpli_forms_referer_url = escape(jQuery(location).attr('pathname') + jQuery(location).attr('search'));
+        simpli.frames.log('_simpli_forms_referer_url = ' + _simpli_forms_referer_url);
+        jQuery(form).append('<input name="_simpli_forms_referer_url" value="' + _simpli_forms_referer_url + '" type="hidden" >');
     }
 
 //    simpli.frames.logWarn('bailed out of form submission');
@@ -415,7 +415,7 @@ simpli.frames.submit.nonAjaxSubmit = function(form, event, form_action_slug) {
     /*
      * append the id of the form
      */
-    jQuery(form).append('<input type="hidden" name="nomstock_forms_id" value="' + jQuery(form).attr('id') + '">');
+    jQuery(form).append('<input type="hidden" name="simpli_forms_id" value="' + jQuery(form).attr('id') + '">');
     /*
      * Add the nonce value to the form , if not already added.
      */

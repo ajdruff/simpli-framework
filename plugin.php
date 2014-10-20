@@ -1,9 +1,9 @@
 <?php
 
 /**
-Plugin Name:   Nomstock Com 
+Plugin Name:   Simpli Frames 
  Plugin URI:    http://example.com 
- Description:   The Nomstock Com plugin does some amazing stuff and was built upon the Simpli framework, a WordPress Plugin development framework that makes building WordPress plugins just a bit easier. 
+ Description:   The Simpli Frames plugin does some amazing stuff and was built upon the Simpli framework, a WordPress Plugin development framework that makes building WordPress plugins just a bit easier. 
  Author:        Author 
  Version:       1.0.0 
  Author URI:    http://example.com 
@@ -67,8 +67,8 @@ $simpli_frames = Simpli_Framework::load('simpli_frames', __FILE__);
  */
 
 
-$simpli_frames->setName('Nomstock Com'); // Name should match the value of 'Plugin Name' in the comments at the top of this file);
-$simpli_frames->setTextDomain('nomstock-com'); // TextDomain must *not* include underscores and uniquely identifies the language domain for your plugin
+$simpli_frames->setName('Simpli Frames'); // Name should match the value of 'Plugin Name' in the comments at the top of this file);
+$simpli_frames->setTextDomain('simpli-frames'); // TextDomain must *not* include underscores and uniquely identifies the language domain for your plugin
 
 
 /*

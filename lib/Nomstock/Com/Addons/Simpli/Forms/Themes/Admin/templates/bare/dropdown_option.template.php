@@ -1,1 +1,0 @@
-<option {SELECTED} value="{OPTION_VALUE}">{OPTION_TEXT}</option>

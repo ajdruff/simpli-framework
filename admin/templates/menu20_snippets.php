@@ -33,7 +33,7 @@ if (!is_object($post)) {
     return;
 }
 ?>
-<div class="nomstock-com">
+<div class="simpli-frames">
     <div class="simpli-message-wrap" id="message-wrap"><div id="message-body">
 
 

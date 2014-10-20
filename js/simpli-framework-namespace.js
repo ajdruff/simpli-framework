@@ -71,10 +71,10 @@ simpli.frames.logWarn = function(message)
  * Wrapper around trigger, so jQuery trigger interface is WordPress Developer friendly.
  * Ref:http://codex.wordpress.org/Function_Reference/do_action
  * Instead of doing this :
- *  jQuery(document).trigger('nomstock_forms_submit_prompt_' + form_action_slug, form_action_slug);
+ *  jQuery(document).trigger('simpli_forms_submit_prompt_' + form_action_slug, form_action_slug);
  *
  *  You can do this :
- *  simpli.frames.do_action('nomstock_forms_submit_prompt_' + form_action_slug,form_action_slug);
+ *  simpli.frames.do_action('simpli_forms_submit_prompt_' + form_action_slug,form_action_slug);
  *
  * @param string $tag The name of the hook you wish to execute.
  * @param string $arg The list of arguments to send to this hook.
@@ -93,10 +93,10 @@ simpli.frames.do_action = function(tag, arg)
  * Ref:http://codex.wordpress.org/Function_Reference/add_action
  *
  * Instead of doing this :
- *  jQuery(document).bind('nomstock_forms_submit_prompt_' + 'upload_addon', uploadActionPrompt);
+ *  jQuery(document).bind('simpli_forms_submit_prompt_' + 'upload_addon', uploadActionPrompt);
  *
  *  You can do this :
- *  simpli.frames.add_action('nomstock_forms_submit_prompt_' + 'upload_addon', uploadActionPrompt);
+ *  simpli.frames.add_action('simpli_forms_submit_prompt_' + 'upload_addon', uploadActionPrompt);
  *
  *
  * @param string $tag The name of the action to which $function_to_add is hooked

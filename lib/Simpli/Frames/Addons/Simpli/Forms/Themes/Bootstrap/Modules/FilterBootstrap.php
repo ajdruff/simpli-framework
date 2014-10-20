@@ -27,30 +27,30 @@ class Simpli_Frames_Addons_Simpli_Forms_Themes_Bootstrap_Modules_FilterBootstrap
         $this->debug()->log( 'applying the common filters of the base class' );
 
         extract( $properties );
-        
+
         /*
          * Several Size filter expressions follow. Their purpose is to 1) Check if the attribute exists, if it does and assigned a value, use it. If it doesnt, take its value from the properties of the entire form. Once a value is assigned, then convert it to a value that the twitter bootstrap framework can use.
          */
         /*
          * Device Size
          */
-        
-                            if ( array_key_exists( 'device_size', $atts )){$tags['ds']=$this->changeDeviceSizeToBoostrapSize($this->maybeTakeFormDefault('device_size',$atts));}
-                            
-                            
-               /*
+
+        if ( array_key_exists( 'device_size', $atts ) ){ $tags[ 'ds' ] = $this->changeDeviceSizeToBoostrapSize( $this->maybeTakeFormDefault( 'device_size', $atts ) ); }
+
+
+        /*
          * Element Size
-         */                     
-                            
-                                                if ( array_key_exists( 'label_size', $atts )){$atts['label_size']=$this->changeSizeToBoostrapSize($this->maybeTakeFormDefault('label_size',$atts));}
-                                                
-               /*
+         */
+
+        if ( array_key_exists( 'label_size', $atts ) ){ $atts[ 'label_size' ] = $this->changeSizeToBoostrapSize( $this->maybeTakeFormDefault( 'label_size', $atts ) ); }
+
+        /*
          * Label Size
-         */                                         
-                                                
-                                                                    if ( array_key_exists( 'size', $atts )){$atts['size']=$this->changeSizeToBoostrapSize($this->maybeTakeFormDefault('size',$atts));}
-                                                                    
-                                                                    
+         */
+
+        if ( array_key_exists( 'size', $atts ) ){ $atts[ 'size' ] = $this->changeSizeToBoostrapSize( $this->maybeTakeFormDefault( 'size', $atts ) ); }
+
+
 //                                                                    
 //                                                                    
 //        if ( array_key_exists( 'device_size', $atts ) && is_null( $atts[ 'device_size' ] ) ) {
@@ -104,8 +104,6 @@ class Simpli_Frames_Addons_Simpli_Forms_Themes_Bootstrap_Modules_FilterBootstrap
 
 //        
 //                    if ( array_key_exists( 'size', $atts )){$atts['size']=$this->changeToBoostrapSize($this->maybeTakeFormDefault('size',$atts));}
-                    
-                    
 //        $this->debug()->logVar( 'form properties = ', $form_size = $this->addon()->getModule( 'Form' )->form );
 //        $this->debug()->logVar( '$atts = ', $atts );
 //        $form_size = $this->addon()->getModule( 'Form' )->form[ 'form' ][ 'size' ];
@@ -215,8 +213,7 @@ class Simpli_Frames_Addons_Simpli_Forms_Themes_Bootstrap_Modules_FilterBootstrap
         return $normalizedSize;
     }
 
-    
-        /**
+    /**
      * Change  Device Size to Bootstrap Size
      *
      * Changes a preset text size to one of the device sizes bootstrap uses. The preset text sizes should be consistent with the size attribute
@@ -241,8 +238,8 @@ class Simpli_Frames_Addons_Simpli_Forms_Themes_Bootstrap_Modules_FilterBootstrap
 
     }
         return $normalizedSize;
-    }
-    
+}
+
     /**
      * Maybe Take Form Default
      *
@@ -252,47 +249,103 @@ class Simpli_Frames_Addons_Simpli_Forms_Themes_Bootstrap_Modules_FilterBootstrap
      * @param string $atts The array of attributes
      * @return void
      */
-    public function maybeTakeFormDefault( $att_name,$atts ) {
+    public function maybeTakeFormDefault( $att_name, $atts ) {
 
 
 
         $form_att = $this->addon()->getModule( 'Form' )->form[ 'form' ][ $att_name ];
-        if ( is_null( $atts[$att_name] ) ) {
+        if ( is_null( $atts[ $att_name ] ) ) {
 
 
 
-            $atts[$att_name] = $form_att;
+            $atts[ $att_name ] = $form_att;
+
+    }
+
+        return($atts[ $att_name ]);
+
 
     }
 
-        return($atts[$att_name]);
-
-
-    }
-    
-        /**
+    /**
      * Filter Radio
      *
      * Filters the Text Tag Attributers
      * @param string $atts The attributes of the tag
      * @return string $atts
      */
-    protected function filterRadio($properties) {
+    protected function filterRadio( $properties ) {
         $this->debug()->t();
 
-        extract($properties);
+        extract( $properties );
 
-        if ( is_null($atts['class'])) {
-            $atts['class']='radio';
+        if ( is_null( $atts[ 'class' ] ) ) {
+            $atts[ 'class' ] = 'radio';
 }
-        
-         $properties= (compact('scid', 'atts', 'tags'));
-        
+
+        $properties = (compact( 'scid', 'atts', 'tags' ));
+
         /*
          * use the shared code for radio,dropdown, and checkbox elements
          */
-        return($this->_filterOptions($properties));
-    }
-    
+        return($this->_filterOptions( $properties ));
+}
+
+    /**
+     * Form Start
+     *
+     * Filters the Text Tag Attribute
+     * @param string $atts The attributes of the tag
+     * @return string $atts
+     */
+    protected function filterFormStart( $properties ) {
+        $this->debug()->setMethodFilter( __FUNCTION__ ,false);
+        $this->debug()->t();
+
+        extract( $properties );
+        /*
+         * Add a container
+         * 
+         * add container start tag if container is set to true and class is provided. if class is not provided, set to 'container'
+         * the filterFormEnd() provides an ending tag for {container_end} if the formStart has contained set to true.
+         * 
+         * 
+         */
+
+        /*
+         * if the container attribute was not set, then set it to true since many of 
+         * the Bootstrap layouts depend on a container
+         */
+        if ( array_key_exists( 'container', $atts ) && is_null( $atts[ 'container' ] ) ) {
+            $atts[ 'container' ] = true;
+           }
+// if no container class was configured then set a default value
+        if ( array_key_exists( 'container_class', $atts ) && is_null( $atts[ 'container_class' ] ) ) {
+
+
+            $atts[ 'container_class' ] = 'container-fluid';
+     }
+
+        if ( $atts[ 'container' ] === true ) {
+
+
+            $tags[ 'container_start' ] = '<div class="' . $atts[ 'container_class' ] . '"><!-- start of container, added by formStart() -->';
+
+} else  if ( $atts[ 'container' ] === false ){
+            $tags[ 'container_start' ] = '';
+
+}
+
+        $this->debug()->logVar( '$atts = ', $atts );
+
+        $properties = compact( 'scid', 'atts', 'tags' );
+
+        /*
+         * Now run it through the parent filter
+         */
+        $properties = parent::filterFormStart( $properties );
+
+        return ($properties);
+}
 
 }
